@@ -12,7 +12,7 @@ our @patterns = (
 # for specifying interdependencies between files
 
 our %dependencies = (
-    "/sis/sitemap.html" => [ grep s!^content!!, glob "content/*.mdtext" ],
+    "/sis/sitemap.html" => [ grep s!^content!!, glob "content/sis/*.mdtext" ],
 );
 
 1;
