@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <title>{% block title %}{{ headers.title }}{% endblock %}</title>
+
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta property="og:image" content="http://www.apache.org/images/asf_logo.gif" />
+
+    <link href="./assets/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    
+    <script href="./assets/libs/bootstrap/js/bootstrap.min.js"></script>
+
+    {% if headers.atom %}
+      <link rel="alternate" href="{{ headers.atom.url }}"
+            type="application/atom+xml" title="{{ headers.atom.title }}" />
+    {% endif %}
+
+    {% if headers.base %}<base href="{{ headers.base }}" />{% endif %}
+    {% if headers.notice %}<!-- {{ headers.notice }} -->{% endif %}
+  </head>
+
+  <body>
+    <div id="page" class="container">
+      <div class="row">
+        <div id="header" class="span12">
+          <img src="http://www.apache.org/images/feather-small.gif" alt="The Apache Software Foundation">
+          <h1>Apache Spatial Information Systems</h1>
+          <h2>{% block tagline %}{{ headers.title }}{% endblock %}</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div id="nav" class="span12">
+          <p>{{ breadcrumbs|safe }}</p>
+          <form name="search" id="search" action="http://www.google.com/search" method="get">
+            <input value="sis.apache.org" name="sitesearch" type="hidden"/>
+            <input type="text" name="q" id="query">
+            <input type="submit" id="submit" value="Search">
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        {% block nav %}
+        <div id="menu" class="span3 bs-docs-sidebar" data-spy="affix" data-offset-top="200">
+          <ul class="nav nav-list bs-docs-sidenav">
+            <li><a href="#">About<a></li>
+            <li><a href="#">Continuous Integration</a></li>
+          </ul>
+        </div>
+        {% endblock %}
+        {% block content %}
+        <div id="content" class="span9 pull3">
+          <div class="section-content">{{ content|markdown }}</div>
+        </div>
+        {% endblock %}
+      </div>
+    </div>
+
+    <div id="copyright" class="container">
+      <div class="row">
+        <p>Copyright &#169; 2011 The Apache Software Foundation, Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>Apache and the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+      </div>
+    </div>
+  </body>
+</html>
