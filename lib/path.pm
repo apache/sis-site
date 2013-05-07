@@ -5,14 +5,14 @@ package path;
 our @patterns = (
 	[qr!\.mdtext$!, single_narrative => { template => "single_narrative.html" }],
 
-	[qr!/sis/sitemap\.html$!, sitemap => { headers => { title => "Sitemap" }} ],
+	[qr!/sitemap\.html$!, sitemap => { headers => { title => "Sitemap" }} ],
 
 ) ;
 
 # for specifying interdependencies between files
 
 our %dependencies = (
-    "/sis/sitemap.html" => [ grep s!^content!!, glob "content/sis/*.mdtext" ],
+    "/sitemap.html" => [ grep s!^content!!, glob "content/*.mdtext" ],
 );
 
 1;
