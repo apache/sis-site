@@ -16,10 +16,10 @@ Notice:    Licensed to the Apache Software Foundation (ASF) under one
            specific language governing permissions and limitations
            under the License.
 
-Releases are crucial aspects for an apache project and following the guidelines is very important. The [Release FAQ][release-faq] describes the foundation wide policies. The following instructions walkthrough SIS specific release steps. 
+Releases are crucial aspects for an apache project and following the guidelines is very important. The [Release FAQ][release-faq] describes the foundation wide policies. The following instructions walkthrough SIS specific release steps.
 
 <a name="release-setup"></a>
-###One time release management setup 
+###One time release management setup
 
 This section describes release management configuration steps, if you have previously configured these steps, jump directly to [Release Process](#release-process).
 
@@ -31,19 +31,19 @@ Performing a release will require:
 <a name="gpg-key"></a>
 #### Generate GPG key
 The releases have to be signed by public key cryptography signatures. Detailed instructions on why releases have to be signed are provided on [Release Signing][release-signing] page.
-The popular software used Open Pretty Good Privacy (OpenPGP) is the GPG. The [GPG instructions][gpg-keys] list out detailed steps on managing your keps.
+The popular software used Open Pretty Good Privacy (OpenPGP) is the GPG. The [GPG instructions][gpg-keys] list out detailed steps on managing your keys.
 
-The steps can be summerized as: 
+The steps can be summarized as:
 
 * Generate 4096 bits RSA key pair using gpg: `gpg --gen-key`.
 * Export the public key: `gpg --list-sigs <Real Name> && gpg --armor -- export <Real Name>`
 * Upload the public key to [SURFNET PGP][surfnet-pgp] or [MIT PGP][mit-pgp] servers.
-* Have your key signed by atleast three apache commiters, [key signing][key-sign] and [Henk Penning][henk-trust] websites provide instructions.
+* Have your key signed by at least three apache commiters, [key signing][key-sign] and [Henk Penning][henk-trust] websites provide instructions.
 * Add the signed public key to the KEYS file on [SIS Dist SVN][sis-dist-svn].
 
 For reference, the steps to sign a key:
 
-* The person whom you know in person provides you his key, usually this happens at key signing party where you can verify each others ID's. 
+* The person whom you know in person provides you his key, usually this happens at key signing party where you can verify each others ID's.
 * Fetch the key `gpg --keyserver <keyserver> --recv-keys <Key_ID>` an example key server is pgp.mit.edu
 * Sign the key `gpg --sign-key <Key_ID>`
 * Upload the key back to the server `gpg --keyserver <keyserver> --send-key <Key_ID>`
@@ -53,11 +53,11 @@ For reference, the steps to sign a key:
 #### Maven Configuration & Nexus Setup
 
 * SIS requires Maven 3 or later to build and release
-* It is encouraged to use maven's password encryption capabilities and set the gpg password in 
+* It is encouraged to use maven's password encryption capabilities and set the gpg password in
 ~/.m2/settings.xml. Detailed instructions are at [Publishing Maven Artifacts][maven-artificats]
-	* Make sure both the apache.snapshots.https and apache.releases.https are configured coreectly. 
+	* Make sure both the apache.snapshots.https and apache.releases.https are configured correctly.
 * Performing release will require maven to run series of commands, the heapsize has to be increased to avoid out of memory exceptions.
-* 		Bash Shell: `export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"`. 
+* 		Bash Shell: `export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"`.
 * 		C Shell: `setenv MAVEN_OPTS "-Xmx1024m -XX:MaxPermSize=256m"`.
 
 <a name="release-process"></a>
@@ -65,7 +65,7 @@ For reference, the steps to sign a key:
 
 1. Before performing the following release steps, ensure the [Release Setup](#release-setup) steps have been performed.
 
-2. Ensure the source is ready for release. Verify:   
+2. Ensure the source is ready for release. Verify:
      * Cleanup JIRA so the Fix Version in issues resolved since the last release includes this release version correctly.
      * Ensure all open issues are resolved before proceeding further, close all resolved issues.
      * Test and make sure the release passes all regression tests.
@@ -78,23 +78,23 @@ For reference, the steps to sign a key:
 
 3. Checkout a clean copy of the trunk to release using command line svn.
     *Do not use Eclipse to do the checkout. The extra dot (.) files created by Eclipse throws off the rat:check processing.*
-    
+
     	`svn co https://svn.apache.org/repos/asf/sis/trunk sis-trunk`
 
-4. Verify the source has the required license headers before trying to release: 
+4. Verify the source has the required license headers before trying to release:
 
 		`mvn -P pedantic verify -DskipTests=true`
 
 5. Do a dry run of the release:prepare step:
- 
+
 		`mvn -P apache-release release:prepare -DautoVersionSubmodules=true -DdryRun=true`
 
     The dry run will not commit any changes back to SVN and gives you the opportunity to verify that the release process will complete as expected. You will be prompted for the following information :
-      
+
       * Release version
       * SCM release tag
       * New development version
-      * GPG Passprhase - On a Mac if the passphrase is stored in keychain, the passphrase is not prompted. 
+      * GPG Passprhase - On a Mac if the passphrase is stored in keychain, the passphrase is not prompted.
 
     *If you cancel a release:prepare before it updates the pom.xml versions, then use the release:clean goal to just remove the extra files that were created.*
 
@@ -102,35 +102,35 @@ For reference, the steps to sign a key:
 
 6. Verify that the release process completed as expected
     * The release plugin will create pom.xml.tag files which contain the changes that would have been committed to SVN. The only differences between pom.xml.tag and it's corresponding pom.xml file should be the version number.
-    * If other formatting changes have been made you should review the changes and then commit them `svn commit -m "fixing formatting for release"`  
+    * If other formatting changes have been made you should review the changes and then commit them `svn commit -m "fixing formatting for release"`
     * Check release.properties and make sure that the scm properties have the right version. Sometimes the scm location can be the previous version not the next version.
     * Verify signatures ([Verifying release signatures](#verify_signatures))
 
-7. Once any failures or required updates have been committed to svn, rollback the release prepare files:  
-		
+7. Once any failures or required updates have been committed to svn, rollback the release prepare files:
+
 		`mvn -P apache-release release:rollback`
 
 8. Prepare the release: Run the "release:prepare" step for real this time. You'll be prompted for the same version information.
-    
+
  		`mvn -P apache-release release:prepare -DautoVersionSubmodules=true`
     Backup (zip or tar) your local release candidate directory in case you need to rollback the release after the next step is performed.
 
 9. Perform the release
-     * This step will create a maven staging repository and site for use in testing and voting. 
-     	
+     * This step will create a maven staging repository and site for use in testing and voting.
+
      		`mvn release:perform -Papache-release`
-     
+
      * If your local OS userid doesn't match your Apache userid, then you'll have to also override the value provided by the OS to Maven for the site-deploy step to work: -Duser.name=[your_apache_uid] --This is known to work for Linux, but not for Mac and unknown for Windows--.
 
 10. Verify the Nexus release artifacts
-    
+
     * Verify the HTML links in site are correct
-    
-    * Verify the staged artifacts in the nexus repo     
+
+    * Verify the staged artifacts in the nexus repo
         * https://repository.apache.org/index.html
         * Staging repositories (under Build Promotion) --> Name column --> org.apache.sis
         * Navigate through the artifact tree and make sure that all javadoc, sources, tests, jars, ... have .asc (GPG signature) and .md5 files. See http://people.apache.org/~henkp/repo/faq.html and http://www.apache.org/dev/release-signing.html#openpgp-ascii-detach-sig
-    
+
     * Close the nexus staging repo
         * https://repository.apache.org/index.html
         * Staging repositories (under Build Promotion) --> Name column --> org.apache.sis
@@ -149,10 +149,10 @@ For reference, the steps to sign a key:
 12. Stage the source and binary artifacts to the dist development repository
 
 	* Checkout SIS development dist area:
-	
+
 			`svn co https://dist.apache.org/repos/dist/dev/sis sis-dev-dist`
-	
-	* Create the directory for ${project.version} and RC{number} within it. The RC number corresponds to the current release attempt. 
+
+	* Create the directory for ${project.version} and RC{number} within it. The RC number corresponds to the current release attempt.
 	* Copy the source and binaries into dist area.
 		* Copy the source and binaries into the development dist RC area created above.
 		* Sources and signed artificats can be downloaded from staging repo https://repository.apache.org/content/groups/staging/org/apache/sis/sis/${project.version}.
@@ -172,22 +172,22 @@ For reference, the steps to sign a key:
 
 14. Finalizing a release
 
-    1. The artificats in the repository are not yet mirrored and available for maven to download. Promote the staged nexus artifacts, but releasing them.   
+    1. The artificats in the repository are not yet mirrored and available for maven to download. Promote the staged nexus artifacts, but releasing them.
 
         * https://repository.apache.org/index.html
         * Staging repositories (under Build Promotion) --> Name column --> org.apache.sis
         * Click checkbox of the closed staging repo (org.apache.sis-XXX) and select Release.
 
-    2. Checkin the source and binary artifcats into distribution svn which will be pulled by all mirrors within 24 hours. The dist/dev svn is not mirrored, but the dist/release is.   
+    2. Checkin the source and binary artifcats into distribution svn which will be pulled by all mirrors within 24 hours. The dist/dev svn is not mirrored, but the dist/release is.
         * `svn copy https://dist.apache.org/repos/dist/dev/sis/${project.version}/RC{number} https://dist.apache.org/repos/dist/release/sis/${project.version}  -m "Committing SIS Source and Binary Release for ${project.name}-${project.version}`
-  
+
     3. Update the staged website
-    
+
         *  Update the downloads page to add new version using the mirrored URLs
         *  Modify the URL for the prior release to the archived URL for the release
-    
+
     4.  Publish the website
-      
+
         *  WAIT 24hrs after committing releases for mirrors to replicate
         *  Publish updates to the download page
 
@@ -202,9 +202,9 @@ For reference, the steps to sign a key:
 16. Announcing the release
 
        * Make a news announcement on the SIS homepage.
-       * Make an announcement about the release on the dev@sis.apache.org, users@sis.apache.org, and announce@apache.org. 
+       * Make an announcement about the release on the dev@sis.apache.org, users@sis.apache.org, and announce@apache.org.
        * Sample announce [email](release-announce.txt).
-     
+
 
 ####Recovering from a vetoed release
 
@@ -217,8 +217,8 @@ For reference, the steps to sign a key:
        $ svn del https://svn.apache.org/repos/asf/sis/tags/${project.version} -m "deleting tag from rolled back release"
 
 4. Revert the svn to old version `mvn -P apache-release release:rollback`
-5. 
-5.  Delete the build artifacts on people & www           
+5.
+5.  Delete the build artifacts on people & www
      *  $ rm -rfv /www/people.apache.org/builds/sis/${project.version}
 
 6. Drop the nexus staging repo
@@ -234,10 +234,10 @@ For reference, the steps to sign a key:
 <a name="verify_signatures"></a>
 ####Verifying release signatures
 On unix platforms and mac's download all source and binary artifacts into a new directory and cd to the download directory.
-      
+
       for file in `find . -type f -iname '*.asc'`
       do
-          gpg --verify ${file} 
+          gpg --verify ${file}
       done
 
 The output will indicate the You'll need to look at the output to ensure it contains only good signatures -
@@ -248,7 +248,7 @@ gpg: Signature made ...
 [release-faq]: http://www.apache.org/dev/release.html
 [gpg-keys]: http://www.apache.org/dev/openpgp.html
 [release-signing]: http://www.apache.org/dev/release-signing.html
-[surfnet-pgp]: http://pgp.surfnet.nl:11371/ 
+[surfnet-pgp]: http://pgp.surfnet.nl:11371/
 [mit-pgp]: http://pgp.mit.edu/
 [key-sign]: http://www.apache.org/dev/release-signing.html#key-signing-party
 [henk-trust]: http://people.apache.org/~henkp/trust/
