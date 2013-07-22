@@ -110,9 +110,8 @@ so a key uploaded to one should be disseminated to the rest.
 Generate a revocation certificate. This is not for immediate use, but generating the certificate now
 is a safety in case the passphrase is lost. Keep the revocation certificate in a safe place.
 
-
-   :::bash
-   gpg --output revocation_certificate.asc --gen-revoke <key_id>
+    :::bash
+    gpg --output revocation_certificate.asc --gen-revoke <key_id>
 
 Have the key signed by at least three Apache commiters. This can be done by executing the following commands on
 the machine of the other Apache commiter, where `<key_to_use>` is the identifier of the other commiter's key.
@@ -140,7 +139,7 @@ If not already done, create a Maven master password:
     :::bash
     mvn --encrypt-master-password <password>
 
-The command will produce an encrypted version of the given password, something like `\{jSMOWnoPFgsHVpMvz5VrIt5kRbzGpI8u+9EF1iFQyJQ=\}`.
+The command will produce an encrypted version of the given password, something like `{jSMOWnoPFgsHVpMvz5VrIt5kRbzGpI8u+9EF1iFQyJQ=}`.
 Store this password in the `~/.m2/settings-security.xml` file like below:
 
     :::xml
@@ -153,7 +152,7 @@ Then encrypt the passphrase of the GPG key created in above steps, like below:
     :::bash
     mvn --encrypt-password <passphrase>
 
-The command will produce an encrypted version of the passphrase, something like `\{COQLCE6DU6GtcS5P=\}`.
+The command will produce an encrypted version of the passphrase, something like `{COQLCE6DU6GtcS5P=}`.
 Cut-and-paste it in a section of the `~/.m2/settings.xml` file like below:
 
     :::xml
