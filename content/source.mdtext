@@ -81,7 +81,7 @@ one can use:
 Eclipse
 -------
 
-Execute the saùe `svn checkout` to `mvn install` commands than in the NetBeans section,
+Execute the `svn checkout` to `mvn install` commands documented in the beginning of this section,
 then execute the following steps:
 
    * Execute `mvn eclipse:eclipse` on the command line.
@@ -201,19 +201,88 @@ modules, the functionality available in the base module, and the functioning of 
 Some coding practices
 =====================
 
-* License Header: Always add the current ASF license header as described in [ASF Source Header][srcheaders].
-* Trailing Whitespaces: Remove all trailing whitespaces. Eclipse users can use Source-_Cleanup option to accomplish this.
-* Indentation: Use 4 space indents (except for XML files) and never use tabs!
-  Use 2 space indents for XML files, because ISO/OGC XML schemas tend to have a very deep structure.
-* Line wrapping: Use 120-column line width for Java code and Javadoc.
+Apache SIS uses the standard Java conventions, except for the 80 characters line length restriction.
+Other exceptions to the coding conventions may occur when tabular formatting can improve readability,
+as in the example below:
+
+    :::java
+    if (x < xmin) xmin = x;
+    if (x > xmax) xmax = x;
+    if (y < ymin) ymin = y;
+    if (y > ymax) ymax = y;
+
+Many mathematical operations in a two-dimensional space (or more) have symmetry.
+Formatting the code in a way that emphase their symmetrical nature, for example
+aligning identical terms in columns, can help to understand the overall pattern
+and to identify bugs. The decision to use standard or tabular format is made on
+a case-by-case basis. Of course, tabular format shall not be abused.
+
+
+
+HTML elements
+-------------
+
+HTML tags and entities shall be used only when there is no equivalent Javadoc tag.
+In addition to the standard Javadoc tags, a few [SIS-specific Javadoc tags][javadoc-tags] are available.
+For example:
+
+   * Instead of "`<code>Foo</code>`", use "`{@code Foo}`".
+   * Instead of "`a &lt; b &lt; c`", use "`{@literal a < b < c}`".
+   * Instead of "`<pre>`" for a Java listing, use "`{@preformat java}`"
+     (this Javadoc tag is specific to Apache SIS).
+
+
+
+Paragraphs
+----------
+
+Usages of the `<p>` tag should be relatively rare.
+Do **not** use `<p>` for the first paragraph in a package, class or member documentation,
+or for the first paragraph after a `</ul>`, `</ol>`, `</table>`, `</blockquote>`, `</pre>`,
+`\{@preformat\}` or `\{@section\}` element.
+The `<p>` tag shall be used only for separating a new paragraph from a previous one.
+In such cases, `<p>` shall have a matching `</p>` tag at the paragraph end in order to form valid HTML.
+
+
+
+Javadoc CSS
+-----------
+
+Avoid using HTML attributes other than `class` as much as possible.
+Instead, rely on styling. Some HTML tags having a style definition in Apache SIS are:
+
+HTML tag                  | Description
+------------------------- | -------------------------------------------------------------------------------------------
+`<table class="sis">`     | Table with a border, blue headers, light background and some space between columns.
+`<th class="hsep">`       | In SIS tables, draw a line on the top border. Used for drawing table section separators.
+`<th class="sep">`        | In SIS tables, draw a bright line on the left border. Used for drawing column separators.
+`<td class="sep">`        | In SIS tables, draw a bright line on the left border. Used for drawing column separators.
+`<table class="compact">` | Table without border and no space between rows. Used for lists with columns alignment.
+`<ul>` and `<ol>`         | Default list styles without space between items (suitable for compact lists).
+`<ul class="verbose">`    | A list style with space between items. Used for lists having verbose (multi-lines) items.
+
+
+
+Miscellaneous
+-------------
+
+  * **License Header:** Always add the current ASF license header as described in [ASF Source Header][srcheaders].
+  * **Trailing Whitespaces:** Remove all trailing whitespaces.
+    + Eclipse users can use the _Source_ - _Cleanup_ option to accomplish this.
+    + NetBeans users can use the use the _Source_ - _Remove trailing spaces_ on a file-by-file basis,
+      or set the _Preferences_ - _Editor_ - _On Save_ - _Remove trailing whitespaces_ option.
+  * **Indentation:** Use 4 space indents (except for XML files) and never use tabs!
+    + Use 2 space indents for XML files, because ISO/OGC XML schemas tend to have a very deep structure.
+  * **Line wrapping:** Use 120-column line width for Java code and Javadoc.
 
 
 *[ISO]: International Organization for Standardization
 *[OGC]: Open Geospatial Consortium
 
-[viewvc]:     http://svn.apache.org/viewvc/sis/
-[subversion]: http://subversion.apache.org
-[git]:        http://git-scm.com
-[srcheaders]: http://www.apache.org/legal/src-headers.html
-[standards]:  http://www.opengeospatial.org/standards
-[geoapi]:     http://www.geoapi.org/3.0/javadoc/index.html
+[viewvc]:       http://svn.apache.org/viewvc/sis/
+[subversion]:   http://subversion.apache.org
+[git]:          http://git-scm.com
+[srcheaders]:   http://www.apache.org/legal/src-headers.html
+[standards]:    http://www.opengeospatial.org/standards
+[geoapi]:       http://www.geoapi.org/3.0/javadoc/index.html
+[javadoc-tags]: http://builds.apache.org/job/sis-trunk/site/sis-build-helper/index.html
