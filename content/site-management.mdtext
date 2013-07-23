@@ -19,7 +19,10 @@ Notice: Licensed to the Apache Software Foundation (ASF) under one
 
 This page explains how the Apache SIS web site is created, the relationship with the Maven site,
 the policy about where to put content, and how to update the site.
+The intended audiences are SIS release managers and SIS web site maintainers.
+
 General documentation about Apache Content Management System (CMS) can be found in the [CMS reference][cms] page.
+The remaining of this page is specific to the SIS project.
 
 [TOC]
 
@@ -27,7 +30,7 @@ General documentation about Apache Content Management System (CMS) can be found 
 Directory layout
 ================
 
-The web site source files can be fetched from Subversion using the following command:
+The source files for the Apache SIS web site can be fetched from Subversion using the following command:
 
     :::bash
     svn checkout https://svn.apache.org/repos/asf/sis/site/trunk site
@@ -40,6 +43,8 @@ The `*` character stands for an arbitrary amount of files having the given exten
     ├─ css
     │  ├─ bootstrap.css
     │  └─ sis.css
+    ├─ img
+    │  └─ *.png
     ├─ js
     │  ├─ bootstrap.js
     │  └─ jquery.js
@@ -54,19 +59,25 @@ All files with the `.mdtext` extension use the Markdown format, which is describ
   * [General markup syntax][markdown]
   * [Extension to the syntax][extension]
 
-Those files can be edited in any IDE and committed with the usual SVN commands.
+New `.mdtext` files can be created using the [site-management.mdtext][template] file as a template.
+Those files can be modified in any text editor and committed with the usual Subversion commands.
 Each commit will trig a new site build, which will be visible in the _staging_ area at
 [http://sis.staging.apache.org](http://sis.staging.apache.org).
-This is usually very fast. When the staging site is considered ready for publication,
-it can be published to [http://sis.apache.org](http://sis.apache.org) as below:
-
-  * Visit the [sis-site-staging](https://ci.apache.org/builders/sis-site-staging) page.
-  * Click on "publish".
+The build progress can be monitored on the [Buildbot][buildbot] page, but they are usually very fast.
+Once a staging site has been approved, it can be published to
+[http://sis.apache.org](http://sis.apache.org).
 
 
 
-Style sheet
-===========
+Content
+=======
+
+(...TODO: clarify here the relationship with Maven site)
+
+
+
+Style sheets
+============
 The SIS web site uses three style sheets, in the following order (last CSS have precedence):
 
 File            | Purpose            | Remark
@@ -101,8 +112,7 @@ Then:
 
   * Update this page for listing the new options.
   * Download the `bootstrap.zip` file and unzip in the `content` directory, overwriting the existing files.
-  * Recursively delete the `img` directory.
-  * Delete `css/bootstrap.css`.
+  * Delete `css/bootstrap.css`, since it is not used.
   * Add the following comment in `css/bootstrap.min.css`, just below the copyright header:
 
 `bootstrap.min.css`:
@@ -118,3 +128,5 @@ Then:
 [bootstrap]: http://twitter.github.io/bootstrap/customize.html
 [markdown]:  http://daringfireball.net/projects/markdown/syntax
 [extension]: http://michelf.ca/projects/php-markdown/extra
+[template]:  http://svn.apache.org/repos/asf/sis/site/trunk/content/site-management.mdtext
+[buildbot]:  http://ci.apache.org/builders/sis-site-staging
