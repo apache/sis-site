@@ -50,7 +50,7 @@ The `*` character stands for an arbitrary amount of files having the given exten
        ├─ single_narrative.html
        └─ skeleton.html
 
-All files with the `.mdtext` extension use the Markdown format, which is described here:
+All files with the `.mdtext` extension use the Markdown format, which is described there:
 
   * [General markup syntax][markdown]
   * [Extension to the syntax][extension]
@@ -70,14 +70,17 @@ Style sheet
 -----------
 The SIS web site uses three style sheets, in the following order (last CSS have precedence):
 
-  * `bootstrap.css` for the main appearance,
-  * `code.css` (from the foundation-wide Apache server) for code highlighting,
-  * `sis.css` for customization specific to the SIS project.
+File            | Purpose            | Remark
+--------------- | ------------------ | ------------------------------------------------------------
+`bootstrap.css` | Main appearance    | Generated from the [Twitter's Bootstrap project][bootstrap].
+`code.css`      | Code highlighting  | Located on the foundation-wide Apache server.
+`sis.css`       | SIS-specific style | Located in `content/css` and can be edited manually.
 
-The `code.css` file is located on a remove server and does not need to be modified.
-The `sis.css` file is located in the `content/css` directory and can be edited manually.
-The `bootstrap.css` file has been generated from the [Twitter's Bootstrap project][bootstrap]
-with only the following options enabled:
+Note that some `<pre>` and `<code>` properties are overwritten in the `sis.css` file,
+for nicer rendering of boxes or tree symbols (like the directory layout in this page).
+
+If the `bootstrap.css` file needs to be updated, then visit the [Bootstrap][bootstrap] web site
+and select only the following options:
 
   * Scaffolding
     + Body type and links
@@ -93,21 +96,16 @@ with only the following options enabled:
   * JS Components
     + Dropdowns
 
-Note that some `<pre>` and `<code>` properties are overwritten in the `sis.css` file,
-for nicer rendering of box or tree symbols (like the directory layout in this page).
+If new options are needed, then select the **minimal** amount of new options.
+Do not select an option that _may_ be used; select only the options that are actually going to be used.
+Then:
 
-If the `bootstrap.css` file needs to be updated, then:
-
-  * Visit the above-cited Bootstrap web site.
-  * Select the above-cited options.
-  * Select the **minimal** amount of new options needed. Do not select an option that _may_ be used;
-    select only the options that are actually going to be used.
-    Do not forget to update this page for listing the new options.
-  * Download the `bootstrap.zip` file an unzip in the `content` directory.
-    It is okay to overwrite the existing files.
+  * Update this page for listing the new options.
+  * Download the `bootstrap.zip` file and unzip in the `content` directory, overwriting the existing files.
   * Recursively delete the `img` directory.
   * Delete `css/bootstrap.css`.
-  * Add the following comment in `css/bootstrap.min.css`, just below the copyright header:
+
+Finally, add the following comment in `css/bootstrap.min.css`, just below the copyright header:
 
     :::css
     /*
