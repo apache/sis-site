@@ -238,8 +238,8 @@ Deploy the release
 ==================
 
 Ensure that the current directory is `tags/$NEW_VERSION`.
-Execute an `install` phase first (this is mandatory because of our custom `sis-build-helper' plugin), then deploy.
-Note that the `site` phase is required, even if we will not deploy the site,
+Execute an `install` phase first (required for our custom `sis-build-helper` plugin), then deploy.
+Note that the `site` phase need to be specified even if we will not deploy the site,
 for proper execution of our custom Javadoc taglets.
 
     :::bash
@@ -252,17 +252,22 @@ Verify and close the Nexus release artifacts
 ============================================
 
 Verify the staged artifacts in the [Nexus repository][repository].
-The artifacts can be found under _Build Promotion_ → _Staging repositories_ → _Name column_ --> `org.apache.sis`.
-Navigate through the artifact tree and make sure that all javadoc, source, test and jar files have
-`.asc` (GPG signature) and `.md5` files.
+The artifacts can be found under _Build Promotion_ → _Staging repositories_, and searching for `org.apache.sis` in the _Repository_ column.
+Navigate through the artifact tree and make sure that all javadoc, source, test and jar files have `.asc` (GPG signature) and `.md5` files.
 
 Additional references about signatures:
 
-   * [Maven repository PGP signature checker FAQ][http://people.apache.org/~henkp/repo/faq.html]
-   * [Release signing][release-signing] (cited in the [Release setup][release-management-setup.html] page)
+   * [Maven repository PGP signature checker FAQ](http://people.apache.org/~henkp/repo/faq.html)
+   * [Release signing][release-signing] (cited in the [Release setup](release-management-setup.html) page)
 
 Close the Nexus staging repository: click the checkboxes for the open staging repositories
-(`org.apache.sis-<module>`) and press _Close_ in the menu bar.
+(`org.apache.sis-<id>`) and press _Close_ in the menu bar.
+In the description field, enter `SIS $NEW_VERSION-$RELEASE_CANDIDATE`
+(replace `$NEW_VERSION` and `$RELEASE_CANDIDATE` by appropriate values.
+This will not be done automatically since this field box is not our bash shell!).
+
+Click on the `org.apache.sis-<id>` link in order to get the URL to the temporary Maven repository created by Nexus.
+Announce on the `dev@` mailing list the availability of this temporary repository for testing purpose.
 
 
 
@@ -344,8 +349,8 @@ Finalize the release
 The artificats in the repository are not yet mirrored and available for Maven to download.
 Promote the staged Nexus artifacts, by releasing them.
 
-  * Go to [Nexus repository][repository] → _Build Promotion_ → _Staging repositories_ → _Name column_ --> `org.apache.sis`.
-  * Click the checkboxes of the closed staging repositories (`org.apache.sis-<module>`) and press _Release_ in the menu bar.
+  * Go to [Nexus repository][repository] → _Build Promotion_ → _Staging repositories_ and search for `org.apache.sis` in the _Repository_ column.
+  * Click the checkboxes of the closed staging repositories (`org.apache.sis-<id>`) and press _Release_ in the menu bar.
   * Check in the source and binary artifacts into distribution svn which will be pulled by all mirrors within 24 hours.
     The `dist/dev` svn is not mirrored, but the `dist/release` is.
 
@@ -407,8 +412,8 @@ Delete the svn tag created by the release:perform step:
 
 Drop the Nexus staging repository:
 
-  * Go to [Nexus repository][repository] → _Enterprise_ → _Staging tab_ → _Name column_ --> `org.apache.sis`.
-  * Right click on the closed staging repositories (`org.apache.sis-<module>`) and select _Drop_.
+  * Go to [Nexus repository][repository] → _Build Promotion_ → _Staging repositories_ and search for `org.apache.sis` in the _Repository_ column.
+  * Right click on the closed staging repositories (`org.apache.sis-<id>`) and select _Drop_.
 
 Make the required updates that caused the vote to be canceled during the release cycle.
 
