@@ -77,20 +77,21 @@ Update [JIRA][JIRA] tasks and prepare release notes as below:
   * Ensure that all open issues are resolved or closed before proceeding further.
   * On the `site` source code repository, create a `content/release-notes/$NEW_VERSION.html` file with all the features added.
   * Use `content/release-notes/$OLD_VERSION.html` as a template, omitting everything between the `<body>` and `</body>` tags.
-  * The release notes can be obtained from JIRA, by clicking on the _Roadmap_ tab → the version number → _Release notes_
+  * The release notes can be obtained from JIRA, by clicking on the _Versions_ tab → the version number → _Release notes_
     and then configuring the release notes to display HTML format and copying it.
     A suggested approach would be to reorganize the release notes as
     _New Features_, then _Improvements_, then _Bug Fixes_, then _Tests_ and finally _Tasks_.
     The _Sub Tasks_ can be classified according the category of their parent issue.
-  * Review and update the `README` file.
+
+Other files to update:
+
+  * Review and update the `README` file on the `trunk` source code repository.
   * Commit any changes back to SVN.
-  * Update the following Wiki pages:
-    + [Roadmap][https://cwiki.apache.org/confluence/display/SIS/Roadmap]
 
 
 
-Prepare the web site
-====================
+Web site
+--------
 
 Update the version numbers from `$NEW_VERSION` to the next version in the following files.
 
@@ -148,8 +149,8 @@ Commit the changes on the branch:
 
 
 
-Verify the branch content
-=========================
+Verify content
+--------------
 
 Try a dry run of the `release:prepare` goal. This goals checks for `SNAPSHOT` dependencies in `pom.xml` files.
 It will not complete the prepare goal until all `SNAPSHOT` dependencies are resolved.
@@ -362,9 +363,12 @@ Delete the prior versions:
   * Delete the prior release artifacts using the `svn delete` command.
   * Commit the deletion.
 
-Update the JIRA versions page to close all issues, mark the version as "released",
+Update the [JIRA][JIRA] versions to mark the version as "released",
 and set the date to the date that the release was approved.
-Make a new release entry for the next release.
+Then prepare for the next release:
+
+  * Make a new release entry in JIRA for the next release.
+  * Update the [Roadmap](https://cwiki.apache.org/confluence/display/SIS/Roadmap) wiki page.
 
 
 
@@ -372,7 +376,7 @@ Announce the release
 --------------------
 
   * Make a news announcement on the SIS home page.
-  * Make an announcement about the release on the `dev@`, `users@, and `announce@` mailing lists.
+  * Make an announcement about the release on the `dev@`, `users@`, and `announce@` mailing lists.
     + Sample announce: [email](release-announce.txt).
 
 
