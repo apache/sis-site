@@ -17,17 +17,16 @@ Notice: Licensed to the Apache Software Foundation (ASF) under one
         under the License.
 
 
-One time release management setup
-=================================
-
 The following instructions need to be done only once by new release managers,
 or when configuring a new machine for performing the releases.
-If those steps have already been done, jump directly to the [Release process](release-process.html) page.
+If those steps have already been done, jump directly to the [Release management](release-management.html) page.
+
+[TOC]
 
 
 
-Directory layout (including Subversion checkout)
-------------------------------------------------
+Directory layout
+================
 
 The steps described in the release process page assume the following directory layout.
 Some directories are SVN checkout, other are ordinary directories. Any other layout can be used.
@@ -51,7 +50,7 @@ Create the above directory structure as below:
 
 
 Shell configuration
--------------------
+===================
 
 It is better for Unix shells to contain the following line in their initialization file
 (typically `~/.bashrc` or `~/.profile`, where `~` stands for the user's home directory):
@@ -62,7 +61,7 @@ It is better for Unix shells to contain the following line in their initializati
 
 
 Generate GPG key
-----------------
+================
 
 The releases have to be signed by public key cryptography signatures.
 Detailed instructions about why releases have to be signed are provided on the [Release Signing][signing] page.
@@ -113,6 +112,11 @@ is a safety in case the passphrase is lost. Keep the revocation certificate in a
     :::bash
     gpg --output revocation_certificate.asc --gen-revoke <key_id>
 
+
+
+Web of trust
+------------
+
 Have the key signed by at least three Apache commiters. This can be done by executing the following commands on
 the machine of the other Apache commiter, where `<key_to_use>` is the identifier of the other commiter's key.
 Those operation should preferably be done in some event where the commiters can meet face-to-face.
@@ -130,7 +134,7 @@ Then, the signed public key shall be appended to the `KEYS` file on [SIS distrib
 
 
 Maven Configuration & Nexus Setup
----------------------------------
+=================================
 
 Detailed instructions are at [Publishing Maven Artifacts][maven].
 In summary, the developer needs to specify username, and optionally password, in his local `~/.m2` directory.
