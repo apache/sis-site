@@ -104,7 +104,7 @@ Commit:
     svn add content/release-notes/$NEW_VERSION.html
     svn commit --message "Document the $NEW_VERSION release."
 
-The new web site will be published in the [staging area][http://sis.staging.apache.org].
+The new web site will be published in the [staging area](http://sis.staging.apache.org).
 It will not yet be published on `http://sis.apache.org`.
 
 
@@ -115,7 +115,9 @@ Create a branch
 Execute the following command:
 
     :::bash
-    svn copy https://svn.apache.org/repos/asf/sis/trunk https://svn.apache.org/repos/asf/sis/branches/$NEW_VERSION --message "Create the $NEW_VERSION branch."
+    svn copy https://svn.apache.org/repos/asf/sis/trunk \
+             https://svn.apache.org/repos/asf/sis/branches/$NEW_VERSION \
+             --message "Create the $NEW_VERSION branch."
 
 Move to a directory containing the project branches (presumed to be `../branches` in the following command,
 but can be replaced by anything else), then checkout a clean copy of the branch to release:
@@ -152,6 +154,18 @@ Commit the changes on the branch:
 Verify content
 --------------
 
+Makes sure that the above modifications does not break compilation.
+
+    :::bash
+    mvn install --define skipTests=true
+
+Starts the GPG agent if not already done.
+This is for avoiding to be prompted many time for the passphrase in every modules to be built by Maven.
+Note that MacOS users can skip this step if their passphrase is stored in the OS keychain,
+
+    :::bash
+    eval $(gpg-agent --daemon)
+
 Try a dry run of the `release:prepare` goal. This goals checks for `SNAPSHOT` dependencies in `pom.xml` files.
 It will not complete the prepare goal until all `SNAPSHOT` dependencies are resolved.
 If anything goes wrong, the directory can be cleaned by running the `release:clean` goal
@@ -164,15 +178,6 @@ before to fix the problem and try again.
 The dry run will not commit any changes back to SVN. Instead, it will create `pom.xml.tag` files containing
 the changes that would have been committed to SVN. This gives us the opportunity to verify that the release
 process will complete as expected.
-
-**Tip:** Maven should not prompt for any information except the GPG passphrase
-(on MacOS, the passphrase will not be prompted if it is stored in keychain).
-However if no GPG agent is running and if the passphrase is not in the OS keychain,
-then Maven may prompt for the passphrase very often (many times per module).
-For avoiding this annoyance, consider starting the `gpg-agent` daemon like below:
-
-    :::bash
-    eval $(gpg-agent --daemon)
 
 Compare the original `pom.xml` files with the `pom.xml.tag` ones to see if the license or any other info has been removed.
 This has been known to happen if the starting `<project>` tag is not on a single line.
@@ -227,13 +232,6 @@ command, but can be replaced by anything else), then checkout and deploy:
     cd $NEW_VERSION
     mvn clean install --define skipTests=true
     mvn site deploy --activate-profiles apache-release
-
-**Note:** the following options may need to be added after the last command:
-
-  * If the local OS `userId` does not match the Apache `userId`, then the Apache one must be specified by
-    `--define user.name=<apache_userId>`
-  * If GPG contains more than one secret key, then the key to use for signing can be specified by
-    `--define gpg.keyname=<key_id>`
 
 
 
