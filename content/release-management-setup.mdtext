@@ -19,7 +19,7 @@ Notice: Licensed to the Apache Software Foundation (ASF) under one
 
 The following instructions need to be done only once by new release managers,
 or when configuring a new machine for performing the releases.
-If those steps have already been done, jump directly to the [Release management](release-management.html) page.
+If those steps have already been done, jump directly to the [Release Management](release-management.html) page.
 
 [TOC]
 
@@ -28,9 +28,9 @@ If those steps have already been done, jump directly to the [Release management]
 Directory layout
 ================
 
-The steps described in the release process page assume the following directory layout.
+The steps described in the _release management_ page assume the following directory layout.
 Some directories are SVN checkout, other are ordinary directories. Any other layout can be used.
-However in the later case, all relative paths in the release process page will need to be adjusted accordingly.
+However in the later case, all relative paths in the _release management_ page will need to be adjusted accordingly.
 
     :::text
     <any root directory for SIS>
@@ -88,12 +88,12 @@ signing Apache softwares - not for daily emails.
  * Key size: 4096 bits.
  * Validity time: 0 (key does not expire).
  * Real name: the developer's name.
- * Email address: developer's email address at <<<@apache.org>>>.
+ * Email address: developer's email address at `@apache.org`.
  * Comment: "CODE SIGNING KEY".
  * Passphrase: please choose a strong one.
 
 Verify the key information (replace _Real Name_ by the above-cited developer's name, keeping quotes in the command below).
-Note the key identifier, which is a value like `EB98E066`. This key identifier will be needed for the next steps.
+Note the key identifier, which is a value like `74383E9D`. This key identifier will be needed for the next steps.
 
     :::bash
     gpg --list-sigs "Real Name"
@@ -106,8 +106,13 @@ so a key uploaded to one should be disseminated to the rest.
     :::bash
     gpg --send-key <key_id>
 
+The key publication can be verified by going on the [MIT server][MIT],
+then entering the developer's "Real Name" in the _Search String_ field.
+It may take a few hours before the published key is propagated.
+
 Generate a revocation certificate. This is not for immediate use, but generating the certificate now
-is a safety in case the passphrase is lost. Keep the revocation certificate in a safe place.
+is a safety in case the passphrase is lost. Keep the revocation certificate in a safe place,
+preferably on a removable device.
 
     :::bash
     gpg --output revocation_certificate.asc --gen-revoke <key_id>
@@ -129,7 +134,8 @@ The other commiter should verify that the `gpg --fingerprint` command output mat
     gpg --send-key <key_id>
 
 The above-cited _Release Signing_ page provides more instructions.
-Then, the signed public key shall be appended to the `KEYS` file on [SIS distribution directory][dist].
+Then, the signed public key shall be appended to the `KEYS` file on the [SIS source code repository][svn],
+then copied to the [SIS distribution directory][dist].
 
 
 
@@ -137,7 +143,8 @@ Maven Configuration & Nexus Setup
 =================================
 
 Detailed instructions are at [Publishing Maven Artifacts][maven].
-In summary, the developer needs to specify username, and optionally password, in his local `~/.m2` directory.
+In summary, the developer needs to specify his Apache username and password (**not** the PGP passphrase)
+in his local `~/.m2` directory.
 If not already done, create a Maven master password:
 
     :::bash
@@ -176,4 +183,6 @@ Cut-and-paste it in a section of the `~/.m2/settings.xml` file like below:
 [PGP]:     http://www.apache.org/dev/openpgp.html
 [signing]: http://www.apache.org/dev/release-signing.html
 [maven]:   http://www.apache.org/dev/publishing-maven-artifacts.html
+[svn]:     https://svn.apache.org/repos/asf/sis/trunk/
 [dist]:    http://dist.apache.org/repos/dist/release/sis/
+[MIT]:     http://pgp.mit.edu
