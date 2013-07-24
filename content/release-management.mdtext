@@ -109,8 +109,8 @@ It will not yet be published on `http://sis.apache.org`.
 
 
 
-Create a branch
-===============
+Create branch
+=============
 
 Execute the following command:
 
@@ -131,7 +131,7 @@ We need to update the Subversion URL and SIS version numbers not only in the `po
 but also in a few Java files. The following command performs the replacement using Ant:
 
     :::bash
-    ant -buildfile core/sis-build-helper/src/main/ant/prepare-branch.xml -Dsis.version=$NEW_VERSION
+    ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml branch -Dsis.version=$NEW_VERSION
 
 Open the root `pom.xml` file in an editor and remove the following sections:
 
@@ -154,11 +154,6 @@ Commit the changes on the branch:
 Verify content
 --------------
 
-Makes sure that the above modifications does not break compilation.
-
-    :::bash
-    mvn install --define skipTests=true
-
 Starts the GPG agent if not already done.
 This is for avoiding to be prompted many time for the passphrase in every modules to be built by Maven.
 Note that MacOS users can skip this step if their passphrase is stored in the OS keychain,
@@ -167,7 +162,7 @@ Note that MacOS users can skip this step if their passphrase is stored in the OS
     eval $(gpg-agent --daemon)
 
 Try a dry run of the `release:prepare` goal. This goals checks for `SNAPSHOT` dependencies in `pom.xml` files.
-It will not complete the prepare goal until all `SNAPSHOT` dependencies are resolved.
+It will not complete the prepare goal until all snapshot dependencies are resolved.
 If anything goes wrong, the directory can be cleaned by running the `release:clean` goal
 before to fix the problem and try again.
 
@@ -176,62 +171,80 @@ before to fix the problem and try again.
         --define autoVersionSubmodules=true --define updateWorkingCopyVersions=false --define dryRun=true
 
 The dry run will not commit any changes back to SVN. Instead, it will create `pom.xml.tag` files containing
-the changes that would have been committed to SVN. This gives us the opportunity to verify that the release
-process will complete as expected.
-
-Compare the original `pom.xml` files with the `pom.xml.tag` ones to see if the license or any other info has been removed.
-This has been known to happen if the starting `<project>` tag is not on a single line.
-The only things that should be different between these files are the `<version>` and `<scm>` elements.
-Comparisons can be performed for all files with the following command:
-
-    :::bash
-    find . -name "pom.xml" -print -exec diff '{}' '{}'.tag \;
-
-View the `release.properties` file and check for the following properties:
-
-  * `exec.additionalArguments` shall contains `-Papache-release`
-    (this profile shall be implied even if not explicitely specified on the command line).
-  * `project.scm.org.apache.sis:parent.connection` shall be (ignoring escape characters)
-    `scm:svn:http://svn.apache.org/repos/asf/sis/branches/$NEW_VERSION`.
+the changes that would have been committed to SVN. We keep those files for verification purpose in the next section.
 
 Verify signature for all files:
 
     :::bash
     find . -name "sis-*.asc" -exec gpg --verify '{}' \;
 
-Clean and ensure that there is no modified files, i.e. that the last `svn` command produces no output:
+
+
+Create tag
+==========
+
+In theory, the next commands would be a real (non-dry) run of `mvn release:prepare`, followed by `mvn release:perform`.
+However we perform those steps manually rather than relying on Maven for the following reasons:
+
+  * Perform some additional changes on the tag.
+  * Reduce the amount of commits on SVN (avoid a rollback in branch directory).
+  * Give more opportunities to take action before commit in case of problems.
+  * We need a separated `install` phase first, then a `site` phase at deploy time
+    (even if the site is not deployed) for proper execution of SIS custom taglets.
+
+First, create the branch:
 
     :::bash
+    svn copy https://svn.apache.org/repos/asf/sis/branches/$NEW_VERSION \
+             https://svn.apache.org/repos/asf/sis/tags/$NEW_VERSION \
+             --message "Create the $NEW_VERSION tag."
+
+Checkout:
+
+    :::bash
+    cd ../../tags
+    svn checkout https://svn.apache.org/repos/asf/sis/tags/$NEW_VERSION
+    cd $NEW_VERSION
+
+Update versions number in `pom.xml` files (like what `mvn release:prepare` would have done),
+plus some additional files:
+
+    :::bash
+    ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml tag -Dsis.version=$NEW_VERSION
+
+Compare with the modifications done by `mvn release:prepare`. The following command should report no difference,
+ignoring the license or other information that may have been removed by the Maven plugin
+(this has been known to happen if the starting `<project>` tag is not on a single line).
+
+    :::bash
+    find . -name "pom.xml" -exec diff '{}' ../../branches/$NEW_VERSION/'{}'.tag \;
+
+Commit:
+
+    :::bash
+    svn commit --message "Fix version number and SVN directory."
+
+Clean the branch, since we will not need it anymore:
+
+    :::bash
+    cd ../../branches/$NEW_VERSION
     mvn release:clean
-    svn status
+    mvn clean
+    cd ../../tags/$NEW_VERSION
 
 
 
 Deploy the release
 ==================
 
-Run the `release:prepare` goal for real this time. The command is identical to the one in the
-_Create a branch_ section except for the `dryRun` property, which is omitted.
-This command will create the tag and commit the changes on SVN.
+Ensure that the current directory is `tags/$NEW_VERSION`.
+Execute an `install` phase first (this is mandatory because of our custom `sis-build-helper' plugin), then deploy.
+Note that the `site` phase is required, even if we will not deploy the site,
+for proper execution of our custom Javadoc taglets.
 
     :::bash
-    mvn release:prepare --define releaseVersion=$NEW_VERSION --define tag=$NEW_VERSION \
-        --define autoVersionSubmodules=true --define updateWorkingCopyVersions=false
-
-In theory, the next command would be `mvn release:perform`.
-However in fact, that command only checks out the project from tag folder and then run the `deploy` phase.
-We need to perform those commands manually, because we need a separated `install` phase first,
-then a `site` phase at deploy time (even if the site is not deployed) for proper execution of SIS custom taglets.
-
-First, move to a directory containing the project tags (presumed to be `../../tags` in the following
-command, but can be replaced by anything else), then checkout and deploy:
-
-    :::bash
-    cd ../../tags
-    svn checkout https://svn.apache.org/repos/asf/sis/tags/$NEW_VERSION
-    cd $NEW_VERSION
-    mvn clean install --define skipTests=true
-    mvn site deploy --activate-profiles apache-release
+    mvn clean install
+    mvn site deploy --activate-profiles apache-release --define skipTests=true
 
 
 
