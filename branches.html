@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Apache SIS branches</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="http://www.apache.org/css/code.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/sis.css">
+
+    
+
+    
+    <!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.  See the NOTICE file distributed with this work for additional information regarding copyright ownership.  The ASF licenses this file to you under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use this file except in compliance with the License.  You may obtain a copy of the License at . http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the License for the specific language governing permissions and limitations under the License. -->
+  </head>
+
+  <body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="/index.html"> Apache SIS&trade; </a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">About<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="mail-lists.html">Mailing Lists</a></li>
+                  <li><a href="license.html">Project License</a></li>
+                  <li><a href="team-list.html">Project Team</a></li>
+                </ul>
+              </li>
+              <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">Project Documentation<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="downloads.html">Downloads</a></li>
+                  <li><a href="source.html">Source Code</a></li>
+                  <li><a href="code-patterns.html">Code patterns</a></li>
+                  <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+                  <li><a href="faq.html">FAQ</a></li>
+                  <li><a href="release-management.html">Release Management</a></li>
+                </ul>
+              </li>
+              <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">ASF <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="http://www.apache.org">The Foundation</a></li>
+                  <li><a href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
+                  <li><a href="http://www.apache.org/foundation/sponsorship.html">Become a Sponsor</a></li>
+                  <li><a href="http://www.apache.org/security/">Security</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div> <!-- /.nav-collapse -->
+        </div><!-- /.container -->
+      </div><!-- /.navbar-inner -->
+    </div>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span2">
+          <img src="img/logo.png"/>
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              <li class="active"><a href="index.html">Home</a></li>
+              <li><a href="mail-lists.html">Mailing Lists</a></li>
+              <li><a href="license.html">Project License</a></li>
+              <li><a href="team-list.html">Project Team</a></li>
+              <li class="nav-header">Project Documentation</li>
+              <li><a href="downloads.html">Downloads</a></li>
+              <li><a href="source.html">Source Code</a></li>
+              <li><a href="code-patterns.html">Code patterns</a></li>
+              <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="release-management.html">Release Management</a></li>
+              <li class="nav-header">ASF</li>
+              <li><a href="http://www.apache.org">The Foundation</a></li>
+              <li><a href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
+              <li><a href="http://www.apache.org/foundation/sponsorship.html">Become a Sponsor</a></li>
+              <li><a href="http://www.apache.org/security/">Security</a></li>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+        <div class="span10">
+          <section id="content" class="row">
+            <article class="span12">
+              <p class="page-title">Apache SIS branches</p>
+              <p>The <a href="source.html">source code repository</a> contains JDK6 and JDK7 branches together with the trunk.
+The Apache SIS releases are created from the code on the trunk only.
+However the actual development often occur on a branch before to be merged to the trunk.
+Those branches exist in order to experiment early the new technologies — since it may impact
+the library design — while keeping the releases compatible with more common environments.</p>
+<p>This page lists the Apache SIS development branches, provides some coding recommendations
+for making merges easier, then provides the steps to follow for performing the merges.</p>
+<div class="toc">
+<ul>
+<li><a href="#development">The development branches</a><ul>
+<li><a href="#jdk7">branches/JDK7</a></li>
+<li><a href="#jdk6">branches/JDK6</a></li>
+<li><a href="#trunk">trunk</a></li>
+</ul>
+</li>
+<li><a href="#recommendations">Coding recommendations</a><ul>
+<li><a href="#formatting">Formatting</a></li>
+<li><a href="#imports">Import statements</a></li>
+<li><a href="#substitutions">Substitution for non-existent classes</a></li>
+</ul>
+</li>
+<li><a href="#merges">Performing the merges</a><ul>
+<li><a href="#merge-two-branches">Merging changes between two branches</a></li>
+<li><a href="#merge-record-only">Declaring that some changes shall not be merged</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="development">The development branches</h1>
+<p>Developers are encouraged to select the first branch listed below, in that order, which meet their needs.</p>
+<h2 id="jdk7">branches/JDK7</h2>
+<p>The JDK7 branch is the recommended development branch for developers who can use a JDK7 environment.
+This branch implements the interfaces defined in the <a href="http://www.geoapi.org/snapshot/index.html">GeoAPI snapshot</a> milestones
+and uses some JDK7-specific features like:</p>
+<ul>
+<li>Syntax enhancements, mostly in exception handling (<em>try-with-resources</em>, <em>multi-catches</em>)
+    but also on other aspects like <em>diamond operator</em>.</li>
+<li>Leveraging of new API (<em>suppressed exceptions</em>, <em>file systems</em>, <em>fork join</em>).</li>
+</ul>
+<h2 id="jdk6">branches/JDK6</h2>
+<p>The JDK6 branch is a merge of the JDK7 branch ported to the JDK6 platform.
+This is the recommended development branch for developers who can not use a JDK7 environment,
+but still want to work closely with latest GeoAPI interfaces.
+The JDK6 branch implements the same GeoAPI interfaces than the JDK7 branch;
+the only differences (apart version number) are the modifications necessary
+for building and running on a JDK6 platform:</p>
+<ul>
+<li><em>Try-with-resources</em> statements replaced by <em>try-finally</em> statements.</li>
+<li><em>Multi-catches</em> replaced by an explicit sequences of <em>catch</em> statements.</li>
+<li><em>Diamond operators</em> replaced by explicit generic types.</li>
+<li><em>Suppressed exceptions</em> removed.</li>
+<li>Imports of <code>java.util.Objects</code> replaced by imports of <code>org.apache.sis.internal.util.Objects</code>.</li>
+<li>Other JDK7-specific features resolved on a case-by-case basis.</li>
+</ul>
+<h2 id="trunk">trunk</h2>
+<p>The trunk is a merge of the JDK6 branch ported to the interfaces defined by the <a href="http://www.geoapi.org/3.0/index.html">GeoAPI stable release</a>.
+This is the code which is built by the continuous integration system and deployed on the Maven repository.
+The only differences (apart version number) compared to the JDK6 branch are the modifications
+necessary for implementing an older version of the GeoAPI interfaces:</p>
+<ul>
+<li>Usages of non-existent GeoAPI interfaces are replaced by direct usages of the
+    corresponding Apache SIS implementation.</li>
+</ul>
+<h1 id="recommendations">Coding recommendations</h1>
+<p>The following recommendations aim to make the merges easier by reducing the extend of potential conflicts.</p>
+<h2 id="formatting">Formatting</h2>
+<p>Refrain from doing massive code reformatting unless:</p>
+<ul>
+<li>the modified files do not yet exist on the other branches;</li>
+<li>or the modified lines are known to be identical on all active branches (merges work well in such cases);</li>
+<li>or the committer is willing to resolve the merge conflicts.</li>
+</ul>
+<p>In particular, if a block merged from the JDK7 branch must be changed in the JDK6 branch
+because of language changes, try to replace it by a block construct using the same indentation.
+For example the following JDK7 construct:</p>
+<div class="codehilite"><pre><span class="k">switch</span> <span class="o">(</span><span class="n">string</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">case</span> <span class="s">&quot;ABC&quot;</span><span class="o">:</span> <span class="o">{</span>
+        <span class="n">invokeABC</span><span class="o">();</span>
+        <span class="k">break</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">case</span> <span class="s">&quot;DEF&quot;</span><span class="o">:</span> <span class="o">{</span>
+        <span class="n">invokeDEF</span><span class="o">();</span>
+        <span class="k">break</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+
+<p>can be replaced by the code below. The outer <code>{…}</code> would normally not be needed
+and the <code>else</code> statement would normally follow the previous <code>}</code>, however in
+this example we aim to preserve the indentation of the <code>case</code> bodies.</p>
+<div class="codehilite"><pre><span class="o">{</span> <span class="c1">// This is a switch(String) on the JDK7 branch</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">string</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;ABC&quot;</span><span class="o">))</span> <span class="o">{</span>
+        <span class="n">invokeABC</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="k">else</span> <span class="nf">if</span> <span class="o">(</span><span class="n">string</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;DEF&quot;</span><span class="o">))</span> <span class="o">{</span>
+        <span class="n">invokeDEF</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+
+<h2 id="imports">Import statements</h2>
+<p>Isolate at the end of the imports section any import statements that are specific to a platform.
+This separation allows any branch to re-arrange the common import statements without generating
+conflicts with the platform-dependent import statements. Example:</p>
+<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">java.io.File</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.sis.util.ArgumentChecks</span><span class="o">;</span>
+
+<span class="c1">// Related to JDK7</span>
+<span class="kn">import</span> <span class="nn">java.util.Objects</span><span class="o">;</span>
+</pre></div>
+
+
+<h2 id="substitutions">Substitution for non-existent classes</h2>
+<p>When using a JDK7 class that does not exist on JDK6, define a class of the same name in a
+<code>org.apache.sis.internal</code> sub-package with the minimal amount of needed functionalities,
+provided that it can be done with reasonable effort. Otherwise just delete the JDK7-dependent
+code from the JDK6 branch.</p>
+<h1 id="merges">Performing the merges</h1>
+<p>Subversion 1.5 and later maintain a <code>svn:mergeinfo</code> property which make merge operations much easier.
+In order to get those merge information properly maintained, no merge operation shall be performed
+with older Subversion tools.</p>
+<h2 id="merge-two-branches">Merging changes between two branches</h2>
+<p>The branches and trunk checkout directories can be located anywhere on the developer machine.
+The following example assumes that the current directory contains the following sub-directories:</p>
+<ul>
+<li><code>JDK6</code> as a checkout of <code>http://svn.apache.org/repos/asf/sis/branches/JDK6</code>.</li>
+<li><code>JDK7</code> as a checkout of <code>http://svn.apache.org/repos/asf/sis/branches/JDK7</code>.</li>
+</ul>
+<p>However the instructions below can be adapted to different directory locations by changing
+the paths given in argument to the <code>cd</code> and <code>svn merge</code> commands.</p>
+<p>Assuming that the developer wants to merge the changes <em>from</em> the JDK7 directory <em>to</em> the JDK6 directory,
+then the following commands can be executed.
+Do <strong>not</strong> specify any revision number to the <code>svn merge</code> command.
+Instead, let Subversion infers the proper revisions range from the <code>svn:mergeinfo</code> property.</p>
+<div class="codehilite"><pre><span class="nb">cd </span>JDK7
+svn update
+<span class="nb">cd</span> ../JDK6
+svn update
+svn merge ../JDK7
+</pre></div>
+
+
+<p>If Subversion reports any conflicts (flagged by the <code>C</code> letter before the file names),
+then edit the conflicted files in any IDE and mark them as resolved:</p>
+<div class="codehilite"><pre>svn resolved path/to/the/resolved/file
+</pre></div>
+
+
+<p>Clean the workspace and test the build. We suggest to execute the Maven commands in the following order,
+since <code>mvn compile</code> will find compilation problems much faster than <code>mvn install</code>.
+If any of those commands fail, edit the files at cause and re-try from the command that failed
+(there is usually no need to run <code>mvn clean</code> again).</p>
+<div class="codehilite"><pre>mvn clean
+mvn compile
+mvn <span class="nb">test</span>-compile
+mvn install
+</pre></div>
+
+
+<p>After a successful build, commit:</p>
+<div class="codehilite"><pre>svn commit --message <span class="s2">&quot;Merge from the JDK6 branch.&quot;</span>
+</pre></div>
+
+
+<h2 id="merge-record-only">Declaring that some changes shall not be merged</h2>
+<p>If a developers wants to apply some changes specific to the JDK7 platform and tells
+Subversion to not propagate those changes to the JDK6 branch, then the following
+procedure shall be applied:</p>
+<ul>
+<li>Before to apply JDK7-specific changes, merge any pending changes to the JDK6 branch.</li>
+<li>Apply the JDK7-specific changes and commit.</li>
+<li>Run the following commands (edit the path arguments if the directory layout is different
+    than the example from the previous section):</li>
+</ul>
+<p>Commands:</p>
+<div class="codehilite"><pre><span class="nb">cd </span>JDK7
+svn update
+<span class="nb">cd</span> ../JDK6
+svn update
+svn merge --record-only ../JDK7
+svn commit --message <span class="s2">&quot;Skip JDK7-specific changes.&quot;</span>
+</pre></div>
+            </article>
+          </section>
+        </div><!--/span-->
+      </div><!--/row-fluid-->
+    </div><!--/container-fluid-->
+
+  <footer class="footer">
+    <div class="container">
+      <p>Copyright &copy; 2013 The Apache Software Foundation, Licensed under the
+        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
+          Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+    </div>
+  </footer>
+
+  <script src="js/jquery-1.9.1.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+
+</body>
+</html>

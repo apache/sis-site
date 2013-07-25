@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Recommended code patterns</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="http://www.apache.org/css/code.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/sis.css">
+
+    
+
+    
+    <!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.  See the NOTICE file distributed with this work for additional information regarding copyright ownership.  The ASF licenses this file to you under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use this file except in compliance with the License.  You may obtain a copy of the License at . http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the License for the specific language governing permissions and limitations under the License. -->
+  </head>
+
+  <body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="/index.html"> Apache SIS&trade; </a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">About<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="mail-lists.html">Mailing Lists</a></li>
+                  <li><a href="license.html">Project License</a></li>
+                  <li><a href="team-list.html">Project Team</a></li>
+                </ul>
+              </li>
+              <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">Project Documentation<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="downloads.html">Downloads</a></li>
+                  <li><a href="source.html">Source Code</a></li>
+                  <li><a href="code-patterns.html">Code patterns</a></li>
+                  <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+                  <li><a href="faq.html">FAQ</a></li>
+                  <li><a href="release-management.html">Release Management</a></li>
+                </ul>
+              </li>
+              <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">ASF <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="http://www.apache.org">The Foundation</a></li>
+                  <li><a href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
+                  <li><a href="http://www.apache.org/foundation/sponsorship.html">Become a Sponsor</a></li>
+                  <li><a href="http://www.apache.org/security/">Security</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div> <!-- /.nav-collapse -->
+        </div><!-- /.container -->
+      </div><!-- /.navbar-inner -->
+    </div>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span2">
+          <img src="img/logo.png"/>
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              <li class="active"><a href="index.html">Home</a></li>
+              <li><a href="mail-lists.html">Mailing Lists</a></li>
+              <li><a href="license.html">Project License</a></li>
+              <li><a href="team-list.html">Project Team</a></li>
+              <li class="nav-header">Project Documentation</li>
+              <li><a href="downloads.html">Downloads</a></li>
+              <li><a href="source.html">Source Code</a></li>
+              <li><a href="code-patterns.html">Code patterns</a></li>
+              <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="release-management.html">Release Management</a></li>
+              <li class="nav-header">ASF</li>
+              <li><a href="http://www.apache.org">The Foundation</a></li>
+              <li><a href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
+              <li><a href="http://www.apache.org/foundation/sponsorship.html">Become a Sponsor</a></li>
+              <li><a href="http://www.apache.org/security/">Security</a></li>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+        <div class="span10">
+          <section id="content" class="row">
+            <article class="span12">
+              <p class="page-title">Recommended code patterns</p>
+              <p>This page lists some recommended code pattern for developing or using Apache SIS.</p>
+<div class="toc">
+<ul>
+<li><a href="#referencing">Referencing</a><ul>
+<li><a href="#axisOrder">Never explicitely swap ordinates for axis order</a></li>
+</ul>
+</li>
+<li><a href="#coverage">Coverages</a><ul>
+<li><a href="#gridToCRS">Georeference images with affine transforms, not bounding boxes</a></li>
+</ul>
+</li>
+<li><a href="#international">International</a><ul>
+<li><a href="#timezone">Specify timezone</a></li>
+<li><a href="#sort">Replace underscores by spaces before sorting</a></li>
+<li><a href="#unicode-loop">Loop over character sequences using code points</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="referencing">Referencing</h1>
+<p>Recommended code pattern when using the <code>sis-referencing</code> module.</p>
+<h2 id="axisOrder">Never explicitely swap ordinates for axis order</h2>
+<p>The <a href="faq.html#axisOrder">axis order issue</a> causes lot of confusion,
+and developers are sometime tempted to swap their ordinate values in order to comply with some expected axis ordering.
+It should never be necessary, since the Apache SIS referencing engine manages axis order transparently - provided that
+the Coordinate Reference System (<abbr title="Coordinate Reference System">CRS</abbr>) definition is accurate. If a code needs to swap ordinates, this is probably an
+indication that the <abbr title="Coordinate Reference System">CRS</abbr> has not been properly defined. Instead than patching the coordinate values, try to make sure
+that the <em>Source <abbr title="Coordinate Reference System"><abbr title="Coordinate Reference System">CRS</abbr></abbr></em> (associated to the original data) and the <em>Target <abbr title="Coordinate Reference System"><abbr title="Coordinate Reference System">CRS</abbr></abbr></em> (the coordinate space where to perform the
+work) are properly defined, and let the referencing engine performs the conversion from the source to the target <abbr title="Coordinate Reference System">CRS</abbr>.
+For example when fetching the <abbr title="Coordinate Reference System">CRS</abbr>, make sure that the proper boolean value is given to the <code>CRS.forCode(…)</code> method.</p>
+<h1 id="coverage">Coverages</h1>
+<p>Recommended code pattern when using the <code>sis-coverage</code> module.</p>
+<h2 id="gridToCRS">Georeference images with affine transforms, <em>not</em> bounding boxes</h2>
+<p>Many users define the geographic extent of an image by its corner locations.
+This approach is not sufficient as it does not specify if the (<var>x</var>,<var>y</var>) axes are interchanged
+(see the <a href="faq.html#axisOrder">axis order issue</a>) or if the <var>y</var> axis is oriented downward.
+All images in SIS shall be georeferenced by at least an affine transform (more complex transforms are also possible),
+never by a rectangle or bounding box.
+In the two-dimensional case, the standard <code>java.awt.geom.AffineTransform</code> class can be used.</p>
+<h1 id="international">International</h1>
+<p>Recommended code pattern for internationalization.</p>
+<h2 id="timezone">Specify timezone</h2>
+<p>Geospatial data often cover a wide geographic area, spanning many time zones.
+Timezone are sometime specified as metadata in the header of data files to be read,
+or is sometime fixed to <abbr title="Universal Time Coordinated">UTC</abbr> by applications managing world-wide data.
+Many SIS objects have <code>Locale</code> and <code>TimeZone</code> fields.
+Such locale and timezone shall be given to <code>java.text.DateFormat</code> or <code>java.util.Calendar</code> constructors.</p>
+<p>When reading dates or timestamps from a <abbr title="Java DataBase Connectivity">JDBC</abbr> database, always use the <code>ResultSet</code> method
+accepting a <code>Calendar</code> argument, when such method is available.
+For example prefer the <code>getTimestamp(int, Calendar)</code> method instead than <code>getTimestamp(int)</code>.
+The <code>Calendar</code> object shall has been created with the appropriate timezone.</p>
+<h2 id="sort">Replace underscores by spaces before sorting</h2>
+<p>Before to sort programmatic names for human reading, consider replacing all occurrences of the underscore character
+(<code>'_'</code>) by the space character (<code>' '</code>). The ASCII value of the underscore character is greater than <code>'Z'</code> but lower
+than <code>'a'</code>, which sometime produce unexpected sort results.
+For example <code>"Foo_bar"</code> is sorted <em>between</em> <code>"FooBar"</code> and <code>"Foobar"</code>.
+The space character produces more consistent sort results because its ASCII value is less than any printable character,
+so <code>"Foo bar"</code> is sorted before both <code>"FooBar"</code> and <code>"Foobar"</code>.</p>
+<h2 id="unicode-loop">Loop over character sequences using code points</h2>
+<p>Since Java 1.5, characters are no longer restricted to 16 bits.
+Some "characters" are actually represented using two consecutive <code>char</code> elements.
+Those "characters" are called <cite>code points</cite>.
+Consequently, when iterating over characters in a string, the following pattern shall be used:</p>
+<div class="codehilite"><pre><span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">string</span><span class="o">.</span><span class="na">length</span><span class="o">();)</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="na">codePointAt</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+    <span class="c1">// ... do some stuff ...</span>
+    <span class="n">i</span> <span class="o">+=</span> <span class="n">Character</span><span class="o">.</span><span class="na">charCount</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+            </article>
+          </section>
+        </div><!--/span-->
+      </div><!--/row-fluid-->
+    </div><!--/container-fluid-->
+
+  <footer class="footer">
+    <div class="container">
+      <p>Copyright &copy; 2013 The Apache Software Foundation, Licensed under the
+        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
+          Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+    </div>
+  </footer>
+
+  <script src="js/jquery-1.9.1.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+
+</body>
+</html>

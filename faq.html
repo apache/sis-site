@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Apache SIS</title>
+    <title>Frequently asked questions</title>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="http://www.apache.org/css/code.css">
@@ -79,36 +79,61 @@
         <div class="span10">
           <section id="content" class="row">
             <article class="span12">
-              <p class="page-title">Apache SIS</p>
-              <p>Apache Spatial Information System (SIS) is a free software, Java language library for developing geospatial applications.
-SIS enables better representation of coordinates for searching, data clustering, archiving, or any other relevant spatial needs.
-The library is an implementation of <a href="http://www.geoapi.org">GeoAPI 3.0</a> interfaces and can be used for desktop or server applications.</p>
-<p>SIS provides data structures for geographic data and associated metadata along with methods to manipulate those data structures.
-The SIS metadata module forms the base of the library and enables the creation of metadata objects which comply
-with the ISO 19115 metadata model and which can be read from or written to ISO 19139 compliant XML documents.
-The SIS referencing module will enable the construction of geodetic data structures for geospatial referencing
-based on the ISO 19111 model such as axis, projection and coordinate reference system definitions, along with the
- associated operations which enable the mathematical conversion of coordinates between different systems of reference.
-The SIS storage modules will provide a common approach to the reading and writing of grid coverages applicable to
-simple imagery as to many dimensional data structures.</p>
-<h2 id="user">Using SIS</h2>
-<p>SIS requires a Java 6 Runtime Environment.
-The latest release is 0.2-incubating.
-The version under development is 0.4-SNAPSHOT.</p>
+              <p class="page-title">Frequently asked questions</p>
+              <p>This page lists some Frequently Asked Questions (FAQ) when using Apache SIS.</p>
+<div class="toc">
 <ul>
-<li><a href="downloads.html">Downloads</a> as a <code>zip</code>/<code>gz</code> files, or as Maven dependencies.</li>
-<li><a href="http://cwiki.apache.org/confluence/display/SIS">SIS Wiki</a> for "drawing board" and roadmap.</li>
-<li><a href="code-patterns.html">Recommended code patterns</a></li>
+<li><a href="#metadata">Metadata</a><ul>
+<li><a href="#metadata-implementation">Custom implementations</a><ul>
+<li><a href="#metadata-proxy">My metadata are stored in a database-like framework. Implementing every GeoAPI interfaces for them is impractical.</a></li>
+<li><a href="#metadata-unknownClass">I can't marshall my custom implementation.</a></li>
 </ul>
-<h2 id="developer">SIS developer documentation</h2>
-<ul>
-<li><a href="source.html">Source code</a>: fetching the code, opening in an IDE, developing, formatting.</li>
-<li><a href="branches.html">Branches</a>: trunk, JDK6, JDK7.</li>
-<li><a href="http://issues.apache.org/jira/browse/SIS">Issue tracking</a>: JIRA.</li>
-<li><a href="http://reviews.apache.org/groups/sis">Code review</a></li>
-<li><a href="release-management.html">Release management</a> (for release managers)</li>
-<li><a href="site-management.html">Web site management</a> (for release managers and site maintainers)</li>
+</li>
 </ul>
+</li>
+<li><a href="#referencing">Referencing</a><ul>
+<li><a href="#axisOrder">Axis order</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="metadata">Metadata</h1>
+<p>Frequently asked questions about the <code>sis-metadata</code> module.</p>
+<h2 id="metadata-implementation">Custom implementations</h2>
+<p>Frequently asked questions custom implementations of <code>org.opengis.metadata</code> interfaces.</p>
+<h3 id="metadata-proxy">My metadata are stored in a database-like framework. Implementing every GeoAPI interfaces for them is impractical.</h3>
+<p>Developers do not need to implement directly the metadata interfaces.
+If the underlying storage framework can access metadata from their class and attribute names (either Java names
+or <abbr title="International Organization for Standardization">ISO</abbr>/<abbr title="Open Geospatial Consortium">OGC</abbr> names), then it is possible to implement a single engine accessing any kind of metadata and let the
+Java Virtual Machine implements the GeoAPI interfaces on-the-fly, using the <code>java.lang.reflect.Proxy</code> class.
+See the <code>Proxy</code> Javadoc for details, keeping in mind that the <abbr title="International Organization for Standardization">ISO</abbr>/<abbr title="Open Geospatial Consortium">OGC</abbr> name of a <code>java.lang.Class</code> or
+<code>java.lang.reflect.Method</code> object can be obtained as below:</p>
+<div class="codehilite"><pre><span class="n">UML</span> <span class="n">uml</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="na">getAnnotation</span><span class="o">(</span><span class="n">UML</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+<span class="k">if</span> <span class="o">(</span><span class="n">uml</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">String</span> <span class="n">name</span> <span class="o">=</span> <span class="n">uml</span><span class="o">.</span><span class="na">identifier</span><span class="o">();</span>
+    <span class="c1">// Fetch the metadata here.</span>
+<span class="o">}</span>
+</pre></div>
+
+
+<p>This is indeed the approach taken by the <code>org.apache.sis.metadata.sql</code> package for providing an implementation
+of all GeoAPI metadata interfaces reading their values directly from a SQL database.</p>
+<h3 id="metadata-unknownClass">I can't marshall my custom implementation.</h3>
+<p>The classes given to the JAXB marshaller shall contain JAXB annotations,
+otherwise the following exception is thrown:</p>
+<div class="codehilite"><pre>javax.xml.bind.JAXBException: class MyCustomClass nor any of its super class is known to this context.
+</pre></div>
+
+
+<p>The easiest workaround is to wrap the custom implementation into one of the implementations
+provided in the <code>org.apache.metadata.iso</code> package.
+All those SIS implementation classes provide shallow copy constructor for making that easy.
+Note that you need to wrap only the root class, not the attributes.
+The attribute values will be wrapped automatically as needed by JAXB adapters.</p>
+<h1 id="referencing">Referencing</h1>
+<p>Frequently asked questions about the <code>sis-referencing</code> module.</p>
+<h3 id="axisOrder">Axis order</h3>
+<p>(... to be provided later ...)</p>
             </article>
           </section>
         </div><!--/span-->
