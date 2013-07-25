@@ -1,0 +1,83 @@
+Title:  Frequently asked questions
+Notice: Licensed to the Apache Software Foundation (ASF) under one
+        or more contributor license agreements.  See the NOTICE file
+        distributed with this work for additional information
+        regarding copyright ownership.  The ASF licenses this file
+        to you under the Apache License, Version 2.0 (the
+        "License"); you may not use this file except in compliance
+        with the License.  You may obtain a copy of the License at
+        .
+          http://www.apache.org/licenses/LICENSE-2.0
+        .
+        Unless required by applicable law or agreed to in writing,
+        software distributed under the License is distributed on an
+        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+        KIND, either express or implied.  See the License for the
+        specific language governing permissions and limitations
+        under the License.
+
+
+This page lists some Frequently Asked Questions (FAQ) when using Apache SIS.
+
+[TOC]
+
+
+
+Metadata    {#metadata}
+=======================
+
+Frequently asked questions about the `sis-metadata` module.
+
+Custom implementations    {#metadata-implementation}
+----------------------------------------------------
+
+Frequently asked questions custom implementations of `org.opengis.metadata` interfaces.
+
+
+
+### My metadata are stored in a database-like framework. Implementing every GeoAPI interfaces for them is impractical.    {#metadata-proxy}
+
+Developers do not need to implement directly the metadata interfaces.
+If the underlying storage framework can access metadata from their class and attribute names (either Java names
+or ISO/OGC names), then it is possible to implement a single engine accessing any kind of metadata and let the
+Java Virtual Machine implements the GeoAPI interfaces on-the-fly, using the `java.lang.reflect.Proxy` class.
+See the `Proxy` Javadoc for details, keeping in mind that the ISO/OGC name of a `java.lang.Class` or
+`java.lang.reflect.Method` object can be obtained as below:
+
+    :::java
+    UML uml = method.getAnnotation(UML.class);
+    if (uml != null) {
+        String name = uml.identifier();
+        // Fetch the metadata here.
+    }
+
+This is indeed the approach taken by the `org.apache.sis.metadata.sql` package for providing an implementation
+of all GeoAPI metadata interfaces reading their values directly from a SQL database.
+
+
+
+### I can't marshall my custom implementation (`JAXBException`).    {#metadata-unknownClass"}
+
+The classes given to the JAXB marshaller shall contain JAXB annotations,
+otherwise the following exception is thrown:
+
+    :::text
+    javax.xml.bind.JAXBException: class MyCustomClass
+    nor any of its super class is known to this context.
+
+The easiest workaround is to wrap the custom implementation into one of the implementations
+provided in the `org.apache.metadata.iso` package.
+All those SIS implementation classes provide shallow copy constructor for making that easy.
+Note that you need to wrap only the root class, not the attributes.
+The attribute values will be wrapped automatically as needed by JAXB adapters.
+
+
+
+Referencing    {#referencing}
+=============================
+
+Frequently asked questions about the `sis-referencing` module.
+
+### Axis order    {#axisOrder}
+
+(... to be provided later ...)
