@@ -77,6 +77,13 @@ or edit the existing values if any:
     cert-digest-algo SHA512
     default-preference-list SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed
 
+If a private key already exists for emails or other purposes, it may be a good idea to keep that key as the default one.
+Add or modify the following line in the `gpg.conf` file, replacing `<previous_key_id>` by the existing key identifier
+(a value like `621CC013`):
+
+    :::text
+    default-key <previous_key_id>
+
 Generate 4096 bits RSA key pair using the following command-line. GPG will prompts for various informations.
 The list below the command suggests some values, keeping in mind that the new key should be used only for
 signing Apache softwares - not for daily emails.
@@ -154,6 +161,7 @@ The command will produce an encrypted version of the given password, something l
 Store this password in the `~/.m2/settings-security.xml` file like below:
 
     :::xml
+    <?xml version="1.0" encoding="UTF-8"?>
     <settingsSecurity>
       <master>{jSMOWnoPFgsHVpMvz5VrIt5kRbzGpI8u+9EF1iFQyJQ=}</master>
     </settingsSecurity>
@@ -168,6 +176,7 @@ Cut-and-paste it in a section of the `~/.m2/settings.xml` file like below,
 together with the PGP key name:
 
     :::xml
+    <?xml version="1.0" encoding="UTF-8"?>
     <settings>
     ...
       <servers>
@@ -193,9 +202,10 @@ Notes:
 
   * Do not store the PGP passphrase in the `settings.xml` file.
     We will use the `gpg-agent` instead, as described in the [release management](release-management.html) page.
-  * The `<user.name>` property in the `<profile>` section can be omitted
-    if the Apache user name matches the user name on the local operating system.
-  * The `<gpg.keyname>` property in the `<profile>` section can be omitted if GPG contains only one private key.
+  * In the `<profile>` section:
+    + The `<user.name>` property can be omitted if the Apache user name matches the user name on the local operating system.
+    + The `<gpg.keyname>` property can be omitted if GPG contains only one private key.
+    + The whole `<profile>` section can be omitted if the two above-cited properties are omitted.
 
 
 [PGP]:     http://www.apache.org/dev/openpgp.html
