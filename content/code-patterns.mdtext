@@ -105,18 +105,8 @@ Some "characters" are actually represented using two consecutive `char` elements
 Those "characters" are called <cite>code points</cite>.
 Consequently, when iterating over characters in a string, the following pattern shall be used:
 
-Do not use:
-
     :::java
-    for (int i=0; i&lt;string.length(); i++) {
-        char c = string.charAt(i);
-        // ... do some stuff ...
-    }
-
-Use instead:
-
-    :::java
-    for (int i=0; i&lt;string.length();) {
+    for (int i=0; i<string.length();) {
         final int c = string.codePointAt(i);
         // ... do some stuff ...
         i += Character.charCount(c);

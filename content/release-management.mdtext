@@ -26,8 +26,8 @@ The intended audiences are SIS release managers.
 
 
 
-Requirements
-============
+Requirements    {#requirements}
+===============================
 
 Before to perform a release, make sure that the following conditions hold:
 
@@ -46,8 +46,8 @@ the current release attempt. Those versions shall be set on the command line lik
 
 
 
-Directory layout
-----------------
+Directory layout    {#directory-layout}
+---------------------------------------
 
 The steps described in this page assume the following directory layout (some directories will be created as
 a result of the steps). Any other layout can be used. However if the layout differs, then the relative paths
@@ -68,8 +68,8 @@ in this page shall be adjusted accordingly.
 
 
 
-Prepare documentation
-=====================
+Prepare documentation    {#prepare-documentation}
+=================================================
 
 Update [JIRA][JIRA] tasks and prepare release notes as below:
 
@@ -90,8 +90,8 @@ Other files to update:
 
 
 
-Web site
---------
+Web site    {#prepare-website}
+------------------------------
 
 Update the version numbers from `$NEW_VERSION` to the next version in the following files.
 
@@ -109,8 +109,8 @@ It will not yet be published on `http://sis.apache.org`.
 
 
 
-Create branch
-=============
+Create branch    {#branch}
+==========================
 
 Execute the following command:
 
@@ -151,8 +151,8 @@ Commit the changes on the branch:
 
 
 
-Verify content
---------------
+Verify content    {#branch-verify}
+----------------------------------
 
 Starts the GPG agent if not already done.
 This is for avoiding to be prompted many time for the passphrase in every modules to be built by Maven.
@@ -180,8 +180,8 @@ Verify signature for all files:
 
 
 
-Create tag
-==========
+Create tag    {#tag}
+====================
 
 In theory, the next commands would be a real (non-dry) run of `mvn release:prepare`, followed by `mvn release:perform`.
 However we perform those steps manually rather than relying on Maven for the following reasons:
@@ -234,8 +234,8 @@ Clean the branch, since we will not need it anymore:
 
 
 
-Deploy Maven artifacts
-======================
+Deploy Maven artifacts    {#maven-deploy}
+=========================================
 
 Ensure that the current directory is `tags/$NEW_VERSION`.
 Execute an `install` phase first (required for our custom `sis-build-helper` plugin), then deploy.
@@ -248,8 +248,8 @@ for proper execution of our custom Javadoc taglets.
 
 
 
-Verify and close the Nexus release artifacts
---------------------------------------------
+Verify and close the Nexus release artifacts    {#nexus-close}
+--------------------------------------------------------------
 
 Verify the staged artifacts in the [Nexus repository][repository].
 The artifacts can be found under _Build Promotion_ → _Staging repositories_, and searching for `org.apache.sis` in the _Repository_ column.
@@ -271,8 +271,8 @@ Announce on the `dev@` mailing list the availability of this temporary repositor
 
 
 
-Stage the source, binary and javadoc artifacts
-==============================================
+Stage the source, binary and javadoc artifacts    {#stage}
+==========================================================
 
 Create the directory for the new version and release candidate within the distribution directory.
 The `RC` number shall correspond to the current release attempt.
@@ -326,8 +326,8 @@ Verify that the files are downloadable from the
 
 
 
-Put the release candidate up for a vote
-=======================================
+Put the release candidate up for a vote    {#vote}
+==================================================
 
   * Create a VOTE email thread on `dev@` to record votes as replies.
     A template is available [here][release-vote.txt].
@@ -343,8 +343,8 @@ Put the release candidate up for a vote
 
 
 
-Finalize the release
-====================
+Finalize the release    {#finalize}
+===================================
 
 The artificats in the repository are not yet mirrored and available for Maven to download.
 Promote the staged Nexus artifacts, by releasing them.
@@ -388,8 +388,8 @@ Then prepare for the next release:
 
 
 
-Announce the release
---------------------
+Announce the release    {#announce}
+-----------------------------------
 
   * Make a news announcement on the SIS home page.
   * Make an announcement about the release on the `dev@`, `users@`, and `announce@` mailing lists.
@@ -397,8 +397,8 @@ Announce the release
 
 
 
-Recovering from a vetoed release
-================================
+Recovering from a vetoed release    {#veto}
+===========================================
 
 Reply to the initial vote email and prepend to the original subject:
 
@@ -419,8 +419,8 @@ Make the required updates that caused the vote to be canceled during the release
 
 
 
-Verify release signatures
-=========================
+Verify release signatures    {#verify}
+======================================
 
 Download all source and binary artifacts into a new directory, then execute in that directory:
 
@@ -430,8 +430,8 @@ Download all source and binary artifacts into a new directory, then execute in t
 The output shall report only good signatures.
 
 
-Updating trunk
-==============
+Updating trunk    {#next-release}
+=================================
 
 Update the version numbers in the `pom.xml` files on trunk with the following command:
 
