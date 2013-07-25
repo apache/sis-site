@@ -30,15 +30,15 @@ for making merges easier, then provides the steps to follow for performing the m
 
 
 
-The development branches {#development}
-========================
+The development branches    {#development}
+==========================================
 
 Developers are encouraged to select the first branch listed below, in that order, which meet their needs.
 
 
 
-branches/JDK7
--------------
+branches/JDK7    {#jdk7}
+------------------------
 
 The JDK7 branch is the recommended development branch for developers who can use a JDK7 environment.
 This branch implements the interfaces defined in the [GeoAPI snapshot][geoapi-snapshot] milestones
@@ -50,8 +50,8 @@ and uses some JDK7-specific features like:
 
 
 
-branches/JDK6
--------------
+branches/JDK6    {#jdk6}
+------------------------
 
 The JDK6 branch is a merge of the JDK7 branch ported to the JDK6 platform.
 This is the recommended development branch for developers who can not use a JDK7 environment,
@@ -69,8 +69,8 @@ for building and running on a JDK6 platform:
 
 
 
-trunk
------
+trunk    {#trunk}
+-----------------
 
 The trunk is a merge of the JDK6 branch ported to the interfaces defined by the [GeoAPI stable release][geoapi-stable].
 This is the code which is built by the continuous integration system and deployed on the Maven repository.
@@ -82,15 +82,15 @@ necessary for implementing an older version of the GeoAPI interfaces:
 
 
 
-Coding recommendations
-======================
+Coding recommendations    {#recommendations}
+============================================
 
   The following recommendations aim to make the merges easier by reducing the extend of potential conflicts.
 
 
 
-Formatting
-----------
+Formatting   {#formatting}
+--------------------------
 
 Refrain from doing massive code reformatting unless:
 
@@ -130,8 +130,8 @@ this example we aim to preserve the indentation of the `case` bodies.
 
 
 
-Import statements
------------------
+Import statements    {#imports}
+-------------------------------
 
 Isolate at the end of the imports section any import statements that are specific to a platform.
 This separation allows any branch to re-arrange the common import statements without generating
@@ -147,8 +147,8 @@ conflicts with the platform-dependent import statements. Example:
 
 
 
-Replacement on non-existent classes
------------------------------------
+Substitution for non-existent classes    {#substitutions}
+---------------------------------------------------------
 
 When using a JDK7 class that does not exist on JDK6, define a class of the same name in a
 `org.apache.sis.internal` sub-package with the minimal amount of needed functionalities,
@@ -157,8 +157,8 @@ code from the JDK6 branch.
 
 
 
-Performing the merges
-=====================
+Performing the merges    {#merges}
+==================================
 
 Subversion 1.5 and later maintain a `svn:mergeinfo` property which make merge operations much easier.
 In order to get those merge information properly maintained, no merge operation shall be performed
@@ -166,8 +166,8 @@ with older Subversion tools.
 
 
 
-Merging changes between two branches
-------------------------------------
+Merging changes between two branches    {#merge-two-branches}
+-------------------------------------------------------------
 
 The branches and trunk checkout directories can be located anywhere on the developer machine.
 The following example assumes that the current directory contains the following sub-directories:
@@ -214,8 +214,8 @@ After a successful build, commit:
 
 
 
-Declaring that some changes shall not be merged
------------------------------------------------
+Declaring that some changes shall not be merged    {#merge-record-only}
+-----------------------------------------------------------------------
 
 If a developers wants to apply some changes specific to the JDK7 platform and tells
 Subversion to not propagate those changes to the JDK6 branch, then the following
