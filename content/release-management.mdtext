@@ -343,62 +343,8 @@ Put the release candidate up for a vote    {#vote}
 
 
 
-Finalize the release    {#finalize}
-===================================
-
-The artificats in the repository are not yet mirrored and available for Maven to download.
-Promote the staged Nexus artifacts, by releasing them.
-
-  * Go to [Nexus repository][repository] → _Build Promotion_ → _Staging repositories_ and search for `org.apache.sis` in the _Repository_ column.
-  * Click the checkboxes of the closed staging repositories (`org.apache.sis-<id>`) and press _Release_ in the menu bar.
-  * Check in the source and binary artifacts into distribution svn which will be pulled by all mirrors within 24 hours.
-    The `dist/dev` svn is not mirrored, but the `dist/release` is.
-
-From any directory:
-
-    :::bash
-    svn copy https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE \
-             https://dist.apache.org/repos/dist/release/sis/$NEW_VERSION \
-        --message "Committing SIS Source and Binary Release for SIS-$NEW_VERSION"
-
-Update the staged web site:
-
-  * Update the downloads page to add new version using the mirrored URLs.
-  * Modify the URL for the prior release to the archived URL for the release.
-
-Publish the web site:
-
-  * WAIT 24 hours after committing releases for mirrors to replicate.
-  * Publish the web site updates:
-    + Login to the [ASF Content Management System][cms-admin].
-    + Click on _Publish sis site_.
-
-Delete the prior versions:
-
-  * Navigate to the release directories checked out in the prior steps.
-  * Delete the prior release artifacts using the `svn delete` command.
-  * Commit the deletion.
-
-Update the [JIRA][JIRA] versions to mark the version as "released",
-and set the date to the date that the release was approved.
-Then prepare for the next release:
-
-  * Make a new release entry in JIRA for the next release.
-  * Update the [Roadmap](https://cwiki.apache.org/confluence/display/SIS/Roadmap) wiki page.
-
-
-
-Announce the release    {#announce}
------------------------------------
-
-  * Make a news announcement on the SIS home page.
-  * Make an announcement about the release on the `dev@`, `users@`, and `announce@` mailing lists.
-    + Sample announce: [email](release-announce.txt).
-
-
-
 Recovering from a vetoed release    {#veto}
-===========================================
+-------------------------------------------
 
 Reply to the initial vote email and prepend to the original subject:
 
@@ -419,8 +365,48 @@ Make the required updates that caused the vote to be canceled during the release
 
 
 
+Finalize the release    {#finalize}
+===================================
+
+The artificats in the repository are not yet mirrored and available for Maven to download.
+Promote the staged Nexus artifacts, by releasing them.
+
+  * Go to [Nexus repository][repository] → _Build Promotion_ → _Staging repositories_ and search for `org.apache.sis` in the _Repository_ column.
+  * Click the checkboxes of the closed staging repositories (`org.apache.sis-<id>`) and press _Release_ in the menu bar.
+  * Check in the source and binary artifacts into distribution svn which will be pulled by all mirrors within 24 hours.
+    The `dist/dev` svn is not mirrored, but the `dist/release` is.
+
+From any directory:
+
+    :::bash
+    svn copy https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE \
+             https://dist.apache.org/repos/dist/release/sis/$NEW_VERSION \
+        --message "Committing SIS Source and Binary Release for SIS-$NEW_VERSION"
+
+Delete the prior versions:
+
+  * Navigate to the release directories checked out in the prior steps.
+  * Delete the prior release artifacts using the `svn delete` command.
+  * Commit the deletion.
+
+Update the staged web site:
+
+  * Make a news announcement on the SIS home page.
+  * Update the downloads page to add new version using the mirrored URLs.
+  * Modify the URL for the prior release to the archived URL for the release.
+
+Update [JIRA][JIRA]:
+
+  * Update the JIRA versions to mark the version as "released".
+  * Set the date to the date that the release was approved.
+  * Prepare for the next release:
+    + Make a new release entry in JIRA for the next release.
+    + Update the [Roadmap](https://cwiki.apache.org/confluence/display/SIS/Roadmap) wiki page.
+
+
+
 Verify release signatures    {#verify}
-======================================
+--------------------------------------
 
 Download all source and binary artifacts into a new directory, then execute in that directory:
 
@@ -430,8 +416,21 @@ Download all source and binary artifacts into a new directory, then execute in t
 The output shall report only good signatures.
 
 
-Updating trunk    {#next-release}
-=================================
+
+Announce the release    {#announce}
+-----------------------------------
+
+  * WAIT 24 hours after committing releases for mirrors to replicate.
+  * Publish the web site updates:
+    + Login to the [ASF Content Management System][cms-admin].
+    + Click on _Publish sis site_.
+  * Make an announcement about the release on the `dev@`, `users@`, and `announce@` mailing lists.
+    + Sample announce: [email](release-announce.txt).
+
+
+
+Update trunk for the next development cycle    {#next-release}
+==============================================================
 
 Update the version numbers in the `pom.xml` files on trunk with the following command:
 
