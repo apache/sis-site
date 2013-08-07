@@ -35,6 +35,7 @@
                   <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
                   <li><a href="faq.html">FAQ</a></li>
                   <li><a href="release-management.html">Release Management</a></li>
+                  <li><a href="site-management.html">Edit WebSite</a></li>
                 </ul>
               </li>
               <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">ASF <b class="caret"></b></a>
@@ -68,6 +69,7 @@
               <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
               <li><a href="faq.html">FAQ</a></li>
               <li><a href="release-management.html">Release Management</a></li>
+              <li><a href="site-management.html">Edit WebSite</a></li>
               <li class="nav-header">ASF</li>
               <li><a href="http://www.apache.org">The Foundation</a></li>
               <li><a href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
@@ -112,12 +114,14 @@ For fetching the source code, choose one of the following commands:</p>
 </ul>
 </li>
 <li><a href="#formatting">Code formatting</a><ul>
+<li><a href="#javadoc-tags">Javadoc annotations</a></li>
 <li><a href="#html">HTML elements</a></li>
 <li><a href="#paragraph">Paragraphs</a></li>
 <li><a href="#css">Javadoc CSS</a></li>
 <li><a href="#miscellaneous">Miscellaneous</a></li>
 </ul>
 </li>
+<li><a href="#classes-naming">Classes naming</a></li>
 </ul>
 </li>
 </ul>
@@ -247,6 +251,15 @@ Formatting the code in a way that emphase their symmetrical nature, for example
 aligning identical terms in columns, can help to understand the overall pattern
 and to identify bugs. The decision to use standard or tabular format is made on
 a case-by-case basis. Of course, tabular format shall not be abused.</p>
+<h3 id="javadoc-tags">Javadoc annotations</h3>
+<p>SIS uses standard javadoc annotations. The meaning of some tags are refined as below:</p>
+<ul>
+<li><code>@since</code>   - the SIS version when the annotated element (class, method, <i>etc.</i>) was first introduced.</li>
+<li><code>@version</code> - the last SIS version when the code of the annotated class got a significant change.</li>
+<li><code>@author</code>  - developer name in <var>FirstName</var> <var>LastName</var> (<var>Organization</var>) format.
+                 A separated <code>@author</code> tag is added for each developer.
+                 The intend is to allow other developers to know to who to ask questions if needed.</li>
+</ul>
 <h3 id="html">HTML elements</h3>
 <p>HTML tags and entities shall be used only when there is no equivalent Javadoc tag.
 In addition to the standard Javadoc tags, a few <a href="http://builds.apache.org/job/sis-trunk/site/sis-build-helper/index.html">SIS-specific Javadoc tags</a> are available.
@@ -321,6 +334,12 @@ Instead, rely on styling. Some HTML tags having a style definition in Apache SIS
 <li><strong>Line wrapping:</strong> Use 120-column line width for Java code and Javadoc.
     Some exceptions to this rule may exist for preserving tabular structures, but should be rare.</li>
 </ul>
+<h2 id="classes-naming">Classes naming</h2>
+<p>Implementations of GeoAPI interfaces usually (but not always) begin with <code>Abstract</code>, <code>Default</code>, <code>Simple</code> or <code>General</code> prefixes.
+The <code>Abstract</code> prefix is used when a class is abstract according <abbr title="International Organization for Standardization">ISO</abbr> specifications - it may or may not be be abstract in the Java sense.
+The <code>General</code> prefix is used when an implementation is designed for use in the general case,
+as opposed to other implementations specialized for a fixed number of dimensions or other conditions.
+Implementations specialized for a fixed number of dimensions are suffixed with <code>1D</code>, <code>2D</code>, <code>3D</code> or <code>4D</code> rather than being prefixed.</p>
             </article>
           </section>
         </div><!--/span-->
