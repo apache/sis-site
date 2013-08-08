@@ -133,10 +133,14 @@ but also in a few Java files. The following command performs the replacement usi
     :::bash
     ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml branch -Dsis.version=$NEW_VERSION
 
-Open the root `pom.xml` file in an editor and remove the following sections:
+Open the root `pom.xml` file in an editor and perform the following changes:
 
-  * The whole `<pluginRepositories>` section, since it should not be needed for releases (and is actually not allowed).
-  * The `<plugin>` section for `docbkx-maven-plugin`, since the DocBook directory is omitted (see below).
+  * Copy-and-paste the whole `<plugin>` section for `maven-javadoc-plugin` from `<reporting>` to `<build>`.
+    We need the javadoc configuration to be duplicated in both `<reporting>` and `<build>` sections in order
+    to get the expected Javadoc output in both Maven site and in the `*-javadoc.jar` files to deployed in the
+    Maven repository. **TODO:** see if upgrading Maven or the `maven-javadoc-plugin` can solve this problem.
+  * Remove the whole `<pluginRepositories>` section, since it should not be needed for releases (and is actually not allowed).
+  * Remove the `<plugin>` section for `docbkx-maven-plugin`, since the DocBook directory is omitted (see below).
 
 Recursively delete the `src/main/docbook` directory (this policy may be revised in future SIS releases).
 We omit this directory for now because this material may move to the CMS, and no English version is available yet.
@@ -189,15 +193,14 @@ However we perform those steps manually rather than relying on Maven for the fol
   * Perform some additional changes on the tag.
   * Reduce the amount of commits on SVN (avoid a rollback in branch directory).
   * Give more opportunities to take action before commit in case of problems.
-  * We need a separated `install` phase first, then a `site` phase at deploy time
-    (even if the site is not deployed) for proper execution of SIS custom taglets.
+  * We need a separated `install` phase first, for proper installation of `sis-build-helper` plugin.
 
-First, create the branch:
+First, create the tag:
 
     :::bash
     svn copy https://svn.apache.org/repos/asf/sis/branches/$NEW_VERSION \
              https://svn.apache.org/repos/asf/sis/tags/$NEW_VERSION \
-             --message "Create the $NEW_VERSION tag."
+             --message "Create the $NEW_VERSION tag for RC$RELEASE_CANDIDATE."
 
 Checkout:
 
@@ -239,12 +242,10 @@ Deploy Maven artifacts    {#maven-deploy}
 
 Ensure that the current directory is `tags/$NEW_VERSION`.
 Execute an `install` phase first (required for our custom `sis-build-helper` plugin), then deploy.
-Note that the `site` phase need to be specified even if we will not deploy the site,
-for proper execution of our custom Javadoc taglets.
 
     :::bash
     mvn clean install
-    mvn site deploy --activate-profiles apache-release --define skipTests=true
+    mvn deploy --activate-profiles apache-release
 
 
 
@@ -259,6 +260,18 @@ Additional references about signatures:
 
    * [Maven repository PGP signature checker FAQ](http://people.apache.org/~henkp/repo/faq.html)
    * [Release signing][release-signing] (cited in the [Release setup](release-management-setup.html) page)
+
+Select any `*-javadoc.jar` file and click on the <cite>Archive Browser</cite> tab on the right side.
+Select any `*.html` file which is known to use some of the custom taglets defined in the `sis-build-helper` module.
+Click on that file and verify that the custom elements are rendered properly.
+In particular, all Java code snippets are missing if the `@preformat` taglet had not be properly registered,
+so try to see at least one code snippet.
+
+Delete all `org/apache/sis/parent/$NEW_VERSION/sis-$NEW_VERSION-source-release.zip.*` files on the Nexus repository.
+They should not be there - source release will be deployed on an other repository later.
+
+Delete all `org/apache/sis/**/$NEW_VERSION/site.xml.*` files.
+There is no apparent reason for deploying Maven web site descriptors.
 
 Close the Nexus staging repository: click the checkboxes for the open staging repositories
 (`org.apache.sis-<id>`) and press _Close_ in the menu bar.
@@ -275,7 +288,7 @@ Stage the source, binary and javadoc artifacts    {#stage}
 ==========================================================
 
 Create the directory for the new version and release candidate within the distribution directory.
-The `RC` number shall correspond to the current release attempt.
+The `$RELEASE_CANDIDATE` number shall correspond to the current release attempt.
 
     :::bash
     mkdir ../../distribution/$NEW_VERSION
