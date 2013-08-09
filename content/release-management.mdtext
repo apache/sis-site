@@ -43,6 +43,7 @@ the current release attempt. Those versions shall be set on the command line lik
     export OLD_VERSION=0.3
     export NEW_VERSION=0.4
     export RELEASE_CANDIDATE=1
+    export SIGNING_KEY=<your key ID>
 
 
 
@@ -303,7 +304,7 @@ If JDK7 is *not* used, then omit the `cp` command below.
 
     :::bash
     cp ../../JDK7/src/main/javadoc/stylesheet.css src/main/javadoc/
-    mvn site
+    mvn site --define skipTests=true
     svn revert src/main/javadoc/stylesheet.css
     cd target/site
     zip -9 -r apache-sis-$NEW_VERSION-doc.zip apidocs
@@ -336,14 +337,16 @@ Rename the files to something more conform to the convention seen in other Apach
 Sign the source, javadoc and binary artifacts:
 
     :::bash
-    gpg --print-md SHA512     apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.sha
-    gpg --print-md MD5        apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.md5
-    gpg --armor --detach-sign apache-sis-$NEW_VERSION-doc.zip
-    gpg --print-md SHA512     apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.sha
-    gpg --print-md MD5        apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.md5
-    gpg --armor --detach-sign apache-sis-$NEW_VERSION.pack.gz
-    gpg --print-md SHA512     apache-sis-$NEW_VERSION.pack.gz > apache-sis-$NEW_VERSION.pack.gz.sha
-    gpg --print-md MD5        apache-sis-$NEW_VERSION.pack.gz > apache-sis-$NEW_VERSION.pack.gz.md5
+    gpg --print-md SHA512 apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.sha
+    gpg --print-md MD5    apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.md5
+
+    gpg --armor --detach-sign --default-key $SIGNING_KEY    apache-sis-$NEW_VERSION-doc.zip
+    gpg --print-md SHA512 apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.sha
+    gpg --print-md MD5    apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.md5
+
+    gpg --armor --detach-sign --default-key $SIGNING_KEY    apache-sis-$NEW_VERSION.pack.gz
+    gpg --print-md SHA512 apache-sis-$NEW_VERSION.pack.gz > apache-sis-$NEW_VERSION.pack.gz.sha
+    gpg --print-md MD5    apache-sis-$NEW_VERSION.pack.gz > apache-sis-$NEW_VERSION.pack.gz.md5
 
 Commit:
 
