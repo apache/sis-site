@@ -130,6 +130,7 @@ but can be replaced by anything else), then checkout a clean copy of the branch 
     cd ../branches
     svn checkout https://svn.apache.org/repos/asf/sis/branches/$NEW_VERSION
     cd $NEW_VERSION
+    export BRANCH_DIR=`pwd`
 
 We need to update the Subversion URL and SIS version numbers not only in the `pom.xml` files,
 but also in a few Java files. The following command performs the replacement using Ant:
@@ -212,6 +213,7 @@ Checkout:
     cd ../../tags
     svn checkout https://svn.apache.org/repos/asf/sis/tags/$NEW_VERSION
     cd $NEW_VERSION
+    export TAG_DIR=`pwd`
 
 Update versions number in `pom.xml` files (like what `mvn release:prepare` would have done),
 plus some additional files:
@@ -224,7 +226,7 @@ ignoring the license or other information that may have been removed by the Mave
 (this has been known to happen if the starting `<project>` tag is not on a single line).
 
     :::bash
-    find . -name "pom.xml" -exec diff '{}' ../../branches/$NEW_VERSION/'{}'.tag \;
+    find . -name "pom.xml" -exec diff '{}' $BRANCH_DIR/$NEW_VERSION/'{}'.tag \;
 
 Commit:
 
@@ -234,21 +236,29 @@ Commit:
 Clean the branch, since we will not need it anymore:
 
     :::bash
-    cd ../../branches/$NEW_VERSION
+    cd BRANCH_DIR/$NEW_VERSION
     mvn release:clean
     mvn clean
-    cd ../../tags/$NEW_VERSION
 
 
 
 Deploy Maven artifacts    {#maven-deploy}
 =========================================
 
-Ensure that the current directory is `tags/$NEW_VERSION`.
-Execute an `install` phase first (required for our custom `sis-build-helper` plugin), then deploy.
+Execute an `install` phase first (required for our custom `sis-build-helper` plugin),
+and generate the binary artifact (`pack.gz` file). The later will fail if duplicated
+class files or resources are found. Consequently building the `pack.gz` file is an
+additional test worth to do before deployment.
+.
 
     :::bash
+    cd $TAG_DIR
     mvn clean install
+    mvn org.apache.sis.core:sis-build-helper:$NEW_VERSION:pack --non-recursive
+
+If the above succeeded, deploy:
+
+    :::bash
     mvn deploy --activate-profiles apache-release
 
 
@@ -271,30 +281,28 @@ Click on that file and verify that the custom elements are rendered properly.
 In particular, all Java code snippets are missing if the `@preformat` taglet had not be properly registered,
 so try to see at least one code snippet.
 
-Delete all `org/apache/sis/parent/$NEW_VERSION/parent-$NEW_VERSION-source-release.zip.*` files on the Nexus repository.
-They should not be there - source release will be deployed on an other repository later.
+Additional cleaning:
 
-Delete all `org/apache/sis/*/$NEW_VERSION/*-$NEW_VERSION-site.xml.*` files.
-There is no apparent reason for deploying Maven web site descriptors.
+  * Delete all `org/apache/sis/parent/$NEW_VERSION/parent-$NEW_VERSION-source-release.zip.*` files on the Nexus repository.
+    They should not be there - source release will be deployed on an other repository later.
+  * Delete all `org/apache/sis/*/$NEW_VERSION/*-$NEW_VERSION-site.xml*` files.
+    There is no apparent reason for deploying Maven web site descriptors.
 
-Close the Nexus staging repository: click the checkboxes for the open staging repositories
-(`org.apache.sis-<id>`) and press _Close_ in the menu bar.
-In the description field, enter `SIS $NEW_VERSION-$RELEASE_CANDIDATE`
-(replace `$NEW_VERSION` and `$RELEASE_CANDIDATE` by appropriate values.
-This will not be done automatically since this field box is not our bash shell!).
+Close the Nexus staging repository:
 
-Click on the `org.apache.sis-<id>` link in order to get the URL to the temporary Maven repository created by Nexus.
-Announce on the `dev@` mailing list the availability of this temporary repository for testing purpose.
+  * Click the checkboxes for the open staging repositories (`org.apache.sis-<id>`) and press _Close_ in the menu bar.
+  * In the description field, enter "`SIS $NEW_VERSION-$RELEASE_CANDIDATE`"
+    (replace `$NEW_VERSION` and `$RELEASE_CANDIDATE` by appropriate values.
+    This will not be done automatically since this field box is not our bash shell!).
+  * Click on the `org.apache.sis-<id>` link in order to get the URL to the temporary Maven repository created by Nexus.
+
+We will announce later (in the <cite>Put the release candidate up for a vote</cite> section) on the `dev@` mailing list
+the availability of this temporary repository for testing purpose.
 
 
 
 Stage the source, binary and javadoc artifacts    {#stage}
 ==========================================================
-
-Create the binary artifact (`pack.gz` file):
-
-    :::bash
-    mvn org.apache.sis.core:sis-build-helper:$NEW_VERSION:pack --non-recursive
 
 Generate the Javadoc. While not mandatory, we suggest to use JDK 7 or above for getting the new look and feel,
 getting the Javadoc enhancements expected in future JDK releases (more dynamic pages),
@@ -310,29 +318,59 @@ If JDK7 is *not* used, then omit the `cp` command below.
     zip -9 -r apache-sis-$NEW_VERSION-doc.zip apidocs
     cd ../..
 
+
+
+Initialize the distribution directory    {#dist}
+------------------------------------------------
+
 Create the directory for the new version and release candidate within the distribution directory.
-The `$RELEASE_CANDIDATE` number shall correspond to the current release attempt.
+The `$RELEASE_CANDIDATE` variable shall be the number of current release attempt.
 
     :::bash
     cd ../../distribution
     mkdir -p $NEW_VERSION/RC$RELEASE_CANDIDATE
     svn add $NEW_VERSION
+    cd $NEW_VERSION/RC$RELEASE_CANDIDATE
+    export DIST_DIR=`pwd`
 
 Copy the `HEADER.html` file from the previous release.
 Update the file content if necessary.
 
-    cd $NEW_VERSION/RC$RELEASE_CANDIDATE
+    :::bash
     svn copy https://dist.apache.org/repos/dist/release/sis/$OLD_VERSION/HEADER.html .
 
 Move the files generated by Maven to the distribution directory:
 
-    mv ../../../tags/$NEW_VERSION/target/sis-$NEW_VERSION-* .
-    mv ../../../tags/$NEW_VERSION/target/site/apache-sis-$NEW_VERSION-* .
+    :::bash
+    mv $TAG_DIR/target/sis-$NEW_VERSION-* .
+    mv $TAG_DIR/target/site/apache-sis-$NEW_VERSION-* .
 
 Rename the files to something more conform to the convention seen in other Apache projects:
 
+    :::bash
     mv sis-$NEW_VERSION-source-release.zip     apache-sis-$NEW_VERSION-src.zip
     mv sis-$NEW_VERSION-source-release.zip.asc apache-sis-$NEW_VERSION-src.zip.asc
+
+
+
+Create the binary artifact    {#binary}
+---------------------------------------
+
+Create the binary artifact:
+
+    :::bash
+    cp -r $TAG_DIR/application/sis-console/src/main/artifact apache-sis-$NEW_VERSION
+    cd apache-sis-$NEW_VERSION
+    cp $TAG_DIR/LICENSE .
+    cp $TAG_DIR/NOTICE .
+    mv $TAG/target/bundles/sis-$NEW_VERSION.pack.gz lib/sis.pack.gz
+    cd ..
+    zip -9 -r apache-sis-$NEW_VERSION-bin.zip apache-sis-$NEW_VERSION
+    rm -r apache-sis-$NEW_VERSION
+
+
+Sign and commit    {#sign}
+--------------------------
 
 Sign the source, javadoc and binary artifacts:
 
@@ -344,25 +382,31 @@ Sign the source, javadoc and binary artifacts:
     gpg --print-md SHA512 apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.sha
     gpg --print-md MD5    apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.md5
 
-    gpg --armor --detach-sign --default-key $SIGNING_KEY    apache-sis-$NEW_VERSION.pack.gz
-    gpg --print-md SHA512 apache-sis-$NEW_VERSION.pack.gz > apache-sis-$NEW_VERSION.pack.gz.sha
-    gpg --print-md MD5    apache-sis-$NEW_VERSION.pack.gz > apache-sis-$NEW_VERSION.pack.gz.md5
+    gpg --armor --detach-sign --default-key $SIGNING_KEY    apache-sis-$NEW_VERSION-bin.zip
+    gpg --print-md SHA512 apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.sha
+    gpg --print-md MD5    apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.md5
 
 Commit:
 
     :::bash
+    svn add apache-sis-$NEW_VERSION-*
     cd ../..
     svn commit --message "SIS release candidate $RELEASE_CANDIDATE"
 
 Verify that the files are downloadable from the
 [https://dist.apache.org/repos/dist/dev/sis/][https://dist.apache.org/repos/dist/dev/sis/] sub-directory.
 
+
+
+Update online Javadoc     {#apidocs}
+------------------------------------
+
 Copy the Javadoc to the web site staging directory:
 
     :::bash
     cd ../site/content
     rm -r apidocs
-    unzip ../../distribution/0.3/RC1/apache-sis-0.3-doc.zip
+    unzip $DIST_DIR/apache-sis-0.3-doc.zip
 
 Execute `svn add` for new files and `svn remove` for deleted files:
 
