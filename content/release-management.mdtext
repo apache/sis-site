@@ -391,6 +391,7 @@ Create the binary artifact:
     rm -r apache-sis-$NEW_VERSION
 
 
+
 Sign and commit    {#sign}
 --------------------------
 
@@ -422,9 +423,6 @@ Commit:
     cd ../..
     svn commit --message "SIS release candidate $RELEASE_CANDIDATE"
 
-Verify that the files are downloadable from the
-[https://dist.apache.org/repos/dist/dev/sis/](https://dist.apache.org/repos/dist/dev/sis/) sub-directory.
-
 
 
 Update online Javadoc     {#apidocs}
@@ -443,6 +441,22 @@ Execute `svn add` for new files and `svn remove` for deleted files:
     cd apidocs
     svn status | gawk '/^\?.*/ {print $2}' | xargs -r svn add
     svn status | gawk '/^\!.*/ {print $2}' | xargs -r svn remove
+
+
+
+Test the release    {#test}
+---------------------------
+
+Execute the following commands in any temporary directory:
+
+    :::bash
+    wget --no-check-certificate https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE/apache-sis-$NEW_VERSION-src.zip \
+                                https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE/apache-sis-$NEW_VERSION-src.zip.asc
+    # Test
+    gpg --verify apache-sis-$NEW_VERSION-src.zip.asc
+    unzip apache-sis-$NEW_VERSION-src.zip
+    cd sis-$NEW_VERSION
+    mvn install
 
 
 
