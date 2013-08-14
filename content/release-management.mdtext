@@ -256,10 +256,14 @@ additional test worth to do before deployment.
     mvn clean install
     mvn org.apache.sis.core:sis-build-helper:$NEW_VERSION:pack --non-recursive
 
-If the above succeeded, deploy:
+If the above succeeded, deploy. We temporarily delete the Maven site descriptors (`site.xml`)
+for preventing Maven to deploy them, since there is no apparent reason why users would want to
+download site descriptors from a Maven repository.
 
     :::bash
+    find . -name "site.xml" -delete
     mvn deploy --activate-profiles apache-release
+    svn revert . --recursive
 
 
 
@@ -285,8 +289,6 @@ Additional cleaning:
 
   * Delete all `org/apache/sis/parent/$NEW_VERSION/parent-$NEW_VERSION-source-release.zip.*` files on the Nexus repository.
     They should not be there - source release will be deployed on an other repository later.
-  * Delete all `org/apache/sis/*/$NEW_VERSION/*-$NEW_VERSION-site.xml*` files.
-    There is no apparent reason for deploying Maven web site descriptors.
 
 Close the Nexus staging repository:
 
@@ -298,6 +300,26 @@ Close the Nexus staging repository:
 
 We will announce later (in the <cite>Put the release candidate up for a vote</cite> section) on the `dev@` mailing list
 the availability of this temporary repository for testing purpose.
+
+
+
+Test the Nexus release artifacts    {#nexus-text}
+-------------------------------------------------
+
+Go to the test Maven project. Open the root `pom.xml` file, go to the `<url>` declaration and replace value by
+the URL of the temporary Maven repository created by Nexus. Usually, only the 3 last digits need to be updated.
+Set the `<version>` number to the SIS release to be tested.
+
+    :::bash
+    cd ../../release-test/maven
+    vim pom.xml
+    svn commit -m "Test project for SIS $NEW_VERSION-RC$RELEASE_CANDIDATE"
+
+Clear the local Maven repository in order to force downloads from the Nexus repository, then test.
+This will also verify the checksums.
+
+    rm -r ~/.m2/repository/org/apache/sis
+    mvn package --strict-checksums
 
 
 
@@ -363,7 +385,7 @@ Create the binary artifact:
     cd apache-sis-$NEW_VERSION
     cp $TAG_DIR/LICENSE .
     cp $TAG_DIR/NOTICE .
-    mv $TAG/target/bundles/sis-$NEW_VERSION.pack.gz lib/sis.pack.gz
+    mv $TAG_DIR/target/bundles/apache-sis-$NEW_VERSION.pack.gz lib/sis.pack.gz
     cd ..
     zip -9 -r apache-sis-$NEW_VERSION-bin.zip apache-sis-$NEW_VERSION
     rm -r apache-sis-$NEW_VERSION
@@ -386,6 +408,13 @@ Sign the source, javadoc and binary artifacts:
     gpg --print-md SHA512 apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.sha
     gpg --print-md MD5    apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.md5
 
+Verify checksums and signatures:
+
+    :::bash
+    find . -name "*.md5" -exec shasum --check '{}' \;
+    find . -name "*.sha" -exec shasum --check '{}' \;
+    find . -name "*.asc" -exec gpg --verify '{}' \;
+
 Commit:
 
     :::bash
@@ -394,7 +423,7 @@ Commit:
     svn commit --message "SIS release candidate $RELEASE_CANDIDATE"
 
 Verify that the files are downloadable from the
-[https://dist.apache.org/repos/dist/dev/sis/][https://dist.apache.org/repos/dist/dev/sis/] sub-directory.
+[https://dist.apache.org/repos/dist/dev/sis/](https://dist.apache.org/repos/dist/dev/sis/) sub-directory.
 
 
 
@@ -429,8 +458,8 @@ Put the release candidate up for a vote    {#vote}
     to rollback the release if a -1 vote is received. See _Recovering from a vetoed release_ below.
   * After the vote has been open for at least 72 hours, has at least three +1 PMC votes and no -1 votes,
     then post the results to the vote thread:
-  * Reply to the initial email and prepend to the original subject "[RESULT]"
-  * Include a list of everyone who voted +1, 0 or -1.
+    + Reply to the initial email and prepend to the original subject "[RESULT]"
+    + Include a list of everyone who voted +1, 0 or -1.
 
 
 
