@@ -29,6 +29,7 @@
               </li>
               <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">Project Documentation<b class="caret"></b></a>
                 <ul class="dropdown-menu">
+                  <li><a href="apidocs/index.html">Online Javadoc</a></li>
                   <li><a href="downloads.html">Downloads</a></li>
                   <li><a href="source.html">Source Code</a></li>
                   <li><a href="code-patterns.html">Code patterns</a></li>
@@ -63,6 +64,7 @@
               <li><a href="license.html">Project License</a></li>
               <li><a href="team-list.html">Project Team</a></li>
               <li class="nav-header">Project Documentation</li>
+              <li><a href="apidocs/index.html">Online Javadoc</a></li>
               <li><a href="downloads.html">Downloads</a></li>
               <li><a href="source.html">Source Code</a></li>
               <li><a href="code-patterns.html">Code patterns</a></li>
@@ -103,9 +105,17 @@ The intended audiences are SIS release managers.</p>
 <li><a href="#tag">Create tag</a></li>
 <li><a href="#maven-deploy">Deploy Maven artifacts</a><ul>
 <li><a href="#nexus-close">Verify and close the Nexus release artifacts</a></li>
+<li><a href="#nexus-text">Test the Nexus release artifacts</a></li>
 </ul>
 </li>
-<li><a href="#stage">Stage the source, binary and javadoc artifacts</a></li>
+<li><a href="#stage">Stage the source, binary and javadoc artifacts</a><ul>
+<li><a href="#dist">Initialize the distribution directory</a></li>
+<li><a href="#binary">Create the binary artifact</a></li>
+<li><a href="#sign">Sign and commit</a></li>
+<li><a href="#apidocs">Update online Javadoc</a></li>
+<li><a href="#test">Test the release</a></li>
+</ul>
+</li>
 <li><a href="#vote">Put the release candidate up for a vote</a><ul>
 <li><a href="#veto">Recovering from a vetoed release</a></li>
 </ul>
@@ -131,6 +141,7 @@ the current release attempt. Those versions shall be set on the command line lik
 <div class="codehilite"><pre><span class="nb">export </span><span class="nv">OLD_VERSION</span><span class="o">=</span>0.3
 <span class="nb">export </span><span class="nv">NEW_VERSION</span><span class="o">=</span>0.4
 <span class="nb">export </span><span class="nv">RELEASE_CANDIDATE</span><span class="o">=</span>1
+<span class="nb">export </span><span class="nv">SIGNING_KEY</span><span class="o">=</span>&lt;your key ID&gt;
 </pre></div>
 
 
@@ -146,9 +157,12 @@ in this page shall be adjusted accordingly.</p>
 │  └─ $NEW_VERSION
 │     └─ target
 │        └─ bundles
-└─ distribution
-   └─ $NEW_VERSION
-      └─ RC$RELEASE_CANDIDATE
+├─ distribution
+│  └─ $NEW_VERSION
+│     └─ RC$RELEASE_CANDIDATE
+└─ site
+   └─ content
+      └─ apidocs
 </pre></div>
 
 
@@ -197,6 +211,7 @@ but can be replaced by anything else), then checkout a clean copy of the branch 
 <div class="codehilite"><pre><span class="nb">cd</span> ../branches
 svn checkout https://svn.apache.org/repos/asf/sis/branches/<span class="nv">$NEW_VERSION</span>
 <span class="nb">cd</span> <span class="nv">$NEW_VERSION</span>
+<span class="nb">export </span><span class="nv">BRANCH_DIR</span><span class="o">=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>
 </pre></div>
 
 
@@ -206,10 +221,14 @@ but also in a few Java files. The following command performs the replacement usi
 </pre></div>
 
 
-<p>Open the root <code>pom.xml</code> file in an editor and remove the following sections:</p>
+<p>Open the root <code>pom.xml</code> file in an editor and perform the following changes:</p>
 <ul>
-<li>The whole <code>&lt;pluginRepositories&gt;</code> section, since it should not be needed for releases (and is actually not allowed).</li>
-<li>The <code>&lt;plugin&gt;</code> section for <code>docbkx-maven-plugin</code>, since the DocBook directory is omitted (see below).</li>
+<li>Copy-and-paste the whole <code>&lt;plugin&gt;</code> section for <code>maven-javadoc-plugin</code> from <code>&lt;reporting&gt;</code> to <code>&lt;build&gt;</code>.
+    We need the javadoc configuration to be duplicated in both <code>&lt;reporting&gt;</code> and <code>&lt;build&gt;</code> sections in order
+    to get the expected Javadoc output in both Maven site and in the <code>*-javadoc.jar</code> files to deployed in the
+    Maven repository. <strong>TODO:</strong> see if upgrading Maven or the <code>maven-javadoc-plugin</code> can solve this problem.</li>
+<li>Remove the whole <code>&lt;pluginRepositories&gt;</code> section, since it should not be needed for releases (and is actually not allowed).</li>
+<li>Remove the <code>&lt;plugin&gt;</code> section for <code>docbkx-maven-plugin</code>, since the DocBook directory is omitted (see below).</li>
 </ul>
 <p>Recursively delete the <code>src/main/docbook</code> directory (this policy may be revised in future SIS releases).
 We omit this directory for now because this material may move to the CMS, and no English version is available yet.</p>
@@ -251,13 +270,12 @@ However we perform those steps manually rather than relying on Maven for the fol
 <li>Perform some additional changes on the tag.</li>
 <li>Reduce the amount of commits on SVN (avoid a rollback in branch directory).</li>
 <li>Give more opportunities to take action before commit in case of problems.</li>
-<li>We need a separated <code>install</code> phase first, then a <code>site</code> phase at deploy time
-    (even if the site is not deployed) for proper execution of SIS custom taglets.</li>
+<li>We need a separated <code>install</code> phase first, for proper installation of <code>sis-build-helper</code> plugin.</li>
 </ul>
-<p>First, create the branch:</p>
+<p>First, create the tag:</p>
 <div class="codehilite"><pre>svn copy https://svn.apache.org/repos/asf/sis/branches/<span class="nv">$NEW_VERSION</span> <span class="se">\</span>
          https://svn.apache.org/repos/asf/sis/tags/<span class="nv">$NEW_VERSION</span> <span class="se">\</span>
-         --message <span class="s2">&quot;Create the $NEW_VERSION tag.&quot;</span>
+         --message <span class="s2">&quot;Create the $NEW_VERSION tag for RC$RELEASE_CANDIDATE.&quot;</span>
 </pre></div>
 
 
@@ -265,6 +283,7 @@ However we perform those steps manually rather than relying on Maven for the fol
 <div class="codehilite"><pre><span class="nb">cd</span> ../../tags
 svn checkout https://svn.apache.org/repos/asf/sis/tags/<span class="nv">$NEW_VERSION</span>
 <span class="nb">cd</span> <span class="nv">$NEW_VERSION</span>
+<span class="nb">export </span><span class="nv">TAG_DIR</span><span class="o">=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>
 </pre></div>
 
 
@@ -277,7 +296,7 @@ plus some additional files:</p>
 <p>Compare with the modifications done by <code>mvn release:prepare</code>. The following command should report no difference,
 ignoring the license or other information that may have been removed by the Maven plugin
 (this has been known to happen if the starting <code>&lt;project&gt;</code> tag is not on a single line).</p>
-<div class="codehilite"><pre>find . -name <span class="s2">&quot;pom.xml&quot;</span> -exec diff <span class="s1">&#39;{}&#39;</span> ../../branches/<span class="nv">$NEW_VERSION</span>/<span class="s1">&#39;{}&#39;</span>.tag <span class="se">\;</span>
+<div class="codehilite"><pre>find . -name <span class="s2">&quot;pom.xml&quot;</span> -exec diff <span class="s1">&#39;{}&#39;</span> <span class="nv">$BRANCH_DIR</span>/<span class="s1">&#39;{}&#39;</span>.tag <span class="se">\;</span>
 </pre></div>
 
 
@@ -287,20 +306,30 @@ ignoring the license or other information that may have been removed by the Mave
 
 
 <p>Clean the branch, since we will not need it anymore:</p>
-<div class="codehilite"><pre><span class="nb">cd</span> ../../branches/<span class="nv">$NEW_VERSION</span>
+<div class="codehilite"><pre><span class="nb">cd</span> <span class="nv">$BRANCH_DIR</span>
 mvn release:clean
 mvn clean
-<span class="nb">cd</span> ../../tags/<span class="nv">$NEW_VERSION</span>
 </pre></div>
 
 
 <h1 id="maven-deploy">Deploy Maven artifacts</h1>
-<p>Ensure that the current directory is <code>tags/$NEW_VERSION</code>.
-Execute an <code>install</code> phase first (required for our custom <code>sis-build-helper</code> plugin), then deploy.
-Note that the <code>site</code> phase need to be specified even if we will not deploy the site,
-for proper execution of our custom Javadoc taglets.</p>
-<div class="codehilite"><pre>mvn clean install
-mvn site deploy --activate-profiles apache-release --define <span class="nv">skipTests</span><span class="o">=</span><span class="nb">true</span>
+<p>Execute an <code>install</code> phase first (required for our custom <code>sis-build-helper</code> plugin),
+and generate the binary artifact (<code>pack.gz</code> file). The later will fail if duplicated
+class files or resources are found. Consequently building the <code>pack.gz</code> file is an
+additional test worth to do before deployment.
+.</p>
+<div class="codehilite"><pre><span class="nb">cd</span> <span class="nv">$TAG_DIR</span>
+mvn clean install
+mvn org.apache.sis.core:sis-build-helper:<span class="nv">$NEW_VERSION</span>:pack --non-recursive
+</pre></div>
+
+
+<p>If the above succeeded, deploy. We temporarily delete the Maven site descriptors (<code>site.xml</code>)
+for preventing Maven to deploy them, since there is no apparent reason why users would want to
+download site descriptors from a Maven repository.</p>
+<div class="codehilite"><pre>find . -name <span class="s2">&quot;site.xml&quot;</span> -delete
+mvn deploy --activate-profiles apache-release
+svn revert . --recursive
 </pre></div>
 
 
@@ -313,63 +342,156 @@ Navigate through the artifact tree and make sure that all javadoc, source, test 
 <li><a href="http://people.apache.org/~henkp/repo/faq.html">Maven repository PGP signature checker FAQ</a></li>
 <li><a href="http://www.apache.org/dev/release-signing.html">Release signing</a> (cited in the <a href="release-management-setup.html">Release setup</a> page)</li>
 </ul>
-<p>Close the Nexus staging repository: click the checkboxes for the open staging repositories
-(<code>org.apache.sis-&lt;id&gt;</code>) and press <em>Close</em> in the menu bar.
-In the description field, enter <code>SIS $NEW_VERSION-$RELEASE_CANDIDATE</code>
-(replace <code>$NEW_VERSION</code> and <code>$RELEASE_CANDIDATE</code> by appropriate values.
-This will not be done automatically since this field box is not our bash shell!).</p>
-<p>Click on the <code>org.apache.sis-&lt;id&gt;</code> link in order to get the URL to the temporary Maven repository created by Nexus.
-Announce on the <code>dev@</code> mailing list the availability of this temporary repository for testing purpose.</p>
+<p>Select any <code>*-javadoc.jar</code> file and click on the <cite>Archive Browser</cite> tab on the right side.
+Select any <code>*.html</code> file which is known to use some of the custom taglets defined in the <code>sis-build-helper</code> module.
+Click on that file and verify that the custom elements are rendered properly.
+In particular, all Java code snippets are missing if the <code>@preformat</code> taglet had not be properly registered,
+so try to see at least one code snippet.</p>
+<p>Additional cleaning:</p>
+<ul>
+<li>Delete all <code>org/apache/sis/parent/$NEW_VERSION/parent-$NEW_VERSION-source-release.zip.*</code> files on the Nexus repository.
+    They should not be there - source release will be deployed on an other repository later.</li>
+</ul>
+<p>Close the Nexus staging repository:</p>
+<ul>
+<li>Click the checkboxes for the open staging repositories (<code>org.apache.sis-&lt;id&gt;</code>) and press <em>Close</em> in the menu bar.</li>
+<li>In the description field, enter "<code>SIS $NEW_VERSION-$RELEASE_CANDIDATE</code>"
+    (replace <code>$NEW_VERSION</code> and <code>$RELEASE_CANDIDATE</code> by appropriate values.
+    This will not be done automatically since this field box is not our bash shell!).</li>
+<li>Click on the <code>org.apache.sis-&lt;id&gt;</code> link in order to get the URL to the temporary Maven repository created by Nexus.</li>
+</ul>
+<p>We will announce later (in the <cite>Put the release candidate up for a vote</cite> section) on the <code>dev@</code> mailing list
+the availability of this temporary repository for testing purpose.</p>
+<h2 id="nexus-text">Test the Nexus release artifacts</h2>
+<p>Go to the test Maven project. Open the root <code>pom.xml</code> file, go to the <code>&lt;url&gt;</code> declaration and replace value by
+the URL of the temporary Maven repository created by Nexus. Usually, only the 3 last digits need to be updated.
+Set the <code>&lt;version&gt;</code> number to the SIS release to be tested.</p>
+<div class="codehilite"><pre><span class="nb">cd</span> ../../release-test/maven
+vim pom.xml
+svn commit -m <span class="s2">&quot;Test project for SIS $NEW_VERSION-RC$RELEASE_CANDIDATE&quot;</span>
+</pre></div>
+
+
+<p>Clear the local Maven repository in order to force downloads from the Nexus repository, then test.
+This will also verify the checksums.</p>
+<div class="codehilite"><pre><span class="n">rm</span> <span class="o">-</span><span class="n">r</span> <span class="o">~/</span><span class="p">.</span><span class="n">m2</span><span class="o">/</span><span class="n">repository</span><span class="o">/</span><span class="n">org</span><span class="o">/</span><span class="n">apache</span><span class="o">/</span><span class="n">sis</span>
+<span class="n">mvn</span> <span class="n">package</span> <span class="o">--</span><span class="n">strict</span><span class="o">-</span><span class="n">checksums</span>
+</pre></div>
+
+
 <h1 id="stage">Stage the source, binary and javadoc artifacts</h1>
-<p>Create the directory for the new version and release candidate within the distribution directory.
-The <code>RC</code> number shall correspond to the current release attempt.</p>
-<div class="codehilite"><pre>mkdir ../../distribution/<span class="nv">$NEW_VERSION</span>
-</pre></div>
-
-
-<p>Create and put the binary artifact in the distribution directory:</p>
-<div class="codehilite"><pre>mvn org.apache.sis:sis-build-helper:<span class="nv">$NEW_VERSION</span>:pack --non-recursive
-mv target/bundles ../../distribution/<span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span>
-</pre></div>
-
-
-<p>Create and put the javadoc in the distribution directory:</p>
-<div class="codehilite"><pre><span class="nb">cd </span>target/site
-zip -9 -r ../../../../distribution/<span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span>/sis-<span class="nv">$NEW_VERSION</span>-apidocs.zip apidocs
+<p>Generate the Javadoc. While not mandatory, we suggest to use JDK 7 or above for getting the new look and feel,
+getting the Javadoc enhancements expected in future JDK releases (more dynamic pages),
+avoiding the security vulnerability discovered in the Javadoc tools of older JDK releases,
+and keeping the <code>diff</code> smaller on the SVN repository of SIS web site.
+If JDK7 is <em>not</em> used, then omit the <code>cp</code> command below.</p>
+<div class="codehilite"><pre>cp ../../JDK7/src/main/javadoc/stylesheet.css src/main/javadoc/
+mvn site --define <span class="nv">skipTests</span><span class="o">=</span><span class="nb">true</span>
+svn revert src/main/javadoc/stylesheet.css
+<span class="nb">cd </span>target/site
+zip -9 -r apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip apidocs
 <span class="nb">cd</span> ../..
 </pre></div>
 
 
-<p>Create and put the source code in the distribution directory:</p>
-<div class="codehilite"><pre>svn <span class="nb">export</span> . ../../distribution/<span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span>/src --native-eol LF
-<span class="nb">cd</span> ../../distribution/<span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span>
-zip -9 -r sis-<span class="nv">$NEW_VERSION</span>-src.zip src
-rm -r src
+<h2 id="dist">Initialize the distribution directory</h2>
+<p>Create the directory for the new version and release candidate within the distribution directory.
+The <code>$RELEASE_CANDIDATE</code> variable shall be the number of current release attempt.</p>
+<div class="codehilite"><pre><span class="nb">cd</span> ../../distribution
+mkdir -p <span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span>
+svn add <span class="nv">$NEW_VERSION</span>
+<span class="nb">cd</span> <span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span>
+<span class="nb">export </span><span class="nv">DIST_DIR</span><span class="o">=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>
 </pre></div>
 
 
+<p>Copy the <code>HEADER.html</code> file from the previous release.
+Update the file content if necessary.</p>
+<div class="codehilite"><pre>svn copy https://dist.apache.org/repos/dist/release/sis/<span class="nv">$OLD_VERSION</span>/HEADER.html .
+</pre></div>
+
+
+<p>Move the files generated by Maven to the distribution directory:</p>
+<div class="codehilite"><pre>mv <span class="nv">$TAG_DIR</span>/target/sis-<span class="nv">$NEW_VERSION</span>-* .
+mv <span class="nv">$TAG_DIR</span>/target/site/apache-sis-<span class="nv">$NEW_VERSION</span>-* .
+</pre></div>
+
+
+<p>Rename the files to something more conform to the convention seen in other Apache projects:</p>
+<div class="codehilite"><pre>mv sis-<span class="nv">$NEW_VERSION</span>-source-release.zip     apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip
+mv sis-<span class="nv">$NEW_VERSION</span>-source-release.zip.asc apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.asc
+</pre></div>
+
+
+<h2 id="binary">Create the binary artifact</h2>
+<p>Create the binary artifact:</p>
+<div class="codehilite"><pre>cp -r <span class="nv">$TAG_DIR</span>/application/sis-console/src/main/artifact apache-sis-<span class="nv">$NEW_VERSION</span>
+<span class="nb">cd </span>apache-sis-<span class="nv">$NEW_VERSION</span>
+cp <span class="nv">$TAG_DIR</span>/LICENSE .
+cp <span class="nv">$TAG_DIR</span>/NOTICE .
+mv <span class="nv">$TAG_DIR</span>/target/bundles/apache-sis-<span class="nv">$NEW_VERSION</span>.pack.gz lib/sis.pack.gz
+<span class="nb">cd</span> ..
+zip -9 -r apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip apache-sis-<span class="nv">$NEW_VERSION</span>
+rm -r apache-sis-<span class="nv">$NEW_VERSION</span>
+</pre></div>
+
+
+<h2 id="sign">Sign and commit</h2>
 <p>Sign the source, javadoc and binary artifacts:</p>
-<div class="codehilite"><pre>gpg --armor --detach-sign sis-<span class="nv">$NEW_VERSION</span>.src.zip
-gpg --print-md SHA512     sis-<span class="nv">$NEW_VERSION</span>.src.zip &gt; sis-<span class="nv">$NEW_VERSION</span>.src.zip.sha
-gpg --print-md MD5        sis-<span class="nv">$NEW_VERSION</span>.src.zip &gt; sis-<span class="nv">$NEW_VERSION</span>.src.zip.md5
-gpg --armor --detach-sign sis-<span class="nv">$NEW_VERSION</span>.apidocs.zip
-gpg --print-md SHA512     sis-<span class="nv">$NEW_VERSION</span>.apidocs.zip &gt; sis-<span class="nv">$NEW_VERSION</span>.apidocs.zip.sha
-gpg --print-md MD5        sis-<span class="nv">$NEW_VERSION</span>.apidocs.zip &gt; sis-<span class="nv">$NEW_VERSION</span>.apidocs.zip.md5
-gpg --armor --detach-sign sis-<span class="nv">$NEW_VERSION</span>.pack.gz
-gpg --print-md SHA512     sis-<span class="nv">$NEW_VERSION</span>.pack.gz &gt; sis-<span class="nv">$NEW_VERSION</span>.pack.gz.sha
-gpg --print-md MD5        sis-<span class="nv">$NEW_VERSION</span>.pack.gz &gt; sis-<span class="nv">$NEW_VERSION</span>.pack.gz.md5
+<div class="codehilite"><pre>gpg --print-md SHA512 apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.sha
+gpg --print-md MD5    apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.md5
+
+gpg --armor --detach-sign --default-key <span class="nv">$SIGNING_KEY</span>    apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip
+gpg --print-md SHA512 apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip.sha
+gpg --print-md MD5    apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip.md5
+
+gpg --armor --detach-sign --default-key <span class="nv">$SIGNING_KEY</span>    apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip
+gpg --print-md SHA512 apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip.sha
+gpg --print-md MD5    apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip.md5
+</pre></div>
+
+
+<p>Verify checksums and signatures:</p>
+<div class="codehilite"><pre>find . -name <span class="s2">&quot;*.md5&quot;</span> -exec shasum --check <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
+find . -name <span class="s2">&quot;*.sha&quot;</span> -exec shasum --check <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
+find . -name <span class="s2">&quot;*.asc&quot;</span> -exec gpg --verify <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
 </pre></div>
 
 
 <p>Commit:</p>
-<div class="codehilite"><pre><span class="nb">cd</span> ../..
-svn add <span class="nv">$NEW_VERSION</span>
+<div class="codehilite"><pre>svn add apache-sis-<span class="nv">$NEW_VERSION</span>-*
+<span class="nb">cd</span> ../..
 svn commit --message <span class="s2">&quot;SIS release candidate $RELEASE_CANDIDATE&quot;</span>
 </pre></div>
 
 
-<p>Verify that the files are downloadable from the
-[http://dist.apache.org/repos/dist/dev/sis/][http://dist.apache.org/repos/dist/dev/sis/] sub-directory.</p>
+<h2 id="apidocs">Update online Javadoc</h2>
+<p>Copy the Javadoc to the web site staging directory:</p>
+<div class="codehilite"><pre><span class="nb">cd</span> ../site/content
+rm -r apidocs
+unzip <span class="nv">$DIST_DIR</span>/apache-sis-0.3-doc.zip
+</pre></div>
+
+
+<p>Execute <code>svn add</code> for new files and <code>svn remove</code> for deleted files:</p>
+<div class="codehilite"><pre><span class="nb">cd </span>apidocs
+svn status | gawk <span class="s1">&#39;/^\?.*/ {print $2}&#39;</span> | xargs -r svn add
+svn status | gawk <span class="s1">&#39;/^\!.*/ {print $2}&#39;</span> | xargs -r svn remove
+</pre></div>
+
+
+<h2 id="test">Test the release</h2>
+<p>Execute the following commands in any temporary directory:</p>
+<div class="codehilite"><pre>wget --no-check-certificate https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span>/apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip <span class="se">\</span>
+                            https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span>/apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.asc
+<span class="c"># Test</span>
+gpg --verify apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.asc
+unzip apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip
+<span class="nb">cd </span>sis-<span class="nv">$NEW_VERSION</span>
+mvn install
+</pre></div>
+
+
 <h1 id="vote">Put the release candidate up for a vote</h1>
 <ul>
 <li>Create a VOTE email thread on <code>dev@</code> to record votes as replies.
@@ -380,9 +502,11 @@ svn commit --message <span class="s2">&quot;SIS release candidate $RELEASE_CANDI
 <li>a -1 vote does not necessarily mean that the vote must be redone, however it is usually a good idea
     to rollback the release if a -1 vote is received. See <em>Recovering from a vetoed release</em> below.</li>
 <li>After the vote has been open for at least 72 hours, has at least three +1 PMC votes and no -1 votes,
-    then post the results to the vote thread:</li>
+    then post the results to the vote thread:<ul>
 <li>Reply to the initial email and prepend to the original subject "[RESULT]"</li>
 <li>Include a list of everyone who voted +1, 0 or -1.</li>
+</ul>
+</li>
 </ul>
 <h2 id="veto">Recovering from a vetoed release</h2>
 <p>Reply to the initial vote email and prepend to the original subject:</p>
@@ -407,22 +531,25 @@ Promote the staged Nexus artifacts, by releasing them.</p>
 <ul>
 <li>Go to <a href="https://repository.apache.org/index.html">Nexus repository</a> → <em>Build Promotion</em> → <em>Staging repositories</em> and search for <code>org.apache.sis</code> in the <em>Repository</em> column.</li>
 <li>Click the checkboxes of the closed staging repositories (<code>org.apache.sis-&lt;id&gt;</code>) and press <em>Release</em> in the menu bar.</li>
-<li>Check in the source and binary artifacts into distribution svn which will be pulled by all mirrors within 24 hours.
-    The <code>dist/dev</code> svn is not mirrored, but the <code>dist/release</code> is.</li>
 </ul>
-<p>From any directory:</p>
+<p>Check in the source and binary artifacts into distribution svn which will be pulled by all mirrors within 24 hours.
+The <code>dist/dev</code> svn is not mirrored, but the <code>dist/release</code> is.
+From any directory:</p>
 <div class="codehilite"><pre>svn copy https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span> <span class="se">\</span>
          https://dist.apache.org/repos/dist/release/sis/<span class="nv">$NEW_VERSION</span> <span class="se">\</span>
-    --message <span class="s2">&quot;Committing SIS Source and Binary Release for SIS-$NEW_VERSION&quot;</span>
+    --message <span class="s2">&quot;Committing SIS Source and Binary Release Candidate $RELEASE_CANDIDATE for SIS-$NEW_VERSION.&quot;</span>
+
+svn delete https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERSION</span> <span class="se">\</span>
+    --message <span class="s2">&quot;Delete SIS $NEW_VERSION staging repository after release.&quot;</span>
 </pre></div>
 
 
-<p>Delete the prior versions:</p>
-<ul>
-<li>Navigate to the release directories checked out in the prior steps.</li>
-<li>Delete the prior release artifacts using the <code>svn delete</code> command.</li>
-<li>Commit the deletion.</li>
-</ul>
+<p>Delete the prior version:</p>
+<div class="codehilite"><pre>svn delete https://dist.apache.org/repos/dist/release/sis/<span class="nv">$OLD_VERSION</span> <span class="se">\</span>
+    --message <span class="s2">&quot;Archive SIS-$OLD_VERSION after release of SIS-$NEW_VERSION.&quot;</span>
+</pre></div>
+
+
 <p>Update the staged web site:</p>
 <ul>
 <li>Make a news announcement on the SIS home page.</li>
