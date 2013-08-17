@@ -507,21 +507,24 @@ Promote the staged Nexus artifacts, by releasing them.
 
   * Go to [Nexus repository][repository] → _Build Promotion_ → _Staging repositories_ and search for `org.apache.sis` in the _Repository_ column.
   * Click the checkboxes of the closed staging repositories (`org.apache.sis-<id>`) and press _Release_ in the menu bar.
-  * Check in the source and binary artifacts into distribution svn which will be pulled by all mirrors within 24 hours.
-    The `dist/dev` svn is not mirrored, but the `dist/release` is.
 
+Check in the source and binary artifacts into distribution svn which will be pulled by all mirrors within 24 hours.
+The `dist/dev` svn is not mirrored, but the `dist/release` is.
 From any directory:
 
     :::bash
     svn copy https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE \
              https://dist.apache.org/repos/dist/release/sis/$NEW_VERSION \
-        --message "Committing SIS Source and Binary Release for SIS-$NEW_VERSION"
+        --message "Committing SIS Source and Binary Release Candidate $RELEASE_CANDIDATE for SIS-$NEW_VERSION."
 
-Delete the prior versions:
+    svn delete https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION \
+        --message "Delete SIS $NEW_VERSION staging repository after release."
 
-  * Navigate to the release directories checked out in the prior steps.
-  * Delete the prior release artifacts using the `svn delete` command.
-  * Commit the deletion.
+Delete the prior version:
+
+    :::bash
+    svn delete https://dist.apache.org/repos/dist/release/sis/$OLD_VERSION \
+        --message "Archive SIS-$OLD_VERSION after release of SIS-$NEW_VERSION."
 
 Update the staged web site:
 
