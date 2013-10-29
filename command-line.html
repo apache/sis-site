@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Command-line interface</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="http://www.apache.org/css/code.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/sis.css">
+
+    
+
+    
+    <!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.  See the NOTICE file distributed with this work for additional information regarding copyright ownership.  The ASF licenses this file to you under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use this file except in compliance with the License.  You may obtain a copy of the License at . http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the License for the specific language governing permissions and limitations under the License. -->
+  </head>
+
+  <body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="/index.html"> Apache SIS&trade; </a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">About<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="mail-lists.html">Mailing Lists</a></li>
+                  <li><a href="license.html">Project License</a></li>
+                  <li><a href="team-list.html">Project Team</a></li>
+                </ul>
+              </li>
+              <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">Project Documentation<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="apidocs/index.html">Online Javadoc</a></li>
+                  <li><a href="downloads.html">Downloads</a></li>
+                  <li><a href="source.html">Source Code</a></li>
+                  <li><a href="code-patterns.html">Code patterns</a></li>
+                  <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+                  <li><a href="faq.html">FAQ</a></li>
+                  <li><a href="release-management.html">Release Management</a></li>
+                  <li><a href="site-management.html">Edit WebSite</a></li>
+                </ul>
+              </li>
+              <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">ASF <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="http://www.apache.org">The Foundation</a></li>
+                  <li><a href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
+                  <li><a href="http://www.apache.org/foundation/sponsorship.html">Become a Sponsor</a></li>
+                  <li><a href="http://www.apache.org/security/">Security</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div> <!-- /.nav-collapse -->
+        </div><!-- /.container -->
+      </div><!-- /.navbar-inner -->
+    </div>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span2">
+          <img src="img/logo.png"/>
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              <li class="active"><a href="index.html">Home</a></li>
+              <li><a href="mail-lists.html">Mailing Lists</a></li>
+              <li><a href="license.html">Project License</a></li>
+              <li><a href="team-list.html">Project Team</a></li>
+              <li class="nav-header">Project Documentation</li>
+              <li><a href="apidocs/index.html">Online Javadoc</a></li>
+              <li><a href="downloads.html">Downloads</a></li>
+              <li><a href="source.html">Source Code</a></li>
+              <li><a href="code-patterns.html">Code patterns</a></li>
+              <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="release-management.html">Release Management</a></li>
+              <li><a href="site-management.html">Edit WebSite</a></li>
+              <li class="nav-header">ASF</li>
+              <li><a href="http://www.apache.org">The Foundation</a></li>
+              <li><a href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
+              <li><a href="http://www.apache.org/foundation/sponsorship.html">Become a Sponsor</a></li>
+              <li><a href="http://www.apache.org/security/">Security</a></li>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+        <div class="span10">
+          <section id="content" class="row">
+            <article class="span12">
+              <p class="page-title">Command-line interface</p>
+              <p>A command-line interface is provided for extracting information from a data file.
+As of SIS 0.3, the command line can only extract ISO 19115 metadata from a NetCDF file.
+More formats and capabilities will be added in future SIS versions.</p>
+<div class="toc">
+<ul>
+<li><a href="#install">Installation</a></li>
+<li><a href="#usage">Usage</a><ul>
+<li><a href="#metadata">Extracting ISO 19115 metadata</a></li>
+</ul>
+</li>
+<li><a href="#performance">Performance consideration</a></li>
+</ul>
+</div>
+<h1 id="install">Installation</h1>
+<p>Select "Apache SIS 0.3 binary" from the <a href="downloads.html">downloads page</a> an unzip in any directory.
+The directory structure will be as below:</p>
+<div class="codehilite"><pre>apache-sis-0.3
+├─ bin
+└─ lib
+</pre></div>
+
+
+<p>The <code>bin</code> sub-directory contains a <code>sis</code> command for Unix systems (Linux or MacOS — we have not yet done a <code>sis.bat</code> file for Windows).
+The <code>bin</code> sub-directory can be added to the <code>PATH</code> environment variable for convenience, but this is not mandatory.
+The remaining of this page assumes that <code>bin</code> is on the search path.
+If not, just prepend the <code>sis</code> command by its path (e.g. <code>./apache-sis-0.3/bin/sis</code>).</p>
+<p>Every JAR files present in the <code>lib</code> sub-directory will be included on the classpath during the execution of <code>sis</code> command.
+By default, the <code>lib</code> directory contains only the SIS archive. However users can add other JAR files in that directory for
+the following optional dependencies:</p>
+<ul>
+<li><strong>UCAR NetCDF library —</strong>
+    by default, SIS uses its own embedded NetCDF reader which supports only the classical NetCDF format, as standardized by OGC.
+    If there is a need to read files encoded in GRID or HDF formats, then one can copy the UCAR NetCDF library in the <code>lib</code> sub-directory.
+    If presents, the UCAR library should be detected and used automatically.</li>
+</ul>
+<h1 id="usage">Usage</h1>
+<p>Invoking <code>sis</code> without argument show a summary of available commands and all options.
+For executing a command, the syntax is:</p>
+<div class="codehilite"><pre>sis &lt;<span class="nb">command</span>&gt; <span class="o">[</span>options<span class="o">]</span> <span class="o">[</span>files<span class="o">]</span>
+</pre></div>
+
+
+<p>The set of legal options and the expected number of file arguments depends on the command being executed.
+However all commands support the <code>--help</code> option, which lists the options available for that command.</p>
+<h2 id="metadata">Extracting ISO 19115 metadata</h2>
+<p>SIS can read the header of a data file and print the metadata in an ISO 19115 structure.
+The data file given in argument can be a local file or a URL.
+By default, the metadata are shown in a relatively compact tree-table format.
+But the metadata can optionally be exported as an ISO 19139 compliant XML document.</p>
+<blockquote><b>Note:</b>
+As of SIS 0.3, only CF-compliant NetCDF files or ISO 19139 XML documents can be given in argument to this command.
+</blockquote>
+
+<p>The following example show the metadata of a NetCDF file accessible from the web:</p>
+<div class="codehilite"><pre>sis metadata http://svn.code.sf.net/p/geoapi/code/trunk/geoapi-netcdf/src/test/resources/org/opengis/wrapper/netcdf/NCEP-SST.nc
+</pre></div>
+
+
+<p>Below is an extract of the above command output:</p>
+<div class="codehilite"><pre>Metadata
+  ├─Identification info
+  │   ├─Citation
+  │   │   ├─Title……………………………………………………………………………… Sea Surface Temperature Analysis Model
+  │   │   ├─Date
+  │   │   │   ├─Date……………………………………………………………………… Sep 22, 2005 2:00:00 AM
+  │   │   │   └─Date type………………………………………………………… Creation
+  │   │   └─Identifier
+  │   │       ├─Code……………………………………………………………………… NCEP/SST/Global_5x2p5deg/SST_Global_5x2p5deg_20050922_0000.nc
+  │   │       └─Authority
+  │   │           └─Title………………………………………………………… edu.ucar.unidata
+  │   ├─Abstract………………………………………………………………………………… NCEP SST Global 5.0 x 2.5 degree model data
+  │   ├─Descriptive keywords
+  │   │   ├─Keyword………………………………………………………………………… EARTH SCIENCE &gt; Oceans &gt; Ocean Temperature &gt; Sea Surface Temperature
+  │   │   ├─Type………………………………………………………………………………… Theme
+  │   │   └─Thesaurus name
+  │   │       └─Title…………………………………………………………………… GCMD Science Keywords
+  │   ├─Resource constraints
+  │   │   └─Use limitation……………………………………………………… Freely available
+  │   ├─Spatial representation type……………………………… Grid
+  │   └─Extent
+  │       ├─Geographic element
+  │       │   ├─West bound longitude…………………………… 180°W
+  │       │   ├─East bound longitude…………………………… 180°E
+  │       │   ├─South bound latitude…………………………… 90°S
+  │       │   ├─North bound latitude…………………………… 90°N
+  │       │   └─Extent type code……………………………………… true
+  │       └─Vertical element
+  │           ├─Minimum value……………………………………………… 0
+  │           └─Maximum value……………………………………………… 0
+  └─Content info
+      └─Dimension
+          ├─Descriptor………………………………………………………………… Sea temperature
+          └─Sequence identifier………………………………………… SST
+</pre></div>
+
+
+<p>Adding the <code>--format xml</code> option to the above command will format the same metadata in a XML document.
+The output is not shown in this page because of its verbosity.</p>
+<h1 id="performance">Performance consideration</h1>
+<p>If there is a large amount of files to process, invoking the above command many time may be inefficient
+since it would restart a new JVM on every invocation. For such cases, it is more efficient to loop inside
+a small Java program using the <a href="apidocs/index.html">SIS API</a>.</p>
+            </article>
+          </section>
+        </div><!--/span-->
+      </div><!--/row-fluid-->
+    </div><!--/container-fluid-->
+
+  <footer class="footer">
+    <div class="container">
+      <p>Copyright &copy; 2013 The Apache Software Foundation, Licensed under the
+        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
+          Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+    </div>
+  </footer>
+
+  <script src="js/jquery-1.9.1.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+
+</body>
+</html>
