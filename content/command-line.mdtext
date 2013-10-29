@@ -1,0 +1,133 @@
+Title:  Command-line interface
+Notice: Licensed to the Apache Software Foundation (ASF) under one
+        or more contributor license agreements.  See the NOTICE file
+        distributed with this work for additional information
+        regarding copyright ownership.  The ASF licenses this file
+        to you under the Apache License, Version 2.0 (the
+        "License"); you may not use this file except in compliance
+        with the License.  You may obtain a copy of the License at
+        .
+          http://www.apache.org/licenses/LICENSE-2.0
+        .
+        Unless required by applicable law or agreed to in writing,
+        software distributed under the License is distributed on an
+        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+        KIND, either express or implied.  See the License for the
+        specific language governing permissions and limitations
+        under the License.
+
+
+
+A command-line interface is provided for extracting information from a data file.
+As of SIS 0.3, the command line can only extract ISO 19115 metadata from a NetCDF file.
+More formats and capabilities will be added in future SIS versions.
+
+[TOC]
+
+
+
+Installation    {#install}
+==========================
+
+Select "Apache SIS 0.3 binary" from the [downloads page](downloads.html) an unzip in any directory.
+The directory structure will be as below:
+
+    :::text
+    apache-sis-0.3
+    ├─ bin
+    └─ lib
+
+The `bin` sub-directory contains a `sis` command for Unix systems (Linux or MacOS — we have not yet done a `sis.bat` file for Windows).
+The `bin` sub-directory can be added to the `PATH` environment variable for convenience, but this is not mandatory.
+The remaining of this page assumes that `bin` is on the search path.
+If not, just prepend the `sis` command by its path (e.g. `./apache-sis-0.3/bin/sis`).
+
+Every JAR files present in the `lib` sub-directory will be included on the classpath during the execution of `sis` command.
+By default, the `lib` directory contains only the SIS archive. However users can add other JAR files in that directory for
+the following optional dependencies:
+
+  * *UCAR NetCDF library:*
+    By default, SIS uses its own embedded NetCDF reader which supports only the classical NetCDF format, as standardized by OGC.
+    If there is a need to read files encoded in GRID or HDF formats, then one can copy the UCAR NetCDF library in the `lib` sub-directory.
+    If presents, the UCAR library should be detected and used automatically.
+
+
+
+
+Usage    {#usage}
+=================
+
+Invoking `sis` without argument should show a summary of available commands and all options.
+For executing a command, the syntax is:
+
+    :::bash
+    sis <command> [options] [files]
+
+The set of legal options and the expected number of file arguments depends on the command being executed.
+However all commands support the `--help` option, which lists the options available for that command.
+
+
+Extracting ISO 19115 metadata    {#metadata}
+--------------------------------------------
+
+SIS can read the header of a data file and print the metadata in an ISO 19115 structure.
+The data file given in argument can be a local file or a URL.
+By default, the metadata are shown in a relatively compact tree-table format.
+But the metadata can optionally be exported in an ISO 19139 compliant XML document.
+
+As of SIS 0.3, only CF-compliant NetCDF files or ISO 19139 XML documents can be given in argument to this command.
+The following example shown the metadata of a NetCDF file accessible from the web:
+
+    :::bash
+    sis metadata http://svn.code.sf.net/p/geoapi/code/trunk/geoapi-netcdf/src/test/resources/org/opengis/wrapper/netcdf/NCEP-SST.nc
+
+Below is an extract of the above command output:
+
+    :::text
+    Metadata
+      ├─Identification info
+      │   ├─Citation
+      │   │   ├─Title……………………………………………………………………………… Sea Surface Temperature Analysis Model
+      │   │   ├─Date
+      │   │   │   ├─Date……………………………………………………………………… Sep 22, 2005 2:00:00 AM
+      │   │   │   └─Date type………………………………………………………… Creation
+      │   │   └─Identifier
+      │   │       ├─Code……………………………………………………………………… NCEP/SST/Global_5x2p5deg/SST_Global_5x2p5deg_20050922_0000.nc
+      │   │       └─Authority
+      │   │           └─Title………………………………………………………… edu.ucar.unidata
+      │   ├─Abstract………………………………………………………………………………… NCEP SST Global 5.0 x 2.5 degree model data
+      │   ├─Descriptive keywords
+      │   │   ├─Keyword………………………………………………………………………… EARTH SCIENCE > Oceans > Ocean Temperature > Sea Surface Temperature
+      │   │   ├─Type………………………………………………………………………………… Theme
+      │   │   └─Thesaurus name
+      │   │       └─Title…………………………………………………………………… GCMD Science Keywords
+      │   ├─Resource constraints
+      │   │   └─Use limitation……………………………………………………… Freely available
+      │   ├─Spatial representation type……………………………… Grid
+      │   └─Extent
+      │       ├─Geographic element
+      │       │   ├─West bound longitude…………………………… 180°W
+      │       │   ├─East bound longitude…………………………… 180°E
+      │       │   ├─South bound latitude…………………………… 90°S
+      │       │   ├─North bound latitude…………………………… 90°N
+      │       │   └─Extent type code……………………………………… true
+      │       └─Vertical element
+      │           ├─Minimum value……………………………………………… 0
+      │           └─Maximum value……………………………………………… 0
+      └─Content info
+          └─Dimension
+              ├─Descriptor………………………………………………………………… Sea temperature
+              └─Sequence identifier………………………………………… SST
+
+
+Adding the `--format xml` option to the above command will format the same metadata in a XML document.
+The output is not shown in this page because of its verbosity.
+
+
+
+Performance consideration    {#performance}
+===========================================
+
+If there is a large amount of files to process, invoking the above command many time may be inefficient
+since it would restart a new JVM on every invocation. For such cases, it is more efficient to loop inside
+a small Java program using the [SIS API](apidocs/index.html).
