@@ -82,10 +82,34 @@ necessary for implementing an older version of the GeoAPI interfaces:
 
 
 
+Behavioral differences between the branches    {#behavior}
+==========================================================
+
+Some JDK7-specific features are reproduced on the JDK6 branch in an approximative way,
+which may cause some differences in the behavior:
+
+  * JDK7 branch creates `java.util.Locale` instances using `Locale.Builder` inner class while the JDK6 branch
+    uses the `Locale` constructor. Since the former performs more rigorous syntax checks than the later,
+    some language strings accepted by the JDK6 branch may be rejected by the JDK7 branch. For example the
+    "`en_US_WIN`" string will be rejected on the JDK7 branch because "`WIN`" is not a valid locale variant.
+
+  * Some exception types do not exist on the JDK6 branch, for instance `java.util.IllformedLocaleException`.
+    The JDK6 branch replaces those types by their nearest parent, which may be `java.lang.RuntimeException`.
+
+  * Some verbose _multi-catches_ are replaced by a single catch of a broad type like `Exception`.
+    Consequently some exceptions that would be propagated on the JDK7 branch are caught on the JDK6 branch.
+    Since such propagated exceptions are expected to be bugs, the broad exception handling on JDK6 branch
+    may make some potential SIS bugs slightly more difficult to identify.
+
+Generally speaking, the JDK7 branch is slightly stricter than the JDK6 branch is.
+Regarding all above points, the trunk is identical to the JDK6 branch.
+
+
+
 Coding recommendations    {#recommendations}
 ============================================
 
-  The following recommendations aim to make the merges easier by reducing the extend of potential conflicts.
+The following recommendations aim to make the merges easier by reducing the extend of potential conflicts.
 
 
 
