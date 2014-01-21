@@ -99,6 +99,7 @@ for making merges easier, then provides the steps to follow for performing the m
 <li><a href="#trunk">trunk</a></li>
 </ul>
 </li>
+<li><a href="#behavior">Behavioral differences between the branches</a></li>
 <li><a href="#recommendations">Coding recommendations</a><ul>
 <li><a href="#formatting">Formatting</a></li>
 <li><a href="#imports">Import statements</a></li>
@@ -135,6 +136,7 @@ for building and running on a JDK6 platform:</p>
 <li><em>Multi-catches</em> replaced by an explicit sequences of <em>catch</em> statements.</li>
 <li><em>Diamond operators</em> replaced by explicit generic types.</li>
 <li><em>Suppressed exceptions</em> removed.</li>
+<li>Exception types introduced after JDK6 (e.g. <code>java.util.IllformedLocaleException</code>) replaced by their nearest parent (may be <code>RuntimeException</code>).</li>
 <li>Imports of <code>java.util.Objects</code> replaced by imports of <code>org.apache.sis.internal.util.Objects</code>.</li>
 <li>Other JDK7-specific features resolved on a case-by-case basis.</li>
 </ul>
@@ -147,6 +149,27 @@ necessary for implementing an older version of the GeoAPI interfaces:</p>
 <li>Usages of non-existent GeoAPI interfaces are replaced by direct usages of the
     corresponding Apache SIS implementation.</li>
 </ul>
+<h1 id="behavior">Behavioral differences between the branches</h1>
+<p>Some JDK7-specific features are reproduced on the JDK6 branch in an approximative way,
+which may cause some differences in application behavior (ignoring differences in performance).
+Most differences are about the JDK7 branch being slightly stricter than the JDK6 branch is,
+or being able to handle information that are unsupported on the JDK6 branch.</p>
+<ul>
+<li>
+<p>Invalid language strings accepted by the JDK6 branch may be rejected by the JDK7 branch, for example "<code>en_US_WIN</code>".
+    Conversely the JDK7 branch accepts IETF BCP 47 language tag strings (for example "<code>en-US-x-lvariant-POSIX</code>") while
+    the JDK6 branch does not. This is because the JDK7 branch creates <code>java.util.Locale</code> instances using <code>Locale.Builder</code>
+    while the JDK6 branch uses <code>Locale</code> constructor, and the former performs more rigorous syntax checks than the later.
+    In the above example, "<code>WIN</code>" is not a valid locale variant.</p>
+</li>
+<li>
+<p>Some exceptions that would be propagated on the JDK7 branch are caught on the JDK6 branch.
+    This is because some verbose <em>multi-catches</em> are replaced by a single catch of a broad type like <code>Exception</code>.
+    Since uncaught exceptions on JDK7 branch were expected to be bugs, the broad exception handling on JDK6 branch
+    may make some potential SIS bugs slightly more difficult to identify.</p>
+</li>
+</ul>
+<p>Regarding all above points, the trunk is identical to the JDK6 branch.</p>
 <h1 id="recommendations">Coding recommendations</h1>
 <p>The following recommendations aim to make the merges easier by reducing the extend of potential conflicts.</p>
 <h2 id="formatting">Formatting</h2>
