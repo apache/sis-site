@@ -64,14 +64,19 @@
 
 /*
  * Table without vertical space between rows and a little bit of space between columns.
- * This table has no border.
+ * This table has no border and text is left-aligned.
  */
-.contentContainer .block table.compact
+.contentContainer .block table.compact,
+.contentContainer ul.blockList ul.blockList li.blockList table.compact
 {
+  margin-top:     6pt;
+  margin-bottom:  6pt;
   width:          auto;
   border:         none;
   border-spacing: 0pt;
   padding:        0pt;
+  line-height:    1em;
+  text-align:     left;
 }
 
 .contentContainer .block table.compact tr td
@@ -80,20 +85,7 @@
   padding-bottom: 0pt;
   padding-right:  3pt;
   padding-left:   3pt;
-}
-
-.contentContainer .block table.compact tr td.onright
-{
-  padding-right: 1pt;
-  text-align:    right;
-  font-weight:   normal;
-}
-
-.contentContainer .block table.compact tr td.onleft
-{
-  padding-left: 1pt;
-  text-align:   left;
-  font-weight:  normal;
+  vertical-align: text-top;
 }
 
 /*
@@ -139,7 +131,30 @@ ul.verbose li {
  * Overrides the <pre> definition provided by the Javadoc tools.
  */
 div.block pre {
-  font-size: 1em;
+  line-height: 1em;
+  font-size:   1em;
+  font-family: Andale Mono, Courier New, monospace;
+}
+
+/*
+ * Note, examples or warnings.
+ */
+div.note {
+  font-size: small;
+  margin-left:  30pt;
+  margin-top:    9pt;
+  margin-bottom: 9pt;
+}
+
+/*
+ * Note, examples or warnings.
+ */
+div.warning {
+  color:   firebrick;
+  margin-left:  30pt;
+  margin-right: 30pt;
+  margin-top:    9pt;
+  margin-bottom: 9pt;
 }
 
 
@@ -571,7 +586,7 @@ table.packageSummary  td.colFirst {
  * The table for the class or members summaries.
  * This is where the appareance of rows are specified.
  *
- * Note: definitions need to be cancelled "table.sis" definition.
+ * Note: need to be cancelled in the "table.sis" and "table.compact" definitions.
  */
 ul.blockList ul.blockList li.blockList table {
   margin: 0 0 12px 0px;
