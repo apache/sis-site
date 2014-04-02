@@ -417,14 +417,15 @@ Copy the Javadoc to the web site staging directory:
     :::bash
     cd ../site/content
     rm -r apidocs
-    unzip $DIST_DIR/apache-sis-0.3-doc.zip
+    unzip $DIST_DIR/apache-sis-$NEW_VERSION-doc.zip
 
 Execute `svn add` for new files and `svn remove` for deleted files:
 
     :::bash
     cd apidocs
-    svn status | gawk '/^\?.*/ {print $2}' | xargs -r svn add
-    svn status | gawk '/^\!.*/ {print $2}' | xargs -r svn remove
+    svn status | gawk '/^\?.*/ {print $2}' | xargs svn add
+    svn status | gawk '/^\!.*/ {print $2}' | xargs svn remove
+    svn commit --message "Update javadoc for SIS $NEW_RELEASE."
 
 
 
