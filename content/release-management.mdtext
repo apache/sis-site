@@ -386,11 +386,11 @@ Sign the source, javadoc and binary artifacts:
     gpg --print-md SHA512 apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.sha
     gpg --print-md MD5    apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.md5
 
-    gpg --armor --detach-sign --default-key $SIGNING_KEY    apache-sis-$NEW_VERSION-doc.zip
+    gpg --use-agent --armor --detach-sign --default-key $SIGNING_KEY apache-sis-$NEW_VERSION-doc.zip
     gpg --print-md SHA512 apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.sha
     gpg --print-md MD5    apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.md5
 
-    gpg --armor --detach-sign --default-key $SIGNING_KEY    apache-sis-$NEW_VERSION-bin.zip
+    gpg --use-agent --armor --detach-sign --default-key $SIGNING_KEY apache-sis-$NEW_VERSION-bin.zip
     gpg --print-md SHA512 apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.sha
     gpg --print-md MD5    apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.md5
 
@@ -433,7 +433,7 @@ Execute `svn add` for new files and `svn remove` for deleted files:
 Test the release    {#test}
 ---------------------------
 
-Execute the following commands in any temporary directory:
+Execute the following commands in any temporary directory for testing the sources:
 
     :::bash
     wget --no-check-certificate https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE/apache-sis-$NEW_VERSION-src.zip \
@@ -443,6 +443,19 @@ Execute the following commands in any temporary directory:
     unzip apache-sis-$NEW_VERSION-src.zip
     cd sis-$NEW_VERSION
     mvn install
+
+
+Execute the following commands in any temporary directory for testing the binary:
+
+    :::bash
+    wget --no-check-certificate https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE/apache-sis-$NEW_VERSION-bin.zip \
+                                https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE/apache-sis-$NEW_VERSION-bin.zip.asc
+    # Test
+    gpg --verify apache-sis-$NEW_VERSION-bin.zip.asc
+    unzip apache-sis-$NEW_VERSION-bin.zip
+    cd apache-sis-$NEW_VERSION
+    bin/sis about --verbose
+    bin/sis metadata http://svn.code.sf.net/p/geoapi/code/trunk/geoapi-netcdf/src/test/resources/org/opengis/wrapper/netcdf/NCEP-SST.nc
 
 
 
