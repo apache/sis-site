@@ -137,8 +137,8 @@ The intended audiences are SIS release managers.</p>
 <p>For all instructions in this page, <code>$OLD_VERSION</code> and <code>$NEW_VERSION</code> stand for the version
 number of the previous and the new release respectively, and <code>$RELEASE_CANDIDATE</code> stands for
 the current release attempt. Those versions shall be set on the command line like below (Unix):</p>
-<div class="codehilite"><pre><span class="nb">export </span><span class="nv">OLD_VERSION</span><span class="o">=</span>0.3
-<span class="nb">export </span><span class="nv">NEW_VERSION</span><span class="o">=</span>0.4
+<div class="codehilite"><pre><span class="nb">export </span><span class="nv">OLD_VERSION</span><span class="o">=</span>0.4
+<span class="nb">export </span><span class="nv">NEW_VERSION</span><span class="o">=</span>0.5
 <span class="nb">export </span><span class="nv">RELEASE_CANDIDATE</span><span class="o">=</span>1
 <span class="nb">export </span><span class="nv">SIGNING_KEY</span><span class="o">=</span>&lt;your key ID&gt;
 </pre></div>
@@ -184,10 +184,11 @@ in this page shall be adjusted accordingly.</p>
 <li>Commit any changes back to SVN.</li>
 </ul>
 <h2 id="prepare-website">Web site</h2>
-<p>Update the version numbers from <code>$NEW_VERSION</code> to the next version in the following files.</p>
+<p>Update the version numbers from the old one to <code>$NEW_VERSION</code> in the following files.</p>
 <ul>
 <li><code>content/index.mdtext</code></li>
-<li><code>content/downloads.mdtext</code></li>
+<li><code>content/downloads.mdtext</code> (need also to update <code>$NEW_VERSION-SNAPSHOT</code> to the next snapshot version)</li>
+<li><code>content/command-line.mdtext</code></li>
 </ul>
 <p>Commit:</p>
 <div class="codehilite"><pre>svn add content/release-notes/<span class="nv">$NEW_VERSION</span>.html
@@ -222,12 +223,12 @@ but also in a few Java files. The following command performs the replacement usi
 
 <p>Open the root <code>pom.xml</code> file in an editor and perform the following changes:</p>
 <ul>
-<li>Copy-and-paste the whole <code>&lt;plugin&gt;</code> section for <code>maven-javadoc-plugin</code> from <code>&lt;reporting&gt;</code> to <code>&lt;build&gt;</code>.
+<li>Copy-and-paste the whole <code>&lt;plugin&gt;</code> block, except <code>&lt;reportSets&gt;</code>, for <code>maven-javadoc-plugin</code> from <code>&lt;reporting&gt;</code> to <code>&lt;build&gt;</code>.
     We need the javadoc configuration to be duplicated in both <code>&lt;reporting&gt;</code> and <code>&lt;build&gt;</code> sections in order
     to get the expected Javadoc output in both Maven site and in the <code>*-javadoc.jar</code> files to deployed in the
     Maven repository. <strong>TODO:</strong> see if upgrading Maven or the <code>maven-javadoc-plugin</code> can solve this problem.</li>
-<li>Remove the whole <code>&lt;pluginRepositories&gt;</code> section, since it should not be needed for releases (and is actually not allowed).</li>
-<li>Remove the <code>&lt;plugin&gt;</code> section for <code>docbkx-maven-plugin</code>, since the DocBook directory is omitted (see below).</li>
+<li>Remove the whole <code>&lt;pluginRepositories&gt;</code> block, since it should not be needed for releases (and is actually not allowed).</li>
+<li>Remove the <code>&lt;plugin&gt;</code> block for <code>docbkx-maven-plugin</code>, since the DocBook directory is omitted (see below).</li>
 </ul>
 <p>Recursively delete the <code>src/main/docbook</code> directory (this policy may be revised in future SIS releases).
 We omit this directory for now because this material may move to the CMS, and no English version is available yet.</p>
@@ -417,7 +418,8 @@ mv <span class="nv">$TAG_DIR</span>/target/distribution/apache-sis-<span class="
 
 
 <p>Rename the files to something more conform to the convention seen in other Apache projects:</p>
-<div class="codehilite"><pre>mv sis-<span class="nv">$NEW_VERSION</span>-source-release.zip     apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip
+<div class="codehilite"><pre>mv apache-sis-<span class="nv">$NEW_VERSION</span>.zip             apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip
+mv sis-<span class="nv">$NEW_VERSION</span>-source-release.zip     apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip
 mv sis-<span class="nv">$NEW_VERSION</span>-source-release.zip.asc apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.asc
 </pre></div>
 
@@ -427,11 +429,11 @@ mv sis-<span class="nv">$NEW_VERSION</span>-source-release.zip.asc apache-sis-<s
 <div class="codehilite"><pre>gpg --print-md SHA512 apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.sha
 gpg --print-md MD5    apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.md5
 
-gpg --armor --detach-sign --default-key <span class="nv">$SIGNING_KEY</span>    apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip
+gpg --use-agent --armor --detach-sign --default-key <span class="nv">$SIGNING_KEY</span> apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip
 gpg --print-md SHA512 apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip.sha
 gpg --print-md MD5    apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip.md5
 
-gpg --armor --detach-sign --default-key <span class="nv">$SIGNING_KEY</span>    apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip
+gpg --use-agent --armor --detach-sign --default-key <span class="nv">$SIGNING_KEY</span> apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip
 gpg --print-md SHA512 apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip.sha
 gpg --print-md MD5    apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip.md5
 </pre></div>
@@ -455,19 +457,20 @@ svn commit --message <span class="s2">&quot;SIS release candidate $RELEASE_CANDI
 <p>Copy the Javadoc to the web site staging directory:</p>
 <div class="codehilite"><pre><span class="nb">cd</span> ../site/content
 rm -r apidocs
-unzip <span class="nv">$DIST_DIR</span>/apache-sis-0.3-doc.zip
+unzip <span class="nv">$DIST_DIR</span>/apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip
 </pre></div>
 
 
 <p>Execute <code>svn add</code> for new files and <code>svn remove</code> for deleted files:</p>
 <div class="codehilite"><pre><span class="nb">cd </span>apidocs
-svn status | gawk <span class="s1">&#39;/^\?.*/ {print $2}&#39;</span> | xargs -r svn add
-svn status | gawk <span class="s1">&#39;/^\!.*/ {print $2}&#39;</span> | xargs -r svn remove
+svn status | gawk <span class="s1">&#39;/^\?.*/ {print $2}&#39;</span> | xargs svn add
+svn status | gawk <span class="s1">&#39;/^\!.*/ {print $2}&#39;</span> | xargs svn remove
+svn commit --message <span class="s2">&quot;Update javadoc for SIS $NEW_RELEASE.&quot;</span>
 </pre></div>
 
 
 <h2 id="test">Test the release</h2>
-<p>Execute the following commands in any temporary directory:</p>
+<p>Execute the following commands in any temporary directory for testing the sources:</p>
 <div class="codehilite"><pre>wget --no-check-certificate https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span>/apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip <span class="se">\</span>
                             https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span>/apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.asc
 <span class="c"># Test</span>
@@ -475,6 +478,18 @@ gpg --verify apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.asc
 unzip apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip
 <span class="nb">cd </span>sis-<span class="nv">$NEW_VERSION</span>
 mvn install
+</pre></div>
+
+
+<p>Execute the following commands in any temporary directory for testing the binary:</p>
+<div class="codehilite"><pre>wget --no-check-certificate https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span>/apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip <span class="se">\</span>
+                            https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span>/apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip.asc
+<span class="c"># Test</span>
+gpg --verify apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip.asc
+unzip apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip
+<span class="nb">cd </span>apache-sis-<span class="nv">$NEW_VERSION</span>
+bin/sis about --verbose
+bin/sis metadata http://svn.code.sf.net/p/geoapi/code/trunk/geoapi-netcdf/src/test/resources/org/opengis/wrapper/netcdf/NCEP-SST.nc
 </pre></div>
 
 
@@ -573,11 +588,12 @@ svn delete https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERS
 </ul>
 <h1 id="next-release">Update trunk for the next development cycle</h1>
 <p>Update the version numbers in the <code>pom.xml</code> files on trunk with the following command:</p>
-<div class="codehilite"><pre>mvn release:update-versions
+<div class="codehilite"><pre>mvn release:update-versions --define <span class="nv">autoVersionSubmodules</span><span class="o">=</span><span class="nb">true</span>
 </pre></div>
 
 
-<p>Report the changes manually on the JDK6 and JDK7 branches.</p>
+<p>Edit the version number in the <code>application/sis-console/src/main/artifact/README</code> file.
+Report the changes manually on the JDK6 and JDK7 branches.</p>
             </article>
           </section>
         </div><!--/span-->
