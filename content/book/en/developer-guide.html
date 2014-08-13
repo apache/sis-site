@@ -1,0 +1,2199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>Introduction to Apache SIS</title>
+    <link rel="stylesheet" type="text/css" href="../book.css"/>
+  </head>
+  <body>
+    <!-- From this point, shift indentation 4 spaces to the left for saving space. -->
+
+<p style="font-size: 30pt; font-weight: 900">Introduction to Apache SIS®</p>
+<p><b style="font-size: large">Table of content</b></p>
+
+<ul class="toc">
+  <li><a href="#Foreword">Foreward</a><ul>
+    <li><a href="#About">Conventions Used in This Guide</a></li>
+  </ul></li>
+  <li><a href="#Standards">Standards and Norms</a><ul>
+    <li><a href="#OGC-process"><abbr>OGC</abbr> Standardization Process</a><ul>
+      <li><a href="#OGC-SWG">Standard Working Group (<abbr>SWG</abbr>) Procedures</a></li>
+      <li><a href="#OGC-OAB">The Architecture Board (<abbr>OAB</abbr>) and the Technical Committee (<abbr>TC</abbr>)</a></li>
+      <li><a href="#OGC-RFC">Procedure for the Submission of Proposals for Modification</a></li>
+    </ul></li>
+    <li><a href="#SpecificationTypes">Different Types of Specifications</a></li>
+    <li><a href="#DefinitionOfTerms">Definition of Terms</a></li>
+  </ul></li>
+  <li><a href="#GeoAPI">GeoAPI</a><ul>
+    <li><a href="#SpecificationToInterfaces">Interface Specifications</a><ul>
+      <li><a href="#UML-annotation">Correspondences Explained in <code>@UML</code> Annotations</a></li>
+      <li><a href="#MappingToJDK">Implicit Correspondences to Standard <abbr>JDK</abbr></a></li>
+    </ul></li>
+    <li><a href="#ServiceLoader">Importing an Implementation of the Interfaces</a><ul>
+      <li><a href="#GeoAPI-simple">Providing the Correct Implementation</a></li>
+    </ul></li>
+    <li><a href="#GeoAPI-modules">GeoAPI Modules</a><ul>
+      <li><a href="#GeoAPI-core">The Interfaces' Definition Modules</a></li>
+      <li><a href="#GeoAPI-conformance">The Conformance Tests Module</a><ul>
+        <li><a href="#GeoAPI-validators">Validations of Instances</a></li>
+        <li><a href="#GeoAPI-tests">Executing Pre-defined Tests</a></li>
+      </ul></li>
+      <li><a href="#GeoAPI-examples">Example Modules</a></li>
+    </ul></li>
+  </ul></li>
+  <li><a href="#XML-ISO">Représentation des objets en <abbr>XML</abbr></a><ul>
+    <li><a href="#XML-ISO-19115">Représentation des méta-données selon <abbr>ISO</abbr> 19139</a><ul>
+      <li><a href="#gco-id">Identification d’instances déjà définies</a></li>
+    </ul></li>
+    <li><a href="#nilReason">Représentation de valeurs manquantes</a></li>
+  </ul></li>
+  <li><a href="#Utilities">Classes et méthodes utilitaires</a><ul>
+    <li><a href="#ComparisonMode">Modes de comparaisons des objets</a></li>
+    <li><a href="#Internationalization">Internationalisation</a><ul>
+      <li><a href="#LocalizedString">Chaînes de caractères distinctes pour chaque conventions locales</a></li>
+      <li><a href="#InternationalString">Instance unique pour toutes les conventions locales</a></li>
+      <li><a href="#Locale.ROOT">Convention <code>Locale.ROOT</code></a></li>
+      <li><a href="#UnicodePoint">Traitement des caractères</a><ul>
+        <li><a href="#Whitespaces">Interprétation des espaces blancs</a></li>
+      </ul></li>
+    </ul></li>
+  </ul></li>
+  <li><a href="#Geometry">Géométries</a><ul>
+    <li><a href="#Geometry-root">Classes de base</a><ul>
+      <li><a href="#DirectPosition">Points et positions directes</a></li>
+      <li><a href="#Envelope">Enveloppes</a><ul>
+        <li><a href="#AntiMeridian">Enveloppes traversant l’antiméridien</a></li>
+      </ul></li>
+    </ul></li>
+  </ul></li>
+  <li><a href="#Coverage">Couvertures de données (<i>Coverages</i>)</a></li>
+</ul>
+
+
+<h1 id="Foreword">Foreward</h1>
+<p>
+  A geospatial information community is a collection of systems or individuals capable of exchanging their geospatial data
+  through the use of common standards, allowing them to communicate with one another.
+  As there are many ways to represent geospatial information, each community tends to structure this information in light of its areas of interest.
+  This diversity complicates the task of the users of (<abbr>SIS</abbr>)
+  geographic information systems by confronting them with an apparently chaotic variety of data formats and structures.
+  The characteristics of these structures vary according to the phenomenon observed and methods of measurement,
+  as well as the habits of the organizations producing the data.
+  Such a variety represents an obstacle in studies that require heterogeneous combinations of data,
+  especially when they originate in communities that are traditionally distinct.
+  For example, a researcher studying cholera might be interested in populations of shrimp as a propagation vector of the disease.
+  But as doctors and oceanographers are not usually in the habit of sharing their work,
+  the participants of such a study may be limited by the effort required to convert the data.
+</p><p>
+  We cannot impose a uniform format on all the collections of data, as the diversity of formats is tied to factors such as the constraints imposed by the measuring apparatus,
+  and the statistical distribution of values.
+  A more flexible solution is to ensure the interoperability of data across a common programming interface
+  (<abbr title="Application Programming Interface">API</abbr>).
+  This <abbr>API</abbr> is not necessarily defined in a programming language;
+  the actual tendency is rather to define conventions that use existing web protocols, which we can translate into various programming languages.
+  But in order for this approach to be viable, the <abbr>API</abbr> must be generally accepted by independent developers.
+  In other words, the <abbr>API</abbr> must come as near as possible to industrial standards.
+</p><p>
+  For example, one task that would benefit from a successful standardization is the accessing of relational databases.
+  The industry has established a common language - the <abbr title="Structured Query Language">SQL</abbr> standard - that the creators of Java
+  have embedded in standard <abbr title="Java DataBase Connectivity">JDBC</abbr> programming interfaces.
+  Today, these interfaces are implemented by many software programs, both free and commercial.
+  Like databases, methods of accessing geographic information have been standardized.
+  In this case, however, the efforts have been more recent, and their integration in software - especially in older programs - is incomplete and not always coherent.
+  At the time of writing, no product to our knowledge has implemented all of the specifications in their entirety.
+  However, there are many implementations that cover a fairly large spectrum.
+  One of these is the Apache <abbr>SIS</abbr>® library that is described in this document.
+</p><p>
+  Apache <abbr title="Spatial Information System">SIS</abbr> is characterized by a sustained effort to comply with standards,
+  going so far as to participate in certain <abbr title="Open Geospatial Consortium">OGC</abbr> projects.
+  In general, complying with standards demands a greater effort than would be required for an isolated development,
+  but rewards us with a double advantage: not only does it improve the interoperability of our data with that of external projects,
+  it also points towards a robust way of elaborating the conceptual model reflected in the <abbr title="Application Programming Interface">API</abbr>.
+  In effect, the groups of experts who conceived of the standards anticipated difficulties that sometimes escape the engineer at the beginning of a project,
+  but which risk catching up with them before the end.
+</p>
+
+
+
+<h2 id="About">Conventions Used in This Guide</h2>
+<p>
+  The elements defined in an information language, such as classes and methods in Java or elements in an <abbr>XML</abbr> document,
+  appear in monospaced font.
+  In order to facilitate an understanding of the relationships between Apache <abbr>SIS</abbr> and the standards, these elements are also represented using the following colour codes:
+</p>
+<ul>
+  <li>
+    Elements defined in the <abbr title="Open Geospatial Consortium">OGC</abbr> standard
+    or the <abbr title="International Organization for Standardization">ISO</abbr> standard appear in blue.
+    Example: <code class="OGC">CD_Ellipsoid</code>.
+  </li>
+  <li>
+    Elements defined in GeoAPI appear in green.
+    Example: <code class="GeoAPI">Ellipsoid</code>.
+  </li>
+  <li>
+    Elements defined in Apache <abbr title="Spatial Information System">SIS</abbr> appear in brown.
+    Example: <code class="SIS">DefaultEllipsoid</code>.
+  </li>
+  <li>
+    Other elements, such as those in standard Java, are left in black.
+    Example: <code>String</code>.
+  </li>
+</ul>
+
+
+
+<h1 id="Standards">Standards and Norms</h1>
+<p>
+  Most standards used by Apache <abbr title="Spatial Information System">SIS</abbr> have been devised by the <a href="http://www.opengeospatial.org">Open Geospatial Consortium</a> (<abbr>OGC</abbr>),
+  sometimes in collaboration with the <a href="http://www.iso.org">International Organization for Standardization</a> (<abbr>ISO</abbr>).
+  Some <abbr>ISO</abbr> standards themselves become European standards via the <a href="http://inspire.jrc.ec.europa.eu">INSPIRE Directive</a>.
+  These standards offer two key features:
+</p>
+<ul>
+  <li>
+    Allowing a community to make its information public in such a way that outside individuals or systems can discover it.
+  </li>
+  <li>
+    Transferring information from one community to another while preserving its semantics,
+    even if the two communities use very different internal representations.
+  </li>
+</ul>
+<p>
+  These standards are made available to the international community for free, as <a href="http://www.opengeospatial.org/standards/is">specifications (<abbr title="Portable Document Format">PDF</abbr> files)</a> or as <a href="http://schemas.opengis.net/gml/3.3/">schemas (<abbr title="XML Schema Definition">XSD</abbr> files)</a>.
+  Standardization organizations do not create software; to obtain an implementation of these specifications,
+  users must choose one of the compliant products available on the market, or develop their own solutions.
+  Such voluntary compliance with these specifications allow independent communities to more easily exchange geographic information.
+</p><p>
+  Besides these formal standardization organizations, there are organizations that are not officially dedicated
+  to the creation of standards, but whose work has largely been adopted as <i>de facto</i> standards.
+  In particular, the <a href="http://www.epsg.org">EPSG</a> database offers numeric codes which allow the easy identification of coordinates among
+  <a href="../sis-referencing/supported-codes.html">several thousand</a>.
+  This database is offered by petroleum companies that have an interest in the results of their exploration in a particular place,
+  knowing that they don't always control the production of the maps they use.
+  Other examples of <i>de facto</i> standards include <a href="http://geotiff.osgeo.org">GeoTIFF</a> for data distributed on a grid (such as images),
+  and <a href="http://en.wikipedia.org/wiki/Shapefile">Shapefile</a> for vector data (such as geometric shapes).
+</p>
+
+
+
+<h2 id="OGC-process"><abbr>OGC</abbr> Standardization Process</h2>
+<p>
+  The work of the <abbr title="Open Geospatial Consortium">OGC</abbr> is done by email, teleconferences, and at <a href="http://www.opengeospatial.org/event?category=ogctcpc">in-person meetings</a>.
+  The <abbr>OGC</abbr> organizes four meetings per year, each lasting five days, and hosted by member organizations that sponsor the event (companies, universities, research centres, <i>etc</i>).
+  The host continent alternates between Europe and North America, with a growing presence in Asia since 2011.
+  These meetings are usually attended by between 50 and 100 participants from among the hundreds of members of the <abbr>OGC</abbr>.
+  Some participants are present at almost all the meetings, forming the pillars of the organization.
+  The meetings of the <abbr title="Open Geospatial Consortium">OGC</abbr> offer opportunities for exchange among members from diverse backgrounds.
+</p><p>
+  The creation of a <abbr>OGC</abbr> standard begins with a gathering of organizations or individuals with a common interest in an issue.
+  A working group is proposed as a <i>Discussion Working Group</i> (<abbr>DWG</abbr>) if the work is still in the exploratory stages,
+  or as a <i>Standard Working Group</i> (<abbr>SWG</abbr>) if the work of standardization is ready to proceed.
+  <abbr>DWG</abbr>s are open to all members of the <abbr>OGC</abbr>,
+  while <abbr>SWG</abbr>s require that their participants enter into an agreement not to hinder the distribution of the standard through intellectual property claims.
+</p>
+
+
+
+<h3 id="OGC-SWG">Standard Working Group (<abbr>SWG</abbr>) Procedures</h3>
+<p>
+  In order to be accepted, a standardization project must be supported by a minimum number of members belonging to distinct organizations.
+  These founding members draft a charter defining the objectives of the <abbr title="Standard Working Group">SWG</abbr>,
+  which must be approved by the Technical Committee of the <abbr title="Open Geospatial Consortium">OGC</abbr>.
+  Each founding member is endowed with the right to vote, with a limit of one voting member per organization.
+  Each new member that wishes to join the <abbr>SWG</abbr> after its creation is granted the role of observer,
+  and receives on request the right to vote after several months of observation.
+</p><p>
+  A <abbr title="Standard Working Group">SWG</abbr> may contain several dozen members,
+  but the volunteers performing the bulk of the work are usually fewer.
+  Their proposals are submitted to the entire membership of the group, who may accept them by unanimous consent.
+  Any objections must be debated, and an alternative proposed.
+  <abbr>SWG</abbr>s usually try to debate an issue until a consensus emerges rather than move ahead despite negative votes,
+  even if those opposed are in a minority.
+  The decisions of the group are then integrated into the specifications by a member who assumes the role of editor.
+</p><p>
+  As far as possible, the working group must structure the specifications as a nucleus around which various extensions might be built.
+  A series of tests must accompany the standard, allowing implementations to be classified by the level of test passed.
+  There must be at least one <i>reference implementation</i> that passes all the tests in order to demonstrate that the standard is usable.
+</p><p>
+  When the standard is judged ready, the <abbr title="Standard Working Group">SWG</abbr> votes on a motion proposing its submission to a vote of the higher authorities of the <abbr title="Open Geospatial Consortium">OGC</abbr>.
+  This process takes several months.
+  There is a faster process for approving <i>de facto</i> standards, but it is applied sparingly.
+</p>
+
+
+<h3 id="OGC-OAB">The Architecture Board (<abbr>OAB</abbr>) and the Technical Committee (<abbr>TC</abbr>)</h3>
+<p>
+  All proposals for standards are first examined by the <abbr title="Open Geospatial Consortium">OGC</abbr> Architecture Board (<abbr>OAB</abbr>).
+  This board ensures that the standard conforms to the requirements of the <abbr title="Open Geospatial Consortium">OGC</abbr> in form,
+  modularization, and in terms of integration with other standards.
+  If the <abbr>OAB</abbr> approves it, the standard is next submitted to a vote of the members of the Technical Committee (<abbr title="Technical Committee">TC</abbr>).
+  This committee consists of the principal members of the <abbr>OGC</abbr>, and only they are capable of granting final approval.
+  If approved, the standard is made publicly available for comments during a period of several months.
+  At the end of this period, the <abbr title="Standard Working Group">SWG</abbr> must examine and respond to each comment.
+  The eventual modifications of the standard are submitted to the <abbr>OAB</abbr>, then the standard is published in its final form.
+  This distribution is announced in a press release by the <abbr>OGC</abbr>.
+</p><p>
+  Certain members of the <abbr title="Open Geospatial Consortium">OGC</abbr> and the <abbr title="Technical Committee">TC</abbr> also act as liaisons with the International Organization for Standardization (<abbr title="International Organization for Standardization">ISO</abbr>).
+  Cooperation between the two organizations goes two ways: the <abbr>OGC</abbr> adopts the <abbr>ISO</abbr> standards as a foundation on which to develop new standards,
+  and certain new <abbr>OGC</abbr> standards become <abbr>ISO</abbr> standards.
+</p>
+
+
+
+
+<h3 id="OGC-RFC">Procedure for the Submission of Proposals for Modification</h3>
+<p>
+  All users, whether or not they are members of the Open Geospatial Consortium, may propose modifications to <abbr title="Open Geospatial Consortium">OGC</abbr> standards.
+  A list of current proposals for changes, along with a form for submitting new proposals, is <a href="http://www.opengeospatial.org/standards/cr">available online</a>.
+  Each proposal is reviewed by the <abbr title="Standard Working Group">SWG</abbr>.
+</p><p>
+  Some working groups use other parallel systems for submissions.
+  In particular, the GeoAPI project continues to use a <a href="http://jira.codehaus.org/browse/GEO">JIRA task system</a>
+  hosted outside of the structures of the <abbr title="Open Geospatial Consortium">OGC</abbr>.
+  This set-up exists in part for historical reasons, and in part because developments on the GeoAPI project are done more at the level of source code rather than at the level of documents or class diagrams.
+</p>
+
+
+
+<h2 id="SpecificationTypes">Different Types of Specifications</h2>
+<p>
+  <abbr title="Open Geospatial Consortium">OGC</abbr> standards are specified in several dozen documents.
+  Each document outlines a service - for example, the transformation of coordinates.
+  The function of each service is described by a collection of object classes and their interactions.
+  These elements are illustrated by <abbr>UML</abbr> (Unified Modeling Language) diagrams in specifications called "abstracts."
+</p><p>
+  <a href="http://www.opengeospatial.org/standards/as">Abstract specifications</a> do not refer to any specific information language.
+  Their concepts may be applied more or less directly to a programming language, a database or an <abbr>XML</abbr> schema.
+  There is always an element of arbitrariness in the method of applying an abstract specification,
+  given that adjustments are often necessary to take into account the constraints or conventions of the target language. For example:
+</p>
+<ul>
+  <li>
+    An object-oriented approach is applied through verbose solutions in certain languages (notably the <abbr>XML</abbr> defined by <abbr>ISO</abbr> 19139) - for example, in order to support polymorphism.
+  </li>
+  <li>
+    Certain data structures only exist in a few languages - for example, unions that exist in C/C++ but not in Java.
+  </li>
+  <li>
+    Certain specifications (especially older ones) define operations which lend themselves easily to programming languages or services,
+    but not to databases.
+  </li>
+</ul>
+<p>
+  At the turn of the millennium, the abstract specifications were explicitly concretized in <i>implementation specifications</i>.
+  The term "implementation" is used here in the sense of all types of interfaces (Java or others) derived from <abbr title="Unified Modeling Language">UML</abbr> diagrams, and not implementations in the Java sense.
+  Such specifications exist for <abbr title="Structured Query Language">SQL</abbr>, <abbr title="Common Object Request Broker Architecture">CORBA</abbr>, <abbr title="Component Object Model">COM</abbr>, and Java languages.
+  As these languages are capable of executing procedures, the specifications of this period define not only data structures,
+  but also operations that apply to these structures.
+</p><p>
+  Thereafter, enthusiasm for "Web 2.0" increased interest <abbr>XML</abbr> over other languages.
+  Older implementation specifications became fell into disuse,
+  and <abbr title="XML Schema Definition">XSD</abbr> schemas became the principle concretization of abstract specifications.
+  Even the way abstract specifications are designed has evolved: they are less likely to define operations, and so what remains is closer to descriptions of database schemas.
+  Some operations that were defined in older standards now appear, in another form, in web service specifications.
+  Finally, the term "implementation specification" has been abandoned, to be subsumed under the term "<abbr title="Open Geospatial Consortium">OGC</abbr> standard."
+  But despite their disuse, <a href="http://www.opengeospatial.org/standards/retired">old implementation specifications</a> remain useful to programs in Java, because:
+</p>
+<ul>
+  <li>
+    Their simpler models, applied to the same concepts, are helpful in understanding new specifications.
+  </li>
+  <li>
+    They sometimes define easy ways to perform common tasks, where the newer specifications limit themselves to general cases.
+  </li>
+  <li>
+    As operations are more often omitted from the newer specifications,
+    the old ones remain a useful supplement when defining <abbr title="Application Programming Interface">API</abbr>s.
+  </li>
+</ul>
+<p>
+  The Apache <abbr title="Spatial Information System">SIS</abbr> project is based on the most recent specifications, drawing from the archives of the <abbr title="Open Geospatial Consortium">OGC</abbr> to complete certain abstract standards or make them more usable.
+  Some old definitions are preserved as "methods of convenience," not always bringing new functionality, but facilitating the practical use of a library.
+</p><p>
+  The following table lists the principal norms used by the project.
+  Many norms are published both as <abbr title="International Organization for Standardization">ISO</abbr> standards and as
+  <abbr title="Open Geospatial Consortium">OGC</abbr> standards, and their corresponding names are listed next to one another in the first two columns.
+  Standards that are depreciated but still used appear <s>struck through</s>.
+  Finally, GeoAPI packages will be introduced in upcoming chapters.
+</p>
+<table>
+  <caption>Principal Standards Used in the Apache <abbr>SIS</abbr> project</caption>
+  <tr>
+    <th><abbr>ISO</abbr> Norm</th>
+    <th><abbr>OGC</abbr> Norm</th>
+    <th>Titre</th>
+    <th>GeoAPI package</th>
+  </tr>
+  <tr>
+    <td class="separator" colspan="4">Abstract Specifications</td>
+  </tr>
+  <tr>
+    <td><abbr>ISO</abbr> 19103</td>
+    <td></td>
+    <td><i>Conceptual schema language</i></td>
+    <td><code>org.opengis.util</code></td>
+  </tr>
+  <tr>
+    <td><abbr>ISO</abbr> 19115</td>
+    <td>Topic 11</td>
+    <td><i>Metadata</i></td>
+    <td><code>org.opengis.metadata</code></td>
+  </tr>
+  <tr>
+    <td><abbr>ISO</abbr> 19111</td>
+    <td>Topic 2</td>
+    <td><i>Spatial referencing by coordinates</i></td>
+    <td><code>org.opengis.referencing</code></td>
+  </tr>
+  <tr>
+    <td><abbr>ISO</abbr> 19108</td>
+    <td></td>
+    <td><i>Temporal Schema</i></td>
+    <td><code>org.opengis.temporal</code></td>
+  </tr>
+  <tr>
+    <td><abbr>ISO</abbr> 19107</td>
+    <td>Topic 1</td>
+    <td><i>Feature geometry</i></td>
+    <td><code>org.opengis.geometry</code></td>
+  </tr>
+  <tr>
+    <td><abbr>ISO</abbr> 19101</td>
+    <td>Topic 5</td>
+    <td><i>Features</i></td>
+    <td><code>org.opengis.feature</code></td>
+  </tr>
+  <tr>
+    <td><abbr>ISO</abbr> 19123</td>
+    <td>Topic 6</td>
+    <td><i>Schema for coverage geometry and functions</i></td>
+    <td><code>org.opengis.coverage</code></td>
+  </tr>
+  <tr>
+    <td><abbr>ISO</abbr> 19156</td>
+    <td>Topic 20</td>
+    <td><i>Observations and measurements</i></td>
+    <td><code>org.opengis.observation</code></td>
+  </tr>
+  <tr>
+    <td class="separator" colspan="4">Implementation Specifications</td>
+  </tr>
+  <tr>
+    <td><abbr>ISO</abbr> 19139</td>
+    <td></td>
+    <td><i>Metadata <abbr>XML</abbr> schema implementation</i></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><abbr>ISO</abbr> 13249</td>
+    <td></td>
+    <td><i><abbr>SQL</abbr> spatial</i></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><s><abbr>OGC</abbr> 01-009</s></td>
+    <td><s><i>Coordinate Transformation Services</i></s></td>
+    <td><code>org.opengis.referencing</code></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><s><abbr>OGC</abbr> 01-004</s></td>
+    <td><s><i>Grid Coverage</i></s></td>
+    <td><code>org.opengis.coverage</code></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><abbr>SLD</abbr></td>
+    <td><i>Styled Layer Descriptor</i></td>
+    <td><code>org.opengis.style</code></td>
+  </tr>
+  <tr>
+    <td class="separator" colspan="4">Web Services</td>
+  </tr>
+  <tr>
+    <td><abbr>ISO</abbr> 19128</td>
+    <td><abbr>WMS</abbr></td>
+    <td><i>Web Map Service</i></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><abbr>WMTS</abbr></td>
+    <td><i>Web Map Tile Service</i></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><abbr>ISO</abbr> 19142</td>
+    <td><abbr>WFS</abbr></td>
+    <td><i>Web Feature Service</i></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><abbr>WCS</abbr></td>
+    <td><i>Web Coverage Service</i></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><abbr>WPS</abbr></td>
+    <td><i>Web Processing Service</i></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>Open<abbr>LS</abbr></td>
+    <td><i>Location Services</i></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><abbr>SWE</abbr></td>
+    <td><i>Sensor Web Enablement</i></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><abbr>SOS</abbr></td>
+    <td><i>Sensor Observation Service</i></td>
+    <td></td>
+  </tr>
+</table>
+
+
+
+<h2 id="DefinitionOfTerms">Definition of Terms</h2>
+<p>
+  Standards sometimes favour the application of certain generic terms to particular contexts,
+  which may differ from the context in which other communities use these terms.
+  For example, the terms <i>domain</i> and <i>range</i> may apply to arbitrary functions in order to designate
+  a set of possible values of inputs and outputs respectively.
+  But the functions to which they are applied by certain <abbr title="International Organization for Standardization">ISO</abbr> standards are not the same as the functions to which they are applied by other libraries.
+  For example, <abbr>ISO</abbr> 19123 applies these terms to <code class="OGC">CV_Coverage</code> objects,
+  seen as functions in which the <i>domain</i> is the set of spatio-temporal coordinates encompassed by the data,
+  and the <i>range</i> is the set of values encompassed.
+  But <abbr title="University Corporation for Atmospheric Research">UCAR</abbr>'s <abbr title="Network Common Data Form">NetCDF</abbr> library applies these terms instead to the function of converting pixel indices (its <i>domain</i>) to spatial-temporal coordinates (its <i>range</i>).
+  Thus the <abbr>UCAR</abbr> library's <i>range</i> may be the <i>domain</i> of <abbr>ISO</abbr> 19123.
+</p><p>
+  The Apache <abbr title="Spatial Information System">SIS</abbr> library prefers as much as possible to use terms in the sense of
+  <abbr title="Open Geospatial Consortium">OGC</abbr> and <abbr title="International Organization for Standardization">ISO</abbr> norms.
+  Particular care must be taken, however, with the interfaces between <abbr>SIS</abbr> and certain other external libraries,
+  in order to reduce the risk of confusion.
+</p>
+
+
+
+<h1 id="GeoAPI">GeoAPI</h1>
+<p>
+  The <a href="http://www.geoapi.org">GeoAPI</a> project offers a set of Java interfaces for geospatial applications.
+  In a series of <code class = "GeoAPI"> org.opengis.*</code> packages, GeoAPI defines structures representing metadata,
+  reference systems of coordinates and operations that perform cartographic projections.
+  In one part that is not yet standardized - called <i>pending</i> - GeoAPI defines structures that represent geo-referenced images,
+  geometries, filters that can be applied to queries, and other features.
+  These interfaces closely follow the specifications of the <abbr title = "Open Geospatial Consortium">OGC</abbr>,
+  while interpreting and adapting them to meet the needs of Java developers - for example, conforming with naming conventions.
+  These interfaces benefit both client applications and libraries:
+</p>
+<ul>
+  <li><p>
+    Developers of client applications benefit from the greater knowledge base available on the Internet
+    (due to the many publications related to <abbr title="Open Geospatial Consortium">OGC</abbr> standards), as well as increased interoperability.
+    Interoperability is facilitated by a better separation between applications that <em>call</em> GeoAPI functions,
+    and libraries that <em>implement</em> GeoAPI.
+    The separation is similar to that offered by the <a href="http://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/"><abbr>JDBC</abbr></a> (<i>Java Database Connectivity</i>) interfaces of standard Java.
+    Using the interfaces' <abbr title="Application Programming Interface">API</abbr>,
+    developers can ignore the underlying implementation.
+    For example, they can perform cartographic projections with the help of the <a href="http://www.geoapi.org/geoapi-proj4/index.html">Proj.4</a> library, or the Apache <abbr title="Spatial Information System">SIS</abbr> library,
+    without having to change their programs when they change libraries.
+  </p></li>
+  <li><p>
+    The developers of libraries inherit the expertise of the specifications' authors,
+    via the models that represent interfaces.
+    GeoAPI also provides a framework within which developers can prioritize the implementation of the features they most need,
+    while providing points on which to build future developments.
+    For example, clients can call a GeoAPI function even if it is not yet supported by the library,
+    and simply get a null value until a new version of the library returns a relevant value.
+  </p></li>
+</ul>
+
+<aside>
+  <p><b>History</b></p>
+  <p>
+    In 2001, the Open GIS Consortium (the former name of the Open Geospatial Consortium) published
+    <a href="http://www.opengeospatial.org/standards/ct"><abbr>OGC</abbr> implementation specification 01-009: <cite>Coordinate Transformation Services</cite></a>.
+    This specification, developed by the Computer Aided Development Corporation (Cadcorp), was accompanied by <abbr title="Component Object Model">COM</abbr>,
+    <abbr title="Common Object Request Broker Architecture">CORBA</abbr>, and Java interfaces.
+    At this time, the wave of web services had not yet eclipsed classical programming interfaces.
+    The interfaces of the <abbr title="Open Geospatial Consortium">OGC</abbr> did anticipate a networked world,
+    but invested rather - in the case of Java - in <abbr>RMI</abbr> (<i>Remote Method Invocation</i>) technology.
+    As the GeoAPI project did not yet exist, we retroactively designate these historical interfaces "<a href="http://www.geoapi.org/0.1/index.html">GeoAPI 0.1</a>."
+    These interfaces already used the pacet name <code class="GeoAPI">org.opengis</code>, which would be adopted by GeoAPI.
+  </p><p>
+    In 2002, developers of free projects launched a <a href="http://web.archive.org/web/20030509104308/http://digitalearth.org/story/2002/10/10/55046/206">call
+    for the creation of a geospatial <abbr title="Application Programming Interface">API</abbr></a>.
+    The initial proposal attracted the interest of at least five free projects.
+    The project was created using <a href="http://sourceforge.net/projects/geoapi/">SourceForge</a>,
+    which has since hosted the source code in a <a href="http://www.geoapi.org/source-repository.html">Subversion repository</a>.
+    It was then that the project assumed the name "GeoAPI," and used the interfaces of the <abbr>OGC</abbr> specification 01-009 as a starting point.
+  </p><p>
+    A few months later, the <abbr title="Open Geospatial Consortium">OGC</abbr> launched the <a href="http://www.opengeospatial.org/standards/go"><abbr>GO</abbr>-1: <i>Geographic Objects</i></a> project,
+    which pursued goals similar to those of GeoAPI.
+    In the meantime, the <abbr>OGC</abbr> abandonned some of their specifications in favor of <abbr title="International Organization for Standardization">ISO</abbr> standards.
+    GeoAPI and <abbr>GO-1</abbr> worked jointly to rework the GeoAPI interfaces and base them on the new <abbr>ISO</abbr> norms.
+    Their first interation, <a href="http://www.geoapi.org/1.0/index.html">GeoAPI 1.0</a>,
+    served as a starting point for the first draft of the <abbr>OGC</abbr> specification 03-064 by the <abbr>GO</abbr>-1 working group.
+    The final version of this specification became an <abbr>OGC</abbr> standard in 2005,
+    and <a href="http://www.geoapi.org/2.0/index.html">GeoAPI 2.0</a> was published at that time.
+  </p><p>
+    The <abbr>GO</abbr>-1 project was largely supported by a company called <i>Polexis</i>.
+    Its acquisition by <i>Sys Technology</i>, and the change in priorities under the new owners,
+    brought a halt to the <abbr>GO</abbr>-1 project, which in turn slowed development on GeoAPI.
+    In order to resume development, a new working group entitled "GeoAPI 3.0" was created at the <abbr title="Open Geospatial Consortium">OGC</abbr>.
+    This group took a narrower focus compared to GeoAPI 2.0, concentrating on the most stable interfaces, and putting the others
+    - such as geometries - in a module entitled "<a href="http://www.geoapi.org/geoapi-pending/index.html">pending</a>," for future consideration.
+    <a href="http://www.geoapi.org/3.0/index.html">GeoAPI 3.0</a> became an <a href="http://www.opengeospatial.org/standards/geoapi"><abbr>OGC</abbr> standard</a> in 2011.
+    This version was the first to be deployed in the <a href="http://search.maven.org/#search|ga|1|geoapi">Maven central repository</a>.
+  </p>
+</aside>
+
+
+<h2 id="SpecificationToInterfaces">Interface Specifications</h2>
+<p>
+  Since <abbr title="Open Geospatial Consortium">OGC</abbr> standards are defined by well-tested software engineering methods,
+  it is possible to automatically generate Java interfaces using relatively common tools.
+  One of the most commonly-used approaches is to transform <a href="http://schemas.opengis.net/gml/3.3/"><abbr>XSD</abbr> schemas</a>
+  into Java interfaces using command line utility <code>xjc</code>.
+  As this utility is included in most Java distributions (it is one of the <a href="http://jaxb.java.net"><abbr>JAXB</abbr></a> tools),
+  this approach is favoured by many projects found on the Internet.
+  Other approaches use tools integrated into the Eclipse Development Environment,
+  which is based on <abbr title="Unified Modeling Language">UML</abbr> schemas rather than <abbr title="XML Schema Definition">XSD</abbr> ones.
+</p><p>
+  A similar approach was attempted in the early days of the GeoAPI project, but was quickly abandoned.
+  We favor a manual approach for the following reasons:
+</p>
+<ul>
+  <li>
+    <p>
+      Some <abbr title="XML Schema Definition">XSD</abbr> schemas are much more verbose than the original <abbr title="Unified Modeling Language">UML</abbr> schemas.
+      Converting from <abbr>XSD</abbr> schemas introduces - at least in the case of metadata -
+      almost double the number of interfaces actually defined by the standard, without adding any new features.
+      <abbr>XSD</abbr> schemas also define attributes specific to <abbr>XML</abbr> documents (<code class="OGC">id</code>,
+      <code class="OGC">uuid</code>, <code>xlink:href</code>, <i>etc.</i>), that do not exist in the original <abbr>UML</abbr> diagrams,
+      and which we do not necessarily wish to display in a Java <abbr title="Application Programming Interface">API</abbr>.
+      Converting from <abbr>UML</abbr> schemas avoids this problem, but tools capable of performing this operation are less common.
+    </p>
+    <div class="example"><p><b>Example:</b>
+      <abbr title="XML Schema Definition">XSD</abbr> metadata schemas insert a <code class="OGC">&lt;gmd:CI_Citation&gt;</code> element
+      inside a <code class="OGC">&lt;gmd:citation&gt;</code>,
+      a <code class="OGC">&lt;gmd:CI_OnlineResource&gt;</code> element inside a <code class="OGC">&lt;gmd:onlineResource&gt;</code>,
+      and so on for the hundreds of classes defined by <abbr>ISO</abbr> standard 19115.
+      This redundancy is certainly not necessary in a Java program.
+    </p></div>
+  </li>
+  <li>
+    <p>
+      <abbr title="Open Geospatial Consortium">OGC</abbr> standards use different naming conventions than Java.
+      In particular, the names of almost all <abbr>OGC</abbr> classes begin with a two-letter prefix,
+      such as <code class="OGC">MD_Identifier</code>.
+      This prefixes fulfill the same role as package names in Java.
+      GeoAPI adapts this practice by using interface names without prefixes and placing these interfaces in packages corresponding to the prefixes,
+      but with more descriptive names.
+      Occasionally we also change the names; for example, to avoid acronyms, or to conform to an established convention such as JavaBeans.
+    </p>
+    <div class="example"><p><b>Example:</b>
+      The <abbr title="Open Geospatial Consortium">OGC</abbr> class <code class="OGC">MD_Identifier</code> becomes the
+      <code class="GeoAPI">Identifier</code> interface in the <code class="GeoAPI">org.opengis.metadata</code> package.
+      The <abbr>OGC</abbr> class <code class="OGC">SC_CRS</code> becomes the <code class="GeoAPI">CoordinateReferenceSystem</code> interface,
+      and the <code class="OGC">usesDatum</code> association becomes a <code class="GeoAPI">getDatum()</code> method,
+      rather than the "<code>getUsesDatum()</code>" that would result from an automatic conversion tool.
+      We do not allow programs to blindly apply rules that ignore the conventions of the community whose schemas we translate.
+    </p></div>
+  </li>
+  <li>
+    <p>
+      The standards may contain structures that do not have a direct equivalent in Java,
+      such as unions similar to what we would find in C/C++.
+      The strategy used to obtain an equivalent feature in Java depends on the context:
+      multiple inheritance of interfaces, modification of the hierarchy, or simply omitting the union.
+      These decisions are made case-by-case based on a needs analysis.
+    </p>
+    <div class="example"><p><b>Example:</b>
+      <abbr>ISO</abbr> Standard 19111 defines different types of coordinate systems, such as spherical, cylindrical, polar or Cartesian.
+      It then defines several <em>subsets</em> of these types of coordinate systems systems.
+      These subsets, represented by unions, serve to specify that a class may only be associated with a particular type of coordinate system.
+      For example, a union of types may be associated with an image, named <code class="OGC">CS_ImageCS</code>,
+      which may only contain <code class="OGC">CS_CartesianCS</code> and <code class="OGC">CS_AffineCS</code>.
+      In this case, we get the desired effect in Java through a modification of the hierarchy of classes:
+      we define the <code class="GeoAPI">CartesianCS</code> interface as a specialization of <code class="GeoAPI">AffineCS</code>,
+      which is semantically correct.
+      But it is not possible to apply a similar strategy to other unions without violating the semantics.
+    </p></div>
+  </li>
+  <li>
+    <p>
+      Several specifications overlap.
+      GeoAPI performs the work of integration by replacing some duplicate structures with references to equivalent structures from the standards that best represent them.
+    </p>
+    <div class="example"><p><b>Example:</b>
+      <abbr>ISO</abbr> Standard 19115, which defines metadata structures,
+      also attempts to describe a few structures representing coordinate reference systems (<abbr title="Coordinate Reference System">CRS</abbr>).
+      Yet these are also the focus of another standard: <abbr>ISO</abbr> 19111.
+      At the same time, <abbr>ISO</abbr> 19111:2007 states in section 3 that it reuses all of the elements of <abbr>ISO</abbr> 19115 except
+      <code class="OGC">MD_CRS</code> and its components.
+      GeoAPI interfaces reduce the redundancy by applying the exclusion recommended by <abbr>ISO</abbr> 19111 to the entire project.
+    </p></div>
+  </li>
+  <li>
+    <p>
+      The complexity of some standards have increased for historical reasons rather than technical ones, related to the standardization process.
+      GeoAPI reduces the technical debt by designing interfaces with each element in its proper place,
+      regardless of the chronological order in which the standards were published.
+    </p>
+    <div class="example"><p><b>Exemple:</b>
+      <abbr>ISO</abbr> Standard 19115-2 is an extension of <abbr>ISO</abbr> Standard 19115-1, adding image metadata structures.
+      These metadata were defined in a separate standard because they were not yet ready when the first part of the standard was published.
+      As it was not possible for administrative reasons to add attributes to already-published classes,
+      the new attributes were added in a sub-class bearing almost the same name.
+      Thus, <abbr>ISO</abbr> Standard 19115-2 defines the class <code class="OGC">MI_Band</code>,
+      which extends the class <code class="OGC">MD_Band</code> from <abbr>ISO</abbr> Standard 19115-1 by adding attributes that would have appeared
+      directly in the parent class if there had been time.
+      In GeoAPI, we have chosen to "repair" these anomalies by fusing these two classes into a single interface.
+    </p></div>
+  </li>
+</ul>
+<p>
+  Deviations from the standards are documented in each class and method affected.
+  Each mention of a deviation is also collected on a <a href="http://www.geoapi.org/3.0/javadoc/departures.html">single page</a> in order to provide an overview.
+  Since these deviations blur the relationships between the standards and certain Java interfaces,
+  the correspondence between these languages is explained by <code class="GeoAPI">@UML</code> annotations and property files described in the following section.
+</p>
+
+
+
+<h3 id="UML-annotation">Correspondences Explained in <code>@UML</code> Annotations</h3>
+<p>
+  For each class, method and constant defined by an <abbr title="Open Geospatial Consortium">OGC</abbr> or <abbr title="International Organization for Standardization">ISO</abbr> standard,
+  GeoAPI indicates its provenance using annotations defined in the <code class="GeoAPI">org.opengis.annotation</code> package.
+  In particular, the <code class="GeoAPI">@UML</code> annotations indicates the standard,
+  the name of the element in that standard, and also its obligation level.
+  For example, in the following code snippet, the first <code class="GeoAPI">@UML</code> code indicates that the Java interface that follows
+  (<code class="GeoAPI">ProjectedCRS</code>) is defined using the <code class="OGC">SC_ProjectedCRS</code> type of <abbr>ISO</abbr> Standard 19111.
+  The second <code class="GeoAPI">@UML</code> annotation, this time applied to the <code class="GeoAPI">getCoordinateSystem()</code> method,
+  indicates that this method is defined using the <code class="OGC">coordinateSystem</code> association of <abbr>ISO</abbr> Standard 19111,
+  and that this association is mandatory - meaning, in Java, that the method is not allowed to return a <code>null</code> value.
+</p>
+
+<pre><b>package</b> <code class="GeoAPI">org.opengis.referencing.crs</code>;
+<code class="comment">
+/**
+ * A 2D coordinate reference system used to approximate the shape of the earth on a planar surface.
+ */</code>
+<code class="GeoAPI">@UML</code>(<var>specification</var> = ISO_19111,
+     <var>identifier</var> = "<code class="OGC">SC_ProjectedCRS</code>")
+<b>public interface</b> <code class="GeoAPI">ProjectedCRS</code> <b>extends</b> <code class="GeoAPI">GeneralDerivedCRS</code> {<code class="comment">
+    /**
+     * Returns the coordinate system, which must be Cartesian.
+     */</code>
+    <code class="GeoAPI">@UML</code>(<var>obligation</var> = MANDATORY,
+         <var>specification</var> = ISO_19111,
+         <var>identifier</var> = "<code class="OGC">coordinateSystem</code>")
+    <code class="GeoAPI">CartesianCS getCoordinateSystem()</code>;
+}</pre>
+
+<p>
+  Java introspection methods allow access to this information during the execution of an application.
+  This is useful for displaying names for users familiar with <abbr title="Open Geospatial Consortium">OGC</abbr> standards,
+  or for writing elements in an <abbr>XML</abbr> document.
+  The following example displays the standard name for the method <code class="GeoAPI">getTitle()</code> from the <code class="GeoAPI">Citation</code> interface:
+</p>
+
+<pre>Class&lt;?&gt; <var>type</var>   = <code class="GeoAPI">Citation</code>.class;
+Method   <var>method</var> = <var>type</var>.getMethod("<code class="GeoAPI">getTitle</code>", (Class&lt;?&gt;[]) null);
+<code class="GeoAPI">UML</code>      <var>annot</var>  = <var>method</var>.getAnnotation(<code class="GeoAPI">UML</code>.class);
+String   <var>ident</var>  = <var>annot</var>.identifier();
+System.out.println("The standard name for the method " + <var>method</var>.getName() + " is " + <var>ident</var>);</pre>
+
+<p>
+  The class <code class="SIS">org.apache.sis.util.iso.Types</code> provides the commodity method
+  <code class="SIS">getStandardName(Class)</code> to perform this operation.
+</p>
+
+<p>
+  The reverse operation - getting the Java class and method of a standard name - is a bit more complicated.
+  It requires reading the <code class="GeoAPI">class-index.properties</code> file provided in the <code class="GeoAPI">org.opengis.annotation</code> package.
+  The following example reads the files just before searching for the name of the interface corresponding to <code class="OGC">CI_Citation</code>.
+  Users are always encouraged to only read this file once and then save its contents in their application's cache.
+</p>
+
+<pre>Properties <var>isoToGeoAPI</var> = <b>new</b> Properties();
+<b>try</b> (InputStream in = <code class="GeoAPI">UML</code>.class.getResourceAsStream("<code class="GeoAPI">class-index.properties</code>")) {
+    <var>isoToGeoAPI</var>.load(in);
+}
+String <var>isoName</var> = "<code class="OGC">CI_Citation</code>";
+String <var>geoName</var> = getProperty(<var>isoName</var>);
+Class&lt;?&gt;  <var>type</var> = Class.forName(<var>geoName</var>);
+System.out.println("The GeoAPI interface <abbr>ISO</abbr> " + <var>isoName</var> + " is " + <var>type</var>);</pre>
+
+<p>
+  The class <code class="SIS">org.apache.sis.util.iso.Types</code> provides the commodity method
+  <code class="SIS">forStandardName(String)</code> to perform this operation.
+</p>
+
+
+
+<h3 id="MappingToJDK">Implicit Correspondences to Standard <abbr>JDK</abbr></h3>
+<p>
+  Come classes and methods have neither an <code class="GeoAPI">@UML</code> annotation, nor an entry in the <code class="GeoAPI">class-index.properties</code> file.
+  They are either extensions of GeoAPI, or else types defined in other libraries, such as standard <abbr title="Java Development Kit">JDK</abbr>.
+  In this last case, the correspondence to <abbr title="International Organization for Standardization">ISO</abbr> standards is implicit.
+  The following table describes this correspondance for <abbr>ISO</abbr> Standard 19103 types.
+  Standard Java's original types are preferred when applicable,
+  but where necessary their equivalents in the form of objects are used in order to authorize null values.
+</p>
+<table>
+  <caption>Correspondences Between <abbr>ISO</abbr> 19103 et <abbr>JDK</abbr></caption>
+  <tr>
+    <th>Type <abbr>ISO</abbr></th>
+    <th>Type <abbr>JDK</abbr></th>
+    <th>Remarks</th>
+  </tr>
+  <tr>
+    <td class="separator" colspan="2">Numbers</td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">Integer</code></td>
+    <td><code>int</code></td>
+    <td class="leftBorder">Sometimes <code>java.lang.Integer</code> for optional attributes.</td>
+  </tr>
+  <tr>
+    <td><code class="OGC">Integer</code> (in some cases)</td>
+    <td><code>long</code></td>
+    <td class="leftBorder">Sometimes <code>java.lang.Long</code> for optional attributes.</td>
+  </tr>
+  <tr>
+    <td><code class="OGC">Real</code></td>
+    <td><code>double</code></td>
+    <td class="leftBorder">Sometimes <code>java.lang.Double</code> for optional attributes.</td>
+  </tr>
+  <tr>
+    <td><code class="OGC">Decimal</code></td>
+    <td><code>java.math.BigDecimal</code></td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">Number</code></td>
+    <td><code>java.lang.Number</code></td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td class="separator" colspan="2">Texts</td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">FreeText</code></td>
+    <td>(no equivalent)</td>
+    <td class="leftBorder">See <code class="GeoAPI">org.opengis.util.InternationalString</code> below.</td>
+  </tr>
+  <tr>
+    <td><code class="OGC">CharacterString</code></td>
+    <td><code>java.lang.String</code></td>
+    <td class="leftBorder">Often <code class="GeoAPI">org.opengis.util.InternationalString</code> (see below).</td>
+  </tr>
+  <tr>
+    <td><code class="OGC">LocalisedCharacterString</code></td>
+    <td><code>java.lang.String</code></td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">Sequence&lt;Character&gt;</code></td>
+    <td><code>java.lang.CharSequence</code></td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">Character</code></td>
+    <td><code>char</code></td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td class="separator" colspan="2">Dates and hours</td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">Date</code></td>
+    <td><code>java.util.Date</code></td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">Time</code></td>
+    <td><code>java.util.Date</code></td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">DateTime</code></td>
+    <td><code>java.util.Date</code></td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td class="separator" colspan="2">Collections</td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">Collection</code></td>
+    <td><code>java.util.Collection</code></td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">Bag</code></td>
+    <td><code>java.util.Collection</code></td>
+    <td class="leftBorder">A <code class="OGC">Bag</code> is similar to a
+        <code class="OGC">Set</code> without being restricted by uniqueness.</td>
+  </tr>
+  <tr>
+    <td><code class="OGC">Set</code></td>
+    <td><code>java.util.Set</code></td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">Sequence</code></td>
+    <td><code>java.util.List</code></td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">Dictionary</code></td>
+    <td><code>java.util.Map</code></td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">KeyValuePair</code></td>
+    <td><code>java.util.Map.Entry</code></td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td class="separator" colspan="2">Enumerations</td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">Enumeration</code></td>
+    <td><code>java.lang.Enum</code></td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">CodeList</code></td>
+    <td>(pas d’équivalent)</td>
+    <td class="leftBorder">See <code class="GeoAPI">org.opengis.util.CodeList</code> below.</td>
+  </tr>
+  <tr>
+    <td class="separator" colspan="2">Various</td>
+    <td class="leftBorder"></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">Boolean</code></td>
+    <td><code>boolean</code></td>
+    <td class="leftBorder">Sometimes <code>java.lang.Boolean</code> for optional attributes.</td>
+  </tr>
+  <tr>
+    <td><code class="OGC">Any</code></td>
+    <td><code>java.lang.Object</code></td>
+    <td class="leftBorder"></td>
+  </tr>
+</table>
+
+<p>
+  The nearest equivalent for <code class="OGC">CharacterString</code> is the <code>String</code> class,
+  but GeoAPI often uses the <code class="GeoAPI">InternationalString</code> interface, allowing the client to choose the language.
+  For example, it is useful on a server that simultaneously provides pages in multiple languages.
+  By returning translations when objects are used rather than at the time of their creation,
+  we allow the <abbr title="Spatial Information System">SIS</abbr> library to provide the same instances of <code class="GeoAPI">Metadata</code>
+  or <code class="GeoAPI">Coverage</code> (for example) for the same data, regardless of the client's language.
+  Translations may be made on the fly with the help of the application's <code>ResourceBundle</code>,
+  or may be provided directly with the data (as in the case of <code class="GeoAPI">Metadata</code>).
+</p>
+<p>
+  An <code class="OGC">Enumeration</code> corresponds to an <code>Enum</code> in Java.
+  Both define all authorized values, without allowing the user to add any.
+  A <code class="OGC">CodeList</code> is similar to an enumeration, except that users may add their own items.
+  Standard <abbr title="Java Development Kit">JDK</abbr> does not offer this possibility.
+  GeoAPI defines an abstract <code class="GeoAPI">CodeList</code> class that reproduces some of the functions of <code>Enum</code> while being extensible.
+  Extensions are derived from <code class="GeoAPI">valueOf(String)</code> static methods, which, in contrast to <code>Enum</code>,
+  creates new instances if the name provided does not correspond to the name of an existing instance.
+</p>
+
+<pre><code class="GeoAPI">MediumName</code> <var>cdRom</var>  = <code class="GeoAPI">MediumName.CD_ROM;</code>
+<code class="GeoAPI">MediumName</code> <var>usbKey</var> = <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">USB_KEY</code>"); <code class="comment">// There is no constraint on this value.</code>
+<b>assert</b> <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">CD_ROM</code>")  == <var>cdRom</var>  : "valueOf must return existing constants.";
+<b>assert</b> <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">USB_KEY</code>") == <var>usbKey</var> : "valueOf must hide the previously requested values.";</pre>
+
+
+
+<h2 id="ServiceLoader">Importing an Implementation of the Interfaces</h2>
+<p>
+  GeoAPI defines factories (<code class="GeoAPI">Factory</code>) that can create implementations of its interfaces.
+  For example, <code class="GeoAPI">DatumFactory</code> provides methods that can create instances which implement the interfaces of a
+  <code class="GeoAPI">org.opengis.referencing.datum</code> package.
+  A <code class="GeoAPI">Factory</code> must be implemented by a geospatial library,
+  and declared as a <i>service</i> as defined by by the standard <code>java.util.ServiceLoader</code> class.
+  The <code>ServiceLoader</code> javadoc explains this procedure.
+  In brief, the library must create a file in the <code>META-INF/services/</code> directory,
+  with a name corresponding to the complete name of an interface in the factory
+  (in the preceding example, <code class="GeoAPI">org.opengis.referencing.datum.DatumFactory</code>).
+  On one line, this text file must include the complete name of the class that implements this interface.
+  This class may be hidden from users, as they do not need to know of its existance.
+</p>
+<p>
+  If the library has correctly declared its factories as services,
+  users may import them by using <code>ServiceLoader</code>, as in the example below.
+  This example only takes the first factory located; if there is more than one factory -
+  for example when multiple libraries coexist - then the choice is left to the user.
+</p>
+
+<pre><b>import</b> <code class="GeoAPI">org.opengis.referencing.GeodeticDatum</code>;
+<b>import</b> <code class="GeoAPI">org.opengis.referencing.DatumFactory</code>;
+<b>import</b> java.util.ServiceLoader;
+
+<b>public class</b> MyApplication {
+    <b>public void</b> createMyDatum() {
+        ServiceLoader  <var>loader</var> = ServiceLoader.load(<code class="GeoAPI">DatumFactory</code>.class);
+        <code class="GeoAPI">DatumFactory</code>  <var>factory</var> = <var>loader</var>.iterator().next();
+        <code class="GeoAPI">GeodeticDatum</code> <var>myDatum</var> = <var>factory</var>.<code class="GeoAPI">createGeodeticDatum</code>(…);
+    }
+}</pre>
+
+
+
+<h3 id="GeoAPI-simple">Providing the Correct Implementation</h3>
+<p>
+  Implementing GeoAPI oneself in order to meet very specific needs is not difficult.
+  A developer might concentrate on a handful of interfaces among the hundreds available,
+  while keeping other interfaces as extension points to eventually implement as needed.
+</p>
+<p>
+  The conceptual model that the interfaces represent is complex. But this complexity may be reduced by combining certain interfaces.
+  For example, many libraries, even well-known ones, do not distinguish between a <cite>Coordinate System</cite> (<abbr>CS</abbr>)
+  and a <cite>Coordinate <u>Reference</u> System</cite> (<abbr>CRS</abbr>).
+  A developer that also wishes not to make this distinction may implement these two interfaces with the same class.
+  The resulting implementation may have a simpler class hierarchy than that of GeoAPI interfaces.
+  The <code class="GeoAPI">geoapi-examples</code> module, discussed later, provides such combinations.
+  The following table lists a few possible combinations:
+</p>
+<table>
+  <tr>
+    <th>Main Interface</th>
+    <th>Auxiliary Interface</th>
+    <th>Use</th>
+  </tr>
+  <tr>
+    <td><code class="GeoAPI">CoordinateReferenceSystem</code></td>
+    <td><code class="GeoAPI">CoordinateSystem</code></td>
+    <td>Description of a spatial reference system (<abbr title="Coordinate Reference System">CRS</abbr>).</td>
+  </tr>
+  <tr>
+    <td><code class="GeoAPI">GeodeticDatum</code></td>
+    <td><code class="GeoAPI">Ellipsoid</code></td>
+    <td>Description of the geodetic referential.</td>
+  </tr>
+  <tr>
+    <td><code class="GeoAPI">CoordinateOperation</code></td>
+    <td><code class="GeoAPI">MathTransform</code></td>
+    <td>Coordinate transformation operations.</td>
+  </tr>
+  <tr>
+    <td><code class="GeoAPI">IdentifiedObject</code></td>
+    <td><code class="GeoAPI">ReferenceIdentifier</code></td>
+    <td>An objet (usually a <abbr>CRS</abbr>) that we can identify by a code.</td>
+  </tr>
+  <tr>
+    <td><code class="GeoAPI">Citation</code></td>
+    <td><code class="GeoAPI">InternationalString</code></td>
+    <td>Bibliographic reference consisting of a simple title.</td>
+  </tr>
+  <tr>
+    <td><code class="GeoAPI">GeographicBoundingBox</code></td>
+    <td><code class="GeoAPI">Extent</code></td>
+    <td>Spatial area in degrees longitude and latitude.</td>
+  </tr>
+  <tr>
+    <td><code class="GeoAPI">ParameterValue</code></td>
+    <td><code class="GeoAPI">ParameterDescriptor</code></td>
+    <td>Description of a parameter (name, type) associated with its value.</td>
+  </tr>
+  <tr>
+    <td><code class="GeoAPI">ParameterValueGroup</code></td>
+    <td><code class="GeoAPI">ParameterDescriptorGroup</code></td>
+    <td>Description of a set of parameters associated with their values.</td>
+  </tr>
+</table>
+
+
+
+<h2 id="GeoAPI-modules">GeoAPI Modules</h2>
+<p>
+  The GeoAPI project consists of a standardized part (<code class="GeoAPI">geoapi</code>)
+  and an experimental part (<code class="GeoAPI">geoapi-pending</code>).
+  As these two parts are mutually exclusive, users must take care not to mix them in the same project.
+  This separation is guaranteed for all projects that depend only on the Maven central repository
+  (including the final versions of Apache <abbr title="Spatial Information System">SIS</abbr>),
+  as the <code class="GeoAPI">geoapi-pending</code> module is never deployed on this central repository.
+  By contrast, <i>snapshots</i> of certain <abbr>SIS</abbr> branches may depend on <code class="GeoAPI">geoapi-pending</code>.
+</p>
+<p>
+  GeoAPI modules are:
+</p>
+<ul>
+  <li><p>
+    <b><code class="GeoAPI">geoapi</code></b> — includes interfaces covered by the
+    <a href="http://www.opengeospatial.org/standards/geoapi">GeoAPI standard of the <abbr title="Open Geospatial Consortium">OGC</abbr></a>.
+    The final versions of Apache <abbr title="Spatial Information System">SIS</abbr> depend on this module.
+  </p></li>
+  <li><p>
+    <b><code class="GeoAPI">geoapi-pending</code></b> — contains a
+    <em>copy</em> of all interfaces in the <code class="GeoAPI">geoapi</code> module
+    (not a dependence) with additions that have not yet been approved as an <abbr>OGC</abbr> standard.
+    Some additions appear in interfaces normally defined by the <code class="GeoAPI">geoapi</code> module, hence the need to copy them.
+    <i>Snapshot</i> versions of <code>jdk6</code> branches, and Apache <abbr>SIS</abbr>'s <code>jdk7</code> and <code>jdk8</code> depend on this module,
+    but this dependence becomes a dependence on the <code class="GeoAPI">geoapi</code> standard module when the branches are joined to the trunk.
+  </p></li>
+  <li><p>
+    <b><code class="GeoAPI">geoapi-conformance</code></b> — includes a JUnit test suite that developers may use to test their implementations.
+    <i>Snapshot</i> and <i>milestones</i> versions depend on the <code class="GeoAPI">geoapi-pending</code> module,
+    while the final versions depend on <code class="GeoAPI">geoapi</code>.
+  </p></li>
+  <li><p>
+    <b><code class="GeoAPI">geoapi-examples</code></b> — includes examples of relatively simple implementations.
+    These examples are placed in the public domain in order to encourage users to copy and adapt them to their needs if
+    Apache <abbr>SIS</abbr> services are unsuitable.
+  </p></li>
+  <li><p>
+    <b><code class="GeoAPI">geoapi-proj4</code></b> — contains a partial implementation of <code class="GeoAPI">org.opengis.referencing</code>
+    packages as adaptors based on the C/C++ library Proj.4.
+    This module may be used as an alternative to the <code class="SIS">sis-referencing</code> module for certain functions.
+  </p></li>
+  <li><p>
+    <b><code class="GeoAPI">geoapi-netcdf</code></b> — contains a partial implementation of <code class="GeoAPI">org.opengis.referencing</code>
+    and <code class="GeoAPI">org.opengis.coverage</code> packages as adaptors based on the <abbr title="Network Common Data Form">NetCDF</abbr> library
+    of the <abbr title="University Corporation for Atmospheric Research">UCAR</abbr>.
+    The series of tests in this module was developed in such a way as to be reusable for other projects.
+    Apache <abbr>SIS</abbr> uses them to test its own <code class="SIS">sis-netcdf</code> module.
+  </p></li>
+  <li><p>
+    <b><code class="GeoAPI">geoapi-openoffice</code></b> — contains an add-in for the OpenOffice.org office suite.
+    <!--
+    Apache <abbr>SIS</abbr> offers its own add-in in the <code class="SIS">sis-openoffice</code> module,
+    but uses the same function names as the GeoAPI module in order to maintain some compatibility.
+    -->
+  </p></li>
+</ul>
+
+<h3 id="GeoAPI-core">The Interfaces' Definition Modules</h3>
+<p>
+  <code class="GeoAPI">geoapi</code> and <code class="GeoAPI">geoapi-pending</code> modules provide interfaces derived from the
+  <abbr title="Unified Modeling Language">UML</abbr> schemas of the international standards.
+  The conceptual model will be explained in detail in the chapters describing the implementation of Apache <abbr>SIS</abbr>.
+  However, we can get an overview of its content by consulting the page listing
+  <a href="http://www.geoapi.org/3.0/javadoc/content.html">GeoAPI methods with their original standards</a>.
+</p>
+
+
+
+<h3 id="GeoAPI-conformance">The Conformance Tests Module</h3>
+<p>
+  The <code class="GeoAPI">geoapi-conformance</code> module provides <i>validators</i>, a JUnit <i>test suite</i>, and <i>report generators</i>
+  in the form of <abbr title="Hypertext Markup Language">HTML</abbr> pages.
+  This module may be used with any GeoAPI implementation.
+  For developers of a geospatial library, it offers the following advantages:
+</p>
+<ul>
+  <li>Reduces the tedious task of writing tests by using existing tests.</li>
+  <li>Increases confidence in the validity of tests,
+    since <code class="GeoAPI">geoapi-conformance</code> has its own test suite and is applied to other implementations.</li>
+  <li>Facilitates comparison with other implementations.</li>
+</ul>
+
+
+
+<h4 id="GeoAPI-validators">Validations of Instances</h4>
+<p>
+  GeoAPI can validate an instance of its interfaces by checking that certain constraints are observed.
+  These constraints, which may only be expressed in the method signature,
+  are usually described textually in the abstract specifications or in the javadoc.
+</p>
+<div class="example"><p><b>Example:</b>
+  The transformation of a coordinate (<code class="OGC">CC_CoordinateOperation</code>) may require a sequence of several steps.
+  In such a sequence of operations (<code class="OGC">CC_ConcatenatedOperation</code>), for each step (<code class="OGC">CC_SingleOperation</code>)
+  the number of dimensions of the output must equal the number of dimensions of the input in the following operation.
+  Expressed in Java, this constraint stipulates that for the entire index 0 &lt; <var>i</var> &lt; <var>n</var> where <var>n</var>
+  is the number of operations, we have <code>coordOperation[i].sourceDimensions == coordOperation[i-1].targetDimensions</code>.
+</p></div>
+
+<p>
+  The easiest way to perform these verifications is to call the static methods <code class="GeoAPI">validate(…)</code> of the class
+  <code class="GeoAPI">org.opengis.test.Validators</code>.
+  As all of these methods bear the same name, it is enough to write “<code>validate(<var>value</var>)</code>” and then allow the compiler
+  to choose the most appropriate method for the type of object given in the argument.
+  If the object type is not known at the time of compilation,
+  the method <code class="GeoAPI">dispatch(Object)</code> may redirect the work to the appropriate <code class="GeoAPI">validate(…)</code> method.
+</p>
+<p>
+  All <code class="GeoAPI">validate(…)</code> functions follow a chain of dependencies,
+  meaning that they will also validate each component of the object to be validated.
+  For example, the validation of a <code class="GeoAPI">GeographicCRS</code> implies the validation of its component
+  <code class="GeoAPI">GeodeticDatum</code>, which itself implies the validation of its component <code class="GeoAPI">Ellipsoid</code>, and so on.
+  Thus it is useless to validate the components themselves, unless you wish to isolate the test for a particular item known to cause problems.
+</p>
+<p>
+  By default, validations are as strict as possible. It is always possible to relax certain rules.
+  The most common is to tolerate the absence of attributes that would normally be mandatory.
+  This rule and a few others may be modified globally for all tests executed by the standard <abbr title="Java Virtual Machine">JVM</abbr>,
+  as in the following example:
+</p>
+
+<pre><b>import</b> <code class="GeoAPI">org.opengis.metadata.Metadata</code>;
+<b>import</b> <code class="GeoAPI">org.opengis.test.Validators</code>;
+<b>import</b> org.junit.Test;
+
+<b>public class</b> MyTest {<code class="comment">
+    /*
+     * Tolerate the absence of mandatory attributes in metadata and citation packages.
+     * This modification applies to all tests executed by the standard <abbr>JVM</abbr>.
+     * If there are multiple test classes, this initialization may be performed
+     * in a parent class to all test classes.
+     */</code>
+    <b>static</b> {
+        <code class="GeoAPI">Validators.DEFAULT.metadata.requireMandatoryAttributes</code> = <b>false</b>;
+        <code class="GeoAPI">Validators.DEFAULT.citation.requireMandatoryAttributes</code> = <b>false</b>;
+    }
+
+    @Test
+    <b>public void</b> testMyMetadata() {
+        <code class="GeoAPI">Metadata</code> <var>myObject</var> = …; <code class="comment">// Create an object here.</code>
+        <code class="GeoAPI">Validators.validate</code>(<var>myObject</var>);
+    }
+}</pre>
+
+<p>
+  Rules may also be modified for a particular test suite without affecting the default configuration of the standard
+  <abbr title="Java Virtual Machine">JVM</abbr>.
+  This approach requires the creation of a new instance of the validator that we wish to modify the configuration.
+</p>
+
+<pre><b>import</b> <code class="GeoAPI">org.opengis.metadata.Metadata</code>;
+<b>import</b> <code class="GeoAPI">org.opengis.test.ValidatorContainer</code>;
+<b>import</b> org.junit.Test;
+
+<b>public class</b> MyTest {
+    <b>private final</b> <code class="GeoAPI">ValidatorContainer</code> <var>validators</var>;
+
+    <b>public</b> MyTest() {
+        <var>validators</var> = <b>new</b> <code class="GeoAPI">ValidatorContainer()</code>;
+        <var>validators</var>.<code class="GeoAPI">metadata.requireMandatoryAttributes</code> = <b>false</b>;
+        <var>validators</var>.<code class="GeoAPI">citation.requireMandatoryAttributes</code> = <b>false</b>;
+    }
+
+    @Test
+    <b>public void</b> testMyMetadata() {
+        <code class="GeoAPI">Metadata</code> <var>myObject</var> = …; <code class="comment">// Create an object here.</code>
+        <code class="GeoAPI">validators.validate</code>(<var>myObject</var>);
+    }
+}</pre>
+
+
+
+<h4 id="GeoAPI-tests">Executing Pre-defined Tests</h4>
+<p>
+  JUnit tests are defined in the <code class="GeoAPI">org.opengis.test</code> sub-packages.
+  All test classes bear a name ending in "<code>Test</code>".
+  In addition, an <code class="GeoAPI">org.opengis.test.TestSuite</code> class includes all test classes defined in the
+  <code class="GeoAPI">geoapi-conformance</code> module.
+  One way to execute all of these tests at once is to create a sub-class of <code class="GeoAPI">TestSuite</code>,
+  perhaps including a static block performing a configuration of validators as in the previous example,
+  and inherit the tests defined in GeoAPI.
+</p>
+<p>
+  Apache <abbr title="Spatial Information System">SIS</abbr> inherits GeoAPI's <code class="GeoAPI">*Test</code> classes on a case-by-case basis,
+  in the appropriate modules.
+  The <code class="GeoAPI">TestSuite</code> class is used instead in an integration test encompassing all <abbr>SIS</abbr> modules.
+  The example below gives an example of a personalizaed GeoAPI test:
+  The <a href="http://www.geoapi.org/geoapi-conformance/apidocs/org/opengis/test/referencing/ParameterizedTransformTest.html">parent test javadoc</a>
+  documents the tests performed in detail.
+  In this example, only one test is modified and all the others are inherited as they are (it is not necessary to repeat them in the sub-class).
+  However, this example adds a supplemental verrification, annotated with <code>@After</code>, which will be executed after each test.
+</p>
+
+<pre><b>import</b> org.junit.*;
+<b>import</b> org.junit.runner.RunWith;
+<b>import</b> org.junit.runners.JUnit4;
+<b>import</b> <code class="GeoAPI">org.opengis.test.referencing.ParameterizedTransformTest</code>;
+<b>import static</b> org.junit.Assert.*;
+
+@RunWith(JUnit4.class)
+<b>public class</b> MyTest <b>extends</b> <code class="GeoAPI">ParameterizedTransformTest</code> {<code class="comment">
+    /**
+     * Specify our own coordinate transformation factory for the GeoAPI tests.
+     * GeoAPI will test the objects created by this factory.
+     */</code>
+    <b>public</b> MyTest() {
+        <b>super</b>(<b>new</b> MyMathTransformFactory());
+    }
+<code class="comment">
+    /**
+     * Changes the behaviour of a test. This example relaxes the requirements of this test a little,
+     * by accepting errors of up to 10 centimetres, rather than the default value of 1 cm.
+     * This change only applies to this method, and does not affect the other inherited tests.
+     */</code>
+    @Test
+    @Override
+    <b>public void</b> testLambertAzimuthalEqualArea() <b>throws</b> <code class="GeoAPI">FactoryException</code>, <code class="GeoAPI">TransformException</code> {
+        <code class="GeoAPI"><var>tolerance</var></code> = 0.1; // Tolérance de 10 cm.
+        <b>super</b>.<code class="GeoAPI">testLambertAzimuthalEqualArea()</code>;
+    }
+<code class="comment">
+    /**
+     * Supplemental verification performed after each test, inherited or not.
+     * In this example, we are verifying that the transformation tested
+     * works correctly in two-dimensional spaces.
+     */</code>
+    @After
+    <b>public void</b> ensureAllTransformAreMath2D() {
+        assertTrue(<code class="GeoAPI"><var>transform</var></code> <b>instanceof</b> <code class="GeoAPI">MathTransform2D</code>);
+    }
+}</pre>
+
+
+
+<h3 id="GeoAPI-examples">Example Modules</h3>
+<p>
+  The <code class="GeoAPI">geoapi-examples</code> module provides examples of simple implementations.
+
+
+
+  Plusieurs de ces classes implémentent plus d’une interface à la fois afin de proposer un modèle conceptuel plus simple.
+  La <a href="http://www.geoapi.org/geoapi-examples/apidocs/overview-summary.html">Javadoc de ce module</a>
+  énumère les paquets et classes clés avec les combinaisons effectuées.
+  Ce module illustre non-seulement comment GeoAPI peut-être implémenté, mais aussi comment l’implémentation
+  peut être testée en utilisant <code class="GeoAPI">geoapi-conformance</code>.
+</p>
+<p>
+  Bien que sa mission première soit de servir d’inspiration aux implémenteurs,
+  <code class="GeoAPI">geoapi-examples</code> a tout-de-même été conçu de manière à être utilisable
+  par des applications ayant des besoins très simples. Tous les exemples étant dans le domaine publique,
+  les développeurs sont invités à adapter librement des copies de ces classes si nécessaires.
+  Toutefois si des modifications sont apportées hors du cadre du projet GeoAPI, le bon usage veut que les copies
+  modifiées soient placées dans un paquet portant un autre nom que <code class="GeoAPI">org.opengis</code>.
+</p>
+<p>
+  Pour des besoins un peu plus poussés, les développeurs sont invités à examiner les modules
+  <code class="GeoAPI">geoapi-proj4</code> et <code class="GeoAPI">geoapi-netcdf</code>.
+  Ces deux modules fournissent des exemples d’adaptateurs permettant d’utiliser, via les interfaces de GeoAPI,
+  une partie des fonctionnalités de bibliothèques externes (Proj.4 et <abbr title="Network Common Data Form">NetCDF</abbr>).
+  L’avantage de passer par ces interfaces est de disposer d’un modèle unifié pour exploiter deux
+  <abbr title="Application Programming Interface">API</abbr> très différents,
+  tout en se gardant la possibilité de basculer plus facilement à une autre bibliothèque si désiré.
+</p>
+
+
+
+<h1 id="XML-ISO">Représentation des objets en <abbr>XML</abbr></h1>
+<p>
+  Les objets définis par les standards
+  <abbr title="Open Geospatial Consortium">OGC</abbr>/<abbr title="International Organization for Standardization">ISO</abbr>
+  doivent pouvoir être échangés sur internet entre des machines distantes,
+  utilisant des logiciels différents écrits dans des langages différents.
+  Quelques uns des formats les plus connus sont
+  le <abbr>WKT</abbr> (<i>Well Known Text</i>) et
+  le <abbr>WKB</abbr> (<i>Well Known Binary</i>).
+  Mais le format le plus exhaustif et souvent considéré comme la référence est le <abbr>XML</abbr>,
+  au point où la façon de représenter les objets <abbr>ISO</abbr> dans ce format fait parfois l’objet d’un standard international à part entière.
+  Ainsi, les classes de méta-données sont décrites dans le standard <abbr>ISO</abbr> 19115 (une spécification dite <i>abstraite</i>),
+  alors que la représentation de ces classes en <abbr>XML</abbr> est décrite par le standard <abbr>ISO</abbr> 19139.
+</p>
+<p>
+  Les différents standards
+  <abbr title="Open Geospatial Consortium">OGC</abbr>/<abbr title="International Organization for Standardization">ISO</abbr>
+  n’emploient pas tous la même stratégie pour exprimer les objets en <abbr>XML</abbr>.
+  Le standard <abbr>ISO</abbr> 19139 en particulier emploie une approche plus verbeuse que les autres normes,
+  et fera l’objet d’une section particulière.
+  Mais la plupart des formats <abbr>XML</abbr> ont en commun de définir des types et des attributs supplémentaires
+  qui ne font pas partie des spécifications abstraites d’origines.
+  Ces attributs supplémentaires sont habituellement propres au <abbr>XML</abbr> et peuvent ne pas apparaître directement dans
+  l’<abbr title="Application Programming Interface">API</abbr> de Apache <abbr title="Spatial Information System">SIS</abbr>.
+  Certains de ces attributs, notamment <code class="OGC">id</code>, <code class="OGC">uuid</code> et <code>xlink:href</code>,
+  restent toutefois accessibles sous forme de paires clé-valeurs.
+</p>
+<p>
+  Les documents <abbr>XML</abbr> peuvent employer les préfixes de leur choix,
+  mais les préfixes suivants sont couramment employés dans la pratique.
+  Ils apparaissent donc par défaut dans les documents produits par Apache <abbr>SIS</abbr>.
+  Ces préfixes sont définis dans la classe <code class="SIS">org.apache.sis.xml.Namespaces</code>.
+</p>
+<table>
+  <caption>Préfixes d’espaces de noms <abbr>XML</abbr> courants</caption>
+  <tr>
+    <th>Préfixe</th>
+    <th>Espace de nom</th>
+  </tr>
+  <tr>
+    <td><code class="OGC">gco</code></td>
+    <td><code>http://www.isotc211.org/2005/gco</code></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">gfc</code></td>
+    <td><code>http://www.isotc211.org/2005/gfc</code></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">gmd</code></td>
+    <td><code>http://www.isotc211.org/2005/gmd</code></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">gmi</code></td>
+    <td><code>http://www.isotc211.org/2005/gmi</code></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">gmx</code></td>
+    <td><code>http://www.isotc211.org/2005/gmx</code></td>
+  </tr>
+  <tr>
+    <td><code class="OGC">gml</code></td>
+    <td><code>http://www.opengis.net/gml/3.2</code></td>
+  </tr>
+  <tr>
+    <td><code>xlink</code></td>
+    <td><code>http://www.w3.org/1999/xlink</code></td>
+  </tr>
+</table>
+
+<aside>
+  <p><b>Outils de lecture et d’écriture de documents <abbr>XML</abbr></b></p>
+  <p>
+    Apache <abbr title="Spatial Information System">SIS</abbr> emploie différentes bibliothèques pour lire et écrire différents type d’objets.
+    La bibliothèque utilisée dépend de la complexité de l’objet et des contraintes de performances.
+    Par exemple les annotations de <abbr title="Java Architecture for XML Binding">JAXB</abbr> ont l’avantage d’être proches du code,
+    ce qui facilite la maintenance de la correspondance entre le Java et le <abbr>XML</abbr>.
+    En revanche <abbr title="Simple API for XML">SAX</abbr> a l’avantage d’être performant.
+    De manière générale, Apache <abbr>SIS</abbr> emploie:
+  </p>
+  <ul>
+    <li>
+      <abbr title="Java Architecture for XML Binding">JAXB</abbr> pour les objets écrits en relativement peu d’exemplaires
+      mais dont la structure est complexe, avec des arborescences profondes.
+      L’ensemble des méta-données <abbr>ISO</abbr> 19139 est un exemple typique.
+    </li>
+    <li>
+      <abbr title="Simple API for XML">SAX</abbr> pour les objets relativement simples mais pouvant exister en très grand nombre.
+      L’ensemble des points dans une géométrie est un exemple typique.
+    </li>
+    <li>
+      <abbr title="Document Object Model">DOM</abbr> comme une alternative à <abbr title="Java Architecture for XML Binding">JAXB</abbr>
+      lorsque les éléments <abbr>XML</abbr> ne correspondent pas directement à des attributs Java.
+      Les <i>features</i> en sont un exemple, car leur structure est dynamique.
+    </li>
+  </ul>
+</aside>
+
+
+
+<h2 id="XML-ISO-19115">Représentation des méta-données selon <abbr>ISO</abbr> 19139</h2>
+<p>
+  Pour chaque classe de méta-donnée, il existe un type <abbr>XML</abbr> nommé comme dans la spécification abstraite
+  (par exemple <code class="OGC">gmd:MD_Metadata</code> et <code class="OGC">gmd:CI_Citation</code>).
+  Tous ces types peuvent être employés comme racine d’un document <abbr>XML</abbr>.
+  Ainsi, il est possible d’écrire un document représentant un objet <code class="OGC">MD_Metadata</code> complet,
+  ou d’écrire un document représentant seulement un objet <code class="OGC">CI_Citation</code>.
+</p>
+<p>
+  Le standard <abbr>ISO</abbr> 19139 dispose le contenu de ces objets d’une manière inhabituelle:
+  pour chaque propriété dont le type de la valeur est lui-même une autre classe du standard <abbr>ISO</abbr> 19139,
+  la valeur est enveloppée dans un élément qui représente son type plutôt que d’être écrite directement.
+  Par exemple dans un objet de type <code class="OGC">CI_Citation</code>,
+  la valeur de la propriété <code class="OGC">citedResponsibleParty</code>
+  est enveloppée dans un élément <code class="OGC">CI_Responsibility</code>.
+  Cette pratique double la profondeur de l’arborescence, en introduisant une duplication
+  à tous les niveaux pour chaque valeur, comme dans l’exemple suivant:
+</p>
+<pre><b>&lt;MD_Metadata&gt;</b>
+  &lt;identificationInfo&gt;
+    <b>&lt;MD_DataIdentification&gt;</b>
+      &lt;citation&gt;
+        <b>&lt;CI_Citation&gt;</b>
+          &lt;citedResponsibleParty&gt;
+            <b>&lt;CI_Responsibility&gt;</b>
+              &lt;party&gt;
+                <b>&lt;CI_Party&gt;</b>
+                  &lt;contactInfo&gt;
+                    <b>&lt;CI_Contact&gt;</b>
+                      &lt;onlineResource&gt;
+                        <b>&lt;CI_OnlineResource&gt;</b>
+                          &lt;linkage&gt;
+                            &lt;URL&gt;http://www.opengeospatial.org&lt;/URL&gt;
+                          &lt;/linkage&gt;
+                        <b>&lt;/CI_OnlineResource&gt;</b>
+                      &lt;/onlineResource&gt;
+                    <b>&lt;/CI_Contact&gt;</b>
+                  &lt;/contactInfo&gt;
+                <b>&lt;/CI_Party&gt;</b>
+              &lt;/party&gt;
+            <b>&lt;/CI_Responsibility&gt;</b>
+          &lt;/citedResponsibleParty&gt;
+        <b>&lt;/CI_Citation&gt;</b>
+      &lt;/citation&gt;
+    <b>&lt;/MD_DataIdentification&gt;</b>
+  &lt;/identificationInfo&gt;
+<b>&lt;/MD_Metadata&gt;</b></pre>
+
+<p>
+  L’exemple précédent, comme tous les documents conformes à <abbr>ISO</abbr> 19139,
+  est constitué d’une alternance systématique de deux types d’éléments <abbr>XML</abbr>.
+  Il y a d’abord le nom de la propriété, qui commence toujours par une lettre minuscule (en ignorant les préfixes).
+  Dans les <abbr title="Application Programming Interface">API</abbr> Java, chaque propriété correspond à une méthode de la classe englobante.
+  Par exemple dans l’exemple ci-haut, <code class="OGC">gmd:identificationInfo</code>
+  correspond à la méthode <code class="GeoAPI">Metadata.getIdentificationInfo()</code>.
+  Contrairement aux <abbr>API</abbr> Java toutefois, les documents <abbr>XML</abbr>
+  ne placent pas les propriétés filles directement en dessous.
+  À la place, ces éléments n’acceptent que les informations suivantes:
+</p>
+<ul>
+  <li>
+    Un élément, décrit dans le paragraphe suivant, qui englobera les propriétés filles.
+  </li>
+  <li>
+    Un groupe d’attributs (notamment <code class="OGC">gmd:idref</code>, <code class="OGC">gco:uuidref</code> et <code>xlink:href</code>)
+    que les schémas <abbr title="XML Schema Definition">XSD</abbr> de l’<abbr title="Open Geospatial Consortium">OGC</abbr>
+    nomment collectivement <code class="OGC">gco:ObjectReference</code>.
+  </li>
+</ul>
+<p>
+  Sous chaque propriété se trouve le type de la valeur, sauf si elle a été remplacée par une référence (la sous-section suivante approfondira ce sujet).
+  Le type de la valeur est un élément <abbr>XML</abbr> dont le nom commence toujours par une lettre majuscule, en ignorant les préfixes.
+  Dans l’exemple ci-haut nous avions <code class="OGC">MD_DataIdentification</code>, qui correspond à l’interface Java <code class="GeoAPI">DataIdentification</code>.
+  C’est cet élément <abbr>XML</abbr> qui contient les propriétés filles. Cet élément accepte aussi un groupe d’attributs
+  (notamment <code class="OGC">id</code> et <code class="OGC">uuid</code>) que les schémas <abbr title="XML Schema Definition">XSD</abbr>
+  de l’<abbr title="Open Geospatial Consortium">OGC</abbr> nomment collectivement <code class="OGC">gco:ObjectIdentification</code>.
+  Ces attributs n’ont pas de méthodes Java dédiées, mais sont accessibles indirectement via l’interface <code class="SIS">IdentifiedObject</code>
+  décrite dans la sous-section suivante.
+</p>
+
+<aside>
+  <p><b>Convention de nommage dans les schémas <abbr>XSD</abbr></b></p>
+  <p>
+    Les schémas <abbr title="XML Schema Definition">XSD</abbr> de l’<abbr title="Open Geospatial Consortium">OGC</abbr>
+    définissent pour chaque élément du premier groupe un type dont le nom se termine par “<code class="OGC">_PropertyType</code>”.
+    Pour le second groupe, chaque élément a un type dont le nom se termine par “<code class="OGC">_Type</code>”.
+  </p>
+</aside>
+
+<p>
+  Afin de réduire la complexité des bibliothèques, GeoAPI et Apache <abbr title="Spatial Information System">SIS</abbr>
+  n’exposent publiquement qu’une vision unifiée de ces deux types d’éléments.
+  L’<abbr title="Application Programming Interface">API</abbr> public correspond essentiellement au
+  deuxième groupe. Toutefois, lors de l’écriture d’un document <abbr>XML</abbr>, des éléments du premier groupe
+  doivent être temporairement recréés.
+  Les classes qui y correspondent sont définies dans des paquets internes de <abbr title="Spatial Information System">SIS</abbr>.
+  Ces classes peuvent être ignorées, sauf si le développeur souhaite implémenter ses propres
+  classes dont les instances devront être lus et écrits par <abbr title="Java Architecture for XML Binding">JAXB</abbr>.
+</p>
+
+<aside>
+  <p><b>Stratégie d’implémentation dans Apache <abbr>SIS</abbr></b></p>
+  <p>
+    Les paquets <code class="SIS">org.apache.sis.internal.jaxb.*</code> (non-publiques)
+    définissent des adaptateurs <abbr title="Java Architecture for XML Binding">JAXB</abbr> pour tous les types d’objet <abbr>ISO</abbr>.
+    Ces adaptateurs sont de toute façon nécessaires pour permettre à <abbr>JAXB</abbr>
+    d’obtenir les classes <abbr title="Spatial Information System">SIS</abbr> implémentant les interfaces de GeoAPI.
+    De manière opportuniste, <abbr>SIS</abbr> en fait à la fois des adaptateurs <abbr>JAXB</abbr>
+    et des objets enveloppants le “vrai” objet à lire ou écrire.
+    Cette utilisation double permet d’éviter d’avoir à doubler le nombre de classes
+    (déjà très élevé) présents dans les paquets internes.
+  </p>
+</aside>
+
+
+<h3 id="gco-id">Identification d’instances déjà définies</h3>
+<p>
+  L’élément englobant peut contenir un attribut <code class="OGC">id</code>,
+  <code class="OGC">uuid</code> ou <code>xlink:href</code>.
+  Si un de ces attributs est présent, l’élément englobé peut être complètement omis;
+  il sera remplacé au moment de la lecture par l’élément référencé par l’attribut.
+  Dans l’exemple suivant, la partie gauche définie un élément associé à l’identifiant “<code>mon_id</code>”,
+  alors que la partie droite référence cet élément:
+</p>
+
+<table class="hidden">
+  <tr>
+    <th>Définir un identifiant</th>
+    <th>Utiliser l’identifiant défini</th>
+  </tr>
+  <tr>
+    <td>
+      <pre style="margin-top: 6pt">&lt;MD_MetaData&gt;
+  &lt;identificationInfo&gt;
+    &lt;MD_DataIdentification id="<b>mon_id</b>"&gt;
+      <code class="comment">&lt;!-- insérer ici des propriétés filles --&gt;</code>
+    &lt;/MD_DataIdentification&gt;
+  &lt;/identificationInfo&gt;
+&lt;/MD_MetaData&gt;</pre>
+    </td>
+    <td>
+      <pre style="margin-top: 6pt">&lt;MD_MetaData&gt;
+  &lt;identificationInfo idref="<b>mon_id</b>"/&gt;
+&lt;/MD_MetaData&gt;</pre>
+    </td>
+  </tr>
+</table>
+
+<p>
+  Le choix de l’attribut à utiliser dépend de la portée de l’élément référencé:
+</p>
+<ul>
+  <li>
+    <code class="OGC">id</code> n’est valide qu’à l’intérieur du document <abbr>XML</abbr>
+    qui définit l’objet ainsi référencé.
+  </li>
+  <li>
+    <code class="OGC">uuid</code> peut être valide à l’extérieur du document <abbr>XML</abbr>,
+    mais quelqu’un doit maintenir une base de données fournissant les objets pour chaque UUID donnés.
+  </li>
+  <li>
+    <code>xlink:href</code> peut faire référence à un autre document <abbr>XML</abbr> accessible sur internet.
+  </li>
+</ul>
+<p>
+  Dans la bibliothèque <abbr title="Spatial Information System">SIS</abbr>,
+  tous les objets susceptibles d’être identifiés dans un document <abbr>XML</abbr>
+  implémentent l’interface <code class="SIS">org.apache.sis.xml.IdentifiedObject</code>.
+  Chaque instance de cette interface fournit une vue de ses identifiants sous forme de <code>Map&lt;Citation,String&gt;</code>,
+  dans lequel la clé <code class="GeoAPI">Citation</code> identifie le type d’identifiant et la valeur est l’identifiant lui-même.
+  Quelques constantes représentant différents types d’identifiants sont énumérées dans <code class="SIS">IdentifierSpace</code>,
+  notamment <code class="SIS">ID</code>, <code class="SIS">UUID</code> et <code class="SIS">HREF</code>.
+  Chacune de ces clés peut être associée à une valeur d’un type différent (habituellement <code>String</code>,
+  <code>UUID</code> ou <code>URI</code>) selon la clé.
+  Par exemple le code suivant définit une valeur pour l’attribut <code class="OGC">uuid</code>:
+</p>
+
+<pre><b>import</b> <code class="SIS">org.apache.sis.metadata.iso.DefaultMetadata</code>;
+<b>import</b> <code class="SIS">org.apache.sis.xml.IdentifierSpace</code>;
+<b>import</b> java.util.UUID;
+
+<b>public class</b> MyClass {
+    <b>public void</b> myMethod() {
+        UUID <var>identifier</var> = UUID.randomUUID();
+        <code class="SIS">DefaultMetadata</code> <var>metadata</var> = <b>new</b> <code class="SIS">DefaultMetadata</code>();
+        <var>metadata</var>.<code class="SIS">getIdentifierMap().putSpecialized</code>(<code class="SIS">IdentifierSpace.UUID</code>, <var>identifier</var>);
+    }
+}</pre>
+
+<p>
+  Bien que ce mécanisme aie été définit dans le but de mieux supporter les représentations des
+  attributs <abbr>XML</abbr> du groupe <code class="OGC">gco:ObjectIdentification</code>,
+  il permet aussi de manière opportuniste de manipuler d’autres types d’identifiants.
+  Par exemple les attributs <code class="GeoAPI">ISBN</code> et <code class="GeoAPI">ISSN</code>
+  de <code class="GeoAPI">Citation</code> peuvent être manipulés de cette manière.
+  Les méthodes de l’interface <code class="SIS">IdentifiedObject</code> fournissent donc un endroit unique
+  où peuvent être manipulés tous types d’identifiants (pas seulement <abbr>XML</abbr>) associés à un objet.
+</p>
+
+
+
+<h2 id="nilReason">Représentation de valeurs manquantes</h2>
+<p>
+  Lorsqu’un attribut n’est pas défini, la méthode correspondante de GeoAPI retourne généralement <code>null</code>.
+  Toutefois les choses se compliquent lorsque l’attribut manquant est une valeur considérée comme obligatoire par le standard <abbr>ISO</abbr> 19115.
+  Le standard <abbr>ISO</abbr> 19139 autorise l’omission d’attributs obligatoires à la condition d’indiquer pourquoi la valeur est manquante.
+  Les raisons peuvent être que l’attribut ne s’applique pas (<code class="OGC">inapplicable</code>),
+  que la valeur existe probablement mais n’est pas connue (<code class="OGC">unknown</code>),
+  que la valeur pourrait ne pas exister (<code class="OGC">missing</code>),
+  qu’elle ne peut pas être divulguée (<code class="OGC">withheld</code>), <i>etc.</i>
+  La transmission de cette information nécessite l’utilisation d’un objet non-nul même lorsque la valeur est manquante.
+  <abbr title="Spatial Information System">SIS</abbr> procède en retournant un objet qui, en plus d’implémenter l’interface GeoAPI attendue,
+  implémente aussi l’interface <code class="SIS">org.apache.xml.NilObject</code>.
+  Cette interface marque les instances dont toutes les méthodes retournent une collection vide,
+  un tableau vide, <code>null</code>, <code>NaN</code>, <code>0</code> ou <code>false</code>,
+  dans cet ordre de préférence selon ce que les types de retours des méthodes permettent.
+  Chaque instance implémentant <code class="SIS">NilObject</code> fournit une méthode
+  <code class="SIS">getNilReason()</code> indiquant pourquoi l’objet est nul.
+</p>
+<p>
+  Dans l’exemple suivant, la partie gauche montre un élément <code class="OGC">CI_Citation</code>
+  contenant un élément <code class="OGC">CI_Series</code>, alors que dans la partie droite la série est inconnue.
+  Si l’élément <code class="OGC">CI_Series</code> avait été complètement omis,
+  alors la méthode <code class="GeoAPI">Citation.getSeries()</code> retournerait <code>null</code> en Java.
+  Mais en présence d’un attribut <code class="OGC">nilReason</code>, l’implémentation <abbr title="Spatial Information System">SIS</abbr>
+  de <code class="SIS">getSeries()</code> retournera plutôt un objet implémentant à la fois les interfaces
+  <code class="GeoAPI">Series</code> et <code class="SIS">NilReason</code>,
+  et dont la méthode <code class="SIS">getNilReason()</code> retournera la constante <code class="SIS">UNKNOWN</code>.
+</p>
+
+<table class="hidden">
+  <tr>
+    <th>Information présente</th>
+    <th>Information absente</th>
+  </tr>
+  <tr>
+    <td>
+      <pre style="margin-top: 6pt">&lt;CI_Citation&gt;
+  &lt;series&gt;
+    &lt;CI_Series&gt;
+      <code class="comment">&lt;!-- insérer ici des propriétés filles --&gt;</code>
+    &lt;/CI_Series&gt;
+  &lt;/series&gt;
+&lt;/CI_Citation&gt;</pre>
+    </td>
+    <td>
+      <pre style="margin-top: 6pt">&lt;CI_Citation&gt;
+  &lt;series nilReason="unknown"/&gt;
+&lt;/CI_Citation&gt;</pre>
+    </td>
+  </tr>
+</table>
+
+
+
+<h1 id="Utilities">Classes et méthodes utilitaires</h1>
+<p>
+  Ce chapitre décrit des aspects de Apache <abbr title="Spatial Information System">SIS</abbr> qui s’appliquent à l’ensemble de la bibliothèque.
+  La plupart de ces utilitaires ne sont pas spécifiques aux systèmes d’information spatiales.
+</p>
+
+<h2 id="ComparisonMode">Modes de comparaisons des objets</h2>
+<p>
+  Il existe différentes opinions sur la façon d’implémenter la méthode <code>Object.equals(Object)</code> du Java standard.
+  Selon certains, il doit être possible de comparer différentes implémentations d’une même interface ou classe de base.
+  Mais cette politique nécessite que chaque interface ou classe de base définisse entièrement dans sa Javadoc les critères ou calculs
+  que doivent employer les méthodes <code>equals(Object)</code> et <code>hashCode()</code> dans toutes les implémentations.
+  Cette approche est choisie notamment par <code>java.util.Collection</code> et ses interfaces filles.
+  La transposition de cette approche aux centaines d’interfaces de GeoAPI serait toutefois une entreprise ardue,
+  qui risquerait d’être assez peu suivie par les diverses implémentations.
+  En outre, elle se fait au détriment de la possibilité de prendre en compte des attributs supplémentaires dans les interfaces filles
+  si cette possibilité n’a pas été spécifiée dans l’interface parente.
+  Cette contrainte découle des points suivants du contrat des méthodes <code>equals(Object)</code> et <code>hashCode()</code>:
+</p>
+<ul>
+  <li><code>A.equals(B)</code> implique <code>B.equals(A)</code> (symétrie);</li>
+  <li><code>A.equals(B)</code> et <code>B.equals(C)</code> implique <code>A.equals(C)</code> (transitivité);</li>
+  <li><code>A.equals(B)</code> implique <code>A.hashCode() == B.hashCode()</code>.</li>
+</ul>
+<p>
+  Par exemple ces trois contraintes sont violées si <var>A</var> (et éventuellement <var>C</var>)
+  peuvent contenir des attributs que <var>B</var> ignore.
+  Pour contourner cette difficulté, une approche alternative consiste à exiger que les objets comparés par la méthode
+  <code>Object.equals(Object)</code> soient exactement de la même classe, c’est-à-dire que <code>A.getClass() == B.getClass()</code>.
+  Cette approche est parfois considérée contraire aux principes de la programmation orientée objets.
+  Dans la pratique, pour des applications relativement complexes, l’importance accordée à ces principes dépend du contexte dans lequel les objets sont comparés:
+  si les objets sont ajoutés à un <code>HashSet</code> ou utilisés comme clés dans un <code>HashMap</code>,
+  alors nous avons besoin d’un strict respect du contrat de <code>equals(Object)</code> et <code>hashCode()</code>.
+  Mais si le développeur compare les objets lui-même, par exemple pour vérifier si des informations qui l’intéresse ont changées,
+  alors les contraintes de symétrie, transitivité ou de cohérence avec les valeurs de hachages peuvent ne pas être pertinentes pour lui.
+  Des comparaisons plus permissives peuvent être souhaitables, allant parfois jusqu’à tolérer de légers écarts dans les valeurs numériques.
+</p>
+<p>
+  Afin de donner une certaine flexibilité aux développeurs, un grand nombre de classes de la bibliothèque <abbr title="Spatial Information System">SIS</abbr>
+  implémentent l’interface <code class="SIS">org.apache.sis.util.LenientComparable</code>, qui défini une méthode <code class="SIS">equals(Object, ComparisonMode)</code>.
+  Les principaux modes de comparaisons sont:
+</p>
+<ul>
+  <li><p>
+    <b><code class="SIS">STRICT</code></b> — Les objets comparés doivent être de la même classe
+    et tous leurs attributs strictement égaux, y compris d’éventuels attributs publics propres à l’implémentation.
+  </p></li>
+  <li><p>
+    <b><code class="SIS">BY_CONTRACT</code></b> — Les objets comparés doivent implémenter la même interface de GeoAPI (ou tout autre standard),
+    mais n’ont pas besoin d’être de la même classe d’implémentation. Seuls les attributs définis dans l’interface sont comparés;
+    tout autres attributs propres à l’implémentation — même s’ils sont publics — sont ignorés.
+  </p></li>
+  <li><p>
+    <b><code class="SIS">IGNORE_METADATA</code></b> — Comme <code class="SIS">BY_CONTRACT</code>,
+    mais ne compare que les attributs qui influencent les opérations (calculs numériques ou autre) effectuées par l’objet.
+    Par exemple dans un référentiel géodésique, la longitude (par rapport à Greenwich) du méridien d’origine sera pris en compte
+    alors que le nom de ce méridien sera ignoré.
+  </p></li>
+  <li><p>
+    <b><code class="SIS">APPROXIMATIVE</code></b> — Comme <code class="SIS">IGNORE_METADATA</code>,
+    mais tolère de légères différences dans les valeurs numériques.
+  </p></li>
+</ul>
+<p>
+  Le mode par défaut, utilisé par les toutes les méthodes <code>equals(Object)</code> de <abbr title="Spatial Information System">SIS</abbr>,
+  est <code class="SIS">STRICT</code>. Ce mode est choisi pour une utilisation sécuritaire — notamment avec <code>HashMap</code> —
+  sans nécessiter de définitions rigoureuses des méthodes <code>equals(Object)</code> et <code>hashCode()</code> dans toutes les interfaces.
+  Avec ce mode, l’ordre des objets (<code>A.equals(B)</code> ou <code>B.equals(A)</code>) n’a pas d’importance.
+  C’est toutefois le seul mode à offrir cette garantie.
+  Dans l’expression <code>A.equals(B)</code>, le mode <code class="SIS">BY_CONTRACT</code>
+  (et donc par extension tous les autres modes qui en dépendent) ne comparera que les propriétés connues de <code>A</code>,
+  sans se soucier de savoir si <code>B</code> en connaît davantage.
+</p>
+
+
+
+<h2 id="Internationalization">Internationalisation</h2>
+<p>
+  Dans une architecture où un programme exécuté sur un serveur fournit ses données à plusieurs clients,
+  les conventions locales du serveur ne sont pas nécessairement les mêmes que celles des clients.
+  Les conventions peuvent différer par la langue, mais aussi par la façon d’écrire les valeurs numériques
+  (même entre deux pays parlant la même langue) ainsi que par le fuseau horaire.
+  Pour produire des messages conformes aux conventions du client, <abbr title="Spatial Information System">SIS</abbr> emploie
+  deux approches qui diffèrent par leur niveau de granularité: au niveau des messages eux-mêmes,
+  ou au niveau des objets produisant les messages. L’approche utilisée détermine aussi s’il est
+  possible de partager une même instance d’un objet pour toutes les langues.
+</p>
+
+<h3 id="LocalizedString">Chaînes de caractères distinctes pour chaque conventions locales</h3>
+<p>
+  Certaines classes ne sont conçues que pour fonctionner selon une convention locale à la fois.
+  C’est évidemment le cas des implémentations standards de <code>java.text.Format</code>,
+  puisqu’elles sont entièrement dédiées au travail d’internationalisation.
+  Mais c’est aussi le cas de d’autres classes moins évidentes comme
+  <code>javax.imageio.ImageReader</code>/<code>ImageWriter</code> ainsi que les exceptions.
+  Lorsque une de ces classes est implémentée par <abbr title="Spatial Information System">SIS</abbr>,
+  nous l’identifions en implémentant l’interface <code class="SIS">org.apache.sis.util.Localized</code>.
+  La méthode <code class="SIS">getLocale()</code> de cette interface permet alors de déterminer
+  selon quelles conventions locales l’instance produira ses messages.
+</p>
+<p>
+  Certaines sous-classes de <code>Exception</code> définies par <abbr title="Spatial Information System">SIS</abbr>
+  implémentent aussi l’interface <code class="SIS">Localized</code>.
+  Pour ces exceptions, le message d’erreur peut être produit selon deux conventions locales
+  selon qu’il s’adresse à l’administrateur du système ou au client:
+  <code>getMessage()</code> retourne le message de l’exception selon les conventions par défaut du système, alors que
+  <code>getLocalizedMessage()</code> retourne le message de l’exception selon les conventions locales spécifiées par <code class="SIS">getLocale()</code>.
+  Ce <code>Locale</code> sera lui-même déterminé par l’objet <code class="SIS">Localized</code> qui a lancé l’exception.
+</p>
+<div class="example"><p><b>Exemple:</b>
+  Supposons que dans un environnement où la langue par défaut serait l’anglais,
+  un objet <code class="SIS">AngleFormat</code> est construit pour lire des angles selon les conventions françaises.
+  Si une <code>ParseException</code> est lancée lors de l’utilisation de ce formateur,
+  alors <code>getMessage()</code> retournera le message d’erreur en anglais
+  tandis que <code>getLocalizedMessage()</code> retournera le message d’erreur en français.
+</p></div>
+<p>
+  Les exceptions définies par <abbr title="Spatial Information System">SIS</abbr> n’implémentent pas toutes l’interface <code class="SIS">Localized</code>.
+  Seules celles dont le message est le plus susceptible d’être montré à l’utilisateur sont ainsi localisées.
+  Les <code>ParseException</code> sont de bonnes candidates puisqu’elles surviennent souvent
+  suite à une saisie incorrecte du client. En revanche les <code>NullPointerException</code>
+  sont généralement la conséquence d’une erreur de programmation;
+  elles peuvent être localisées dans la langue par défaut du système, mais ça sera généralement tout.
+</p>
+<p>
+  La classe utilitaire <code class="SIS">org.apache.sis.util.Exceptions</code> fournit
+  des méthodes de commodité pour obtenir des messages selon des conventions locales données
+  lorsque cette information est disponible.
+</p>
+
+
+
+<h3 id="InternationalString">Instance unique pour toutes les conventions locales</h3>
+<p>
+  Les <abbr title="Application Programming Interface">API</abbr> définit par <abbr title="Spatial Information System">SIS</abbr>
+  ou hérités de GeoAPI privilégient plutôt l’utilisation du type <code class="GeoAPI">InternationalString</code>
+  là où une valeur de type <code>String</code> serait susceptible d’être localisée.
+  Cette approche permet de différer le processus d’internationalisation au moment d’obtenir
+  une chaîne de caractères plutôt qu’au moment de construire l’objet qui les contient.
+  C’est particulièrement utile pour les classes immutables dont les instances existent
+  en un seul exemplaire indépendamment des conventions locales.
+</p>
+<div class="example"><p><b>Exemple:</b>
+  Il existe dans <abbr title="Spatial Information System">SIS</abbr> une seule instance de type
+  <code class="GeoAPI">OperationMethod</code> représentant la projection de Mercator, quelle que soit la langue du client.
+  Mais sa méthode <code class="GeoAPI">getName()</code> fournit (indirectement)
+  une instance de <code class="GeoAPI">InternationalString</code> telle que
+  <code>toString(Locale.ENGLISH)</code> retourne <cite>Mercator Projection</cite>
+  alors que <code>toString(Locale.FRENCH)</code> retourne <cite>Projection de Mercator</cite>.
+</p></div>
+<p>
+  En définissant des objets spatiaux indépendemment des conventions locales, on réduit les risques de sur-coûts de calculs.
+  Par exemple il est plus facile de détecter que deux cartes emploient la même projection cartographique si cette dernière
+  est représentée par la même instance de <code class="GeoAPI">CoordinateOperation</code>, même si la projection
+  porte différents noms selon les pays. En outre, certain types de <code class="GeoAPI">CoordinateOperation</code>
+  peuvent nécessiter des grilles de transformation de coordonnées, ce qui accroît l’intérêt de partager une instance unique
+  pour des raisons d’économie de mémoire.
+</p>
+
+
+
+<h3 id="Locale.ROOT">Convention <code>Locale.ROOT</code></h3>
+<p>
+  Toutes les méthodes <abbr title="Spatial Information System">SIS</abbr> recevant ou retournant une valeur de type <code>Locale</code>
+  acceptent la valeur <code>Locale.ROOT</code>. Cette valeur est interprétée comme signifiant de ne pas localiser le texte.
+  La notion de <cite>texte non-localisé</cite> est un peu fausse, puisqu’il faut bien choisir une convention de format.
+  Mais cette convention, bien que très proche de l’anglais, sera généralement légèrement différente.
+  Par exemple:
+</p>
+<ul>
+  <li>
+    Les identifiants sont écrits tels qu’ils apparaissent dans les diagrammes <abbr title="Unified Modeling Language">UML</abbr>,
+    par exemple <cite>blurredImage</cite> au lieu de <cite>Blurred image</cite>.
+  </li>
+  <li>
+    Les dates sont écrites selon le format <abbr>ISO</abbr> 8601,
+    qui ne correspond pas aux conventions anglaises.
+  </li>
+  <li>
+    Les nombres sont écrits à l’aide de leurs méthodes <code>toString()</code> plutôt qu’à l’aide d’un <code>java.text.NumberFormat</code>.
+    Il en résulte des différences dans le nombre de chiffres significatifs, l’utilisation de la notation exponentielle et l’absence de séparateur des milliers.
+  </li>
+</ul>
+
+
+
+<h3 id="UnicodePoint">Traitement des caractères</h3>
+<p>
+  Les chaînes de caractères en Java utilisent l’encodage UTF-16. Il existe une correspondance directe
+  entre les valeurs de type <code>char</code> et la très grande majorité des caractères, ce
+  qui facilite l’utilisation des chaînes lorsque ces caractères suffisent.
+  Mais certains caractères Unicode ne sont pas représentables par un seul <code>char</code>.
+  Ces <i>caractères supplémentaires</i> comprennent certains idéogrammes,
+  mais aussi des symboles routiers et géographiques dans la plage 1F680 à 1F700.
+  Le support de ces caractères supplémentaires nécessite des itérations un peu plus complexes
+  que le cas classique où l’on supposait une correspondance directe.
+  Ainsi, au lieu de la boucle de gauche ci-dessous, les applications internationales devraient
+  généralement utiliser la boucle de droite:
+</p>
+
+<table class="hidden">
+  <tr>
+    <th>Boucle à éviter</th>
+    <th>Boucle recommandée</th>
+  </tr>
+  <tr>
+    <td>
+      <pre style="margin-top: 6pt"><b>for</b> (<b>int</b> <var>i</var>=0; <var>i</var>&lt;<var>string</var>.length(); <var>i</var>++) {
+    <b>char</b> <var>c</var> = <var>string</var>.charAt(<var>i</var>);
+    <b>if</b> (Character.isWhitespace(<var>c</var>)) {
+        <code class="comment">// Un espace blanc a été trouvé.</code>
+    }
+}</pre>
+    </td>
+    <td>
+      <pre style="margin-top: 6pt"><b>for</b> (<b>int</b> <var>i</var>=0; <var>i</var>&lt;<var>string</var>.length();) {
+    <b>int</b> <var>c</var> = <var>string</var>.codePointAt(<var>i</var>);
+    <b>if</b> (Character.isWhitespace(<var>c</var>)) {
+        <code class="comment">// Un espace blanc a été trouvé.</code>
+    }
+    <var>i</var> += Character.charCount(<var>c</var>);
+}</pre>
+    </td>
+  </tr>
+</table>
+
+<p>
+  <abbr title="Spatial Information System">SIS</abbr> supporte les caractères supplémentaires en utilisant la boucle de droite lorsque nécessaire.
+  Mais la boucle de gauche reste occasionnellement utilisée lorsqu’il est connu que les caractères recherchés ne sont
+  pas des caractères supplémentaires, même si la chaîne dans laquelle on fait la recherche peut en contenir.
+</p>
+
+
+
+<h4 id="Whitespaces">Interprétation des espaces blancs</h4>
+<p>
+  Le Java standard fournit deux méthodes pour déterminer si un caractères est un espace blanc:
+  <code>Character.isWhitespace(…)</code> et <code>Character.isSpaceChar(…)</code>.
+  Ces deux méthodes diffèrent dans leurs interprétations des espaces insécables, des tabulations et des retours à la ligne.
+  La première méthode est conforme à l’interprétation couramment utilisée dans des langages telles que le Java, C/C++ et <abbr>XML</abbr>,
+  qui considère les tabulations et retours à la ligne comme des espaces blancs,
+  alors que les espaces insécables sont interprétés comme des caractères non-blanc.
+  La seconde méthode — strictement conforme à la définition Unicode — fait l’interprétation inverse.
+</p>
+<p>
+  <abbr title="Spatial Information System">SIS</abbr> emploie ces deux méthodes dans des contextes différents.
+  <code>isWhitespace(…)</code> est utilisée pour <em>séparer</em> les éléments d’une liste (nombres, dates, mots, <i>etc.</i>),
+  tandis que <code>isSpaceChar(…)</code> est utilisée pour ignorer les espaces blancs <em>à l’intérieur</em> d’un seul élément.
+</p>
+<div class="example"><p><b>Exemple:</b>
+  Supposons une liste de nombres représentés selon les conventions françaises.
+  Chaque nombre peut contenir des <em>espace insécables</em> comme séparateurs des milliers,
+  tandis que les différents nombres de la liste peuvent être séparés par des espaces ordinaires, des tabulations ou des retours à la ligne.
+  Pendant l’analyse d’un nombre, on veut considérer les espaces insécables comme faisant partie du nombre,
+  alors qu’une tabulation ou un retour à la ligne indique très probablement une séparation entre ce nombre et le nombre suivant.
+  On utilisera donc <code>isSpaceChar(…)</code>.
+  Inversement, lors de la séparation des nombres de la liste, on veut considérer les tabulations et
+  les retours à la ligne comme des séparateurs mais pas les espaces insécables.
+  On utilisera donc <code>isWhitespace(…)</code>.
+  Le rôle des espaces ordinaires, qui pourraient s’appliquer aux deux cas, doit être décidé en amont.
+</p></div>
+<p>
+  Dans la pratique, cette distinction se traduit pas une utilisation de <code>isSpaceChar(…)</code>
+  dans les implémentations de <code>java.text.Format</code>,
+  et une utilisation de <code>isWhitespace(…)</code> dans pratiquement tout le reste
+  de la bibliothèque <abbr title="Spatial Information System">SIS</abbr>.
+</p>
+
+
+
+<h1 id="Geometry">Géométries</h1>
+<p>
+  Ce chapitre introduit quelques aspects de la norme <abbr>ISO</abbr> 19107 (<i>Spatial schema</i>)
+  et les classes de Apache <abbr title="Spatial Information System">SIS</abbr> qui les implémentent.
+</p>
+
+
+
+<h2 id="Geometry-root">Classes de base</h2>
+<p>
+  Chaque objet géométrique est considéré comme un ensemble infini de points.
+  En tant qu’ensemble, leurs opérations les plus fondamentales sont de même nature que les opérations standards des collections du Java.
+  On pourrait donc voir une géométrie comme une sorte de <code>java.util.Set</code> dont les éléments seraient des points,
+  à ceci près que le nombre d’éléments contenus dans cet ensemble est infini (à l’exception des géométries représentant un simple point).
+  Pour mieux représenter ce concept, la norme <abbr title="International Organization for Standardization">ISO</abbr> et GeoAPI définissent une interface <code class="OGC">TransfiniteSet</code>
+  que l’on peut voir comme un <code>Set</code> de taille infini. Bien qu’un lien de parenté existe conceptuellement entre ces interfaces,
+  GeoAPI ne définit pas <code class="GeoAPI">TransfiniteSet</code> comme une sous-interface de <code>java.util.Collection</code>
+  car la définition de certaines méthodes telles que <code>size()</code> et <code>iterator()</code> serait problématique.
+  On y retrouve toutefois des méthodes très similaires telles que <code class="GeoAPI">contains(…)</code> et <code class="GeoAPI">intersects(…)</code>.
+</p>
+<p>
+  La classe parente de toutes les géométries est appelée <code class="OGC">GM_Object</code> dans la norme <abbr>ISO</abbr> 19107.
+  Les interfaces de GeoAPI utilisent plutôt le nom <code class="GeoAPI">Geometry</code>, car l’omission du préfixe <code class="OGC">GM_</code>
+  (comme le veut la convention dans GeoAPI) aurait laissé un nom trop proche de la classe <code>Object</code> du Java.
+  Toutes les géométries sont des spécialisations de <code class="GeoAPI">TransfiniteSet</code>.
+</p>
+
+
+
+<h3 id="DirectPosition">Points et positions directes</h3>
+<p>
+  <abbr>ISO</abbr> 19107 définit deux types de structures pour représenter un point:
+  <code class="OGC">GM_Point</code> et <code class="OGC">DirectPosition</code>.
+  Le premier type est une véritable géométrie et peut donc être relativement lourd, selon les implémentations.
+  Le second type n’est pas considéré formellement comme une géométrie;
+  il n’étend ni <code class="OGC">GM_Object</code> ni <code class="OGC">TransfiniteSet</code>.
+  Il ne définit pratiquement pas d’opérations autres que le stockage d’une séquence de nombres représentant une coordonnée.
+  Il peut donc être un objet plus léger.
+</p>
+<p>
+  Afin de permettre à l’<abbr title="Application Programming Interface">API</abbr> de travailler indifféremment
+  avec ces deux types de positions, <abbr>ISO</abbr> 19107 définit <code class="OGC">Position</code> comme une <cite>union</cite>
+  de <code class="OGC">DirectPosition</code> et <code class="OGC">GM_Point</code>.
+  Il s’agit d’une union au sens du C/C++. Pour le langage Java, GeoAPI obtient le même effet en définissant
+  <code class="GeoAPI">Position</code> comme l’interface parente de
+  <code class="GeoAPI">DirectPosition</code> et <code class="GeoAPI">Point</code>.
+  Dans la pratique, la grande majorité des <abbr title="Application Programming Interface">API</abbr>
+  de Apache <abbr title="Spatial Information System">SIS</abbr> travaillent sur des
+  <code class="GeoAPI">DirectPosition</code>, ou occasionnellement des
+  <code class="GeoAPI">Position</code> quand il semble utile d’autoriser aussi des points géométriques.
+</p>
+
+
+
+<h3 id="Envelope">Enveloppes</h3>
+<p>
+  Les enveloppes stockent les valeurs minimales et maximales des coordonnées d’une géométrie.
+  Les enveloppes <em>ne sont pas</em> elles-mêmes des géométries; ce ne sont pas des ensembles
+  infinis de points (<code class="OGC">TransfiniteSet</code>). Il n’y a aucune garantie
+  que toutes les positions contenues dans les limites d’une enveloppe soient géographiquement valides.
+  Il faut voir les enveloppes comme une information sur les valeurs extrêmes que peuvent prendre les
+  coordonnées d’une géométrie en faisant comme si chaque dimension était indépendante des autres,
+  rien de plus. Nous assimilons néanmoins les enveloppes à des rectangles, cubes ou hyper-cubes
+  (selon le nombre de dimensions) afin de faciliter la discussion, mais en gardant à l’esprit leur
+  nature non-géométrique.
+</p>
+<div class="example"><p><b>Exemple:</b>
+  Nous pouvons tester si une position est à l’intérieur des limites de l’enveloppe.
+  Un résultat positif ne garantie pas que la position est à l’intérieur de la géométrie délimitée par l’enveloppe,
+  mais un résultat négatif garantie qu’elle est à l’extérieur. De même on peut effectuer des tests d’intersections.
+  En revanche appliquer une rotation n’a pas beaucoup de sens pour une enveloppe, car le résultat peut être très différent
+  de celui que nous aurions obtenu en effectuant une rotation de la géométrie originale, puis en recalculant son enveloppe.
+</p></div>
+<p>
+  Une enveloppe peut être représentée par deux positions correspondant à deux coins opposés
+  d’un rectangle, cube ou hyper-cube. On prend souvent comme premier coin celui dont toutes
+  les ordonnées ont la valeur minimale (<code class="OGC">lowerCorner</code>), et comme second
+  coin celui dont toutes les ordonnées ont la valeur maximale (<code class="OGC">upperCorner</code>).
+  Lors d’un affichage utilisant un système de coordonnées classique (valeurs de l’axe des <var>y</var> augmentant vers le haut),
+  ces deux positions apparaissent respectivement dans le coin inférieur gauche et dans le coin supérieur droit d’un rectangle.
+  Attention toutefois aux différents systèmes de coordonnées, qui peuvent faire varier les positions de ces coins à l’écran.
+  Les expressions <i>lower corner</i> et <i>upper corner</i>
+  doivent être comprises au sens mathématique plutôt que visuel.
+</p>
+
+
+
+<h4 id="AntiMeridian">Enveloppes traversant l’antiméridien</h4>
+<p>
+  Les minimums et maximums sont les valeurs les plus souvent assignées aux <code class="OGC">lowerCorner</code>
+  et <code class="OGC">upperCorner</code>. Mais les choses se compliquent dans le cas d’une enveloppe traversant
+  l’antiméridien (-180° ou 180° de longitude). Par exemple, une enveloppe de 10° de largeur peut commencer à 175° de longitude et
+  se terminer à -175°. Dans ce cas, la valeur de longitude assignée au <code class="OGC">lowerCorner</code> est
+  supérieure à celle qui est assignée à l’<code class="OGC">upperCorner</code>.
+  Apache <abbr title="Spatial Information System">SIS</abbr> emploie donc une définition légèrement différente de ces deux coins:
+</p>
+<ul>
+  <li><b><code class="SIS">lowerCorner</code>:</b>
+    le point de départ lorsque l’on parcourt l’intérieur de l’enveloppe dans la direction des valeurs croissantes.
+  </li>
+  <li><b><code class="SIS">upperCorner</code>:</b>
+    le point d’arrivé lorsque l’on a parcouru l’intérieur de l’enveloppe dans la direction des valeurs croissantes.
+  </li>
+</ul>
+<p>
+  Lorsque l’enveloppe ne traverse par l’antiméridien, ces deux définitions sont équivalentes à la sélection
+  des valeurs minimales et maximales respectivement. C’est le cas du rectangle vert dans la figure ci-dessous.
+  Lorsque l’enveloppe traverse l’antiméridien, les coins <code class="SIS">lowerCorner</code>
+  et <code class="SIS">upperCorner</code> apparaissent encore en bas et en haut du rectangle
+  (en supposant un système de coordonnées classique), donc leurs noms restent appropriés d’un point de vue visuel.
+  Mais les positions gauche et droite sont interchangées.
+  Ce cas est représenté par le rectangle rouge dans la figure ci-dessous.
+</p>
+<center>
+  <img src="../../apidocs/org/apache/sis/geometry/doc-files/AntiMeridian.png"
+       alt="Exemples d’enveloppes avec et sans croisement de l’antiméridien."/>
+</center>
+<p>
+  Les notions d’inclusion et d’intersection s’interprètent toutefois de manière légèrement différente dans ces deux cas.
+  Dans le cas habituel où l’on ne traverse par l’antiméridien, le rectangle vert délimite bien une région d’inclusion.
+  Les régions exclues de ce rectangle se propagent à l’infini dans toutes les directions.
+  En d’autres mots, la région d’inclusion n’est pas répétée tous les 360°.
+  Mais dans le cas du rectangle rouge, l’information fournie par l’enveloppe délimite plutôt la région d’exclusion qui
+  se trouve entre les deux bords du rectangle. La région d’inclusion se propage à l’infini des côtés gauche et droit.
+  Nous pourrions stipuler que toute longitude inférieure à -180° ou supérieure à 180° est considérée exclue,
+  mais ça serait une décision arbitraire qui ne serait pas un reflet symétrique du cas habituel (rectangle vert).
+  Un développeur pourrait vouloir utiliser ces valeurs, par exemple dans une mosaïque où la carte du monde
+  est répétée plusieurs fois horizontalement sans pour autant les confondre.
+  Si un développeur souhaite effectuer des opérations comme si les régions d’inclusions ou d’exclusions étaient
+  répétées tous les 360°, alors il doit lui-même ramener ses valeurs de longitudes entre -180° et 180° au préalable.
+  Toutes les fonctions <code class="SIS">add(…)</code>, <code class="SIS">contains(…)</code>,
+  <code class="SIS">intersect(…)</code>, <i>etc.</i> de toutes les enveloppes
+  définies dans le paquet <code class="SIS">org.apache.sis.geometry</code> effectuent leurs calculs selon cette convention.
+</p>
+<aside>
+  <p><b>Généralisation à d’autres types d’axes</b></p>
+  <p>
+    Cette section nomme spécifiquement la longitude car il constitue le cas le plus courant d’axe cyclique.
+    Mais dans les enveloppes de Apache <abbr title="Spatial Information System">SIS</abbr>,
+    il n’est fait nul part mention explicite du cas de la longitude, ni de son cycle de 360°.
+    Les caractéristiques de la plage de valeurs de chaque axe (ses extremums, unités, type de cycle, <i>etc.</i>)
+    sont des attributs des objets <code class="GeoAPI">CoordinateSystemAxis</code>,
+    indirectement associés aux enveloppes via le système de référence des coordonnées.
+    Apache <abbr>SIS</abbr> inspecte ces attributs pour déterminer de quelle façon il doit effectuer ses opérations.
+    Ainsi, tout axe associé au code <code class="GeoAPI">RangeMeaning.WRAPAROUND</code> bénéficiera du même traitement que la longitude.
+    Cela pourrait être par exemple un axe du temps dans des données climatologiques
+    (une “année” représentant la température moyenne de tous les mois de janvier, suivit de la moyenne de tous les mois de février,
+    <i>etc.</i>).
+    Cette généralisation s’applique aussi aux axes de longitudes définis par une plage de 0° à 360° plutôt que de -180° à 180°.
+  </p>
+</aside>
+<p>
+  Pour que les fonctions telles que <code class="SIS">add(…)</code> fonctionnent correctement,
+  tous les objets impliqués doivent utiliser le même système de référence des coordonnées, y compris
+  la même plage de valeurs. Ainsi, une enveloppe exprimant les longitudes dans la plage [-180 … +180]°
+  n’est pas compatible avec une enveloppe exprimant les longitudes dans la plage [0 … 360]°.
+  Les conversions, si nécessaires, sont à la charge de l’utilisateur
+  (la classe <code class="SIS">Envelopes</code> fournit des méthodes de commodités pour ce faire).
+  En outre, les coordonnées de l’enveloppe doivent être comprises dans les limites du système de coordonnées,
+  sauf si le développeur souhaite volontairement considérer (par exemple) 300° de longitude
+  comme un position distincte de -60°. La classe <code class="SIS">GeneralEnvelope</code>
+  fournit une méthode <code class="SIS">normalize()</code> pour ramener les coordonnées
+  dans les limites attendues, au prix parfois de valeurs <cite><i>lower</i></cite>
+  supérieures à la valeur <cite><i>upper</i></cite>.
+</p>
+<aside>
+  <p><b>Le cas particulier de la plage [+0 … -0]</b></p>
+  <p>
+    le Java (ou de manière plus générale, la norme IEEE 754) définit deux valeurs distinctes de zéro:
+    un zéro positif et un zéro négatif. Ces deux valeurs sont considérées égales lorsqu’on les compares avec l’opérateur <code>==</code> du Java.
+    Mais dans les enveloppes de <abbr title="Spatial Information System">SIS</abbr>,
+    ils peuvent mener à des résultats opposés pour les axes ayant <code class="GeoAPI">RangeMeaning.WRAPAROUND</code>.
+    Une enveloppe dont la plage est [0 … 0], [-0 … -0] ou [-0 … +0] sera bien considérée comme une enveloppe vide,
+    mais la page [+0 … -0] sera au contraire considérée comme incluant la totalité des valeurs, jusqu’à l’infini.
+    Ce comportement est conforme à la définition de <code class="SIS">lowerCorner</code> et <code class="SIS">upperCorner</code>
+    qui considère +0 comme le point de départ, et -0 comme le point d’arrivé après avoir fait le tour des valeurs possibles.
+    Un tel comportement ne se produit que pour la paire de valeurs +0 et -0, et seulement dans cet ordre.
+    Pour toutes les autres valeurs réelles, si la condition <code>lower</code> <code>==</code> <code>upper</code>
+    est vrai, alors il est garanti que l’enveloppe est vide.
+  </p>
+</aside>
+
+
+
+<h1 id="Coverage">Couvertures de données (<i>Coverages</i>)</h1>
+<p>
+  Les images, souvent nommées <i>rasters</i> en anglais, sont des cas particuliers
+  d’une structure de données appelée <i>coverages</i>.
+  On pourrait traduire ce terme anglais par « couverture de données ».
+  Le titre du standard les décrivant, “<i>Coverage geometry and functions</i>”
+  (<abbr>ISO</abbr> 19123), résume bien les deux éléments essentiels des couvertures de données:
+</p>
+<ul>
+  <li>
+    <p>
+      Un <i>coverage</i> est une fonction qui, à partir d’une coordonnée spécifiée en entrée,
+      retourne une valeur d’attribut. L’ensemble des valeurs pouvant être données en entrée est appelé le domaine
+      (<i>domain</i> en anglais), alors que l’ensemble des valeurs pouvant être retournées est appelé <i>range</i> en anglais.
+      Le domaine est souvent l’espace spatio-temporel couvert par les données,
+      mais rien dans <abbr title="Spatial Information System">SIS</abbr> n’empêche les couvertures de s’étendre à d’autres dimensions.
+      Par exemple les études en thermodynamique utilisent souvent un espace dont les dimensions sont la température et la pression.
+    </p>
+    <div class="example"><p><b>Exemple:</b>
+      les valeurs des pixels d’une image pourraient contenir des mesures d’élévation du terrain.
+      Si une fonction <var>h</var> = <var>f</var>(φ,λ) permet d’obtenir (éventuellement à l’aide d’interpolations)
+      l’élévation <var>h</var> en fonction d’une coordonnée géographique (φ,λ), alors
+      l’enveloppe géographique de l’image définie le <i>domain</i>, la fonction <var>f</var> est le <i>coverage</i>,
+      et l’ensemble des valeurs de <var>h</var> que peut retourner cette fonction est le <i>range</i>.
+    </p></div>
+  </li>
+  <li>
+    <p>
+      Les différents types de couvertures peuvent se caractériser par la géométrie de leurs cellules.
+      En particulier, une couverture n’est pas nécessairement composée de cellules quadrilatérales.
+      Toutefois les cellules quadrilatérales étant de loin les plus fréquentes (puisque c’est la géométrie classique des pixels des images),
+      on utilisera souvent le terme <i>grid coverage</i> pour désigner les couvertures composées de telles cellules.
+      Dans <abbr title="Spatial Information System">SIS</abbr>, la géométrie de ces couvertures est décrite par la classe <code class="SIS">GridGeometry</code>.
+    </p>
+  </li>
+</ul>
+<p>
+  Les caractéristiques du domaine spatial sont définies par le standard <abbr>ISO</abbr> 19123,
+  alors que les caractéristiques du <i>range</i> ne font pas parties du standard.
+  Le standard mentionne simplement que les <i>ranges</i> peuvent être finis ou infinis,
+  et ne sont pas nécessairement numériques.
+  Par exemple les valeurs retournées par une couverture peuvent provenir d’une énumération
+  (« ceci est une forêt », « ceci est un lac », <i>etc.</i>).
+  Toutefois, le standard définit deux grands types de couvertures qui ont un impact
+  sur les types de <i>ranges</i> autorisés:
+  les couvertures <i>discrètes</i> et les couvertures <i>continues</i>.
+  Présentées simplement, les couvertures continues sont des fonctions pouvant utiliser des méthodes d’interpolations.
+  Or, les interpolations n’étant possibles qu’avec des valeurs numériques, les <i>ranges</i> de valeurs
+  non-numériques ne peuvent être utilisés qu’avec des couvertures de type <code class="OGC">CV_DiscreteCoverage</code>.
+  En revanche, les <i>ranges</i> de valeurs numériques peuvent
+  être utilisés aussi avec des couvertures de type <code class="OGC">CV_ContinuousCoverage</code>.
+</p>
+<aside>
+  <p><b>La classe <code class="SIS">Range</code> de SIS et sa relation avec les standards</b></p>
+  <p>
+    La distinction entre les plages de tout type de valeurs et les plages de valeurs numériques est représentée dans <abbr title="Spatial Information System">SIS</abbr>
+    par les classes <code class="SIS">Range</code> et <code class="SIS">NumberRange</code> respectivement.
+    La classe <code class="SIS">NumberRange</code> est la plus utilisée, et elle est aussi celle qui se rapproche le plus de la
+    <a href="http://fr.wikipedia.org/wiki/Intervalle_%28math%C3%A9matiques%29">notion mathématique usuelle d’un intervalle</a>.
+    Se représentation textuelle se rapproche des spécifications du standard <abbr>ISO</abbr> 31-11,
+    excepté que la virgule est remplacée par le caractère “…” comme séparateur des valeurs minimales et maximales.
+    Par exemple “[0 … 256)” représente la plage des valeurs 0 inclusivement à 256 exclusivement.
+  </p>
+  <p>
+    Les objets <code class="SIS">Range</code> ne sont associés aux <i>coverages</i> que indirectement.
+    Dans <abbr title="Spatial Information System">SIS</abbr>, les valeurs que peuvent retourner les couvertures sont décrites par des
+    objets de type <code class="SIS">SampleDimension</code>. Ce sont ces derniers qui contiendront
+    des instances de <code class="SIS">Range</code> ainsi que d’autres informations telles qu’une
+    <i>fonction de transfert</i> (décrite plus loin).
+  </p>
+</aside>
+
+    <!-- End of shifted indentation. -->
+  </body>
+</html>
