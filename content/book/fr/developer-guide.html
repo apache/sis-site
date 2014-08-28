@@ -64,8 +64,8 @@
   <li><a href="#XML-ISO">Représentation des objets en <abbr>XML</abbr></a><ul>
     <li><a href="#XML-ISO-19115">Représentation des méta-données selon <abbr>ISO</abbr> 19139</a><ul>
       <li><a href="#gco-id">Identification d’instances déjà définies</a></li>
+      <li><a href="#nilReason">Représentation de valeurs manquantes</a></li>
     </ul></li>
-    <li><a href="#nilReason">Représentation de valeurs manquantes</a></li>
   </ul></li>
   <li><a href="#Utilities">Classes et méthodes utilitaires</a><ul>
     <li><a href="#ComparisonMode">Modes de comparaisons des objets</a></li>
@@ -261,7 +261,7 @@
 <h3 id="OGC-OAB">Le conseil d’architecture (<abbr>OAB</abbr>) et le comité technique (<abbr>TC</abbr>)</h3>
 <p>
   Toute proposition de standard est d’abord examinée par le conseil d’architecture
-  (<i><abbr title="Open Geospatial Consortium">OGC</abbr> Architecture Board</i> - <abbr>OAB</abbr>).
+  (<i><abbr title="Open Geospatial Consortium">OGC</abbr> Architecture Board</i> — <abbr>OAB</abbr>).
   Ce conseil vérifie que le standard répond aux exigences de l’<abbr title="Open Geospatial Consortium">OGC</abbr> sur la forme,
   sur la modularisation, et en termes d’intégration avec les autres standards.
   Si l’<abbr>OAB</abbr> donne son aval, le standard est alors soumis au vote des membres du comité technique (<abbr title="Technical Committe">TC</abbr>).
@@ -1398,7 +1398,7 @@ System.out.println("L’interface GeoAPI du type <abbr>ISO</abbr> " + <var>isoNa
   <abbr title="Open Geospatial Consortium">OGC</abbr>/<abbr title="International Organization for Standardization">ISO</abbr>
   n’emploient pas tous la même stratégie pour exprimer les objets en <abbr>XML</abbr>.
   Le standard <abbr>ISO</abbr> 19139 en particulier emploie une approche plus verbeuse que les autres normes,
-  et fera l’objet d’une section particulière.
+  et fera l’objet d’une <a href="#XML-ISO-19115">section particulière</a>.
   Mais la plupart des formats <abbr>XML</abbr> ont en commun de définir des types et des attributs supplémentaires
   qui ne font pas partie des spécifications abstraites d’origines.
   Ces attributs supplémentaires sont habituellement propres au <abbr>XML</abbr> et peuvent ne pas apparaître directement dans
@@ -1460,7 +1460,7 @@ System.out.println("L’interface GeoAPI du type <abbr>ISO</abbr> " + <var>isoNa
   </p>
   <ul>
     <li>
-      <abbr title="Java Architecture for XML Binding">JAXB</abbr> pour les objets écrits en relativement peu d’exemplaires
+      <abbr title="Java Architecture for XML Binding">JAXB</abbr> pour les objets qui ne sont pas répétés très souvent dans le document
       mais dont la structure est complexe, avec des arborescences profondes.
       L’ensemble des méta-données <abbr>ISO</abbr> 19139 est un exemple typique.
     </li>
@@ -1528,44 +1528,24 @@ System.out.println("L’interface GeoAPI du type <abbr>ISO</abbr> " + <var>isoNa
 
 <p>
   L’exemple précédent, comme tous les documents conformes à <abbr>ISO</abbr> 19139,
-  est constitué d’une alternance systématique de deux types d’éléments <abbr>XML</abbr>.
-  Il y a d’abord le nom de la propriété, qui commence toujours par une lettre minuscule (en ignorant les préfixes).
-  Dans les <abbr title="Application Programming Interface">API</abbr> Java, chaque propriété correspond à une méthode de la classe englobante.
-  Par exemple dans l’exemple ci-haut, <code class="OGC">gmd:identificationInfo</code>
-  correspond à la méthode <code class="GeoAPI">Metadata.getIdentificationInfo()</code>.
-  Contrairement aux <abbr>API</abbr> Java toutefois, les documents <abbr>XML</abbr>
-  ne placent pas les propriétés filles directement en dessous.
-  À la place, ces éléments n’acceptent que les informations suivantes:
+  est donc constitué d’une alternance systématique de deux types d’éléments <abbr>XML</abbr> imbriqués:
 </p>
-<ul>
-  <li>
-    Un élément, décrit dans le paragraphe suivant, qui englobera les propriétés filles.
-  </li>
-  <li>
-    Un groupe d’attributs (notamment <code class="OGC">gmd:idref</code>, <code class="OGC">gco:uuidref</code> et <code>xlink:href</code>)
-    que les schémas <abbr title="XML Schema Definition">XSD</abbr> de l’<abbr title="Open Geospatial Consortium">OGC</abbr>
-    nomment collectivement <code class="OGC">gco:ObjectReference</code>.
-  </li>
-</ul>
-<p>
-  Sous chaque propriété se trouve le type de la valeur, sauf si elle a été remplacée par une référence (la sous-section suivante approfondira ce sujet).
-  Le type de la valeur est un élément <abbr>XML</abbr> dont le nom commence toujours par une lettre majuscule, en ignorant les préfixes.
-  Dans l’exemple ci-haut nous avions <code class="OGC">MD_DataIdentification</code>, qui correspond à l’interface Java <code class="GeoAPI">DataIdentification</code>.
-  C’est cet élément <abbr>XML</abbr> qui contient les propriétés filles. Cet élément accepte aussi un groupe d’attributs
-  (notamment <code class="OGC">id</code> et <code class="OGC">uuid</code>) que les schémas <abbr title="XML Schema Definition">XSD</abbr>
-  de l’<abbr title="Open Geospatial Consortium">OGC</abbr> nomment collectivement <code class="OGC">gco:ObjectIdentification</code>.
-  Ces attributs n’ont pas de méthodes Java dédiées, mais sont accessibles indirectement via l’interface <code class="SIS">IdentifiedObject</code>
-  décrite dans la sous-section suivante.
-</p>
-
-<aside>
-  <p><b>Convention de nommage dans les schémas <abbr>XSD</abbr></b></p>
-  <p>
-    Les schémas <abbr title="XML Schema Definition">XSD</abbr> de l’<abbr title="Open Geospatial Consortium">OGC</abbr>
-    définissent pour chaque élément du premier groupe un type dont le nom se termine par “<code class="OGC">_PropertyType</code>”.
-    Pour le second groupe, chaque élément a un type dont le nom se termine par “<code class="OGC">_Type</code>”.
-  </p>
-</aside>
+<ol>
+  <li><p>
+    Il y a d’abord le nom de la propriété, qui commence toujours par une lettre minuscule (en ignorant les préfixes).
+    Dans les <abbr title="Application Programming Interface">API</abbr> Java, chaque propriété correspond à une méthode de la classe englobante.
+    Dans l’exemple ci-haut, <code class="OGC">gmd:identificationInfo</code>
+    (une propriété de la classe <code class="OGC">MD_Metadata</code>)
+    correspond à la méthode <code class="GeoAPI">Metadata.getIdentificationInfo()</code>.
+  </p></li>
+  <li><p>
+      Sous chaque propriété se trouve le type de la valeur, sauf si elle a été remplacée par une référence
+      (la <a href="#gco-id">sous-section suivante</a> suivante approfondira ce sujet).
+      Le type de la valeur est un élément <abbr>XML</abbr> dont le nom commence toujours par une lettre majuscule, en ignorant les préfixes.
+      Dans l’exemple ci-haut nous avions <code class="OGC">MD_DataIdentification</code>, qui correspond à l’interface Java <code class="GeoAPI">DataIdentification</code>.
+      C’est cet élément <abbr>XML</abbr> qui contient les valeurs de la propriété.
+  </p></li>
+</ol>
 
 <p>
   Afin de réduire la complexité des bibliothèques, GeoAPI et Apache <abbr title="Spatial Information System">SIS</abbr>
@@ -1575,7 +1555,7 @@ System.out.println("L’interface GeoAPI du type <abbr>ISO</abbr> " + <var>isoNa
   doivent être temporairement recréés.
   Les classes qui y correspondent sont définies dans des paquets internes de <abbr title="Spatial Information System">SIS</abbr>.
   Ces classes peuvent être ignorées, sauf si le développeur souhaite implémenter ses propres
-  classes dont les instances devront être lus et écrits par <abbr title="Java Architecture for XML Binding">JAXB</abbr>.
+  classes dont les instances devront être lues et écrites par <abbr title="Java Architecture for XML Binding">JAXB</abbr>.
 </p>
 
 <aside>
@@ -1589,6 +1569,17 @@ System.out.println("L’interface GeoAPI du type <abbr>ISO</abbr> " + <var>isoNa
     et des objets enveloppants le “vrai” objet à lire ou écrire.
     Cette utilisation double permet d’éviter d’avoir à doubler le nombre de classes
     (déjà très élevé) présents dans les paquets internes.
+  </p>
+  <p><b>Convention de nommage dans les schémas <abbr>XSD</abbr></b></p>
+  <p>
+    Les schémas <abbr title="XML Schema Definition">XSD</abbr> de l’<abbr title="Open Geospatial Consortium">OGC</abbr>
+    définissent pour chaque élément du premier groupe un type dont le nom se termine par “<code class="OGC">_PropertyType</code>”.
+    Pour le second groupe, chaque élément a un type dont le nom se termine par “<code class="OGC">_Type</code>”.
+    Les “<code class="OGC">_PropertyType</code>” peuvent avoir un groupe d’attributs
+    (notamment <code class="OGC">gmd:idref</code>, <code class="OGC">gco:uuidref</code> et <code>xlink:href</code>)
+    que les schémas <abbr>XSD</abbr> nomment collectivement <code class="OGC">gco:ObjectReference</code>.
+    Ces attributs n’ont pas de méthodes Java dédiées, mais sont accessibles indirectement via l’interface
+    <code class="SIS">IdentifiedObject</code> décrite dans la sous-section suivante.
   </p>
 </aside>
 
@@ -1679,12 +1670,12 @@ System.out.println("L’interface GeoAPI du type <abbr>ISO</abbr> " + <var>isoNa
 
 
 
-<h2 id="nilReason">Représentation de valeurs manquantes</h2>
+<h3 id="nilReason">Représentation de valeurs manquantes</h3>
 <p>
-  Lorsqu’un attribut n’est pas défini, la méthode correspondante de GeoAPI retourne généralement <code>null</code>.
-  Toutefois les choses se compliquent lorsque l’attribut manquant est une valeur considérée comme obligatoire par le standard <abbr>ISO</abbr> 19115.
-  Le standard <abbr>ISO</abbr> 19139 autorise l’omission d’attributs obligatoires à la condition d’indiquer pourquoi la valeur est manquante.
-  Les raisons peuvent être que l’attribut ne s’applique pas (<code class="OGC">inapplicable</code>),
+  Lorsqu’une propriété n’est pas définie, la méthode correspondante de GeoAPI retourne généralement <code>null</code>.
+  Toutefois les choses se compliquent lorsque la propriété manquante est une valeur considérée comme obligatoire par le standard <abbr>ISO</abbr> 19115.
+  Le standard <abbr>ISO</abbr> 19139 autorise l’omission de propriétés obligatoires à la condition d’indiquer pourquoi la valeur est manquante.
+  Les raisons peuvent être que la propriété ne s’applique pas (<code class="OGC">inapplicable</code>),
   que la valeur existe probablement mais n’est pas connue (<code class="OGC">unknown</code>),
   que la valeur pourrait ne pas exister (<code class="OGC">missing</code>),
   qu’elle ne peut pas être divulguée (<code class="OGC">withheld</code>), <i>etc.</i>
@@ -1872,8 +1863,8 @@ System.out.println("L’interface GeoAPI du type <abbr>ISO</abbr> " + <var>isoNa
   là où une valeur de type <code>String</code> serait susceptible d’être localisée.
   Cette approche permet de différer le processus d’internationalisation au moment d’obtenir
   une chaîne de caractères plutôt qu’au moment de construire l’objet qui les contient.
-  C’est particulièrement utile pour les classes immutables dont les instances existent
-  en un seul exemplaire indépendamment des conventions locales.
+  C’est particulièrement utile pour les classes immutables qui serviront à créer des instances uniques
+  indépendamment des conventions locales.
 </p>
 <div class="example"><p><b>Exemple:</b>
   Il existe dans <abbr title="Spatial Information System">SIS</abbr> une seule instance de type
@@ -2122,7 +2113,7 @@ System.out.println("L’interface GeoAPI du type <abbr>ISO</abbr> " + <var>isoNa
 </center>
 <p>
   Les notions d’inclusion et d’intersection s’interprètent toutefois de manière légèrement différente dans ces deux cas.
-  Dans le cas habituel où l’on ne traverse par l’antiméridien, le rectangle vert délimite bien une région d’inclusion.
+  Dans le cas habituel où l’on ne traverse pas l’antiméridien, le rectangle vert délimite bien une région d’inclusion.
   Les régions exclues de ce rectangle se propagent à l’infini dans toutes les directions.
   En d’autres mots, la région d’inclusion n’est pas répétée tous les 360°.
   Mais dans le cas du rectangle rouge, l’information fournie par l’enveloppe délimite plutôt la région d’exclusion qui
