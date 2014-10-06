@@ -68,7 +68,7 @@
     </ul></li>
   </ul></li>
   <li><a href="#XML-ISO">Représentation des objets en <abbr>XML</abbr></a><ul>
-    <li><a href="#XML-ISO-19115">Représentation des méta-données selon <abbr>ISO</abbr> 19139</a><ul>
+    <li><a href="#XML-ISO-19115">Représentation des méta-données selon <abbr>ISO</abbr> 19115-3</a><ul>
       <li><a href="#gco-id">Identification d’instances déjà définies</a></li>
       <li><a href="#nilReason">Représentation de valeurs manquantes</a></li>
     </ul></li>
@@ -1141,7 +1141,7 @@ System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + <var>
   Cette séparation est garantie pour tous les projets qui ne dépendent que du dépôt central de Maven
   (incluant les versions finales de Apache <abbr title="Spatial Information System">SIS</abbr>),
   car le module <code class="GeoAPI">geoapi-pending</code> n’est jamais déployé sur ce dépôt central.
-  En revanche les <i>snapshot</i> de certaines branches de <abbr>SIS</abbr> peuvent dépendre de <code class="GeoAPI">geoapi-pending</code>.
+  En revanche certaines branches de développement de <abbr>SIS</abbr> peuvent dépendre de <code class="GeoAPI">geoapi-pending</code>.
 </p>
 <p>
   Les modules de GeoAPI sont:
@@ -1158,7 +1158,7 @@ System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + <var>
     (non pas une dépendance) avec des ajouts qui n’ont pas encore été approuvés comme un standard <abbr>OGC</abbr>.
     Certains ajouts apparaissent dans des interfaces normalement définies par le module <code class="GeoAPI">geoapi</code>,
     d’où la nécessité de les copier.
-    Les versions <i>snapshot</i> des branches <code>jdk6</code>,
+    Les branches de développement <code>jdk6</code>,
     <code>jdk7</code> et <code>jdk8</code> de Apache <abbr>SIS</abbr> dépendent de ce module,
     mais cette dépendance est transformée en une dépendance vers le module <code class="GeoAPI">geoapi</code>
     standard au moment de fusionner les branches avec le tronc.
@@ -1166,8 +1166,6 @@ System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + <var>
   <li><p>
     <b><code class="GeoAPI">geoapi-conformance</code></b> — contient
     une suite de tests JUnit que les développeurs peuvent utiliser pour tester leurs implémentations.
-    Les versions <i>snapshot</i> et les <i>milestones</i> dépendent du module <code class="GeoAPI">geoapi-pending</code>
-    alors que les versions finales dépendent de <code class="GeoAPI">geoapi</code>.
   </p></li>
   <li><p>
     <b><code class="GeoAPI">geoapi-examples</code></b> — contient des
@@ -1206,7 +1204,7 @@ System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + <var>
   fournissent les interfaces dérivées des schémas <abbr title="Unified Modeling Language">UML</abbr> des standards internationaux.
   Le modèle conceptuel sera expliqué en détails dans les chapitres décrivant l’implémentation Apache <abbr>SIS</abbr>.
   On peut toutefois avoir un aperçu de son contenu en consultant la page listant les
-  <a href="http://www.geoapi.org/3.0/javadoc/content.html">types et méthodes de GeoAPI avec leurs standards d’origines</a>.
+  <a href="http://www.geoapi.org/3.0/javadoc/content.html">types et méthodes de GeoAPI et les standards d’où ils proviennent</a>.
 </p>
 
 
@@ -1230,17 +1228,17 @@ System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + <var>
 <h4 id="GeoAPI-validators">Validations des instances</h4>
 <p>
   GeoAPI peut valider une instance de ses interfaces en vérifiant que certaines contraintes sont respectées.
-  Ces contraintes, qui ne peuvent pas être exprimées dans la signature de la méthode, sont généralement décrites
-  textuellement dans les spécifications abstraites ou dans la javadoc.
+  Certaines contraintes ne peuvent pas être exprimées dans la signature de la méthode. Ces contraintes sont
+  généralement décrites textuellement dans les spécifications abstraites ou dans la javadoc.
 </p>
 <div class="example"><p><b>Exemple:</b>
-  La transformation d’une coordonnée (<code class="OGC">CC_CoordinateOperation</code>) peut nécessiter l’enchaînement de plusieurs étapes.
+  La conversion ou transformation d’une coordonnée (<code class="OGC">CC_CoordinateOperation</code>) peut nécessiter l’enchaînement de plusieurs étapes.
   Dans une telle chaîne d’opérations (<code class="OGC">CC_ConcatenatedOperation</code>),
   pour chaque étape (<code class="OGC">CC_SingleOperation</code>) le nombre de dimensions
   en sortie doit être égal au nombre de dimensions attendu en entré par l’opération suivante.
   Exprimée en langage Java, cette contrainte stipule que pour tout index
   0 &lt; <var>i</var> &lt; <var>n</var> où <var>n</var> est le nombre d’opérations, on a
-  <code>coordOperation[i].sourceDimensions == coordOperation[i-1].targetDimensions</code>.
+  <code>coordOperation[i].targetDimensions == coordOperation[i-1].sourceDimensions</code>.
 </p></div>
 
 <p>
@@ -1311,7 +1309,7 @@ System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + <var>
     @Test
     <b>public void</b> testMyMetadata() {
         <code class="GeoAPI">Metadata</code> <var>myObject</var> = …; <code class="comment">// Construisez un objet ici.</code>
-        <code class="GeoAPI">validators.validate</code>(<var>myObject</var>);
+        <var>validators</var>.<code class="GeoAPI">validate</code>(<var>myObject</var>);
     }
 }</pre>
 
@@ -1321,16 +1319,11 @@ System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + <var>
 <p>
   Des classes de tests JUnit sont définies dans des sous-paquets de <code class="GeoAPI">org.opengis.test</code>.
   Toutes les classes de tests portent un nom se terminant en "<code>Test</code>".
-  En outre, une classe <code class="GeoAPI">org.opengis.test.TestSuite</code> englobe l’ensemble
-  de toutes les classes de tests définies dans le module <code class="GeoAPI">geoapi-conformance</code>.
-  Une façon d’exécuter l’ensemble de ces tests est donc de créer une sous-classe de
-  <code class="GeoAPI">TestSuite</code>, éventuellement y placer un bloc statique effectuant
-  une configuration des validateurs comme dans l’exemple précédent, et d’hériter les tests définis dans GeoAPI.
-</p>
-<p>
-  Apache <abbr title="Spatial Information System">SIS</abbr> hérite des classes <code class="GeoAPI">*Test</code> de GeoAPI au cas-par-cas,
-  dans les modules appropriées. La classe <code class="GeoAPI">TestSuite</code> sera plutôt
-  utilisée dans un test d’intégration englobant l’ensemble des modules de <abbr>SIS</abbr>.
+  GeoAPI définie aussi une classe <code class="GeoAPI">org.opengis.test.TestSuite</code> englobant l’ensemble
+  des tests définis dans le module <code class="GeoAPI">geoapi-conformance</code>,
+  mais Apache <abbr title="Spatial Information System">SIS</abbr> ne l’utilise pas.
+  Apache <abbr>SIS</abbr> hérite plutôt des classes <code class="GeoAPI">*Test</code> de GeoAPI au cas-par-cas,
+  dans les modules appropriées.
   L’exemple ci-dessous donne un exemple de test de GeoAPI personnalisé.
   La <a href="http://www.geoapi.org/geoapi-conformance/apidocs/org/opengis/test/referencing/ParameterizedTransformTest.html">Javadoc
   de la classe parente</a> documente en détails les tests effectués.
@@ -1421,14 +1414,14 @@ System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + <var>
   le <abbr>WKB</abbr> (<i>Well Known Binary</i>).
   Mais le format le plus exhaustif et souvent considéré comme la référence est le <abbr>XML</abbr>,
   au point où la façon de représenter les objets <abbr>ISO</abbr> dans ce format fait parfois l’objet d’un standard international à part entière.
-  Ainsi, les classes de méta-données sont décrites dans le standard <abbr>ISO</abbr> 19115 (une spécification dite <i>abstraite</i>),
-  alors que la représentation de ces classes en <abbr>XML</abbr> est décrite par le standard <abbr>ISO</abbr> 19139.
+  Ainsi, les classes de méta-données sont décrites dans le standard <abbr>ISO</abbr> 19115-1 (une spécification dite <i>abstraite</i>),
+  alors que la représentation de ces classes en <abbr>XML</abbr> est décrite par les standards <abbr>ISO</abbr> 19115-3 et 19139.
 </p>
 <p>
   Les différents standards
   <abbr title="Open Geospatial Consortium">OGC</abbr>/<abbr title="International Organization for Standardization">ISO</abbr>
   n’emploient pas tous la même stratégie pour exprimer les objets en <abbr>XML</abbr>.
-  Le standard <abbr>ISO</abbr> 19139 en particulier emploie une approche plus verbeuse que les autres normes,
+  Le standard <abbr>ISO</abbr> 19115-3 en particulier emploie une approche plus verbeuse que les autres normes,
   et fera l’objet d’une <a href="#XML-ISO-19115">section particulière</a>.
   Mais la plupart des formats <abbr>XML</abbr> ont en commun de définir des types et des attributs supplémentaires
   qui ne font pas partie des spécifications abstraites d’origines.
@@ -1493,7 +1486,7 @@ System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + <var>
     <li>
       <abbr title="Java Architecture for XML Binding">JAXB</abbr> pour les objets qui ne sont pas répétés très souvent dans le document
       mais dont la structure est complexe, avec des arborescences profondes.
-      L’ensemble des méta-données <abbr>ISO</abbr> 19139 est un exemple typique.
+      L’ensemble des méta-données <abbr>ISO</abbr> 19115-3 est un exemple typique.
     </li>
     <li>
       <abbr title="Simple API for XML">SAX</abbr> pour les objets relativement simples mais pouvant exister en très grand nombre.
@@ -1509,9 +1502,9 @@ System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + <var>
 
 
 
-<h2 id="XML-ISO-19115">Représentation des méta-données selon <abbr>ISO</abbr> 19139</h2>
+<h2 id="XML-ISO-19115">Représentation des méta-données selon <abbr>ISO</abbr> 19115-3</h2>
 <p>
-  Pour chaque classe de méta-donnée, il existe un type <abbr>XML</abbr> nommé comme dans la spécification abstraite
+  Pour chaque classe de méta-donnée, il existe un type <abbr>XML</abbr> portant le même nom que dans la spécification abstraite
   (par exemple <code class="OGC">gmd:MD_Metadata</code> et <code class="OGC">gmd:CI_Citation</code>).
   Tous ces types peuvent être employés comme racine d’un document <abbr>XML</abbr>.
   Ainsi, il est possible d’écrire un document représentant un objet <code class="OGC">MD_Metadata</code> complet,
@@ -1712,7 +1705,7 @@ System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + <var>
   qu’elle ne peut pas être divulguée (<code class="OGC">withheld</code>), <i>etc.</i>
   La transmission de cette information nécessite l’utilisation d’un objet non-nul même lorsque la valeur est manquante.
   <abbr title="Spatial Information System">SIS</abbr> procède en retournant un objet qui, en plus d’implémenter l’interface GeoAPI attendue,
-  implémente aussi l’interface <code class="SIS">org.apache.xml.NilObject</code>.
+  implémente aussi l’interface <code class="SIS">org.apache.sis.xml.NilObject</code>.
   Cette interface marque les instances dont toutes les méthodes retournent une collection vide,
   un tableau vide, <code>null</code>, <code>NaN</code>, <code>0</code> ou <code>false</code>,
   dans cet ordre de préférence selon ce que les types de retours des méthodes permettent.
@@ -1849,7 +1842,7 @@ System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + <var>
   C’est évidemment le cas des implémentations standards de <code>java.text.Format</code>,
   puisqu’elles sont entièrement dédiées au travail d’internationalisation.
   Mais c’est aussi le cas de d’autres classes moins évidentes comme
-  <code>javax.imageio.ImageReader</code>/<code>ImageWriter</code> ainsi que les exceptions.
+  <code>javax.imageio.ImageReader</code>/<code>ImageWriter</code> ainsi que les sous-classes de <code>Exception</code>.
   Lorsque une de ces classes est implémentée par <abbr title="Spatial Information System">SIS</abbr>,
   nous l’identifions en implémentant l’interface <code class="SIS">org.apache.sis.util.Localized</code>.
   La méthode <code class="SIS">getLocale()</code> de cette interface permet alors de déterminer
@@ -1881,7 +1874,7 @@ System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + <var>
 </p>
 <p>
   La classe utilitaire <code class="SIS">org.apache.sis.util.Exceptions</code> fournit
-  des méthodes de commodité pour obtenir des messages selon des conventions locales données
+  des méthodes de commodité pour obtenir des messages selon des conventions locales spécifiées
   lorsque cette information est disponible.
 </p>
 
