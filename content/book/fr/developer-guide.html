@@ -2034,15 +2034,15 @@ System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + <var>
   à ceci près que le nombre d’éléments contenus dans cet ensemble est infini (à l’exception des géométries représentant un simple point).
   Pour mieux représenter ce concept, la norme <abbr title="International Organization for Standardization">ISO</abbr> et GeoAPI définissent une interface <code class="OGC">TransfiniteSet</code>
   que l’on peut voir comme un <code>Set</code> de taille infini. Bien qu’un lien de parenté existe conceptuellement entre ces interfaces,
-  GeoAPI ne définit pas <code class="GeoAPI">TransfiniteSet</code> comme une sous-interface de <code>java.util.Collection</code>
+  GeoAPI ne définit pas <code class="GeoAPI">TransfiniteSet</code> comme une sous-interface de <code>java.util.Set</code>
   car la définition de certaines méthodes telles que <code>size()</code> et <code>iterator()</code> serait problématique.
   On y retrouve toutefois des méthodes très similaires telles que <code class="GeoAPI">contains(…)</code> et <code class="GeoAPI">intersects(…)</code>.
 </p>
 <p>
-  La classe parente de toutes les géométries est appelée <code class="OGC">GM_Object</code> dans la norme <abbr>ISO</abbr> 19107.
+  Toutes les géométries sont des spécialisations de <code class="GeoAPI">TransfiniteSet</code>.
+  La classe parente de toutes ces géométries est appelée <code class="OGC">GM_Object</code> dans la norme <abbr>ISO</abbr> 19107.
   Les interfaces de GeoAPI utilisent plutôt le nom <code class="GeoAPI">Geometry</code>, car l’omission du préfixe <code class="OGC">GM_</code>
   (comme le veut la convention dans GeoAPI) aurait laissé un nom trop proche de la classe <code>Object</code> du Java.
-  Toutes les géométries sont des spécialisations de <code class="GeoAPI">TransfiniteSet</code>.
 </p>
 
 
@@ -2145,7 +2145,7 @@ System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + <var>
   Nous pourrions stipuler que toute longitude inférieure à -180° ou supérieure à 180° est considérée exclue,
   mais ça serait une décision arbitraire qui ne serait pas un reflet symétrique du cas habituel (rectangle vert).
   Un développeur pourrait vouloir utiliser ces valeurs, par exemple dans une mosaïque où la carte du monde
-  est répétée plusieurs fois horizontalement sans pour autant les confondre.
+  est répétée plusieurs fois horizontalement tout en considérant chaque répétition comme distincte des autres.
   Si un développeur souhaite effectuer des opérations comme si les régions d’inclusions ou d’exclusions étaient
   répétées tous les 360°, alors il doit lui-même ramener ses valeurs de longitudes entre -180° et 180° au préalable.
   Toutes les fonctions <code class="SIS">add(…)</code>, <code class="SIS">contains(…)</code>,

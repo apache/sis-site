@@ -643,7 +643,7 @@
       <abbr title="XML Schema Definition">XSD</abbr> metadata schemas insert a <code class="OGC">&lt;gmd:CI_Citation&gt;</code> element
       inside a <code class="OGC">&lt;gmd:citation&gt;</code>,
       a <code class="OGC">&lt;gmd:CI_OnlineResource&gt;</code> element inside a <code class="OGC">&lt;gmd:onlineResource&gt;</code>,
-      and so on for the hundreds of classes defined by <abbr>ISO</abbr> standard 19115.
+      and so on for the hundreds of classes defined by <abbr>ISO</abbr> 19115 standard.
       This redundancy is certainly not necessary in a Java program.
     </p></div>
   </li>
@@ -675,7 +675,7 @@
       These decisions are made case-by-case based on a needs analysis.
     </p>
     <div class="example"><p><b>Example:</b>
-      <abbr>ISO</abbr> Standard 19111 defines different types of coordinate systems, such as spherical, cylindrical, polar or Cartesian.
+      <abbr>ISO</abbr> 19111 standard defines different types of coordinate systems, such as spherical, cylindrical, polar or Cartesian.
       It then defines several <em>subsets</em> of these types of coordinate systems systems.
       These subsets, represented by unions, serve to specify that a class may only be associated with a particular type of coordinate system.
       For example, a union of types may be associated with an image, named <code class="OGC">CS_ImageCS</code>,
@@ -692,7 +692,7 @@
       GeoAPI performs the work of integration by replacing some duplicate structures with references to equivalent structures from the standards that best represent them.
     </p>
     <div class="example"><p><b>Example:</b>
-      <abbr>ISO</abbr> Standard 19115, which defines metadata structures,
+      <abbr>ISO</abbr> 19115 standard, which defines metadata structures,
       also attempts to describe a few structures representing coordinate reference systems (<abbr title="Coordinate Reference System">CRS</abbr>).
       Yet these are also the focus of another standard: <abbr>ISO</abbr> 19111.
       At the same time, <abbr>ISO</abbr> 19111:2007 states in section 3 that it reuses all of the elements of <abbr>ISO</abbr> 19115 except
@@ -707,12 +707,12 @@
       regardless of the chronological order in which the standards were published.
     </p>
     <div class="example"><p><b>Exemple:</b>
-      <abbr>ISO</abbr> Standard 19115-2 is an extension of <abbr>ISO</abbr> Standard 19115-1, adding image metadata structures.
+      <abbr>ISO</abbr> 19115-2 standard is an extension of <abbr>ISO</abbr> 19115-1 standard, adding image metadata structures.
       These metadata were defined in a separate standard because they were not yet ready when the first part of the standard was published.
       As it was not possible for administrative reasons to add attributes to already-published classes,
       the new attributes were added in a sub-class bearing almost the same name.
-      Thus, <abbr>ISO</abbr> Standard 19115-2 defines the class <code class="OGC">MI_Band</code>,
-      which extends the class <code class="OGC">MD_Band</code> from <abbr>ISO</abbr> Standard 19115-1 by adding attributes that would have appeared
+      Thus, <abbr>ISO</abbr> 19115-2 defines the class <code class="OGC">MI_Band</code>,
+      which extends the class <code class="OGC">MD_Band</code> from <abbr>ISO</abbr> 19115-1 by adding attributes that would have appeared
       directly in the parent class if there were ready on time.
       In GeoAPI, we have chosen to “repair” these anomalies by fusing these two classes into a single interface.
     </p></div>
@@ -734,9 +734,9 @@
   In particular, the <code class="GeoAPI">@UML</code> annotations indicates the standard,
   the name of the element in that standard, and also its obligation.
   For example, in the following code snippet, the first <code class="GeoAPI">@UML</code> code indicates that the Java interface that follows
-  (<code class="GeoAPI">ProjectedCRS</code>) is defined using the <code class="OGC">SC_ProjectedCRS</code> type of <abbr>ISO</abbr> Standard 19111.
+  (<code class="GeoAPI">ProjectedCRS</code>) is defined using the <code class="OGC">SC_ProjectedCRS</code> type of <abbr>ISO</abbr> 19111 standard.
   The second <code class="GeoAPI">@UML</code> annotation, this time applied to the <code class="GeoAPI">getCoordinateSystem()</code> method,
-  indicates that this method is defined using the <code class="OGC">coordinateSystem</code> association of <abbr>ISO</abbr> Standard 19111,
+  indicates that this method is defined using the <code class="OGC">coordinateSystem</code> association of <abbr>ISO</abbr> 19111 standard,
   and that this association is mandatory — meaning, in Java, that the method is not allowed to return a <code>null</code> value.
 </p>
 
@@ -1349,7 +1349,7 @@ System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + <var>isoN
   But the most exhaustive and often referred format is <abbr>XML</abbr>,
   to the point where the representation of <abbr>ISO</abbr> objects in this format is itself sometimes
   the entire focus of an international standard.
-  Thus are metadata classes described in <abbr>ISO</abbr> Standard 19115-1 (an abstract specification),
+  Thus are metadata classes described in <abbr>ISO</abbr> 19115-1 standard (an abstract specification),
   while the representation of these classes in <abbr>XML</abbr> is described in <abbr>ISO</abbr> 19115-3 and 19139 standards.
 </p>
 <p>
@@ -1838,7 +1838,7 @@ System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + <var>isoN
   same instance of <code class="GeoAPI">CoordinateOperation</code>,
   even if the projection has a different name depending on the country.
   Moreover, certain types of <code class="GeoAPI">CoordinateOperation</code> may require coordinate transformation matrices,
-  so sharing a single instance becomes even more preferable in order to conserve memory.
+  so sharing a single instance becomes even more preferable in order to reduce memory consumption.
 </p>
 
 
@@ -1952,7 +1952,7 @@ System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + <var>isoN
 
 <h1 id="Geometry">Geometries</h1>
 <p>
-  This chapter introduces a few aspects of <abbr>ISO</abbr> Standard 19107 (<i>Spatial schema</i>) and the
+  This chapter introduces a few aspects of <abbr>ISO</abbr> 19107 standard (<i>Spatial schema</i>) and the
   Apache <abbr title="Spatial Information System">SIS</abbr> classes that implement them.
 </p>
 
@@ -1962,21 +1962,20 @@ System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + <var>isoN
 <p>
   Each geometric object is considered an infinite set of points.
   As a set, their most fundamental operations are of the same nature as the standard operations of Java collections.
-  We may therefore see a geometry as a sort of <code>java.util.Set</code> in which the elements are points,
+  We may therefore see a geometry as a kind of <code>java.util.Set</code> in which the elements are points,
   except that the number of elements contained in the set is infinite (with the exception of geometries representing a simple point).
   To better represent this concept, the <abbr title="International Organization for Standardization">ISO</abbr> standard
   and GeoAPI define a <code class="OGC">TransfiniteSet</code> interface which we could see as a <code>Set</code> of infinite size.
   Although a parent relationship exists conceptually between these interfaces,
-  GeoAPI does not define <code class="GeoAPI">TransfiniteSet</code> as a sub-interface of <code>java.util.Collection</code>,
+  GeoAPI does not define <code class="GeoAPI">TransfiniteSet</code> as a sub-interface of <code>java.util.Set</code>,
   as the definition of certain methods such as <code>size()</code> and <code>iterator()</code> would be problematic.
   However, we find very similar methods such as <code class="GeoAPI">contains(…)</code> and <code class="GeoAPI">intersects(…)</code>.
 </p>
 <p>
-  The parent class of all geometries is called <code class="OGC">GM_Object</code> in <abbr>ISO</abbr> Standard 19107.
-  GeoAPI interfaces use the name <code class="GeoAPI">Geometry</code> instead, as the omission of the prefix
-  <code class="OGC">GM_</code> (as prescribed in GeoAPI convention) would leave a name too similar to Java's
-  <code>Object</code> class.
   All geometries are specializations of <code class="GeoAPI">TransfiniteSet</code>.
+  The parent class of those geometries is called <code class="OGC">GM_Object</code> in <abbr>ISO</abbr> 19107 standard.
+  GeoAPI interfaces use the <code class="GeoAPI">Geometry</code> name instead, as the omission of the <code class="OGC">GM_</code>
+  prefix (as prescribed in GeoAPI convention) would leave a name too similar to Java's <code>Object</code> class.
 </p>
 
 
@@ -2075,7 +2074,7 @@ System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + <var>isoN
   We could stipulate that all longitudes below -180° or above 180° are considered excluded,
   but this would be an arbitrary decision that would not be an exact counterpart to the usual case (green rectangle).
   A developer may wish to use these values, for example, in a mosaic where the map of the world is repeated several times
-  horizontally so as not to cause confusion.
+  horizontally and each repetition is considered distinct.
   If developers wish to perform operations as though the regions of inclusion or exclusion were repeated every 360°,
   they themselves will have to bring the longitudinal values between -180° and 180° in advance.
   All the <code class="SIS">add(…)</code>, <code class="SIS">contains(…)</code>,
@@ -2121,7 +2120,7 @@ System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + <var>isoN
     But in <abbr title="Spatial Information System">SIS</abbr> envelopes,
     they may actually return opposite results for axes using <code class="GeoAPI">RangeMeaning.WRAPAROUND</code>.
     An envelope whose range is [0 … 0], [-0 … -0] or [-0 … +0] would normally be considered an empty envelope,
-    but the [+0 … -0] range would in fact be considered to include the entire, infinite totality of values.
+    but the [+0 … -0] range would in fact be considered to include the entire set of values all around the world.
     This behaviour conforms to the definition of <code class="SIS">lowerCorner</code> and <code class="SIS">upperCorner</code>,
     which considers +0 as the starting point, and -0 as the end-point after cycling through all possible values.
     Such behaviour only occurs for the pair of values +0 and -0, and only in that order.
@@ -2136,7 +2135,7 @@ System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + <var>isoN
 <p>
   Images, or <i>rasters</i>, are a particular case of a data structure called a <i>coverage</i>.
   We could think of this as a “coverage of data.”
-  The title of the standard that describes them, “Coverage Geometry and Functions,” (<abbr>ISO</abbr> 19123),
+  The title of the <abbr>ISO</abbr> 19123 standard that describes them, “Coverage Geometry and Functions”,
   nicely summarizes the two essential elements of coverages:
 </p>
 <ul>
@@ -2167,7 +2166,7 @@ System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + <var>isoN
   </li>
 </ul>
 <p>
-  The characteristics of the spatial domain are defined by <abbr>ISO</abbr> Standard 19123,
+  The characteristics of the spatial domain are defined by <abbr>ISO</abbr> 19123 standard,
   while the characteristics of range are not included in the standard.
   The standard simply mentions that ranges may be finite or infinite,
   and are not necessarily numerical.
@@ -2186,7 +2185,7 @@ System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + <var>isoN
     classes respectively.
     The <code class="SIS">NumberRange</code> is used more often, and is also the one that most closely approaches the
     <a href="http://fr.wikipedia.org/wiki/Intervalle_%28math%C3%A9matiques%29">the common mathematical concept of an interval</a>.
-    This textual representation approaches the specifications of <abbr>ISO</abbr> Standard 31-11,
+    This textual representation approaches the specifications of <abbr>ISO</abbr> 31-11 standard,
     except that the comma is replaced by the character “…” as the separator of minimal and maximal values.
     For example, “[0 … 256)” represents the range of values from 0 inclusive to 256 exclusive.
   </p>
