@@ -144,6 +144,28 @@ to work on the SIS branch targeting the most recent JDK platform (currently JDK8
     cd sis
     mvn install
 
+The [source code](source.html) page provides tips for opening the files in an IDE,
+and guidelines about the way SIS source code is organized.
+
+
+
+
+Committing changes    {#commit}
+===============================
+
+Copies or displacements of files shall be done with the `svn copy` or `svn move` command, respectively.
+Be aware that not all IDE or graphical tools perform this action appropriately.
+*Always verify on the command-line*, at least the first times that a new tools is used, by executing `svn status`.
+Files that have been moved or copied shall have a `A+` symbol in the left margin, like below:
+
+    :::text
+    D       my-directory/the-old-filename
+    A  +    my-directory/the-new-filename
+
+Using the proper SVN command is necessary for preserving the history, preserving the [SVN properties](#svn-config),
+and consuming less space on the Apache server hosting the source code repository.
+
+
 
 
 Configuring Subversion properties    {#svn-config}
@@ -151,7 +173,7 @@ Configuring Subversion properties    {#svn-config}
 
 Subversion can associate properties to each tracked files. Those properties tell to Subversion
 how to handle platform-specific aspects like end-of-line characters, and how to serve the files
-to web browsers (MIME type, encoding, <etc.>).
+to web browsers (MIME type, encoding, <i>etc.</i>).
 Those properties are typically set when a new file is added, not during modifications.
 Developers can specify default properties for all their Subversion working copies as below:
 
@@ -160,10 +182,15 @@ Developers can specify default properties for all their Subversion working copie
   * Scroll down to the `[auto-props]` section and make sure to assign the appropriate
     (usually `native`) value to the End Of Line (EOL) style of the files to be edited.
 
-Below is an example of a portion of Subversion configuration file:
+Below is an example of a portion of Subversion configuration file
+(real configuration files are typically larger):
 
     :::ini
     [miscellany]
+    # Whitespace-delimited globs which Subversion will ignore in its 'status' output.
+    global-ignores = *.class *.jar .* *~
+
+    # Enables automatic properties (defined below) for 'svn add' and 'svn import'.
     enable-auto-props = yes
 
     # Section for configuring automatic properties.

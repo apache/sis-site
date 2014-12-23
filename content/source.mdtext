@@ -94,8 +94,24 @@ then execute the following steps:
 
 
 
-Classes naming convention    {#classes-naming}
-==============================================
+License header    {#license}
+============================
+
+All Java source files (`*.java`) shall begin with the current ASF license header as described in [ASF Source Header][srcheaders].
+Properties source files (`*.properties`) used as inputs to some processor (e.g. the resource compiler)
+shall have the same license header, but with lines prefixed by `#` instead of `*`.
+Properties files distributed as-is in the JAR files can summarize the license on a single line for saving space,
+as below:
+
+    :::text
+    # Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.
+
+
+
+
+Naming convention    {#naming}
+==============================
+
 Implementations of GeoAPI interfaces usually (but not always) begin with `Abstract`, `Default`, `Simple` or `General` prefixes.
 
   * The `Abstract` prefix is used when a class is abstract according ISO specifications — it may or may not be be abstract in the Java sense.
@@ -126,6 +142,44 @@ Formatting the code in a way that emphase their symmetrical nature, for example
 aligning identical terms in columns, can help to understand the overall pattern
 and to identify bugs. The decision to use standard or tabular format is made on
 a case-by-case basis. Of course, tabular format shall not be abused.
+
+
+
+Spaces and line length    {#spaces}
+-----------------------------------
+
+  * **Trailing Whitespaces:** Remove all trailing whitespaces.
+    + Eclipse users can use the _Source_ - _Cleanup_ option to accomplish this.
+    + NetBeans users can use the use the _Source_ - _Remove trailing spaces_ on a file-by-file basis,
+      or set the _Preferences_ - _Editor_ - _On Save_ - _Remove trailing whitespaces_ option.
+  * **Indentation:** Use 4 space indents (except for XML files) and never use tabs.
+    + Use 2 space indents for XML files, because ISO/OGC XML schemas tend to have a very deep structure.
+  * **Line wrapping:** Use 120-column line width for Java code and Javadoc.
+    Some exceptions to this rule may exist for preserving tabular structures, but should be rare.
+
+
+
+Declarations    {#declarations}
+-------------------------------
+
+Class, method and field declarations should use the keywords in the following order:
+
+  * `public`, `protected` or `private`
+  * `abstract` or `static`
+  * `final`
+  * `strictfp` (should be applied on all test classes)
+
+This is known as the "customary order" in the [Java Language Specification][JLS-order].
+
+
+
+
+Documentation formatting    {#javadoc}
+======================================
+
+Apache SIS uses the standard Javadoc conventions, except for the 80 characters line length restriction.
+Javadoc lines should not exceed 120 characters, but exceptions to this rule may exist for preserving the
+structure of `<table>` elements.
 
 
 
@@ -216,21 +270,6 @@ HTML tag                  | Description
 
 
 
-Miscellaneous    {#miscellaneous}
----------------------------------
-
-  * **License Header:** Always add the current ASF license header as described in [ASF Source Header][srcheaders].
-  * **Trailing Whitespaces:** Remove all trailing whitespaces.
-    + Eclipse users can use the _Source_ - _Cleanup_ option to accomplish this.
-    + NetBeans users can use the use the _Source_ - _Remove trailing spaces_ on a file-by-file basis,
-      or set the _Preferences_ - _Editor_ - _On Save_ - _Remove trailing whitespaces_ option.
-  * **Indentation:** Use 4 space indents (except for XML files) and never use tabs!
-    + Use 2 space indents for XML files, because ISO/OGC XML schemas tend to have a very deep structure.
-  * **Line wrapping:** Use 120-column line width for Java code and Javadoc.
-    Some exceptions to this rule may exist for preserving tabular structures, but should be rare.
-
-
-
 *[ISO]: International Organization for Standardization
 *[OGC]: Open Geospatial Consortium
 
@@ -238,8 +277,7 @@ Miscellaneous    {#miscellaneous}
 [subversion]:       http://subversion.apache.org
 [git]:              http://git-scm.com
 [srcheaders]:       http://www.apache.org/legal/src-headers.html
-[standards]:        http://www.opengeospatial.org/standards
-[geoapi]:           http://www.geoapi.org/3.0/javadoc/index.html
+[JLS-order]:        http://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.1
 [mathml-wolfram]:   http://reference.wolfram.com/mathematica/XML/tutorial/MathML.html
 [mathml-dessci]:    http://www.dessci.com/en/reference/mathml/
 [mathml-fonts]:     http://developer.mozilla.org/en-US/docs/Mozilla/MathML_Project/Fonts
