@@ -95,7 +95,7 @@ For fetching the source code, choose one of the following commands:</p>
 </pre></div>
 
 
-<p>The remaining of this page provides tips for SIS developers.</p>
+<p>The remaining of this page gives some guidelines about the way SIS source code is organized.</p>
 <div class="toc">
 <ul>
 <li><a href="#ide">Opening Apache SIS in an IDE</a><ul>
@@ -103,28 +103,21 @@ For fetching the source code, choose one of the following commands:</p>
 <li><a href="#eclipse">Eclipse</a></li>
 </ul>
 </li>
-<li><a href="#developing">Developing Apache SIS</a><ul>
-<li><a href="#knowledge">Background Knowledge</a><ul>
-<li><a href="#science">Geographic Information Systems and Science</a></li>
-<li><a href="#ogc">The ISO/OGC Geospatial Model</a></li>
-<li><a href="#java">Object-Oriented Programming in Java</a></li>
-<li><a href="#math">Mathematical Background</a></li>
-<li><a href="#geoapi">The GeoAPI Interfaces</a></li>
-<li><a href="#modules">The SIS library modules</a></li>
+<li><a href="#license">License header</a></li>
+<li><a href="#naming">Naming convention</a></li>
+<li><a href="#formatting">Code formatting</a><ul>
+<li><a href="#spaces">Spaces and line length</a></li>
+<li><a href="#declarations">Declarations</a></li>
 </ul>
 </li>
-<li><a href="#formatting">Code formatting</a><ul>
+<li><a href="#javadoc">Documentation formatting</a><ul>
 <li><a href="#javadoc-tags">Javadoc annotations</a></li>
 <li><a href="#html">HTML elements</a></li>
 <li><a href="#mathml">MathML elements</a></li>
 <li><a href="#paragraph">Paragraphs</a></li>
 <li><a href="#css">Javadoc CSS</a></li>
-<li><a href="#miscellaneous">Miscellaneous</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li><a href="#classes-naming">Classes naming convention</a></li>
 </ul>
 </div>
 <h1 id="ide">Opening Apache SIS in an IDE</h1>
@@ -169,74 +162,26 @@ then execute the following steps:</p>
 <li>Go to <em>File</em> → <em>Import</em> → <em>General</em> → <em>Existing Projects in Workspace</em>.</li>
 <li>Choose the <code>sis</code> directory and import.</li>
 </ul>
-<h1 id="developing">Developing Apache SIS</h1>
-<p>Improving and extending SIS requires extensive knowledge of geographic information science,
-object oriented programming, the Java language, and of the library itself. Contributors should
-expect that they will need to learn a great deal before being able to become productive.
-However, the effort required to become productive should improve the contributor's understanding
-and knowledge of geographic information systems, of geodetic and geographic science, and of
-effective computer programming.</p>
-<p>This document is expected to evolve as the SIS project develops its own mode of operation.</p>
-<h2 id="knowledge">Background Knowledge</h2>
-<p>All contributors arrive to the project with different knowledge bases, some with scientific
-backgrounds, some with a background in computer science, and others with geographic backgrounds
-or even no training in geographic information science at all. By sharing the richness of our
-individual backgrounds we have acquired a list of subjects which we consider critical to fully
-understanding the SIS project. New contributors are highly encouraged to explore these
-areas if they have no or little knowledge of them.</p>
-<h3 id="science">Geographic Information Systems and Science</h3>
-<p>While a background in the field is not required, it nonetheless proves exceedingly useful along the way.
-GIS has developed its own language and has particular concerns which return frequently.
-Issues of spatial representation, data size, spatial scale, information workflows and other topics
-arise frequently and are worth understanding.</p>
-<p>A good general introduction to the field is the book <em>Geographic Information Systems and Science</em>
-by Paul A. Longley, Michael F. Goodchild, David J. Maguire and David W. Rhind published in its
-second edition by John Wiley and Sons Ltd. in 2004.</p>
-<h3 id="ogc">The <abbr title="International Organization for Standardization">ISO</abbr>/<abbr title="Open Geospatial Consortium">OGC</abbr> Geospatial Model</h3>
-<p>SIS builds on the standards developed through a collaboration between the International
-Organization for Standardization (<abbr title="International Organization for Standardization">ISO</abbr>) and the Open Geospatial Consortium (<abbr title="Open Geospatial Consortium">OGC</abbr>).
-Contributors to SIS should have at least a basic understanding of the model developed in the
-<abbr title="International Organization for Standardization">ISO</abbr> 19000 series of specifications, starting with the Abstract model and working through the
-<em>Feature</em> model. While the <abbr title="International Organization for Standardization">ISO</abbr> specifications are sold, the <abbr title="Open Geospatial Consortium">OGC</abbr> releases its own, essentially
-identical versions of standards which have evolved from the collaboration. The <abbr title="Open Geospatial Consortium">OGC</abbr> specifications
-are available for the <a href="http://www.opengeospatial.org/standards"><abbr title="Open Geospatial Consortium"><abbr title="Open Geospatial Consortium">OGC</abbr></abbr> standards and specification</a> page.</p>
-<p>As time progresses, we hope to develop documentation material to introduce the <abbr title="International Organization for Standardization">ISO</abbr> 19000 specification series.</p>
-<h3 id="java">Object-Oriented Programming in Java</h3>
-<p>SIS is a library designed to be used by other programmers. To play this role effectively,
-SIS must consider the various ways that users can reuse Java code: not only through object
-instantiation and method calls but also through inheritance. SIS pays special attention to
-accessibility constraints ensuring that only the classes and methods which are offered for
-use are publicly accessible and that these methods are fully and correctly documented in javadoc.</p>
-<p>Contributors are highly recommended to read the book <em>Effective Java</em> by Joshua Block, published
-in its second edition by Addison-Wesley in 2008. The book explains the importance of certain
-elements in the Java language and discusses subtleties of the language and its use.
-Most importantly, the book reveals the full scope a programmer must consider when developing a code library.</p>
-<p>The <a href="code-patterns.html">Recommended code patterns</a> page also discusses some elements
-of special importance to Apache SIS.</p>
-<h3 id="math">Mathematical Background</h3>
-<p>SIS frequently deals with complex calculations using relatively simple mathematics of
-trigonometry and matrix algebra. The coordinate operations of the Referencing modules involve
-trigonometric transformations on a flattened ellipsoid of rotation, the image transformations in
-the Coverage modules and in the Rendering system involve extensive use of Affine transforms, and
-the Analytic modules often use their own mathematical operations.
-These mathematics cannot be simplified — they reflect the richness of the world around us.</p>
-<p>Affine transformations are not particularly complex but critically important both to the
-geo-referencing operations of the Referencing modules and to the image transformations of the
-Coverage modules. Affines transform coordinates through translation, scaling, rotations, and
-shear, though this latter component is used infrequently in the library. Mathematically,
-affine transformations are usually applied as a matrix operation applied to a coordinate vector.
-There are numerous introductions to affine transformations available on the World Wide Web since
-the concept is central to all graphics programming.</p>
-<h3 id="geoapi">The GeoAPI Interfaces</h3>
-<p>SIS is build partially as an implementation of the GeoAPI interfaces. GeoAPI defines a set
-of objects offering particular methods thereby providing an interpretation of the <abbr title="International Organization for Standardization">ISO</abbr>/<abbr title="Open Geospatial Consortium">OGC</abbr>
-standards in the Java language. GeoAPI therefore defines the core of the model implemented
-by Apache SIS.</p>
-<p>GeoAPI can most easily be learned by exploring the <a href="http://www.geoapi.org/3.0/javadoc/index.html">GeoAPI Javadoc</a>.</p>
-<h3 id="modules">The SIS library modules</h3>
-<p>Contributors should gain a basic understanding of the core library including the separation into
-modules, the functionality available in the base module, and the functioning of the modules of interest.</p>
-<h2 id="formatting">Code formatting</h2>
+<h1 id="license">License header</h1>
+<p>All Java source files (<code>*.java</code>) shall begin with the current ASF license header as described in <a href="http://www.apache.org/legal/src-headers.html">ASF Source Header</a>.
+Properties source files (<code>*.properties</code>) used as inputs to some processor (e.g. the resource compiler)
+shall have the same license header, but with lines prefixed by <code>#</code> instead of <code>*</code>.
+Properties files distributed as-is in the JAR files can summarize the license on a single line for saving space,
+as below:</p>
+<div class="codehilite"><pre># Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.
+</pre></div>
+
+
+<h1 id="naming">Naming convention</h1>
+<p>Implementations of GeoAPI interfaces usually (but not always) begin with <code>Abstract</code>, <code>Default</code>, <code>Simple</code> or <code>General</code> prefixes.</p>
+<ul>
+<li>The <code>Abstract</code> prefix is used when a class is abstract according <abbr title="International Organization for Standardization">ISO</abbr> specifications — it may or may not be be abstract in the Java sense.</li>
+<li>The <code>General</code> prefix is used when an implementation is designed for use in the general case,
+    as opposed to other implementations specialized for a fixed number of dimensions or other conditions.</li>
+<li>Implementations specialized for a fixed number of dimensions are suffixed with <code>1D</code>, <code>2D</code>, <code>3D</code> or <code>4D</code> rather than being prefixed.</li>
+</ul>
+<p>Classes that do not implement an interface are usually not prefixed, even if abstract.</p>
+<h1 id="formatting">Code formatting</h1>
 <p>Apache SIS uses the standard Java conventions, except for the 80 characters line length restriction.
 Other exceptions to the coding conventions may occur when tabular formatting can improve readability,
 as in the example below:</p>
@@ -252,7 +197,35 @@ Formatting the code in a way that emphase their symmetrical nature, for example
 aligning identical terms in columns, can help to understand the overall pattern
 and to identify bugs. The decision to use standard or tabular format is made on
 a case-by-case basis. Of course, tabular format shall not be abused.</p>
-<h3 id="javadoc-tags">Javadoc annotations</h3>
+<h2 id="spaces">Spaces and line length</h2>
+<ul>
+<li><strong>Trailing Whitespaces:</strong> Remove all trailing whitespaces.<ul>
+<li>Eclipse users can use the <em>Source</em> - <em>Cleanup</em> option to accomplish this.</li>
+<li>NetBeans users can use the use the <em>Source</em> - <em>Remove trailing spaces</em> on a file-by-file basis,
+  or set the <em>Preferences</em> - <em>Editor</em> - <em>On Save</em> - <em>Remove trailing whitespaces</em> option.</li>
+</ul>
+</li>
+<li><strong>Indentation:</strong> Use 4 space indents (except for XML files) and never use tabs.<ul>
+<li>Use 2 space indents for XML files, because <abbr title="International Organization for Standardization">ISO</abbr>/<abbr title="Open Geospatial Consortium">OGC</abbr> XML schemas tend to have a very deep structure.</li>
+</ul>
+</li>
+<li><strong>Line wrapping:</strong> Use 120-column line width for Java code and Javadoc.
+    Some exceptions to this rule may exist for preserving tabular structures, but should be rare.</li>
+</ul>
+<h2 id="declarations">Declarations</h2>
+<p>Class, method and field declarations should use the keywords in the following order:</p>
+<ul>
+<li><code>public</code>, <code>protected</code> or <code>private</code></li>
+<li><code>abstract</code> or <code>static</code></li>
+<li><code>final</code></li>
+<li><code>strictfp</code> (should be applied on all test classes)</li>
+</ul>
+<p>This is known as the "customary order" in the <a href="http://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.1">Java Language Specification</a>.</p>
+<h1 id="javadoc">Documentation formatting</h1>
+<p>Apache SIS uses the standard Javadoc conventions, except for the 80 characters line length restriction.
+Javadoc lines should not exceed 120 characters, but exceptions to this rule may exist for preserving the
+structure of <code>&lt;table&gt;</code> elements.</p>
+<h2 id="javadoc-tags">Javadoc annotations</h2>
 <p>SIS uses standard javadoc annotations. The meaning of some tags are refined as below:</p>
 <ul>
 <li><code>@since</code>   - the SIS version when the annotated element (class, method, <i>etc.</i>) was first introduced.</li>
@@ -288,17 +261,16 @@ a case-by-case basis. Of course, tabular format shall not be abused.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="html">HTML elements</h3>
+<h2 id="html">HTML elements</h2>
 <p>HTML tags and entities shall be used only when there is no equivalent Javadoc tag.
-In addition to the standard Javadoc tags, a few <a href="http://builds.apache.org/job/sis-trunk/site/sis-build-helper/index.html">SIS-specific Javadoc tags</a> are available.
 For example:</p>
 <ul>
-<li>Instead of "<code>&lt;code&gt;Foo&lt;/code&gt;</code>", use "<code>{@code Foo}</code>".</li>
+<li>Instead of "<code>&lt;code&gt;✎&lt;/code&gt;</code>", use "<code>{@code ✎}</code>".</li>
 <li>Instead of "<code>a &amp;lt; b &amp;lt; c</code>", use "<code>{@literal a &lt; b &lt; c}</code>".</li>
-<li>Instead of "<code>&lt;pre&gt;</code>" for a Java listing, use "<code>{@preformat java}</code>"
-     (this Javadoc tag is specific to Apache SIS).</li>
+<li>Instead of "<code>&lt;pre&gt;✎&lt;/pre&gt;</code>" for a Java listing, use "<code>{@preformat java ✎}</code>"
+     (this Javadoc tag is specific to Apache SIS — see above table).</li>
 </ul>
-<h3 id="mathml">MathML elements</h3>
+<h2 id="mathml">MathML elements</h2>
 <p>The source code occasionally uses MathML for formulas that are difficult to render with only Unicode characters.
 PNG images are not extensively used for formulas because they are difficult to edit after creation,
 and their content are invisible to search operations (for example when a variable is renamed).
@@ -313,14 +285,14 @@ For an introduction to MathML, see:</p>
 Internet Explorer users need to <a href="http://www.dessci.com/en/products/mathplayer/download.htm">install a plugin</a>.
 Firefox users can optionally install the <a href="http://developer.mozilla.org/en-US/docs/Mozilla/MathML_Project/Fonts">fonts for Mozilla's MathML engine</a> for better results.
 Note that a <a href="http://www.mathjax.org/">JavaScript display engine</a> is available for all browsers, but not yet used by SIS.</p>
-<h3 id="paragraph">Paragraphs</h3>
+<h2 id="paragraph">Paragraphs</h2>
 <p>Usages of the <code>&lt;p&gt;</code> tag should be relatively rare.
 Do <strong>not</strong> use <code>&lt;p&gt;</code> for the first paragraph in a package, class or member documentation,
 or for the first paragraph after a <code>&lt;/ul&gt;</code>, <code>&lt;/ol&gt;</code>, <code>&lt;/table&gt;</code>, <code>&lt;/blockquote&gt;</code>, <code>&lt;/pre&gt;</code>,
 <code>{@preformat}</code> or <code>{@section}</code> element.
 The <code>&lt;p&gt;</code> tag shall be used only for separating a new paragraph from a previous one.
 In such cases, <code>&lt;p&gt;</code> shall have a matching <code>&lt;/p&gt;</code> tag at the paragraph end in order to form valid HTML.</p>
-<h3 id="css">Javadoc CSS</h3>
+<h2 id="css">Javadoc CSS</h2>
 <p>Avoid using HTML attributes other than <code>class</code> as much as possible.
 Instead, rely on styling. Some HTML tags having a style definition in Apache SIS are:</p>
 <table>
@@ -369,28 +341,6 @@ Instead, rely on styling. Some HTML tags having a style definition in Apache SIS
 </tr>
 </tbody>
 </table>
-<h3 id="miscellaneous">Miscellaneous</h3>
-<ul>
-<li><strong>License Header:</strong> Always add the current ASF license header as described in <a href="http://www.apache.org/legal/src-headers.html">ASF Source Header</a>.</li>
-<li><strong>Trailing Whitespaces:</strong> Remove all trailing whitespaces.<ul>
-<li>Eclipse users can use the <em>Source</em> - <em>Cleanup</em> option to accomplish this.</li>
-<li>NetBeans users can use the use the <em>Source</em> - <em>Remove trailing spaces</em> on a file-by-file basis,
-  or set the <em>Preferences</em> - <em>Editor</em> - <em>On Save</em> - <em>Remove trailing whitespaces</em> option.</li>
-</ul>
-</li>
-<li><strong>Indentation:</strong> Use 4 space indents (except for XML files) and never use tabs!<ul>
-<li>Use 2 space indents for XML files, because <abbr title="International Organization for Standardization">ISO</abbr>/<abbr title="Open Geospatial Consortium">OGC</abbr> XML schemas tend to have a very deep structure.</li>
-</ul>
-</li>
-<li><strong>Line wrapping:</strong> Use 120-column line width for Java code and Javadoc.
-    Some exceptions to this rule may exist for preserving tabular structures, but should be rare.</li>
-</ul>
-<h1 id="classes-naming">Classes naming convention</h1>
-<p>Implementations of GeoAPI interfaces usually (but not always) begin with <code>Abstract</code>, <code>Default</code>, <code>Simple</code> or <code>General</code> prefixes.
-The <code>Abstract</code> prefix is used when a class is abstract according <abbr title="International Organization for Standardization">ISO</abbr> specifications - it may or may not be be abstract in the Java sense.
-The <code>General</code> prefix is used when an implementation is designed for use in the general case,
-as opposed to other implementations specialized for a fixed number of dimensions or other conditions.
-Implementations specialized for a fixed number of dimensions are suffixed with <code>1D</code>, <code>2D</code>, <code>3D</code> or <code>4D</code> rather than being prefixed.</p>
             </article>
           </section>
         </div><!--/span-->
