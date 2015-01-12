@@ -128,8 +128,56 @@ Code formatting    {#formatting}
 ================================
 
 Apache SIS uses the standard Java conventions, except for the 80 characters line length restriction.
-Other exceptions to the coding conventions may occur when tabular formatting can improve readability,
-as in the example below:
+The conventions listed below are guidelines. Some exceptions to those convention can occur but should
+be rare (see [exceptions to coding conventions](#tabular-formatting)).
+
+
+
+Spaces and line length    {#spaces}
+-----------------------------------
+
+  * **Indentation:** Use a consistent space indents and never use tabs.
+    + Use 4 space indents for Java files.
+    + Use 2 space indents for XML files, because ISO/OGC XML schemas tend to have a very deep structure.
+  * **Space after keyword:** Put a space after `if`, `else`, `for`, `try`, `catch` and similar keywords
+    (not after method names).
+  * **Trailing Whitespaces:** Remove all trailing whitespaces.
+    + Eclipse users can use the _Source_ - _Cleanup_ option to accomplish this.
+    + NetBeans users can use the use the _Source_ - _Remove trailing spaces_ on a file-by-file basis,
+      or set the _Preferences_ - _Editor_ - _On Save_ - _Remove trailing whitespaces_ option.
+  * **Line wrapping:** Use 120-column line width for Java code and Javadoc.
+    Some exceptions to this rule may exist for preserving tabular structures, but should be rare.
+
+
+
+Brackets    {#brackets}
+-----------------------
+
+  * **Curly brackets:** The `{` and `}` brackets are mandatory for `if`, `else`, `while` and other blocks,
+    except if the instruction after the keyword is on the same line (e.g. `else if`).
+
+
+
+Member declarations    {#declarations}
+--------------------------------------
+
+  * Class, method and field declarations shall use the keywords in the following order.
+    This is known as the "customary order" in the [Java Language Specification][JLS-order]:
+    + `public`, `protected` or `private`,
+    + `abstract` or `static`,
+    + `final`,
+    + `strictfp` (should be applied on all test classes).
+  * Member fields do not have any particular prefix (no `m_` prefix).
+
+
+
+Exceptions to coding conventions    {#tabular-formatting}
+---------------------------------------------------------
+
+Many mathematical operations in a two-dimensional space (or more) have symmetry.
+Formatting the code in a way that emphase their symmetrical nature, for example
+aligning identical terms in columns, can help to understand the overall pattern
+and to identify bugs. Example:
 
     :::java
     if (x < xmin) xmin = x;
@@ -137,39 +185,8 @@ as in the example below:
     if (y < ymin) ymin = y;
     if (y > ymax) ymax = y;
 
-Many mathematical operations in a two-dimensional space (or more) have symmetry.
-Formatting the code in a way that emphase their symmetrical nature, for example
-aligning identical terms in columns, can help to understand the overall pattern
-and to identify bugs. The decision to use standard or tabular format is made on
-a case-by-case basis. Of course, tabular format shall not be abused.
-
-
-
-Spaces and line length    {#spaces}
------------------------------------
-
-  * **Trailing Whitespaces:** Remove all trailing whitespaces.
-    + Eclipse users can use the _Source_ - _Cleanup_ option to accomplish this.
-    + NetBeans users can use the use the _Source_ - _Remove trailing spaces_ on a file-by-file basis,
-      or set the _Preferences_ - _Editor_ - _On Save_ - _Remove trailing whitespaces_ option.
-  * **Indentation:** Use 4 space indents (except for XML files) and never use tabs.
-    + Use 2 space indents for XML files, because ISO/OGC XML schemas tend to have a very deep structure.
-  * **Line wrapping:** Use 120-column line width for Java code and Javadoc.
-    Some exceptions to this rule may exist for preserving tabular structures, but should be rare.
-
-
-
-Declarations    {#declarations}
--------------------------------
-
-Class, method and field declarations should use the keywords in the following order:
-
-  * `public`, `protected` or `private`
-  * `abstract` or `static`
-  * `final`
-  * `strictfp` (should be applied on all test classes)
-
-This is known as the "customary order" in the [Java Language Specification][JLS-order].
+The decision to use standard or tabular format is made on a case-by-case basis.
+Of course, tabular format shall not be abused.
 
 
 
