@@ -152,15 +152,7 @@ but also in a few Java files. The following command performs the replacement usi
 
 Open the root `pom.xml` file in an editor and perform the following changes:
 
-  * Copy-and-paste the whole `<plugin>` block, except `<reportSets>`, for `maven-javadoc-plugin` from `<reporting>` to `<build>`.
-    We need the javadoc configuration to be duplicated in both `<reporting>` and `<build>` sections in order
-    to get the expected Javadoc output in both Maven site and in the `*-javadoc.jar` files to deployed in the
-    Maven repository. **TODO:** see if upgrading Maven or the `maven-javadoc-plugin` can solve this problem.
-  * Remove the whole `<pluginRepositories>` block, since it should not be needed for releases (and is actually not allowed).
-  * Remove the `<plugin>` block for `docbkx-maven-plugin`, since the DocBook directory is omitted (see below).
-
-Recursively delete the `src/main/docbook` directory (this policy may be revised in future SIS releases).
-We omit this directory for now because this material may move to the CMS, and no English version is available yet.
+  * Remove the whole `<pluginRepositories>` block (including comment), since it should not be needed for releases (and is actually not allowed).
 
 In `core/sis-utility/src/main/java/org/apache/sis/internal/system/Supervisor.java`, consider setting
 the `ENABLED` flag to `false`. This policy may be revised in future SIS releases.
@@ -580,13 +572,17 @@ Announce the release    {#announce}
 Update trunk for the next development cycle    {#next-release}
 ==============================================================
 
-Update the version numbers in the `pom.xml` files on trunk with the following command:
+On the development branch (usually JDK8),
+update the version numbers in the `pom.xml` files on trunk with the following command:
 
     :::bash
     mvn release:update-versions --define autoVersionSubmodules=true
 
-Edit the version number in the `application/sis-console/src/main/artifact/README` file.
-Report the changes manually on the JDK6, JDK7 and JDK8 branches.
+This change will need to be merged manually on the JDK7, JDK6 branches and on the trunk.
+Then on the development branch:
+
+  * Edit the version number in the `application/sis-console/src/main/artifact/README` file.
+  * Edit the value of the `MAJOR_VERSION` constant in the `core/sis-utility/src/main/java/org/apache/sis/internal/system/Modules.java` file.
 
 
 
