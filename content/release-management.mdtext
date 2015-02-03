@@ -40,10 +40,12 @@ number of the previous and the new release respectively, and `$RELEASE_CANDIDATE
 the current release attempt. Those versions shall be set on the command line like below (Unix):
 
     :::bash
-    export OLD_VERSION=0.4
-    export NEW_VERSION=0.5
+    export OLD_VERSION=0.5
+    export NEW_VERSION=0.6
     export RELEASE_CANDIDATE=1
     export SIGNING_KEY=<your key ID>
+
+Tip: to see the key IDs, execute `gpg --list-keys`.
 
 
 
@@ -72,6 +74,17 @@ in this page shall be adjusted accordingly.
 
 
 
+Prepare source code    {#prepare-source}
+========================================
+
+Before to start the release process:
+
+  * Review and update the `README` file on the `trunk` source code repository.
+  * Review the `javac` and `javadoc` warnings reported by Jenkins and fix at least the typos.
+  * Ensure that the `trunk` build is successful (including tests) with JDK6, JDK7 and JDK8.
+
+
+
 Prepare documentation    {#prepare-documentation}
 =================================================
 
@@ -87,17 +100,13 @@ Update [JIRA][JIRA] tasks and prepare release notes as below:
     _New Features_, then _Improvements_, then _Bug Fixes_, then _Tests_ and finally _Tasks_.
     The _Sub Tasks_ can be classified according the category of their parent issue.
 
-Other files to update:
-
-  * Review and update the `README` file on the `trunk` source code repository.
-  * Review and update the `src/main/rdf/DOAP.rdf` file. Add a new `<release>`
-    block for the new release with the estimated release date.
-  * Commit any changes back to SVN.
-
 
 
 Web site    {#prepare-website}
 ------------------------------
+
+Review and update the `content/DOAP.rdf` file on the `site` source code repository.
+Add a new `<release>` block for the new release with the estimated release date.
 
 Update the version numbers from the old one to `$NEW_VERSION` in the following files.
 
@@ -109,7 +118,7 @@ Commit:
 
     :::bash
     svn add content/release-notes/$NEW_VERSION.html
-    svn commit --message "Document the $NEW_VERSION release."
+    svn commit --message "Prepare documentation for the $NEW_VERSION release."
 
 The new web site will be published in the [staging area](http://sis.staging.apache.org).
 It will not yet be published on `http://sis.apache.org`.
