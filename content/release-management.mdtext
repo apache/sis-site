@@ -44,8 +44,12 @@ the current release attempt. Those versions shall be set on the command line lik
     export NEW_VERSION=0.6
     export RELEASE_CANDIDATE=1
     export SIGNING_KEY=<your key ID>
+    export BOOTCLASSPATH=<path to the rt.jar file of a JDK6 installation>
 
-Tip: to see the key IDs, execute `gpg --list-keys`.
+The key ID value can be found be executing `gpg --list-keys`.
+The boot class path value is highly system-dependent. Some examples are:
+
+  * `/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar` on MacOS.
 
 
 
@@ -74,8 +78,8 @@ in this page shall be adjusted accordingly.
 
 
 
-Prepare source code    {#prepare-source}
-========================================
+Prepare site and source code    {#prepare-source}
+=================================================
 
 Before to start the release process:
 
@@ -85,8 +89,8 @@ Before to start the release process:
 
 
 
-Prepare documentation    {#prepare-documentation}
-=================================================
+Documentation    {#prepare-documentation}
+-----------------------------------------
 
 Update [JIRA][JIRA] tasks and prepare release notes as below:
 
@@ -125,8 +129,8 @@ It will not yet be published on `http://sis.apache.org`.
 
 
 
-Create branch    {#branch}
-==========================
+Create branch and tag    {#branch}
+==================================
 
 Execute the following command:
 
@@ -157,6 +161,11 @@ Open the root `pom.xml` file in an editor and perform the following changes:
 In `core/sis-utility/src/main/java/org/apache/sis/internal/system/Supervisor.java`, consider setting
 the `ENABLED` flag to `false`. This policy may be revised in future SIS releases.
 
+Remove the workaround for the bug in JDK6 `javadoc`, since we perform release with JDK7 or JDK8:
+
+    :::bash
+    svn remove core/sis-build-helper/src/main/java/org/opengis
+
 Commit the changes on the branch:
 
     :::bash
@@ -180,7 +189,7 @@ If anything goes wrong, the directory can be cleaned by running the `release:cle
 before to fix the problem and try again.
 
     :::bash
-    mvn release:prepare --define releaseVersion=$NEW_VERSION --define tag=$NEW_VERSION \
+    mvn release:prepare --define releaseVersion=$NEW_VERSION --define tag=$NEW_VERSION --define bootclasspath=$BOOTCLASSPATH \
         --define autoVersionSubmodules=true --define updateWorkingCopyVersions=false --define dryRun=true
 
 The dry run will not commit any changes back to SVN. Instead, it will create `pom.xml.tag` files containing
@@ -193,8 +202,8 @@ Verify signature for all files:
 
 
 
-Create tag    {#tag}
-====================
+Tag the branch    {#tag}
+------------------------
 
 In theory, the next commands would be a real (non-dry) run of `mvn release:prepare`, followed by `mvn release:perform`.
 However we perform those steps manually rather than relying on Maven for the following reasons:
