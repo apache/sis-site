@@ -49,6 +49,7 @@ the current release attempt. Those versions shall be set on the command line lik
 The key ID value can be found be executing `gpg --list-keys`.
 The boot class path value is highly system-dependent. Some examples are:
 
+  * `/usr/lib/jvm/java-6/jre/lib/rt.jar` on some Linux distributions (replace `java-6` by the actual directory name).
   * `/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar` on MacOS.
 
 
@@ -75,6 +76,18 @@ in this page shall be adjusted accordingly.
     └─ site
        └─ content
           └─ apidocs
+
+
+
+Java updates    {#java-update}
+------------------------------
+
+While we need a JDK6 installation for the `bootclasspath` option, we do not recommend to use it for generating
+the binaries since JDK6 has reached its end of public updates (but not the end of commercial support).
+We recommend to create the release with JDK7 or JDK8 instead. Make sure that the JDK installation
+to be used for the release has been updated recently, since compilers may receive critical bug fixes.
+For example the `javadoc` tool of older JDK versions was known to generate HTML pages with a vulnerability in them.
+
 
 
 
@@ -161,10 +174,12 @@ Open the root `pom.xml` file in an editor and perform the following changes:
 In `core/sis-utility/src/main/java/org/apache/sis/internal/system/Supervisor.java`, consider setting
 the `ENABLED` flag to `false`. This policy may be revised in future SIS releases.
 
-Remove the workaround for the bug in JDK6 `javadoc`, since we perform release with JDK7 or JDK8:
+Remove the workaround for the bug in JDK6 `javadoc`, since we perform release with JDK7 or JDK8.
+Remove also the modules that are not yet ready for a release:
 
     :::bash
     svn remove core/sis-build-helper/src/main/java/org/opengis
+    svn remove application/sis-javafx
 
 Commit the changes on the branch:
 
@@ -250,8 +265,7 @@ Clean the branch, since we will not need it anymore:
 
     :::bash
     cd $BRANCH_DIR
-    mvn release:clean
-    mvn clean
+    mvn clean release:clean
 
 
 
@@ -265,7 +279,7 @@ additional test worth to do before deployment.
 
     :::bash
     cd $TAG_DIR
-    mvn clean install
+    mvn clean install --define bootclasspath=$BOOTCLASSPATH
     mvn org.apache.sis.core:sis-build-helper:$NEW_VERSION:dist --non-recursive
 
 If the above succeeded, deploy. We temporarily delete the Maven site descriptors (`site.xml`)
@@ -274,7 +288,7 @@ download site descriptors from a Maven repository.
 
     :::bash
     find . -name "site.xml" -delete
-    mvn deploy --activate-profiles apache-release
+    mvn deploy --activate-profiles apache-release --define bootclasspath=$BOOTCLASSPATH
     svn revert . --recursive
 
 
@@ -305,7 +319,7 @@ Additional cleaning:
 Close the Nexus staging repository:
 
   * Click the checkboxes for the open staging repositories (`org.apache.sis-<id>`) and press _Close_ in the menu bar.
-  * In the description field, enter "`SIS $NEW_VERSION-$RELEASE_CANDIDATE`"
+  * In the description field, enter "`SIS $NEW_VERSION-RC$RELEASE_CANDIDATE`"
     (replace `$NEW_VERSION` and `$RELEASE_CANDIDATE` by appropriate values.
     This will not be done automatically since this field box is not our bash shell!).
   * Click on the `org.apache.sis-<id>` link in order to get the URL to the temporary Maven repository created by Nexus.
@@ -318,9 +332,11 @@ the availability of this temporary repository for testing purpose.
 Test the Nexus release artifacts    {#nexus-text}
 -------------------------------------------------
 
-Go to the test Maven project. Open the root `pom.xml` file, go to the `<url>` declaration and replace value by
-the URL of the temporary Maven repository created by Nexus. Usually, only the 3 last digits need to be updated.
-Set the `<version>` number to the SIS release to be tested.
+Go to the test Maven project.
+Open the root `pom.xml` file and set the `<version>` number to the SIS release to be tested.
+Then go to the `<url>` declaration of the first `<repository>` and replace value by the URL
+of the temporary Maven repository created by Nexus.
+Usually, only the 3 last digits need to be updated.
 
     :::bash
     cd ../../release-test/maven
@@ -332,6 +348,7 @@ This will also verify the checksums.
 
     rm -r ~/.m2/repository/org/apache/sis
     mvn package --strict-checksums
+    mvn clean
 
 
 
@@ -346,7 +363,7 @@ If JDK8 is *not* used, then omit the `cp` command below.
 
     :::bash
     cp ../../JDK8/src/main/javadoc/stylesheet.css src/main/javadoc/
-    mvn site --define skipTests=true
+    mvn javadoc:aggregate --define bootclasspath=$BOOTCLASSPATH
     svn revert src/main/javadoc/stylesheet.css
     cd target/site
     zip -9 -r apache-sis-$NEW_VERSION-doc.zip apidocs
