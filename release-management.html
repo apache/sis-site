@@ -90,17 +90,19 @@ The intended audiences are SIS release managers.</p>
 <ul>
 <li><a href="#requirements">Requirements</a><ul>
 <li><a href="#directory-layout">Directory layout</a></li>
+<li><a href="#java-update">Java updates</a></li>
 </ul>
 </li>
-<li><a href="#prepare-documentation">Prepare documentation</a><ul>
+<li><a href="#prepare-source">Prepare site and source code</a><ul>
+<li><a href="#prepare-documentation">Documentation</a></li>
 <li><a href="#prepare-website">Web site</a></li>
 </ul>
 </li>
-<li><a href="#branch">Create branch</a><ul>
+<li><a href="#branch">Create branch and tag</a><ul>
 <li><a href="#branch-verify">Verify content</a></li>
+<li><a href="#tag">Tag the branch</a></li>
 </ul>
 </li>
-<li><a href="#tag">Create tag</a></li>
 <li><a href="#maven-deploy">Deploy Maven artifacts</a><ul>
 <li><a href="#nexus-close">Verify and close the Nexus release artifacts</a></li>
 <li><a href="#nexus-text">Test the Nexus release artifacts</a></li>
@@ -135,13 +137,20 @@ The intended audiences are SIS release managers.</p>
 <p>For all instructions in this page, <code>$OLD_VERSION</code> and <code>$NEW_VERSION</code> stand for the version
 number of the previous and the new release respectively, and <code>$RELEASE_CANDIDATE</code> stands for
 the current release attempt. Those versions shall be set on the command line like below (Unix):</p>
-<div class="codehilite"><pre><span class="nb">export </span><span class="nv">OLD_VERSION</span><span class="o">=</span>0.4
-<span class="nb">export </span><span class="nv">NEW_VERSION</span><span class="o">=</span>0.5
+<div class="codehilite"><pre><span class="nb">export </span><span class="nv">OLD_VERSION</span><span class="o">=</span>0.5
+<span class="nb">export </span><span class="nv">NEW_VERSION</span><span class="o">=</span>0.6
 <span class="nb">export </span><span class="nv">RELEASE_CANDIDATE</span><span class="o">=</span>1
 <span class="nb">export </span><span class="nv">SIGNING_KEY</span><span class="o">=</span>&lt;your key ID&gt;
+<span class="nb">export </span><span class="nv">BOOTCLASSPATH</span><span class="o">=</span>&lt;path to the rt.jar file of a JDK6 installation&gt;
 </pre></div>
 
 
+<p>The key ID value can be found be executing <code>gpg --list-keys</code>.
+The boot class path value is highly system-dependent. Some examples are:</p>
+<ul>
+<li><code>/usr/lib/jvm/java-6/jre/lib/rt.jar</code> on some Linux distributions (replace <code>java-6</code> by the actual directory name).</li>
+<li><code>/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar</code> on MacOS.</li>
+</ul>
 <h2 id="directory-layout">Directory layout</h2>
 <p>The steps described in this page assume the following directory layout (some directories will be created as
 a result of the steps). Any other layout can be used. However if the layout differs, then the relative paths
@@ -163,7 +172,20 @@ in this page shall be adjusted accordingly.</p>
 </pre></div>
 
 
-<h1 id="prepare-documentation">Prepare documentation</h1>
+<h2 id="java-update">Java updates</h2>
+<p>While we need a JDK6 installation for the <code>bootclasspath</code> option, we do not recommend to use it for generating
+the binaries since JDK6 has reached its end of public updates (but not the end of commercial support).
+We recommend to create the release with JDK7 or JDK8 instead. Make sure that the JDK installation
+to be used for the release has been updated recently, since compilers may receive critical bug fixes.
+For example the <code>javadoc</code> tool of older JDK versions was known to generate HTML pages with a vulnerability in them.</p>
+<h1 id="prepare-source">Prepare site and source code</h1>
+<p>Before to start the release process:</p>
+<ul>
+<li>Review and update the <code>README</code> file on the <code>trunk</code> source code repository.</li>
+<li>Review the <code>javac</code> and <code>javadoc</code> warnings reported by Jenkins and fix at least the typos.</li>
+<li>Ensure that the <code>trunk</code> build is successful (including tests) with JDK6, JDK7 and JDK8.</li>
+</ul>
+<h2 id="prepare-documentation">Documentation</h2>
 <p>Update <a href="http://issues.apache.org/jira/browse/SIS">JIRA</a> tasks and prepare release notes as below:</p>
 <ul>
 <li>Ensure that the <em>Fix Version</em> in issues resolved since the last release includes this release version correctly.</li>
@@ -176,14 +198,9 @@ in this page shall be adjusted accordingly.</p>
     <em>New Features</em>, then <em>Improvements</em>, then <em>Bug Fixes</em>, then <em>Tests</em> and finally <em>Tasks</em>.
     The <em>Sub Tasks</em> can be classified according the category of their parent issue.</li>
 </ul>
-<p>Other files to update:</p>
-<ul>
-<li>Review and update the <code>README</code> file on the <code>trunk</code> source code repository.</li>
-<li>Review and update the <code>src/main/rdf/DOAP.rdf</code> file. Add a new <code>&lt;release&gt;</code>
-    block for the new release with the estimated release date.</li>
-<li>Commit any changes back to SVN.</li>
-</ul>
 <h2 id="prepare-website">Web site</h2>
+<p>Review and update the <code>content/DOAP.rdf</code> file on the <code>site</code> source code repository.
+Add a new <code>&lt;release&gt;</code> block for the new release with the estimated release date.</p>
 <p>Update the version numbers from the old one to <code>$NEW_VERSION</code> in the following files.</p>
 <ul>
 <li><code>content/index.mdtext</code></li>
@@ -192,13 +209,13 @@ in this page shall be adjusted accordingly.</p>
 </ul>
 <p>Commit:</p>
 <div class="codehilite"><pre>svn add content/release-notes/<span class="nv">$NEW_VERSION</span>.html
-svn commit --message <span class="s2">&quot;Document the $NEW_VERSION release.&quot;</span>
+svn commit --message <span class="s2">&quot;Prepare documentation for the $NEW_VERSION release.&quot;</span>
 </pre></div>
 
 
 <p>The new web site will be published in the <a href="http://sis.staging.apache.org">staging area</a>.
 It will not yet be published on <code>http://sis.apache.org</code>.</p>
-<h1 id="branch">Create branch</h1>
+<h1 id="branch">Create branch and tag</h1>
 <p>Execute the following command:</p>
 <div class="codehilite"><pre>svn copy https://svn.apache.org/repos/asf/sis/trunk <span class="se">\</span>
          https://svn.apache.org/repos/asf/sis/branches/<span class="nv">$NEW_VERSION</span> <span class="se">\</span>
@@ -223,17 +240,17 @@ but also in a few Java files. The following command performs the replacement usi
 
 <p>Open the root <code>pom.xml</code> file in an editor and perform the following changes:</p>
 <ul>
-<li>Copy-and-paste the whole <code>&lt;plugin&gt;</code> block, except <code>&lt;reportSets&gt;</code>, for <code>maven-javadoc-plugin</code> from <code>&lt;reporting&gt;</code> to <code>&lt;build&gt;</code>.
-    We need the javadoc configuration to be duplicated in both <code>&lt;reporting&gt;</code> and <code>&lt;build&gt;</code> sections in order
-    to get the expected Javadoc output in both Maven site and in the <code>*-javadoc.jar</code> files to deployed in the
-    Maven repository. <strong>TODO:</strong> see if upgrading Maven or the <code>maven-javadoc-plugin</code> can solve this problem.</li>
-<li>Remove the whole <code>&lt;pluginRepositories&gt;</code> block, since it should not be needed for releases (and is actually not allowed).</li>
-<li>Remove the <code>&lt;plugin&gt;</code> block for <code>docbkx-maven-plugin</code>, since the DocBook directory is omitted (see below).</li>
+<li>Remove the whole <code>&lt;pluginRepositories&gt;</code> block (including comment), since it should not be needed for releases (and is actually not allowed).</li>
 </ul>
-<p>Recursively delete the <code>src/main/docbook</code> directory (this policy may be revised in future SIS releases).
-We omit this directory for now because this material may move to the CMS, and no English version is available yet.</p>
 <p>In <code>core/sis-utility/src/main/java/org/apache/sis/internal/system/Supervisor.java</code>, consider setting
 the <code>ENABLED</code> flag to <code>false</code>. This policy may be revised in future SIS releases.</p>
+<p>Remove the workaround for the bug in JDK6 <code>javadoc</code>, since we perform release with JDK7 or JDK8.
+Remove also the modules that are not yet ready for a release:</p>
+<div class="codehilite"><pre>svn remove core/sis-build-helper/src/main/java/org/opengis
+svn remove application/sis-javafx
+</pre></div>
+
+
 <p>Commit the changes on the branch:</p>
 <div class="codehilite"><pre>svn commit --message <span class="s2">&quot;Prepare the branch for the $NEW_VERSION release.&quot;</span>
 </pre></div>
@@ -251,7 +268,7 @@ Note that MacOS users can skip this step if their passphrase is stored in the OS
 It will not complete the prepare goal until all snapshot dependencies are resolved.
 If anything goes wrong, the directory can be cleaned by running the <code>release:clean</code> goal
 before to fix the problem and try again.</p>
-<div class="codehilite"><pre>mvn release:prepare --define <span class="nv">releaseVersion</span><span class="o">=</span><span class="nv">$NEW_VERSION</span> --define <span class="nv">tag</span><span class="o">=</span><span class="nv">$NEW_VERSION</span> <span class="se">\</span>
+<div class="codehilite"><pre>mvn release:prepare --define <span class="nv">releaseVersion</span><span class="o">=</span><span class="nv">$NEW_VERSION</span> --define <span class="nv">tag</span><span class="o">=</span><span class="nv">$NEW_VERSION</span> --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span> <span class="se">\</span>
     --define <span class="nv">autoVersionSubmodules</span><span class="o">=</span><span class="nb">true</span> --define <span class="nv">updateWorkingCopyVersions</span><span class="o">=</span><span class="nb">false</span> --define <span class="nv">dryRun</span><span class="o">=</span><span class="nb">true</span>
 </pre></div>
 
@@ -263,7 +280,7 @@ the changes that would have been committed to SVN. We keep those files for verif
 </pre></div>
 
 
-<h1 id="tag">Create tag</h1>
+<h2 id="tag">Tag the branch</h2>
 <p>In theory, the next commands would be a real (non-dry) run of <code>mvn release:prepare</code>, followed by <code>mvn release:perform</code>.
 However we perform those steps manually rather than relying on Maven for the following reasons:</p>
 <ul>
@@ -307,8 +324,7 @@ ignoring the license or other information that may have been removed by the Mave
 
 <p>Clean the branch, since we will not need it anymore:</p>
 <div class="codehilite"><pre><span class="nb">cd</span> <span class="nv">$BRANCH_DIR</span>
-mvn release:clean
-mvn clean
+mvn clean release:clean
 </pre></div>
 
 
@@ -318,7 +334,7 @@ and generate the binary artifact (<code>pack.gz</code> file). The later will fai
 class files or resources are found. Consequently building the <code>pack.gz</code> file is an
 additional test worth to do before deployment.</p>
 <div class="codehilite"><pre><span class="nb">cd</span> <span class="nv">$TAG_DIR</span>
-mvn clean install
+mvn clean install --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
 mvn org.apache.sis.core:sis-build-helper:<span class="nv">$NEW_VERSION</span>:dist --non-recursive
 </pre></div>
 
@@ -327,7 +343,7 @@ mvn org.apache.sis.core:sis-build-helper:<span class="nv">$NEW_VERSION</span>:di
 for preventing Maven to deploy them, since there is no apparent reason why users would want to
 download site descriptors from a Maven repository.</p>
 <div class="codehilite"><pre>find . -name <span class="s2">&quot;site.xml&quot;</span> -delete
-mvn deploy --activate-profiles apache-release
+mvn deploy --activate-profiles apache-release --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
 svn revert . --recursive
 </pre></div>
 
@@ -354,7 +370,7 @@ so try to see at least one code snippet.</p>
 <p>Close the Nexus staging repository:</p>
 <ul>
 <li>Click the checkboxes for the open staging repositories (<code>org.apache.sis-&lt;id&gt;</code>) and press <em>Close</em> in the menu bar.</li>
-<li>In the description field, enter "<code>SIS $NEW_VERSION-$RELEASE_CANDIDATE</code>"
+<li>In the description field, enter "<code>SIS $NEW_VERSION-RC$RELEASE_CANDIDATE</code>"
     (replace <code>$NEW_VERSION</code> and <code>$RELEASE_CANDIDATE</code> by appropriate values.
     This will not be done automatically since this field box is not our bash shell!).</li>
 <li>Click on the <code>org.apache.sis-&lt;id&gt;</code> link in order to get the URL to the temporary Maven repository created by Nexus.</li>
@@ -362,9 +378,11 @@ so try to see at least one code snippet.</p>
 <p>We will announce later (in the <cite>Put the release candidate up for a vote</cite> section) on the <code>dev@</code> mailing list
 the availability of this temporary repository for testing purpose.</p>
 <h2 id="nexus-text">Test the Nexus release artifacts</h2>
-<p>Go to the test Maven project. Open the root <code>pom.xml</code> file, go to the <code>&lt;url&gt;</code> declaration and replace value by
-the URL of the temporary Maven repository created by Nexus. Usually, only the 3 last digits need to be updated.
-Set the <code>&lt;version&gt;</code> number to the SIS release to be tested.</p>
+<p>Go to the test Maven project.
+Open the root <code>pom.xml</code> file and set the <code>&lt;version&gt;</code> number to the SIS release to be tested.
+Then go to the <code>&lt;url&gt;</code> declaration of the first <code>&lt;repository&gt;</code> and replace value by the URL
+of the temporary Maven repository created by Nexus.
+Usually, only the 3 last digits need to be updated.</p>
 <div class="codehilite"><pre><span class="nb">cd</span> ../../release-test/maven
 vim pom.xml
 svn commit -m <span class="s2">&quot;Test project for SIS $NEW_VERSION-RC$RELEASE_CANDIDATE&quot;</span>
@@ -375,6 +393,7 @@ svn commit -m <span class="s2">&quot;Test project for SIS $NEW_VERSION-RC$RELEAS
 This will also verify the checksums.</p>
 <div class="codehilite"><pre><span class="n">rm</span> <span class="o">-</span><span class="n">r</span> <span class="o">~/</span><span class="p">.</span><span class="n">m2</span><span class="o">/</span><span class="n">repository</span><span class="o">/</span><span class="n">org</span><span class="o">/</span><span class="n">apache</span><span class="o">/</span><span class="n">sis</span>
 <span class="n">mvn</span> <span class="n">package</span> <span class="o">--</span><span class="n">strict</span><span class="o">-</span><span class="n">checksums</span>
+<span class="n">mvn</span> <span class="n">clean</span>
 </pre></div>
 
 
@@ -385,7 +404,7 @@ avoiding the security vulnerability discovered in the Javadoc tools of older JDK
 and keeping the <code>diff</code> smaller on the SVN repository of SIS web site.
 If JDK8 is <em>not</em> used, then omit the <code>cp</code> command below.</p>
 <div class="codehilite"><pre>cp ../../JDK8/src/main/javadoc/stylesheet.css src/main/javadoc/
-mvn site --define <span class="nv">skipTests</span><span class="o">=</span><span class="nb">true</span>
+mvn javadoc:aggregate --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
 svn revert src/main/javadoc/stylesheet.css
 <span class="nb">cd </span>target/site
 zip -9 -r apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip apidocs
@@ -489,6 +508,7 @@ gpg --verify apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip.asc
 unzip apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip
 <span class="nb">cd </span>apache-sis-<span class="nv">$NEW_VERSION</span>
 bin/sis about --verbose
+bin/sis metadata http://catalog.data.gov/harvest/object/df138a1b-e7cb-4ca4-b7c3-316135e81b16
 bin/sis metadata http://svn.code.sf.net/p/geoapi/code/trunk/geoapi-netcdf/src/test/resources/org/opengis/wrapper/netcdf/NCEP-SST.nc
 </pre></div>
 
@@ -587,13 +607,20 @@ svn delete https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERS
     The email needs to be sent from an <code>@apache.org</code> email address.</li>
 </ul>
 <h1 id="next-release">Update trunk for the next development cycle</h1>
-<p>Update the version numbers in the <code>pom.xml</code> files on trunk with the following command:</p>
-<div class="codehilite"><pre>mvn release:update-versions --define <span class="nv">autoVersionSubmodules</span><span class="o">=</span><span class="nb">true</span>
+<p>On the development branch (usually JDK8),
+update the version numbers in the <code>pom.xml</code> files on trunk with the following command:</p>
+<div class="codehilite"><pre>mvn clean
+mvn release:update-versions --define <span class="nv">autoVersionSubmodules</span><span class="o">=</span><span class="nb">true</span>
 </pre></div>
 
 
-<p>Edit the version number in the <code>application/sis-console/src/main/artifact/README</code> file.
-Report the changes manually on the JDK6, JDK7 and JDK8 branches.</p>
+<p>This change will need to be merged manually on the JDK7, JDK6 branches and on the trunk.
+Then on the development branch:</p>
+<ul>
+<li>Edit the version number in the <code>application/sis-console/src/main/artifact/README</code> file.</li>
+<li>Edit the value of the <code>MAJOR_VERSION</code> or <code>MINOR_VERSION</code> constant in the
+    <code>core/sis-utility/src/main/java/org/apache/sis/internal/system/Modules.java</code> file.</li>
+</ul>
             </article>
           </section>
         </div><!--/span-->

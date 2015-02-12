@@ -107,7 +107,9 @@ For fetching the source code, choose one of the following commands:</p>
 <li><a href="#naming">Naming convention</a></li>
 <li><a href="#formatting">Code formatting</a><ul>
 <li><a href="#spaces">Spaces and line length</a></li>
-<li><a href="#declarations">Declarations</a></li>
+<li><a href="#brackets">Brackets</a></li>
+<li><a href="#declarations">Member declarations</a></li>
+<li><a href="#tabular-formatting">Exceptions to coding conventions</a></li>
 </ul>
 </li>
 <li><a href="#javadoc">Documentation formatting</a><ul>
@@ -183,8 +185,48 @@ as below:</p>
 <p>Classes that do not implement an interface are usually not prefixed, even if abstract.</p>
 <h1 id="formatting">Code formatting</h1>
 <p>Apache SIS uses the standard Java conventions, except for the 80 characters line length restriction.
-Other exceptions to the coding conventions may occur when tabular formatting can improve readability,
-as in the example below:</p>
+The conventions listed below are guidelines. Some exceptions to those conventions can occur but should
+be rare (see <a href="#tabular-formatting">exceptions to coding conventions</a>).</p>
+<h2 id="spaces">Spaces and line length</h2>
+<ul>
+<li><strong>Indentation:</strong> Use a consistent space indents and never use tabs.<ul>
+<li>Use 4 space indents for Java files.</li>
+<li>Use 2 space indents for XML files, because <abbr title="International Organization for Standardization">ISO</abbr>/<abbr title="Open Geospatial Consortium">OGC</abbr> XML schemas tend to have a very deep structure.</li>
+</ul>
+</li>
+<li><strong>Space after keyword:</strong> Put a space after <code>if</code>, <code>else</code>, <code>for</code>, <code>try</code>, <code>catch</code> and similar keywords
+    (not after method names).</li>
+<li><strong>Trailing Whitespaces:</strong> Remove all trailing whitespaces.<ul>
+<li>Eclipse users can use the <em>Source</em> - <em>Cleanup</em> option to accomplish this.</li>
+<li>NetBeans users can use the use the <em>Source</em> - <em>Remove trailing spaces</em> on a file-by-file basis,
+  or set the <em>Preferences</em> - <em>Editor</em> - <em>On Save</em> - <em>Remove trailing whitespaces</em> option.</li>
+</ul>
+</li>
+<li><strong>Line wrapping:</strong> Use 120-column line width for Java code and Javadoc.
+    Some exceptions to this rule may exist for preserving tabular structures, but should be rare.</li>
+</ul>
+<h2 id="brackets">Brackets</h2>
+<ul>
+<li><strong>Curly brackets:</strong> The <code>{</code> and <code>}</code> brackets are mandatory for <code>if</code>, <code>else</code>, <code>while</code> and other blocks,
+    except if the instruction after the keyword is on the same line (e.g. <code>else if</code>).</li>
+</ul>
+<h2 id="declarations">Member declarations</h2>
+<ul>
+<li>Class, method and field declarations shall use the keywords in the following order.
+    This is known as the "customary order" in the <a href="http://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.1">Java Language Specification</a>:<ul>
+<li><code>public</code>, <code>protected</code> or <code>private</code>,</li>
+<li><code>abstract</code> or <code>static</code>,</li>
+<li><code>final</code>,</li>
+<li><code>strictfp</code> (should be applied on all test classes).</li>
+</ul>
+</li>
+<li>Member fields do not have any particular prefix (no <code>m_</code> prefix).</li>
+</ul>
+<h2 id="tabular-formatting">Exceptions to coding conventions</h2>
+<p>Many mathematical operations in a two-dimensional space (or more) have symmetry.
+Formatting the code in a way that emphase their symmetrical nature, for example
+aligning identical terms in columns, can help to understand the overall pattern
+and to identify bugs. Example:</p>
 <div class="codehilite"><pre><span class="k">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">xmin</span><span class="o">)</span> <span class="n">xmin</span> <span class="o">=</span> <span class="n">x</span><span class="o">;</span>
 <span class="k">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">xmax</span><span class="o">)</span> <span class="n">xmax</span> <span class="o">=</span> <span class="n">x</span><span class="o">;</span>
 <span class="k">if</span> <span class="o">(</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">ymin</span><span class="o">)</span> <span class="n">ymin</span> <span class="o">=</span> <span class="n">y</span><span class="o">;</span>
@@ -192,35 +234,8 @@ as in the example below:</p>
 </pre></div>
 
 
-<p>Many mathematical operations in a two-dimensional space (or more) have symmetry.
-Formatting the code in a way that emphase their symmetrical nature, for example
-aligning identical terms in columns, can help to understand the overall pattern
-and to identify bugs. The decision to use standard or tabular format is made on
-a case-by-case basis. Of course, tabular format shall not be abused.</p>
-<h2 id="spaces">Spaces and line length</h2>
-<ul>
-<li><strong>Trailing Whitespaces:</strong> Remove all trailing whitespaces.<ul>
-<li>Eclipse users can use the <em>Source</em> - <em>Cleanup</em> option to accomplish this.</li>
-<li>NetBeans users can use the use the <em>Source</em> - <em>Remove trailing spaces</em> on a file-by-file basis,
-  or set the <em>Preferences</em> - <em>Editor</em> - <em>On Save</em> - <em>Remove trailing whitespaces</em> option.</li>
-</ul>
-</li>
-<li><strong>Indentation:</strong> Use 4 space indents (except for XML files) and never use tabs.<ul>
-<li>Use 2 space indents for XML files, because <abbr title="International Organization for Standardization">ISO</abbr>/<abbr title="Open Geospatial Consortium">OGC</abbr> XML schemas tend to have a very deep structure.</li>
-</ul>
-</li>
-<li><strong>Line wrapping:</strong> Use 120-column line width for Java code and Javadoc.
-    Some exceptions to this rule may exist for preserving tabular structures, but should be rare.</li>
-</ul>
-<h2 id="declarations">Declarations</h2>
-<p>Class, method and field declarations should use the keywords in the following order:</p>
-<ul>
-<li><code>public</code>, <code>protected</code> or <code>private</code></li>
-<li><code>abstract</code> or <code>static</code></li>
-<li><code>final</code></li>
-<li><code>strictfp</code> (should be applied on all test classes)</li>
-</ul>
-<p>This is known as the "customary order" in the <a href="http://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.1">Java Language Specification</a>.</p>
+<p>The decision to use standard or tabular format is made on a case-by-case basis.
+Of course, tabular format shall not be abused.</p>
 <h1 id="javadoc">Documentation formatting</h1>
 <p>Apache SIS uses the standard Javadoc conventions, except for the 80 characters line length restriction.
 Javadoc lines should not exceed 120 characters, but exceptions to this rule may exist for preserving the
