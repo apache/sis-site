@@ -542,24 +542,12 @@ The `dist/dev` svn is not mirrored, but the `dist/release` is.
 From any directory:
 
     :::bash
-    svn copy https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE \
+    svn move https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE \
              https://dist.apache.org/repos/dist/release/sis/$NEW_VERSION \
         --message "Committing SIS Source and Binary Release Candidate $RELEASE_CANDIDATE for SIS-$NEW_VERSION."
 
     svn delete https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION \
         --message "Delete SIS $NEW_VERSION staging repository after release."
-
-Delete the prior version:
-
-    :::bash
-    svn delete https://dist.apache.org/repos/dist/release/sis/$OLD_VERSION \
-        --message "Archive SIS-$OLD_VERSION after release of SIS-$NEW_VERSION."
-
-Update the staged web site:
-
-  * Make a news announcement on the SIS home page.
-  * Update the downloads page to add new version using the mirrored URLs.
-  * Modify the URL for the prior release to the archived URL for the release.
 
 Update [JIRA][JIRA]:
 
@@ -593,6 +581,12 @@ Announce the release    {#announce}
   * Make an announcement about the release on the `dev@`, `users@`, and `announce@` mailing lists.
     A template is available [here](templates/release-announce.txt).
     The email needs to be sent from an `@apache.org` email address.
+
+Delete the prior version:
+
+    :::bash
+    svn delete https://dist.apache.org/repos/dist/release/sis/$OLD_VERSION \
+        --message "Archive SIS-$OLD_VERSION after release of SIS-$NEW_VERSION."
 
 
 
