@@ -556,7 +556,7 @@ Promote the staged Nexus artifacts, by releasing them.</p>
 <p>Check in the source and binary artifacts into distribution svn which will be pulled by all mirrors within 24 hours.
 The <code>dist/dev</code> svn is not mirrored, but the <code>dist/release</code> is.
 From any directory:</p>
-<div class="codehilite"><pre>svn copy https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span> <span class="se">\</span>
+<div class="codehilite"><pre>svn move https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span> <span class="se">\</span>
          https://dist.apache.org/repos/dist/release/sis/<span class="nv">$NEW_VERSION</span> <span class="se">\</span>
     --message <span class="s2">&quot;Committing SIS Source and Binary Release Candidate $RELEASE_CANDIDATE for SIS-$NEW_VERSION.&quot;</span>
 
@@ -565,18 +565,6 @@ svn delete https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERS
 </pre></div>
 
 
-<p>Delete the prior version:</p>
-<div class="codehilite"><pre>svn delete https://dist.apache.org/repos/dist/release/sis/<span class="nv">$OLD_VERSION</span> <span class="se">\</span>
-    --message <span class="s2">&quot;Archive SIS-$OLD_VERSION after release of SIS-$NEW_VERSION.&quot;</span>
-</pre></div>
-
-
-<p>Update the staged web site:</p>
-<ul>
-<li>Make a news announcement on the SIS home page.</li>
-<li>Update the downloads page to add new version using the mirrored URLs.</li>
-<li>Modify the URL for the prior release to the archived URL for the release.</li>
-</ul>
 <p>Update <a href="http://issues.apache.org/jira/browse/SIS">JIRA</a>:</p>
 <ul>
 <li>Update the JIRA versions to mark the version as "released".</li>
@@ -606,6 +594,12 @@ svn delete https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERS
     A template is available <a href="templates/release-announce.txt">here</a>.
     The email needs to be sent from an <code>@apache.org</code> email address.</li>
 </ul>
+<p>Delete the prior version:</p>
+<div class="codehilite"><pre>svn delete https://dist.apache.org/repos/dist/release/sis/<span class="nv">$OLD_VERSION</span> <span class="se">\</span>
+    --message <span class="s2">&quot;Archive SIS-$OLD_VERSION after release of SIS-$NEW_VERSION.&quot;</span>
+</pre></div>
+
+
 <h1 id="next-release">Update trunk for the next development cycle</h1>
 <p>On the development branch (usually JDK8),
 update the version numbers in the <code>pom.xml</code> files on trunk with the following command:</p>
