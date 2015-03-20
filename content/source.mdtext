@@ -234,17 +234,37 @@ For example:
    * Instead of "`<pre>✎</pre>`" for a Java listing, use "`{@preformat java ✎}`"
      (this Javadoc tag is specific to Apache SIS — see above table).
 
-The following HTML tags can be used:
 
-HTML element              | Description
-------------------------- | --------------------------------------------------------------------------------
+
+### Paragraphs    {#paragraph}
+
+Usages of the `<p>` tag should be relatively rare, since we use CSS styles (see below)
+as much as possible for controlling the margin between elements like lists and tables.
+Do **not** use `<p>` for the first paragraph in a package, class or member documentation,
+or for the first paragraph after a `</ul>`, `</ol>`, `</table>`, `</blockquote>`, `</pre>`,
+or `{@preformat}` element.
+The `<p>` tag shall be used only for separating a new paragraph from a previous one.
+In such cases, `<p>` shall have a matching `</p>` tag at the paragraph end in order to form valid HTML.
+
+
+
+### Javadoc CSS    {#css}
+
+Avoid using HTML attributes other than `class` as much as possible.
+Instead, rely on styling. Some HTML tags having a style definition in Apache SIS are:
+
+HTML tag                  | Description
+------------------------- | -------------------------------------------------------------------------------------------
 `<div class="section">`   | Header of a sub-section in a package, class or member description.
-`<div class="note">`      | Note or example (use smaller font).
-`<ul>` or `<ol>`          | Start a list with few space between the items (useful for short descriptions).
-`<ul class="verbose">`    | Start a list with more space between the items (useful for long descriptions).
-`<table class="sis">`     | Table with a blue header row and some space between the cells
-`<table class="compact">` | Table without vertical space between the cells.
-`<td class="sep">`        | Table cell with a vertical line on the left side.
+`<div class="note">`      | Indented text with smaller font, used for notes or examples.
+`<div class="warning">`   | Text in red color, used for warning about probable API changes.
+`<ul>` and `<ol>`         | Default list styles with few space between items (suitable for compact lists).
+`<ul class="verbose">`    | A list style with space between items. Used for lists having verbose (multi-lines) items.
+`<table class="compact">` | Table without border and no space between rows. Used for lists with columns alignment.
+`<table class="sis">`     | Table with a border, blue headers, light background and some space between columns.
+`<th class="hsep">`       | In SIS tables, draw a line on the top border. Used for drawing table section separators.
+`<th class="sep">`        | In SIS tables, draw a bright line on the left border. Used for drawing column separators.
+`<td class="sep">`        | In SIS tables, draw a bright line on the left border. Used for drawing column separators.
 
 
 
@@ -265,38 +285,6 @@ MathML is supported natively in Firefox, Safari and Opera.
 Internet Explorer users need to [install a plugin][mathml-plugin-ie].
 Firefox users can optionally install the [fonts for Mozilla's MathML engine][mathml-fonts] for better results.
 Note that a [JavaScript display engine][mathml-mathjax] is available for all browsers, but not yet used by SIS.
-
-
-
-Paragraphs    {#paragraph}
---------------------------
-
-Usages of the `<p>` tag should be relatively rare.
-Do **not** use `<p>` for the first paragraph in a package, class or member documentation,
-or for the first paragraph after a `</ul>`, `</ol>`, `</table>`, `</blockquote>`, `</pre>`,
-or `{@preformat}` element.
-The `<p>` tag shall be used only for separating a new paragraph from a previous one.
-In such cases, `<p>` shall have a matching `</p>` tag at the paragraph end in order to form valid HTML.
-
-
-
-Javadoc CSS    {#css}
----------------------
-
-Avoid using HTML attributes other than `class` as much as possible.
-Instead, rely on styling. Some HTML tags having a style definition in Apache SIS are:
-
-HTML tag                  | Description
-------------------------- | -------------------------------------------------------------------------------------------
-`<table class="sis">`     | Table with a border, blue headers, light background and some space between columns.
-`<th class="hsep">`       | In SIS tables, draw a line on the top border. Used for drawing table section separators.
-`<th class="sep">`        | In SIS tables, draw a bright line on the left border. Used for drawing column separators.
-`<td class="sep">`        | In SIS tables, draw a bright line on the left border. Used for drawing column separators.
-`<table class="compact">` | Table without border and no space between rows. Used for lists with columns alignment.
-`<ul>` and `<ol>`         | Default list styles without space between items (suitable for compact lists).
-`<ul class="verbose">`    | A list style with space between items. Used for lists having verbose (multi-lines) items.
-`<div class="note">`      | Indented text with smaller font, used for notes or examples.
-`<div class="warning">`   | Text in red color, used for warning about probable API changes.
 
 
 
