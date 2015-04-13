@@ -13,7 +13,18 @@
   </head>
   <body>
     <h1>Apache SIS™ Coordinate Operation Methods</h1>
-    <p>The following tables summarize the coordinate operation methods known to Apache SIS, together with the recognized parameters.</p>
+    <p>
+      The following tables summarize the coordinate operation methods known to Apache SIS, together with the recognized parameters.
+      Unless otherwise noticed, all parameters are mandatory
+      (in the sense that they should always be shown in forms, regardless of whether they have default value),
+      but two of them are handled in a special way: the <code>semi-major</code> and <code>semi-minor</code> parameters.
+      Those two parameters are needed for all map projections, but usually do not need to be specified explicitely since they are inferred from the ellipsoid.
+      The only exception is when <a href="http://sis.apache.org/apidocs/org/apache/sis/referencing/operation/transform/DefaultMathTransformFactory.html">creating parameterized transforms directly</a>.
+    </p>
+    <p>
+      All map projections support also implicit <code>earth_radius</code> and <code>inverse_flattening</code> parameters (not shown below).
+      Read and write operations on those implicit parameters are delegated to the <code>semi-major</code> and <code>semi-minor</code> parameters.
+    </p>
     <p><b>Table of content:</b></p>
     <ul>
       <li>
@@ -341,36 +352,6 @@
           <td class="left">∞) m</td>
           <td class="sep"></td>
         </tr><tr>
-          <td>8823</td>
-          <td class="sep">
-            <details>
-              <summary>Latitude of 1st standard parallel</summary>
-              <table class="aliases">
-                <tr>
-                  <th>OGC:</th>
-                  <td>standard_parallel_1</td>
-                </tr><tr>
-                  <th>ESRI:</th>
-                  <td>Standard_Parallel_1</td>
-                </tr><tr>
-                  <th>NetCDF:</th>
-                  <td>standard_parallel</td>
-                </tr><tr>
-                  <th>GeoTIFF:</th>
-                  <td>ProjStdParallel1</td>
-                </tr><tr>
-                  <th>Proj4:</th>
-                  <td>lat_ts</td>
-                </tr>
-              </table>
-            </details>
-          </td>
-          <td class="sep">Optional ¹</td>
-          <td class="sep right">(-90</td>
-          <td class="center">…</td>
-          <td class="left">90)°</td>
-          <td class="sep">0°</td>
-        </tr><tr>
           <td>8801</td>
           <td class="sep">
             <details>
@@ -395,7 +376,7 @@
               </table>
             </details>
           </td>
-          <td class="sep">Unmodifiable ²</td>
+          <td class="sep">Unmodifiable ¹</td>
           <td class="sep center" colspan="3">{0}°</td>
           <td class="sep">0°</td>
         </tr><tr>
@@ -428,33 +409,6 @@
           <td class="center">…</td>
           <td class="left">180]°</td>
           <td class="sep">0°</td>
-        </tr><tr>
-          <td></td>
-          <td class="sep">
-            <details>
-              <summary><span class="non-epsg">OGC:</span><code>scale_factor</code></summary>
-              <table class="aliases">
-                <tr>
-                  <th>ESRI:</th>
-                  <td>Scale_Factor</td>
-                </tr><tr>
-                  <th>NetCDF:</th>
-                  <td>scale_factor_at_projection_origin</td>
-                </tr><tr>
-                  <th>GeoTIFF:</th>
-                  <td>ScaleAtNatOrigin</td>
-                </tr><tr>
-                  <th>Proj4:</th>
-                  <td>k</td>
-                </tr>
-              </table>
-            </details>
-          </td>
-          <td class="sep">Optional ³</td>
-          <td class="sep right">(0</td>
-          <td class="center">…</td>
-          <td class="left">∞)</td>
-          <td class="sep">1</td>
         </tr><tr>
           <td>8806</td>
           <td class="sep">
@@ -520,13 +474,7 @@
       <table class="footnotes">
         <tr>
           <td>¹</td>
-          <td>This parameter borrowed from the “Mercator (variant B)” projection is not formally a parameter of this projection.</td>
-        </tr><tr>
-          <td>²</td>
           <td>This parameter is shown for completeness, but should never have a value different than 0 for this projection.</td>
-        </tr><tr>
-          <td>³</td>
-          <td>This parameter borrowed from the “Mercator (variant A)” projection is not formally a parameter of this projection.</td>
         </tr>
       </table>
     </blockquote>
@@ -866,12 +814,15 @@
           <td class="left">90)°</td>
           <td class="sep">0°</td>
         </tr><tr>
-          <td></td>
+          <td>8801</td>
           <td class="sep">
             <details>
-              <summary><span class="non-epsg">OGC:</span><code>latitude_of_origin</code></summary>
+              <summary>Latitude of natural origin</summary>
               <table class="aliases">
                 <tr>
+                  <th>OGC:</th>
+                  <td>latitude_of_origin</td>
+                </tr><tr>
                   <th>ESRI:</th>
                   <td>Latitude_Of_Origin</td>
                 </tr><tr>
@@ -920,33 +871,6 @@
           <td class="center">…</td>
           <td class="left">180]°</td>
           <td class="sep">0°</td>
-        </tr><tr>
-          <td></td>
-          <td class="sep">
-            <details>
-              <summary><span class="non-epsg">OGC:</span><code>scale_factor</code></summary>
-              <table class="aliases">
-                <tr>
-                  <th>ESRI:</th>
-                  <td>Scale_Factor</td>
-                </tr><tr>
-                  <th>NetCDF:</th>
-                  <td>scale_factor_at_projection_origin</td>
-                </tr><tr>
-                  <th>GeoTIFF:</th>
-                  <td>ScaleAtNatOrigin</td>
-                </tr><tr>
-                  <th>Proj4:</th>
-                  <td>k</td>
-                </tr>
-              </table>
-            </details>
-          </td>
-          <td class="sep">Optional ²</td>
-          <td class="sep right">(0</td>
-          <td class="center">…</td>
-          <td class="left">∞)</td>
-          <td class="sep">1</td>
         </tr><tr>
           <td>8806</td>
           <td class="sep">
@@ -1012,9 +936,6 @@
       <table class="footnotes">
         <tr>
           <td>¹</td>
-          <td>This parameter is shown for completeness, but should never have a value different than 0 for this projection.</td>
-        </tr><tr>
-          <td>²</td>
           <td>This parameter borrowed from the “Mercator (variant A)” projection is not formally a parameter of this projection.</td>
         </tr>
       </table>
@@ -1169,6 +1090,10 @@
             <details>
               <summary>Easting at false origin</summary>
               <table class="aliases">
+                <tr>
+                  <th>OGC:</th>
+                  <td>false_easting</td>
+                </tr>
               </table>
             </details>
           </td>
@@ -1183,6 +1108,10 @@
             <details>
               <summary>Northing at false origin</summary>
               <table class="aliases">
+                <tr>
+                  <th>OGC:</th>
+                  <td>false_northing</td>
+                </tr>
               </table>
             </details>
           </td>
@@ -1265,36 +1194,6 @@
           <td class="left">∞) m</td>
           <td class="sep"></td>
         </tr><tr>
-          <td>8823</td>
-          <td class="sep">
-            <details>
-              <summary>Latitude of 1st standard parallel</summary>
-              <table class="aliases">
-                <tr>
-                  <th>OGC:</th>
-                  <td>standard_parallel_1</td>
-                </tr><tr>
-                  <th>ESRI:</th>
-                  <td>Standard_Parallel_1</td>
-                </tr><tr>
-                  <th>NetCDF:</th>
-                  <td>standard_parallel</td>
-                </tr><tr>
-                  <th>GeoTIFF:</th>
-                  <td>ProjStdParallel1</td>
-                </tr><tr>
-                  <th>Proj4:</th>
-                  <td>lat_ts</td>
-                </tr>
-              </table>
-            </details>
-          </td>
-          <td class="sep">Optional ¹</td>
-          <td class="sep right">(-90</td>
-          <td class="center">…</td>
-          <td class="left">90)°</td>
-          <td class="sep">0°</td>
-        </tr><tr>
           <td>8801</td>
           <td class="sep">
             <details>
@@ -1319,7 +1218,7 @@
               </table>
             </details>
           </td>
-          <td class="sep">Unmodifiable ²</td>
+          <td class="sep">Unmodifiable ¹</td>
           <td class="sep center" colspan="3">{0}°</td>
           <td class="sep">0°</td>
         </tr><tr>
@@ -1352,33 +1251,6 @@
           <td class="center">…</td>
           <td class="left">180]°</td>
           <td class="sep">0°</td>
-        </tr><tr>
-          <td></td>
-          <td class="sep">
-            <details>
-              <summary><span class="non-epsg">OGC:</span><code>scale_factor</code></summary>
-              <table class="aliases">
-                <tr>
-                  <th>ESRI:</th>
-                  <td>Scale_Factor</td>
-                </tr><tr>
-                  <th>NetCDF:</th>
-                  <td>scale_factor_at_projection_origin</td>
-                </tr><tr>
-                  <th>GeoTIFF:</th>
-                  <td>ScaleAtNatOrigin</td>
-                </tr><tr>
-                  <th>Proj4:</th>
-                  <td>k</td>
-                </tr>
-              </table>
-            </details>
-          </td>
-          <td class="sep">Optional ³</td>
-          <td class="sep right">(0</td>
-          <td class="center">…</td>
-          <td class="left">∞)</td>
-          <td class="sep">1</td>
         </tr><tr>
           <td>8806</td>
           <td class="sep">
@@ -1444,13 +1316,7 @@
       <table class="footnotes">
         <tr>
           <td>¹</td>
-          <td>This parameter borrowed from the “Mercator (variant B)” projection is not formally a parameter of this projection.</td>
-        </tr><tr>
-          <td>²</td>
           <td>This parameter is shown for completeness, but should never have a value different than 0 for this projection.</td>
-        </tr><tr>
-          <td>³</td>
-          <td>This parameter borrowed from the “Mercator (variant A)” projection is not formally a parameter of this projection.</td>
         </tr>
       </table>
     </blockquote>
@@ -1525,36 +1391,6 @@
           <td class="left">∞) m</td>
           <td class="sep"></td>
         </tr><tr>
-          <td>8823</td>
-          <td class="sep">
-            <details>
-              <summary>Latitude of 1st standard parallel</summary>
-              <table class="aliases">
-                <tr>
-                  <th>OGC:</th>
-                  <td>standard_parallel_1</td>
-                </tr><tr>
-                  <th>ESRI:</th>
-                  <td>Standard_Parallel_1</td>
-                </tr><tr>
-                  <th>NetCDF:</th>
-                  <td>standard_parallel</td>
-                </tr><tr>
-                  <th>GeoTIFF:</th>
-                  <td>ProjStdParallel1</td>
-                </tr><tr>
-                  <th>Proj4:</th>
-                  <td>lat_ts</td>
-                </tr>
-              </table>
-            </details>
-          </td>
-          <td class="sep">Optional ¹</td>
-          <td class="sep right">(-90</td>
-          <td class="center">…</td>
-          <td class="left">90)°</td>
-          <td class="sep">0°</td>
-        </tr><tr>
           <td>8801</td>
           <td class="sep">
             <details>
@@ -1579,7 +1415,7 @@
               </table>
             </details>
           </td>
-          <td class="sep">Unmodifiable ²</td>
+          <td class="sep">Unmodifiable ¹</td>
           <td class="sep center" colspan="3">{0}°</td>
           <td class="sep">0°</td>
         </tr><tr>
@@ -1612,33 +1448,6 @@
           <td class="center">…</td>
           <td class="left">180]°</td>
           <td class="sep">0°</td>
-        </tr><tr>
-          <td></td>
-          <td class="sep">
-            <details>
-              <summary><span class="non-epsg">OGC:</span><code>scale_factor</code></summary>
-              <table class="aliases">
-                <tr>
-                  <th>ESRI:</th>
-                  <td>Scale_Factor</td>
-                </tr><tr>
-                  <th>NetCDF:</th>
-                  <td>scale_factor_at_projection_origin</td>
-                </tr><tr>
-                  <th>GeoTIFF:</th>
-                  <td>ScaleAtNatOrigin</td>
-                </tr><tr>
-                  <th>Proj4:</th>
-                  <td>k</td>
-                </tr>
-              </table>
-            </details>
-          </td>
-          <td class="sep">Optional ³</td>
-          <td class="sep right">(0</td>
-          <td class="center">…</td>
-          <td class="left">∞)</td>
-          <td class="sep">1</td>
         </tr><tr>
           <td>8806</td>
           <td class="sep">
@@ -1704,13 +1513,7 @@
       <table class="footnotes">
         <tr>
           <td>¹</td>
-          <td>This parameter borrowed from the “Mercator (variant B)” projection is not formally a parameter of this projection.</td>
-        </tr><tr>
-          <td>²</td>
           <td>This parameter is shown for completeness, but should never have a value different than 0 for this projection.</td>
-        </tr><tr>
-          <td>³</td>
-          <td>This parameter borrowed from the “Mercator (variant A)” projection is not formally a parameter of this projection.</td>
         </tr>
       </table>
     </blockquote>
