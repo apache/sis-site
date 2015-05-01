@@ -171,8 +171,10 @@ Open the root `pom.xml` file in an editor and perform the following changes:
 
   * Remove the whole `<pluginRepositories>` block (including comment), since it should not be needed for releases (and is actually not allowed).
 
-In `core/sis-utility/src/main/java/org/apache/sis/internal/system/Supervisor.java`, consider setting
-the `ENABLED` flag to `false`. This policy may be revised in future SIS releases.
+Consider modifying the following flags (those recommendations may be revised in future SIS releases):
+
+  * In `core/sis-utility/src/main/java/org/apache/sis/internal/system/Supervisor.java`, set the `ENABLED` flag to `false`.
+  * In `core/sis-utility/src/main/java/org/apache/sis/internal/util/TemporalUtilities.java`, set the `REPORT_MISSING_MODULE` flag to `false`.
 
 Remove the workaround for the bug in JDK6 `javadoc`, since we perform release with JDK7 or JDK8.
 Remove also the modules that are not yet ready for a release:
