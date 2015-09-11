@@ -40,8 +40,8 @@ number of the previous and the new release respectively, and `$RELEASE_CANDIDATE
 the current release attempt. Those versions shall be set on the command line like below (Unix):
 
     :::bash
-    export OLD_VERSION=0.5
-    export NEW_VERSION=0.6
+    export OLD_VERSION=0.6
+    export NEW_VERSION=0.7
     export RELEASE_CANDIDATE=1
     export SIGNING_KEY=<your key ID>
     export BOOTCLASSPATH=<path to the rt.jar file of a JDK6 installation>
@@ -162,7 +162,9 @@ but can be replaced by anything else), then checkout a clean copy of the branch 
     export BRANCH_DIR=`pwd`
 
 We need to update the Subversion URL and SIS version numbers not only in the `pom.xml` files,
-but also in a few Java files. The following command performs the replacement using Ant:
+but also in a few Java files. The following command performs the replacement using Ant.
+Note that this command does *not* yet remove the `-SNAPSHOT` suffix in version numbers
+(this will be done later):
 
     :::bash
     ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml branch -Dsis.version=$NEW_VERSION
