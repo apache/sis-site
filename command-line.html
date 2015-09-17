@@ -82,23 +82,35 @@
           <section id="content" class="row">
             <article class="span12">
               <p class="page-title">Command-line interface</p>
-              <p>A command-line interface is provided for extracting information from a data file.
-As of SIS 0.5, the command line can only extract ISO 19115 metadata from a NetCDF file.
+              <style type="text/css">
+/* The following code is added by mdx_elementid.py
+   It was originally lifted from http://subversion.apache.org/style/site.css */
+/*
+ * Hide class="elementid-permalink", except when an enclosing heading
+ * has the :hover property.
+ */
+.headerlink, .elementid-permalink {
+  visibility: hidden;
+}
+h2:hover > .headerlink, h3:hover > .headerlink, h1:hover > .headerlink, h6:hover > .headerlink, h4:hover > .headerlink, h5:hover > .headerlink, dt:hover > .elementid-permalink { visibility: visible }</style>
+<p>A command-line interface is provided for extracting information from a data file.
+As of SIS 0.6, the command line can only extract ISO 19115 metadata from a NetCDF file.
 More formats and capabilities will be added in future SIS versions.</p>
 <div class="toc">
 <ul>
 <li><a href="#install">Installation</a></li>
 <li><a href="#usage">Usage</a><ul>
-<li><a href="#metadata">Extracting ISO 19115 metadata</a></li>
+<li><a href="#crs">Extracting ISO 19111 Coordinate Reference System (CRS)</a></li>
+<li><a href="#metadata">Extracting ISO 19115 Metadata</a></li>
 </ul>
 </li>
 <li><a href="#performance">Performance consideration</a></li>
 </ul>
 </div>
-<h1 id="install">Installation</h1>
-<p>Select "Apache SIS 0.5 binary" from the <a href="downloads.html">downloads page</a> an unzip in any directory.
+<h1 id="install">Installation<a class="headerlink" href="#install" title="Permanent link">&para;</a></h1>
+<p>Select "Apache SIS 0.6 binary" from the <a href="downloads.html">downloads page</a> an unzip in any directory.
 The directory structure will be as below:</p>
-<div class="codehilite"><pre>apache-sis-0.5
+<div class="codehilite"><pre>apache-sis-0.6
 ├─ bin
 └─ lib
 </pre></div>
@@ -107,7 +119,7 @@ The directory structure will be as below:</p>
 <p>The <code>bin</code> sub-directory contains a <code>sis</code> command for Unix systems (Linux or MacOS — we have not yet done a <code>sis.bat</code> file for Windows).
 The <code>bin</code> sub-directory can be added to the <code>PATH</code> environment variable for convenience, but this is not mandatory.
 The remaining of this page assumes that <code>bin</code> is on the search path.
-If not, just prepend the <code>sis</code> command by its path (e.g. <code>./apache-sis-0.5/bin/sis</code>).</p>
+If not, just prepend the <code>sis</code> command by its path (e.g. <code>./apache-sis-0.6/bin/sis</code>).</p>
 <p>Every JAR files present in the <code>lib</code> sub-directory will be included on the classpath during the execution of <code>sis</code> command.
 By default, the <code>lib</code> directory contains only the SIS archive. However users can add other JAR files in that directory for
 the following optional dependencies:</p>
@@ -117,7 +129,7 @@ the following optional dependencies:</p>
     If there is a need to read files encoded in GRID or HDF formats, then one can copy the UCAR NetCDF library in the <code>lib</code> sub-directory.
     If presents, the UCAR library should be detected and used automatically.</li>
 </ul>
-<h1 id="usage">Usage</h1>
+<h1 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h1>
 <p>Invoking <code>sis</code> without argument show a summary of available commands and all options.
 For executing a command, the syntax is:</p>
 <div class="codehilite"><pre>sis &lt;<span class="nb">command</span>&gt; <span class="o">[</span>options<span class="o">]</span> <span class="o">[</span>files<span class="o">]</span>
@@ -126,13 +138,43 @@ For executing a command, the syntax is:</p>
 
 <p>The set of legal options and the expected number of file arguments depends on the command being executed.
 However all commands support the <code>--help</code> option, which lists the options available for that command.</p>
-<h2 id="metadata">Extracting ISO 19115 metadata</h2>
+<h2 id="crs">Extracting ISO 19111 Coordinate Reference System (CRS)<a class="headerlink" href="#crs" title="Permanent link">&para;</a></h2>
+<p>SIS can read a Coordinate Reference System definition from the <em>Well Known Text</em> (WKT) format version 1 and 2,
+or from <em>Geographic Markup Language</em> (GML) version 3.2.
+The following example show the CRS of a GML file accessible from the web:</p>
+<div class="codehilite"><pre>sis crs http://svn.apache.org/repos/asf/sis/trunk/core/sis-referencing/src/test/resources/org/apache/sis/referencing/crs/ProjectedCRS.xml --format WKT
+</pre></div>
+
+
+<p>The above command output should produce the following output:</p>
+<div class="codehilite"><pre>PROJCRS[&quot;NTF (Paris) / Lambert zone II&quot;,
+  BASEGEODCRS[&quot;NTF (Paris)&quot;,
+    DATUM[&quot;Nouvelle Triangulation Francaise&quot;,
+      ELLIPSOID[&quot;Clarke 1880 (IGN)&quot;, 6378249.2, 293.4660212936269, LENGTHUNIT[&quot;metre&quot;, 1]]],
+      PRIMEM[&quot;Paris&quot;, 2.5969213, ANGLEUNIT[&quot;grade&quot;, 0.015707963267948967]]],
+  CONVERSION[&quot;Lambert zone II&quot;,
+    METHOD[&quot;Lambert Conic Conformal (1SP)&quot;, ID[&quot;EPSG&quot;, 9801]],
+    PARAMETER[&quot;Latitude of natural origin&quot;, 52.0, ANGLEUNIT[&quot;grade&quot;, 0.015707963267948967], ID[&quot;EPSG&quot;, 8801]],
+    PARAMETER[&quot;Longitude of natural origin&quot;, 0.0, ANGLEUNIT[&quot;grade&quot;, 0.015707963267948967], ID[&quot;EPSG&quot;, 8802]],
+    PARAMETER[&quot;Scale factor at natural origin&quot;, 0.99987742, SCALEUNIT[&quot;unity&quot;, 1], ID[&quot;EPSG&quot;, 8805]],
+    PARAMETER[&quot;False easting&quot;, 600000.0, LENGTHUNIT[&quot;metre&quot;, 1], ID[&quot;EPSG&quot;, 8806]],
+    PARAMETER[&quot;False northing&quot;, 2200000.0, LENGTHUNIT[&quot;metre&quot;, 1], ID[&quot;EPSG&quot;, 8807]]],
+  CS[Cartesian, 2],
+    AXIS[&quot;Easting (E)&quot;, east, ORDER[1]],
+    AXIS[&quot;Northing (N)&quot;, north, ORDER[2]],
+    LENGTHUNIT[&quot;metre&quot;, 1],
+  SCOPE[&quot;Large and medium scale topographic mapping and engineering survey.&quot;],
+  ID[&quot;EPSG&quot;, 27572, URI[&quot;urn:ogc:def:crs:EPSG::27572&quot;]]]
+</pre></div>
+
+
+<h2 id="metadata">Extracting ISO 19115 Metadata<a class="headerlink" href="#metadata" title="Permanent link">&para;</a></h2>
 <p>SIS can read the header of a data file and print the metadata in an ISO 19115 structure.
 The data file given in argument can be a local file or a URL.
 By default, the metadata are shown in a relatively compact tree-table format.
 But the metadata can optionally be exported as an ISO 19139 compliant XML document.</p>
 <blockquote><b>Note:</b>
-As of SIS 0.5, only CF-compliant NetCDF files or ISO 19139 XML documents can be given in argument to this command.
+As of SIS 0.6, only CF-compliant NetCDF files or ISO 19139 XML documents can be given in argument to this command.
 </blockquote>
 
 <p>The following example show the metadata of a NetCDF file accessible from the web:</p>
@@ -180,7 +222,7 @@ As of SIS 0.5, only CF-compliant NetCDF files or ISO 19139 XML documents can be 
 
 <p>Adding the <code>--format xml</code> option to the above command will format the same metadata in a XML document.
 The output is not shown in this page because of its verbosity.</p>
-<h1 id="performance">Performance consideration</h1>
+<h1 id="performance">Performance consideration<a class="headerlink" href="#performance" title="Permanent link">&para;</a></h1>
 <p>If there is a large amount of files to process, invoking the above command many time may be inefficient
 since it would restart a new JVM on every invocation. For such cases, it is more efficient to loop inside
 a small Java program using the <a href="apidocs/index.html">SIS API</a>.</p>
@@ -192,7 +234,7 @@ a small Java program using the <a href="apidocs/index.html">SIS API</a>.</p>
 
   <footer class="footer">
     <div class="container">
-      <p>Copyright &copy; 2013-2014 The Apache Software Foundation, Licensed under the
+      <p>Copyright &copy; 2013-2015 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
           Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
     </div>

@@ -82,7 +82,18 @@
           <section id="content" class="row">
             <article class="span12">
               <p class="page-title">Build from source</p>
-              <p>Apache SIS is built by Maven.
+              <style type="text/css">
+/* The following code is added by mdx_elementid.py
+   It was originally lifted from http://subversion.apache.org/style/site.css */
+/*
+ * Hide class="elementid-permalink", except when an enclosing heading
+ * has the :hover property.
+ */
+.headerlink, .elementid-permalink {
+  visibility: hidden;
+}
+h2:hover > .headerlink, h3:hover > .headerlink, h1:hover > .headerlink, h6:hover > .headerlink, h4:hover > .headerlink, h5:hover > .headerlink, dt:hover > .elementid-permalink { visibility: visible }</style>
+<p>Apache SIS is built by Maven.
 For installing the JAR files in the local Maven repository, execute the following command
 from the SIS project root:</p>
 <div class="codehilite"><pre>mvn install
@@ -104,7 +115,7 @@ from the SIS project root:</p>
 </li>
 </ul>
 </div>
-<h1 id="dist">Distribution file and Pack200 bundle</h1>
+<h1 id="dist">Distribution file and Pack200 bundle<a class="headerlink" href="#dist" title="Permanent link">&para;</a></h1>
 <p>The Pack200 bundle is a file with the <code>.pack.gz</code> extension containing all SIS modules except <code>sis-webapp</code>
 (because Web applications use an other packaging) together with their dependencies.
 Pack200 files are uncompressed by the <code>unpack200</code> command provided in JDK/JRE installation.
@@ -121,7 +132,7 @@ if there is many versions of the plugin in the local repository.</p>
 <p>The result will be created in the <code>target/distribution/apache-sis-&lt;version&gt;.zip</code> file.
 To test, uncompress in any directory and execute <code>apache-sis-&lt;version&gt;/bin/sis</code>.
 The Pack200 file will be automatically uncompressed when first needed.</p>
-<h2 id="pack200">Generating the Pack200 file alone</h2>
+<h2 id="pack200">Generating the Pack200 file alone<a class="headerlink" href="#pack200" title="Permanent link">&para;</a></h2>
 <p>If only the Pack200 file is desired, without the distribution ZIP file,
 one can use the following command:</p>
 <div class="codehilite"><pre>mvn org.apache.sis.core:sis-build-helper:pack --non-recursive
@@ -136,19 +147,19 @@ To uncompress that file, use the following command:</p>
 
 <p>The Pack200 bundle does not include the <code>sis-webapp</code> module because the later can be downloaded
 as a <code>WAR</code> file from the Maven repository.</p>
-<h2 id="limitations">Known limitations</h2>
+<h2 id="limitations">Known limitations<a class="headerlink" href="#limitations" title="Permanent link">&para;</a></h2>
 <p>The current plugin implementation has some hard-coded values, especially:</p>
 <ul>
 <li>The ZIP file content is copied from the <code>application/sis-console/src/main/artifact</code> directory.</li>
 <li>The Pack200 file path inside the ZIP file is hard-coded to <code>lib/sis.pack.gz</code>.</li>
 <li>The final filename is hard-coded to <code>apache-sis-&lt;version&gt;.zip</code>.</li>
 </ul>
-<h1 id="build-helper">SIS-specific Maven plugin</h1>
+<h1 id="build-helper">SIS-specific Maven plugin<a class="headerlink" href="#build-helper" title="Permanent link">&para;</a></h1>
 <p>Apache SIS uses a <code>sis-build-helper</code> plugin for SIS-specific tasks and Javadoc customization.
 This plugin is used automatically by <code>mvn install</code>. Consequently the remaining of this page
 can be safely ignored. This page is provided only as a reference for developers wanting to
 take a closer look to SIS <code>pom.xml</code> file.</p>
-<h2 id="resources">Localized resources compiler</h2>
+<h2 id="resources">Localized resources compiler<a class="headerlink" href="#resources" title="Permanent link">&para;</a></h2>
 <p>Localized resources are provided in <code>*.properties</code> files as specified by the <code>java.util.PropertyResourceBundle</code> standard class.
 However SIS does not use those resources files directly. Instead <code>*.properties</code> files are transformed into binary files having
 the same filename but the <code>.utf</code> extension. This conversion is done for efficiency, for convenience (the compiler applies the
@@ -187,7 +198,7 @@ the constants in the <code>Keys</code> inner class in a feaster way than buildin
 </pre></div>
 
 
-<h2 id="jar-collect">JAR files collector</h2>
+<h2 id="jar-collect">JAR files collector<a class="headerlink" href="#jar-collect" title="Permanent link">&para;</a></h2>
 <p>Links or lists all JAR files (including dependencies) in the <code>target/binaries</code> directory of the parent project.
 This plugin performs a work similar to the standard Maven assembly plugin work, with the following differences:</p>
 <ul>
@@ -225,7 +236,7 @@ This plugin performs a work similar to the standard Maven assembly plugin work, 
 
   <footer class="footer">
     <div class="container">
-      <p>Copyright &copy; 2013-2014 The Apache Software Foundation, Licensed under the
+      <p>Copyright &copy; 2013-2015 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
           Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
     </div>

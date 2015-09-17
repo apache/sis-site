@@ -82,7 +82,18 @@
           <section id="content" class="row">
             <article class="span12">
               <p class="page-title">Apache SIS branches</p>
-              <p>The <a href="source.html">source code repository</a> contains JDK6, JDK7 and JDK8 branches together with the trunk.
+              <style type="text/css">
+/* The following code is added by mdx_elementid.py
+   It was originally lifted from http://subversion.apache.org/style/site.css */
+/*
+ * Hide class="elementid-permalink", except when an enclosing heading
+ * has the :hover property.
+ */
+.headerlink, .elementid-permalink {
+  visibility: hidden;
+}
+h2:hover > .headerlink, h3:hover > .headerlink, h1:hover > .headerlink, h6:hover > .headerlink, h4:hover > .headerlink, h5:hover > .headerlink, dt:hover > .elementid-permalink { visibility: visible }</style>
+<p>The <a href="source.html">source code repository</a> contains JDK6, JDK7 and JDK8 branches together with the trunk.
 The Apache SIS releases are created from the code on the trunk only.
 However the actual development often occur on a branch before to be merged to the trunk.
 Those branches exist in order to experiment early the new technologies — since it may impact
@@ -112,9 +123,9 @@ for making merges easier, then provides the steps to follow for performing the m
 </li>
 </ul>
 </div>
-<h1 id="development">The development branches</h1>
+<h1 id="development">The development branches<a class="headerlink" href="#development" title="Permanent link">&para;</a></h1>
 <p>Developers are encouraged to select the first branch listed below, in that order, which meet their needs.</p>
-<h2 id="jdk8">branches/JDK8</h2>
+<h2 id="jdk8">branches/JDK8<a class="headerlink" href="#jdk8" title="Permanent link">&para;</a></h2>
 <p>The JDK8 branch is the recommended development branch for developers who can use a JDK8 environment.
 This branch implements the interfaces defined in the <a href="http://www.geoapi.org/snapshot/index.html">GeoAPI snapshot</a> milestones
 and uses some JDK8 or JDK7-specific features like:</p>
@@ -123,12 +134,12 @@ and uses some JDK8 or JDK7-specific features like:</p>
     but also on other aspects like <em>diamond operator</em>.</li>
 <li>Leveraging of new API (<em>suppressed exceptions</em>, <em>file systems</em>, <em>fork join</em>).</li>
 </ul>
-<h2 id="jdk7">branches/JDK7</h2>
+<h2 id="jdk7">branches/JDK7<a class="headerlink" href="#jdk7" title="Permanent link">&para;</a></h2>
 <p>The JDK7 branch is a merge of the JDK8 branch ported to the JDK7 platform.
 The JDK7 branch implements the same GeoAPI interfaces than the JDK8 branch;
 the only differences (apart version number) are the modifications necessary
 for building and running on a JDK7 platform.</p>
-<h2 id="jdk6">branches/JDK6</h2>
+<h2 id="jdk6">branches/JDK6<a class="headerlink" href="#jdk6" title="Permanent link">&para;</a></h2>
 <p>The JDK6 branch is a merge of the JDK7 branch ported to the JDK6 platform.
 This is the recommended development branch for developers who can not use a JDK7 environment,
 but still want to work closely with latest GeoAPI interfaces.
@@ -144,7 +155,7 @@ for building and running on a JDK6 platform:</p>
 <li>Imports of <code>java.util.Objects</code> replaced by imports of <code>org.apache.sis.internal.util.Objects</code>.</li>
 <li>Other JDK7-specific features resolved on a case-by-case basis.</li>
 </ul>
-<h2 id="trunk">trunk</h2>
+<h2 id="trunk">trunk<a class="headerlink" href="#trunk" title="Permanent link">&para;</a></h2>
 <p>The trunk is a merge of the JDK6 branch ported to the interfaces defined by the <a href="http://www.geoapi.org/3.0/index.html">GeoAPI stable release</a>.
 This is the code which is built by the continuous integration system and deployed on the Maven repository.
 The only differences (apart version number) compared to the JDK6 branch are the modifications
@@ -153,7 +164,7 @@ necessary for implementing an older version of the GeoAPI interfaces:</p>
 <li>Usages of non-existent GeoAPI interfaces are replaced by direct usages of the
     corresponding Apache SIS implementation.</li>
 </ul>
-<h1 id="behavior">Behavioral differences between the branches</h1>
+<h1 id="behavior">Behavioral differences between the branches<a class="headerlink" href="#behavior" title="Permanent link">&para;</a></h1>
 <p>Some JDK7-specific features are reproduced on the JDK6 branch in an approximative way,
 which may cause some differences in application behavior (ignoring differences in performance).
 Most differences are about the JDK7 branch being slightly stricter than the JDK6 branch is,
@@ -174,9 +185,9 @@ or being able to handle information that are unsupported on the JDK6 branch.</p>
 </li>
 </ul>
 <p>Regarding all above points, the trunk is identical to the JDK6 branch.</p>
-<h1 id="recommendations">Coding recommendations</h1>
+<h1 id="recommendations">Coding recommendations<a class="headerlink" href="#recommendations" title="Permanent link">&para;</a></h1>
 <p>The following recommendations aim to make the merges easier by reducing the extend of potential conflicts.</p>
-<h2 id="formatting">Formatting</h2>
+<h2 id="formatting">Formatting<a class="headerlink" href="#formatting" title="Permanent link">&para;</a></h2>
 <p>Refrain from doing massive code reformatting unless:</p>
 <ul>
 <li>the modified files do not yet exist on the other branches;</li>
@@ -213,7 +224,7 @@ this example we aim to preserve the indentation of the <code>case</code> bodies.
 </pre></div>
 
 
-<h2 id="imports">Import statements</h2>
+<h2 id="imports">Import statements<a class="headerlink" href="#imports" title="Permanent link">&para;</a></h2>
 <p>Isolate at the end of the imports section any import statements that are specific to a platform.
 This separation allows any branch to re-arrange the common import statements without generating
 conflicts with the platform-dependent import statements. Example:</p>
@@ -226,16 +237,16 @@ conflicts with the platform-dependent import statements. Example:</p>
 </pre></div>
 
 
-<h2 id="substitutions">Substitution for non-existent classes</h2>
+<h2 id="substitutions">Substitution for non-existent classes<a class="headerlink" href="#substitutions" title="Permanent link">&para;</a></h2>
 <p>When using a JDK7 class that does not exist on JDK6, define a class of the same name in a
 <code>org.apache.sis.internal</code> sub-package with the minimal amount of needed functionalities,
 provided that it can be done with reasonable effort. Otherwise just delete the JDK7-dependent
 code from the JDK6 branch.</p>
-<h1 id="merges">Performing the merges</h1>
+<h1 id="merges">Performing the merges<a class="headerlink" href="#merges" title="Permanent link">&para;</a></h1>
 <p>Subversion 1.5 and later maintain a <code>svn:mergeinfo</code> property which make merge operations much easier.
 In order to get those merge information properly maintained, no merge operation shall be performed
 with older Subversion tools.</p>
-<h2 id="merge-two-branches">Merging changes between two branches</h2>
+<h2 id="merge-two-branches">Merging changes between two branches<a class="headerlink" href="#merge-two-branches" title="Permanent link">&para;</a></h2>
 <p>The branches and trunk checkout directories can be located anywhere on the developer machine.
 The following example assumes that the current directory contains the following sub-directories:</p>
 <ul>
@@ -278,7 +289,7 @@ mvn install
 </pre></div>
 
 
-<h2 id="merge-record-only">Declaring that some changes shall not be merged</h2>
+<h2 id="merge-record-only">Declaring that some changes shall not be merged<a class="headerlink" href="#merge-record-only" title="Permanent link">&para;</a></h2>
 <p>If a developers wants to apply some changes specific to the JDK7 platform and tells
 Subversion to not propagate those changes to the JDK6 branch, then the following
 procedure shall be applied:</p>
@@ -304,7 +315,7 @@ svn commit --message <span class="s2">&quot;Skip JDK7-specific changes.&quot;</s
 
   <footer class="footer">
     <div class="container">
-      <p>Copyright &copy; 2013-2014 The Apache Software Foundation, Licensed under the
+      <p>Copyright &copy; 2013-2015 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
           Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
     </div>

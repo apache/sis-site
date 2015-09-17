@@ -82,7 +82,18 @@
           <section id="content" class="row">
             <article class="span12">
               <p class="page-title">Release management</p>
-              <p>This page describes how to create and deploy the SIS Maven artifacts, binary bundle, javadoc and list of API changes.
+              <style type="text/css">
+/* The following code is added by mdx_elementid.py
+   It was originally lifted from http://subversion.apache.org/style/site.css */
+/*
+ * Hide class="elementid-permalink", except when an enclosing heading
+ * has the :hover property.
+ */
+.headerlink, .elementid-permalink {
+  visibility: hidden;
+}
+h2:hover > .headerlink, h3:hover > .headerlink, h1:hover > .headerlink, h6:hover > .headerlink, h4:hover > .headerlink, h5:hover > .headerlink, dt:hover > .elementid-permalink { visibility: visible }</style>
+<p>This page describes how to create and deploy the SIS Maven artifacts, binary bundle, javadoc and list of API changes.
 The <a href="http://www.apache.org/dev/release.html">Release FAQ</a> page describes the foundation wide policies.
 The instructions on this page provide a summary suitable to SIS releases, together with SIS-specific steps.
 The intended audiences are SIS release managers.</p>
@@ -124,10 +135,13 @@ The intended audiences are SIS release managers.</p>
 <li><a href="#announce">Announce the release</a></li>
 </ul>
 </li>
-<li><a href="#next-release">Update trunk for the next development cycle</a></li>
+<li><a href="#next-release">Update trunk for the next development cycle</a><ul>
+<li><a href="#nexus-clean">Delete old artifacts on Maven snapshot repository</a></li>
+</ul>
+</li>
 </ul>
 </div>
-<h1 id="requirements">Requirements</h1>
+<h1 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h1>
 <p>Before to perform a release, make sure that the following conditions hold:</p>
 <ul>
 <li>Commands will be executed in a Unix shell.</li>
@@ -137,8 +151,8 @@ The intended audiences are SIS release managers.</p>
 <p>For all instructions in this page, <code>$OLD_VERSION</code> and <code>$NEW_VERSION</code> stand for the version
 number of the previous and the new release respectively, and <code>$RELEASE_CANDIDATE</code> stands for
 the current release attempt. Those versions shall be set on the command line like below (Unix):</p>
-<div class="codehilite"><pre><span class="nb">export </span><span class="nv">OLD_VERSION</span><span class="o">=</span>0.5
-<span class="nb">export </span><span class="nv">NEW_VERSION</span><span class="o">=</span>0.6
+<div class="codehilite"><pre><span class="nb">export </span><span class="nv">OLD_VERSION</span><span class="o">=</span>0.6
+<span class="nb">export </span><span class="nv">NEW_VERSION</span><span class="o">=</span>0.7
 <span class="nb">export </span><span class="nv">RELEASE_CANDIDATE</span><span class="o">=</span>1
 <span class="nb">export </span><span class="nv">SIGNING_KEY</span><span class="o">=</span>&lt;your key ID&gt;
 <span class="nb">export </span><span class="nv">BOOTCLASSPATH</span><span class="o">=</span>&lt;path to the rt.jar file of a JDK6 installation&gt;
@@ -151,7 +165,7 @@ The boot class path value is highly system-dependent. Some examples are:</p>
 <li><code>/usr/lib/jvm/java-6/jre/lib/rt.jar</code> on some Linux distributions (replace <code>java-6</code> by the actual directory name).</li>
 <li><code>/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar</code> on MacOS.</li>
 </ul>
-<h2 id="directory-layout">Directory layout</h2>
+<h2 id="directory-layout">Directory layout<a class="headerlink" href="#directory-layout" title="Permanent link">&para;</a></h2>
 <p>The steps described in this page assume the following directory layout (some directories will be created as
 a result of the steps). Any other layout can be used. However if the layout differs, then the relative paths
 in this page shall be adjusted accordingly.</p>
@@ -172,33 +186,33 @@ in this page shall be adjusted accordingly.</p>
 </pre></div>
 
 
-<h2 id="java-update">Java updates</h2>
+<h2 id="java-update">Java updates<a class="headerlink" href="#java-update" title="Permanent link">&para;</a></h2>
 <p>While we need a JDK6 installation for the <code>bootclasspath</code> option, we do not recommend to use it for generating
 the binaries since JDK6 has reached its end of public updates (but not the end of commercial support).
 We recommend to create the release with JDK7 or JDK8 instead. Make sure that the JDK installation
 to be used for the release has been updated recently, since compilers may receive critical bug fixes.
 For example the <code>javadoc</code> tool of older JDK versions was known to generate HTML pages with a vulnerability in them.</p>
-<h1 id="prepare-source">Prepare site and source code</h1>
+<h1 id="prepare-source">Prepare site and source code<a class="headerlink" href="#prepare-source" title="Permanent link">&para;</a></h1>
 <p>Before to start the release process:</p>
 <ul>
 <li>Review and update the <code>README</code> file on the <code>trunk</code> source code repository.</li>
 <li>Review the <code>javac</code> and <code>javadoc</code> warnings reported by Jenkins and fix at least the typos.</li>
 <li>Ensure that the <code>trunk</code> build is successful (including tests) with JDK6, JDK7 and JDK8.</li>
 </ul>
-<h2 id="prepare-documentation">Documentation</h2>
+<h2 id="prepare-documentation">Documentation<a class="headerlink" href="#prepare-documentation" title="Permanent link">&para;</a></h2>
 <p>Update <a href="http://issues.apache.org/jira/browse/SIS">JIRA</a> tasks and prepare release notes as below:</p>
 <ul>
 <li>Ensure that the <em>Fix Version</em> in issues resolved since the last release includes this release version correctly.</li>
 <li>Ensure that all open issues are resolved or closed before proceeding further.</li>
 <li>On the <code>site</code> source code repository, create a <code>content/release-notes/$NEW_VERSION.html</code> file with all the features added.</li>
 <li>Use <code>content/release-notes/$OLD_VERSION.html</code> as a template, omitting everything between the <code>&lt;body&gt;</code> and <code>&lt;/body&gt;</code> tags.</li>
-<li>The release notes can be obtained from JIRA, by clicking on the <em>Versions</em> tab → the version number → <em>Release notes</em>
+<li>The release notes can be obtained from JIRA, by clicking on the <em>Roadmap</em> tab → the version number → <em>Release notes</em>
     and then configuring the release notes to display HTML format and copying it.
     A suggested approach would be to reorganize the release notes as
     <em>New Features</em>, then <em>Improvements</em>, then <em>Bug Fixes</em>, then <em>Tests</em> and finally <em>Tasks</em>.
     The <em>Sub Tasks</em> can be classified according the category of their parent issue.</li>
 </ul>
-<h2 id="prepare-website">Web site</h2>
+<h2 id="prepare-website">Web site<a class="headerlink" href="#prepare-website" title="Permanent link">&para;</a></h2>
 <p>Review and update the <code>content/DOAP.rdf</code> file on the <code>site</code> source code repository.
 Add a new <code>&lt;release&gt;</code> block for the new release with the estimated release date.</p>
 <p>Update the version numbers from the old one to <code>$NEW_VERSION</code> in the following files.</p>
@@ -215,7 +229,7 @@ svn commit --message <span class="s2">&quot;Prepare documentation for the $NEW_V
 
 <p>The new web site will be published in the <a href="http://sis.staging.apache.org">staging area</a>.
 It will not yet be published on <code>http://sis.apache.org</code>.</p>
-<h1 id="branch">Create branch and tag</h1>
+<h1 id="branch">Create branch and tag<a class="headerlink" href="#branch" title="Permanent link">&para;</a></h1>
 <p>Execute the following command:</p>
 <div class="codehilite"><pre>svn copy https://svn.apache.org/repos/asf/sis/trunk <span class="se">\</span>
          https://svn.apache.org/repos/asf/sis/branches/<span class="nv">$NEW_VERSION</span> <span class="se">\</span>
@@ -233,7 +247,9 @@ svn checkout https://svn.apache.org/repos/asf/sis/branches/<span class="nv">$NEW
 
 
 <p>We need to update the Subversion URL and SIS version numbers not only in the <code>pom.xml</code> files,
-but also in a few Java files. The following command performs the replacement using Ant:</p>
+but also in a few Java files. The following command performs the replacement using Ant.
+Note that this command does <em>not</em> yet remove the <code>-SNAPSHOT</code> suffix in version numbers
+(this will be done later):</p>
 <div class="codehilite"><pre>ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml branch -Dsis.version<span class="o">=</span><span class="nv">$NEW_VERSION</span>
 </pre></div>
 
@@ -242,8 +258,11 @@ but also in a few Java files. The following command performs the replacement usi
 <ul>
 <li>Remove the whole <code>&lt;pluginRepositories&gt;</code> block (including comment), since it should not be needed for releases (and is actually not allowed).</li>
 </ul>
-<p>In <code>core/sis-utility/src/main/java/org/apache/sis/internal/system/Supervisor.java</code>, consider setting
-the <code>ENABLED</code> flag to <code>false</code>. This policy may be revised in future SIS releases.</p>
+<p>Consider modifying the following flags (those recommendations may be revised in future SIS releases):</p>
+<ul>
+<li>In <code>core/sis-utility/src/main/java/org/apache/sis/internal/system/Supervisor.java</code>, set the <code>ENABLED</code> flag to <code>false</code>.</li>
+<li>In <code>core/sis-utility/src/main/java/org/apache/sis/internal/util/TemporalUtilities.java</code>, set the <code>REPORT_MISSING_MODULE</code> flag to <code>false</code>.</li>
+</ul>
 <p>Remove the workaround for the bug in JDK6 <code>javadoc</code>, since we perform release with JDK7 or JDK8.
 Remove also the modules that are not yet ready for a release:</p>
 <div class="codehilite"><pre>svn remove core/sis-build-helper/src/main/java/org/opengis
@@ -256,7 +275,7 @@ svn remove application/sis-javafx
 </pre></div>
 
 
-<h2 id="branch-verify">Verify content</h2>
+<h2 id="branch-verify">Verify content<a class="headerlink" href="#branch-verify" title="Permanent link">&para;</a></h2>
 <p>Starts the GPG agent if not already done.
 This is for avoiding to be prompted many time for the passphrase in every modules to be built by Maven.
 Note that MacOS users can skip this step if their passphrase is stored in the OS keychain,</p>
@@ -280,7 +299,7 @@ the changes that would have been committed to SVN. We keep those files for verif
 </pre></div>
 
 
-<h2 id="tag">Tag the branch</h2>
+<h2 id="tag">Tag the branch<a class="headerlink" href="#tag" title="Permanent link">&para;</a></h2>
 <p>In theory, the next commands would be a real (non-dry) run of <code>mvn release:prepare</code>, followed by <code>mvn release:perform</code>.
 However we perform those steps manually rather than relying on Maven for the following reasons:</p>
 <ul>
@@ -328,7 +347,7 @@ mvn clean release:clean
 </pre></div>
 
 
-<h1 id="maven-deploy">Deploy Maven artifacts</h1>
+<h1 id="maven-deploy">Deploy Maven artifacts<a class="headerlink" href="#maven-deploy" title="Permanent link">&para;</a></h1>
 <p>Execute an <code>install</code> phase first (required for our custom <code>sis-build-helper</code> plugin),
 and generate the binary artifact (<code>pack.gz</code> file). The later will fail if duplicated
 class files or resources are found. Consequently building the <code>pack.gz</code> file is an
@@ -348,7 +367,7 @@ svn revert . --recursive
 </pre></div>
 
 
-<h2 id="nexus-close">Verify and close the Nexus release artifacts</h2>
+<h2 id="nexus-close">Verify and close the Nexus release artifacts<a class="headerlink" href="#nexus-close" title="Permanent link">&para;</a></h2>
 <p>Verify the staged artifacts in the <a href="https://repository.apache.org/index.html">Nexus repository</a>.
 The artifacts can be found under <em>Build Promotion</em> → <em>Staging repositories</em>, and searching for <code>org.apache.sis</code> in the <em>Repository</em> column.
 Navigate through the artifact tree and make sure that all javadoc, source, test and jar files have <code>.asc</code> (GPG signature) and <code>.md5</code> files.</p>
@@ -377,7 +396,7 @@ so try to see at least one code snippet.</p>
 </ul>
 <p>We will announce later (in the <cite>Put the release candidate up for a vote</cite> section) on the <code>dev@</code> mailing list
 the availability of this temporary repository for testing purpose.</p>
-<h2 id="nexus-text">Test the Nexus release artifacts</h2>
+<h2 id="nexus-text">Test the Nexus release artifacts<a class="headerlink" href="#nexus-text" title="Permanent link">&para;</a></h2>
 <p>Go to the test Maven project.
 Open the root <code>pom.xml</code> file and set the <code>&lt;version&gt;</code> number to the SIS release to be tested.
 Then go to the <code>&lt;url&gt;</code> declaration of the first <code>&lt;repository&gt;</code> and replace value by the URL
@@ -397,7 +416,7 @@ This will also verify the checksums.</p>
 </pre></div>
 
 
-<h1 id="stage">Stage the source, binary and javadoc artifacts</h1>
+<h1 id="stage">Stage the source, binary and javadoc artifacts<a class="headerlink" href="#stage" title="Permanent link">&para;</a></h1>
 <p>Generate the Javadoc. While not mandatory, we suggest to use JDK 8 or above for getting the new look and feel,
 getting the Javadoc enhancements expected in future JDK releases (more dynamic pages),
 avoiding the security vulnerability discovered in the Javadoc tools of older JDK releases,
@@ -412,7 +431,7 @@ zip -9 -r apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip apidocs
 </pre></div>
 
 
-<h2 id="dist">Initialize the distribution directory</h2>
+<h2 id="dist">Initialize the distribution directory<a class="headerlink" href="#dist" title="Permanent link">&para;</a></h2>
 <p>Create the directory for the new version and release candidate within the distribution directory.
 The <code>$RELEASE_CANDIDATE</code> variable shall be the number of current release attempt.</p>
 <div class="codehilite"><pre><span class="nb">cd</span> ../../distribution
@@ -443,7 +462,7 @@ mv sis-<span class="nv">$NEW_VERSION</span>-source-release.zip.asc apache-sis-<s
 </pre></div>
 
 
-<h2 id="sign">Sign and commit</h2>
+<h2 id="sign">Sign and commit<a class="headerlink" href="#sign" title="Permanent link">&para;</a></h2>
 <p>Sign the source, javadoc and binary artifacts:</p>
 <div class="codehilite"><pre>gpg --print-md SHA512 apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.sha
 gpg --print-md MD5    apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.md5
@@ -472,7 +491,7 @@ svn commit --message <span class="s2">&quot;SIS release candidate $RELEASE_CANDI
 </pre></div>
 
 
-<h2 id="apidocs">Update online Javadoc</h2>
+<h2 id="apidocs">Update online Javadoc<a class="headerlink" href="#apidocs" title="Permanent link">&para;</a></h2>
 <p>Copy the Javadoc to the web site staging directory:</p>
 <div class="codehilite"><pre><span class="nb">cd</span> ../site/content
 rm -r apidocs
@@ -488,7 +507,7 @@ svn commit --message <span class="s2">&quot;Update javadoc for SIS $NEW_RELEASE.
 </pre></div>
 
 
-<h2 id="test">Test the release</h2>
+<h2 id="test">Test the release<a class="headerlink" href="#test" title="Permanent link">&para;</a></h2>
 <p>Execute the following commands in any temporary directory for testing the sources:</p>
 <div class="codehilite"><pre>wget --no-check-certificate https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span>/apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip <span class="se">\</span>
                             https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span>/apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.asc
@@ -509,11 +528,12 @@ unzip apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip
 <span class="nb">cd </span>apache-sis-<span class="nv">$NEW_VERSION</span>
 bin/sis about --verbose
 bin/sis metadata http://catalog.data.gov/harvest/object/df138a1b-e7cb-4ca4-b7c3-316135e81b16
-bin/sis metadata http://svn.code.sf.net/p/geoapi/code/trunk/geoapi-netcdf/src/test/resources/org/opengis/wrapper/netcdf/NCEP-SST.nc
+bin/sis metadata https://github.com/opengeospatial/geoapi/raw/master/geoapi-netcdf/src/test/resources/org/opengis/wrapper/netcdf/NCEP-SST.nc
+bin/sis crs http://svn.apache.org/repos/asf/sis/trunk/core/sis-referencing/src/test/resources/org/apache/sis/referencing/crs/ProjectedCRS.xml --format WKT
 </pre></div>
 
 
-<h1 id="vote">Put the release candidate up for a vote</h1>
+<h1 id="vote">Put the release candidate up for a vote<a class="headerlink" href="#vote" title="Permanent link">&para;</a></h1>
 <ul>
 <li>Create a VOTE email thread on <code>dev@</code> to record votes as replies.
     A template is available <a href="templates/release-vote.txt">here</a>.</li>
@@ -529,7 +549,7 @@ bin/sis metadata http://svn.code.sf.net/p/geoapi/code/trunk/geoapi-netcdf/src/te
 </ul>
 </li>
 </ul>
-<h2 id="veto">Recovering from a vetoed release</h2>
+<h2 id="veto">Recovering from a vetoed release<a class="headerlink" href="#veto" title="Permanent link">&para;</a></h2>
 <p>Reply to the initial vote email and prepend to the original subject:</p>
 <div class="codehilite"><pre>[CANCELED]
 </pre></div>
@@ -546,7 +566,7 @@ bin/sis metadata http://svn.code.sf.net/p/geoapi/code/trunk/geoapi-netcdf/src/te
 <li>Right click on the closed staging repositories (<code>org.apache.sis-&lt;id&gt;</code>) and select <em>Drop</em>.</li>
 </ul>
 <p>Make the required updates that caused the vote to be canceled during the release cycle.</p>
-<h1 id="finalize">Finalize the release</h1>
+<h1 id="finalize">Finalize the release<a class="headerlink" href="#finalize" title="Permanent link">&para;</a></h1>
 <p>The artificats in the repository are not yet mirrored and available for Maven to download.
 Promote the staged Nexus artifacts, by releasing them.</p>
 <ul>
@@ -575,14 +595,14 @@ svn delete https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERS
 </ul>
 </li>
 </ul>
-<h2 id="verify">Verify release signatures</h2>
+<h2 id="verify">Verify release signatures<a class="headerlink" href="#verify" title="Permanent link">&para;</a></h2>
 <p>Download all source and binary artifacts into a new directory, then execute in that directory:</p>
 <div class="codehilite"><pre>find . -name <span class="s2">&quot;*.asc&quot;</span> -exec gpg --verify <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
 </pre></div>
 
 
 <p>The output shall report only good signatures.</p>
-<h2 id="announce">Announce the release</h2>
+<h2 id="announce">Announce the release<a class="headerlink" href="#announce" title="Permanent link">&para;</a></h2>
 <ul>
 <li>WAIT 24 hours after committing releases for mirrors to replicate.</li>
 <li>Publish the web site updates:<ul>
@@ -600,7 +620,7 @@ svn delete https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERS
 </pre></div>
 
 
-<h1 id="next-release">Update trunk for the next development cycle</h1>
+<h1 id="next-release">Update trunk for the next development cycle<a class="headerlink" href="#next-release" title="Permanent link">&para;</a></h1>
 <p>On the development branch (usually JDK8),
 update the version numbers in the <code>pom.xml</code> files on trunk with the following command:</p>
 <div class="codehilite"><pre>mvn clean
@@ -615,6 +635,10 @@ Then on the development branch:</p>
 <li>Edit the value of the <code>MAJOR_VERSION</code> or <code>MINOR_VERSION</code> constant in the
     <code>core/sis-utility/src/main/java/org/apache/sis/internal/system/Modules.java</code> file.</li>
 </ul>
+<h2 id="nexus-clean">Delete old artifacts on Maven snapshot repository<a class="headerlink" href="#nexus-clean" title="Permanent link">&para;</a></h2>
+<p>Login in the <a href="https://repository.apache.org/index.html">Nexus repository</a>. In the <em>Repositories</em> tag, select <em>Snapshots</em> of type <em>hosted</em>
+(not to be confused with <em>Snapshots</em> of type <em>group</em>). Navigate to the <code>org/apache/sis</code> directory and delete
+all directories starting with the old version number. The sub-directories need to be cleaned too.</p>
             </article>
           </section>
         </div><!--/span-->
@@ -623,7 +647,7 @@ Then on the development branch:</p>
 
   <footer class="footer">
     <div class="container">
-      <p>Copyright &copy; 2013-2014 The Apache Software Foundation, Licensed under the
+      <p>Copyright &copy; 2013-2015 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
           Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
     </div>

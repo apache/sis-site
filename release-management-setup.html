@@ -82,7 +82,18 @@
           <section id="content" class="row">
             <article class="span12">
               <p class="page-title">Release management setup</p>
-              <p>The following instructions need to be done only once by new release managers,
+              <style type="text/css">
+/* The following code is added by mdx_elementid.py
+   It was originally lifted from http://subversion.apache.org/style/site.css */
+/*
+ * Hide class="elementid-permalink", except when an enclosing heading
+ * has the :hover property.
+ */
+.headerlink, .elementid-permalink {
+  visibility: hidden;
+}
+h2:hover > .headerlink, h3:hover > .headerlink, h1:hover > .headerlink, h6:hover > .headerlink, h4:hover > .headerlink, h5:hover > .headerlink, dt:hover > .elementid-permalink { visibility: visible }</style>
+<p>The following instructions need to be done only once by new release managers,
 or when configuring a new machine for performing the releases.
 If those steps have already been done, jump directly to the <a href="release-management.html">Release Management</a> page.</p>
 <div class="toc">
@@ -96,7 +107,7 @@ If those steps have already been done, jump directly to the <a href="release-man
 <li><a href="#maven">Maven Configuration &amp; Nexus Setup</a></li>
 </ul>
 </div>
-<h1 id="directory-layout">Directory layout</h1>
+<h1 id="directory-layout">Directory layout<a class="headerlink" href="#directory-layout" title="Permanent link">&para;</a></h1>
 <p>The steps described in the <em>release management</em> page assume the following directory layout.
 Some directories are SVN checkout, other are ordinary directories. Any other layout can be used.
 However in the later case, all relative paths in the <em>release management</em> page will need to be adjusted accordingly.</p>
@@ -120,14 +131,14 @@ mkdir tags
 </pre></div>
 
 
-<h1 id="shell">Shell configuration</h1>
+<h1 id="shell">Shell configuration<a class="headerlink" href="#shell" title="Permanent link">&para;</a></h1>
 <p>It is better for Unix shells to contain the following line in their initialization file
 (typically <code>~/.bashrc</code> or <code>~/.profile</code>, where <code>~</code> stands for the user's home directory):</p>
 <div class="codehilite"><pre><span class="nb">export </span><span class="nv">GPG_TTY</span><span class="o">=</span><span class="k">$(</span>tty<span class="k">)</span>
 </pre></div>
 
 
-<h1 id="generate-key">Generate GPG key</h1>
+<h1 id="generate-key">Generate GPG key<a class="headerlink" href="#generate-key" title="Permanent link">&para;</a></h1>
 <p>The releases have to be signed by public key cryptography signatures.
 Detailed instructions about why releases have to be signed are provided on the <a href="http://www.apache.org/dev/release-signing.html">Release Signing</a> page.
 The standard used is OpenPGP (<em>Open Pretty Good Privacy</em>), and a popular software implementation of that standard is GPG (<em>GNU Privacy Guard</em>).
@@ -188,7 +199,7 @@ preferably on a removable device.</p>
 </pre></div>
 
 
-<h2 id="trust">Web of trust</h2>
+<h2 id="trust">Web of trust<a class="headerlink" href="#trust" title="Permanent link">&para;</a></h2>
 <p>Have the key signed by at least three Apache commiters. This can be done by executing the following commands on
 the machine of the other Apache commiter, where <code>&lt;key_to_use&gt;</code> is the identifier of the other commiter's key.
 Those operation should preferably be done in some event where the commiters can meet face-to-face.
@@ -203,7 +214,7 @@ gpg --send-key &lt;key_id&gt;
 <p>The above-cited <em>Release Signing</em> page provides more instructions.
 Then, the signed public key shall be appended to the <code>KEYS</code> file on the <a href="https://svn.apache.org/repos/asf/sis/trunk/">SIS source code repository</a>,
 then copied to the <a href="http://dist.apache.org/repos/dist/release/sis/">SIS distribution directory</a>.</p>
-<h1 id="maven">Maven Configuration &amp; Nexus Setup</h1>
+<h1 id="maven">Maven Configuration &amp; Nexus Setup<a class="headerlink" href="#maven" title="Permanent link">&para;</a></h1>
 <p>Detailed instructions are at <a href="http://www.apache.org/dev/publishing-maven-artifacts.html">Publishing Maven Artifacts</a>.
 In summary, the developer needs to specify his Apache username and password (<strong>not</strong> the PGP passphrase)
 in his local <code>~/.m2</code> directory, and the GPG key identifier.
@@ -272,7 +283,7 @@ together with the PGP key name:</p>
 
   <footer class="footer">
     <div class="container">
-      <p>Copyright &copy; 2013-2014 The Apache Software Foundation, Licensed under the
+      <p>Copyright &copy; 2013-2015 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
           Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
     </div>
