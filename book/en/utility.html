@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>Utility Classes and Methods</title>
+    <link rel="stylesheet" type="text/css" href="../../content/book/book.css"/>
+  </head>
+  <body>
+    <header>
+      <h1 id="Utilities">Utility Classes and Methods</h1>
+    </header>
+    <p>
+      This chapter describes aspects of Apache <abbr>SIS</abbr> that apply to the entire library.
+      Most of these utilities are not specific to spatial information systems.
+    </p>
+
+    <h2 id="ComparisonMode">Comparison Modes of Objects</h2>
+    <p>
+      There are various opinions on how to implement Java standard's <code>Object.equals(Object)</code> method.
+      According to some, it should be possible to compare different implementations of the same interface or base class.
+      But to follow this policy, each interface or base class's javadoc must define the algorithms that all implementations
+      shall use for their <code>equals(Object)</code> and <code>hashCode()</code> methods.
+      This approach is common in <code>java.util.Collection</code> and its child interfaces.
+      Transferring this approach to certain GeoAPI interfaces, however, would be a difficult task,
+      and would probably not be followed in many implementations.
+      Moreover, it comes at the expense of being able to take into account supplementary attributes in the child interfaces,
+      unless this possibility has been specified in the parent interface.
+      This constraint arises from the following points of the <code>equals(Object)</code> and <code>hashCode()</code> method contracts:
+    </p>
+    <ul>
+      <li><code>A.equals(B)</code> implies <code>B.equals(A)</code> (symmetry);</li>
+      <li><code>A.equals(B)</code> and <code>B.equals(C)</code> implies <code>A.equals(C)</code> (transitivity);</li>
+      <li><code>A.equals(B)</code> implies <code>A.hashCode() == B.hashCode()</code>.</li>
+    </ul>
+    <p>
+      For example, these three constraints are violated if <var>A</var> (and eventually <var>C</var>) can contain attributes
+      which <var>B</var> ignores.
+      To bypass this problem, an alternative approach is to require that the objects compared by the
+      <code>Object.equals(Object)</code> method be of the same class; in other words, <code>A.getClass() == B.getClass()</code>.
+      This approach is sometimes regarded as contrary to the principles of object oriented programming.
+      In practice, for relatively complex applications, the important accorded to these principles depends on the context
+      in which the objects are compared:
+      if the objects are added to a <code>HashSet</code> or used as keys in a <code>HashMap</code>,
+      we would need a stricter adherence to the <code>equals(Object)</code> and <code>hashCode()</code> contract.
+      But if the developer is comparing the objects his- or herself, for example to check that the relevant information has been changed,
+      then the constraints of symmetry, transitivity or coherence with the hash values may be of little interest.
+      More permissive comparisons may be desirable, sometimes going so far as to tolerate minor discrepancies in numerical values.
+    </p>
+    <p>
+      In order to allow developers a certain amount of flexibility, many classes in the <abbr>SIS</abbr>
+      library implement the <code class="SIS">org.apache.sis.util.LenientComparable</code> interface,
+      which defines a <code class="SIS">equals(Object, ComparisonMode)</code> method.
+      The principle modes of comparison are:
+    </p>
+    <ul>
+      <li><p>
+        <b><code class="SIS">STRICT</code></b> — The objects compared must share the same class and have exactly equal attributes,
+        including any possible public attributes specific to the implementation.
+      </p></li>
+      <li><p>
+        <b><code class="SIS">BY_CONTRACT</code></b> — The objects compared must implement the same GeoAPI (or other standard)
+        interface, but need not be of the same implementation class.
+        Only the attributes defined in the interface are compared;
+        all other attributes specific to the implementation — even if they are public — are ignored.
+      </p></li>
+      <li><p>
+        <b><code class="SIS">IGNORE_METADATA</code></b> — Like <code class="SIS">BY_CONTRACT</code>,
+        but only compares attributes that influence the operations (numeric calculations or otherwise) performed by the object.
+        For example, in a geodesic datum, the longitude (in relation to Greenwich) of the original meridian
+        would be taken into account, while the name of the meridian would be ignored.
+      </p></li>
+      <li><p>
+        <b><code class="SIS">APPROXIMATIVE</code></b> — Like <code class="SIS">IGNORE_METADATA</code>,
+        but tolerates minor discrepancies in numerical values.
+      </p></li>
+    </ul>
+    <p>
+      The default mode, used in all <code>equals(Object)</code> methods in <abbr>SIS</abbr>,
+      is <code class="SIS">STRICT</code>. This mode is chosen for a safe operation — particularly with <code>HashMap</code> —
+      without the need to rigorously define <code>equals(Object)</code> and <code>hashCode()</code> operations in every interface.
+      With this mode, the order of objects (<code>A.equals(B)</code> or <code>B.equals(A)</code>) is unimportant.
+      It is, however, the only mode that offers this guarantee.
+      In the expression <code>A.equals(B)</code>, the <code class="SIS">BY_CONTRACT</code> mode
+      (and so by extension all other modes that depend on it) only compares the properties known to <code>A</code>,
+      regardless of whether <code>B</code> knows more.
+    </p>
+
+
+
+    <h2 id="Internationalization">Internationalization</h2>
+    <p>
+      In an architecture where a program executed on a server provides its data to multiple clients,
+      the server's locale conventions are not necessarily the same as those of the clients.
+      Conventions may differ in language, but also in the way they write numeric values
+      (even between two countries that speak the same language) as well in time zone.
+      To produce messages that conform to the client's conventions, <abbr>SIS</abbr> uses
+      two approaches, distinguished by their level of granularity: at the level of the messages themselves,
+      or at the level of the objects that create the messages.
+      The approach used also determines whether it is possible to share the same instance of an object for all languages.
+    </p>
+
+    <h3 id="LocalizedString">Distinct Character Sequences for Each Locale</h3>
+    <p>
+      Some classes are only designed to function according to one locale convention at a time.
+      This is of course true for the standard implementations of <code>java.text.Format</code>,
+      as they are entirely dedicated to the work of internationalization.
+      But it is also the case for other less obvious classes like <code>javax.imageio.ImageReader</code>/<code>ImageWriter</code>
+      and for <code>Exception</code> subclasses.
+      When one of these classes is implemented by <abbr>SIS</abbr>,
+      we identify it by implementing the <code class="SIS">org.apache.sis.util.Localized</code> interface.
+      The <code class="SIS">getLocale()</code> method of this interface can determine the locale conventions
+      by which the instance produces its message.
+    </p>
+    <p>
+      Some sub-classes of <code>Exception</code> defined by <abbr>SIS</abbr> also implement the <code class="SIS">Localized</code> interface.
+      For these exceptions, the error message may be produced according to two locale conventions,
+      for either the administrator or the client respectively:
+      <code>getMessage()</code> returns the exception message according to the system default conventions,
+      while <code>getLocalizedMessage()</code> returns the exception message according to the locale conventions specified
+      by <code class="SIS">getLocale()</code>.
+      This <code>Locale</code> will be determined by the <code class="SIS">Localized</code> object that threw the exception.
+    </p>
+    <div class="example"><p><b>Example:</b>
+      Given an environment in which the default language is English and an <code class="SIS">AngleFormat</code> object is created to
+      read angles according to French conventions.
+      If a <code>ParseException</code> is thrown when using this formatter, <code>getMessage()</code> returns the error message in English,
+      while <code>getLocalizedMessage()</code> returns the error message in French.
+    </p></div>
+    <p>
+      The exceptions defined by <abbr>SIS</abbr> do not implement all of the <code class="SIS">Localized</code> interface.
+      Only those most likely to be shown to the user are localized in this way.
+      <code>ParseException</code> are good candidates because they often occur due to an incorrect entry by the client.
+      By contrast, <code>NullPointerException</code> are generally caused by a programming error;
+      they may be localized in the system default language, but that is usually all.
+    </p>
+    <p>
+      The utility class <code class="SIS">org.apache.sis.util.Exceptions</code> provides convenience methods to get messages
+      according to the conventions of a given locale, when this information is available.
+    </p>
+
+
+
+    <h3 id="InternationalString">Single instance for all supported locales</h3>
+    <p>
+      The <abbr>API</abbr> conventions defined by <abbr>SIS</abbr> or inherited by GeoAPI favour the use of the
+      <code class="GeoAPI">InternationalString</code> type when the value of a <code>String</code> type would likely be localized.
+      This approach allows us to defer the internationalization process to the time when a character sequence is requested,
+      rather than the time when the object that contains them is created.
+      This is particularly useful for immutable classes used for creating unique instances independently of locale conventions.
+    </p>
+    <div class="example"><p><b>Example:</b>
+      <abbr>SIS</abbr> includes only one instance of the <code class="GeoAPI">OperationMethod</code>
+      type representing the Mercator projection, regardless of the client's language.
+      But its <code class="GeoAPI">getName()</code> method (indirectly) provides an instance of
+      <code class="GeoAPI">InternationalString</code>, so that <code>toString(Locale.ENGLISH)</code> returns <cite>Mercator projection</cite>
+      while <code>toString(Locale.FRENCH)</code> returns <cite>Projection de Mercator</cite>.
+    </p></div>
+    <p>
+      When defining spatial objects independently of locale conventions, we reduce the risk of computational overload.
+      For example, it is easier to detect that two maps use the same cartographic projection if this last is represented by the
+      same instance of <code class="GeoAPI">CoordinateOperation</code>,
+      even if the projection has a different name depending on the country.
+      Moreover, certain types of <code class="GeoAPI">CoordinateOperation</code> may require coordinate transformation matrices,
+      so sharing a single instance becomes even more preferable in order to reduce memory consumption.
+    </p>
+
+
+
+    <h3 id="Locale.ROOT"><code>Locale.ROOT</code> Convention</h3>
+    <p>
+      All <abbr>SIS</abbr> methods receiving or returning the value of a <code>Locale</code> type accept the <code>Locale.ROOT</code> value.
+      This value is interpreted as specifying not to localize the text.
+      The notion of a <cite>non-localized text</cite> is a little false, as it is always necessary to chose a formatting convention.
+      This convention however, though very close to English, is usually slightly different.
+      For example:
+    </p>
+    <ul>
+      <li>
+        Identifiers are written as they appear in <abbr>UML</abbr> diagrams,
+        such as <cite>blurredImage</cite> instead of <cite>Blurred image</cite>.
+      </li>
+      <li>
+        Dates are written according to the <abbr>ISO</abbr> 8601 format,
+        which does not correspond to English conventions.
+      </li>
+      <li>
+        Numbers are written using their <code>toString()</code> methods, rather than using a <code>java.text.NumberFormat</code>.
+        As a result, there are differences in the number of significant digits,
+        use of exponential notation and the absence of thousands separators.
+      </li>
+    </ul>
+
+
+
+    <h3 id="UnicodePoint">Treatment of Characters</h3>
+    <p>
+      In Java, sequences of characters use UTF-16 encoding.
+      There is a direct correspondence between the values of the <code>char</code> type and the great majority of characters,
+      which facilitates the use of sequences so long as these characters are sufficient.
+      However, certain Unicode characters cannot be represented by a single <code>char</code>.
+      These <i>supplementary characters</i> include certain ideograms,
+      but also road and geographical symbols in the 1F680 to 1F700 range.
+      Support for these supplementary characters requires slightly more complex interactions than the classic case,
+      where we may assume a direct correspondence.
+      Thus, instead of the loop on the left below, international applications must generally use the loop on the right:
+    </p>
+
+    <table class="hidden">
+      <tr>
+        <th>Loop to Avoid</th>
+        <th>Recommended loop</th>
+      </tr>
+      <tr>
+        <td>
+<pre style="margin-top: 6pt"><b>for</b> (<b>int</b> <var>i</var>=0; <var>i</var>&lt;<var>string</var>.length(); <var>i</var>++) {
+    <b>char</b> <var>c</var> = <var>string</var>.charAt(<var>i</var>);
+    <b>if</b> (Character.isWhitespace(<var>c</var>)) {
+        <code class="comment">// A blank space was found.</code>
+    }
+}</pre>
+        </td>
+        <td>
+<pre style="margin-top: 6pt"><b>for</b> (<b>int</b> <var>i</var>=0; <var>i</var>&lt;<var>string</var>.length();) {
+    <b>int</b> <var>c</var> = <var>string</var>.codePointAt(<var>i</var>);
+    <b>if</b> (Character.isWhitespace(<var>c</var>)) {
+        <code class="comment">// A blank space was found.</code>
+    }
+    <var>i</var> += Character.charCount(<var>c</var>);
+}</pre>
+        </td>
+      </tr>
+    </table>
+
+    <p>
+      <abbr>SIS</abbr> supports supplementary characters by using the loop on the right where necessary,
+      but the loop on the left is occasionally used when it is known that the characters searched for are not supplementary characters,
+      even if some may be present in the sequence in which we are searching.
+    </p>
+
+
+
+    <h4 id="Whitespaces">The Interpretation of Blank Spaces</h4>
+    <p>
+      Standard Java provides two methods for determining whether a character is a blank space:
+      <code>Character.isWhitespace(…)</code> and <code>Character.isSpaceChar(…)</code>.
+      These two methods differ in their interpretations of non-breaking spaces, tabs and line breaks.
+      The first method conforms to the interpretation currently used in languages such as Java, C/C++ and <abbr>XML</abbr>,
+      which considers tabs and line breaks to be blank spaces, while non-breaking spaces are read as not blank.
+      The second method — which conforms strictly to the Unicode definition — makes the opposite interpretation.
+    </p>
+    <p>
+      <abbr>SIS</abbr> uses each of these methods in different contexts.
+      <code>isWhitespace(…)</code> is used to <em>separate</em> the elements of a list (numbers, dates, words, etc.),
+      while <code>isSpaceChar(…)</code> is used to ignore blank spaces <em>inside</em> a single element.
+    </p>
+    <div class="example"><p><b>Example:</b>
+      Take a list of numbers represented according to French conventions.
+      Each number may contain <em>non-breaking spaces</em> as thousands separators,
+      while the different numbers in the list may be separated by ordinary spaces, tabs or line breaks.
+      When analyzing a number, we want to consider the non-breaking spaces as being part of the number,
+      whereas a tab or a line break most likely indicates a separation between this number and the next.
+      We would thus use <code>isSpaceChar(…)</code>.
+      Conversely, when separating the numbers in the list, we want to consider tabs and line breaks as separators,
+      but not non-breaking spaces.
+      We would thus use <code>isWhitespace(…)</code>.
+      The role of ordinary spaces, to which either case might apply, should be decided beforehand.
+    </p></div>
+    <p>
+      In practice, this distinction is reflected in the use of <code>isSpaceChar(…)</code> in the implementations of <code>java.text.Format</code>,
+      or the use of <code>isWhitespace(…)</code> in nearly all the rest of the <abbr>SIS</abbr> library.
+    </p>
+  </body>
+</html>
