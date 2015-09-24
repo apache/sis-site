@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>Data Coverages</title>
+    <link rel="stylesheet" type="text/css" href="../../content/book/book.css"/>
+  </head>
+  <body>
+    <header>
+      <h1 id="Coverage">Data Coverages</h1>
+    </header>
+    <p>
+      Images, or <i>rasters</i>, are a particular case of a data structure called a <i>coverage</i>.
+      We could think of this as a “coverage of data.”
+      The title of the <abbr>ISO</abbr> 19123 standard that describes them, “Coverage Geometry and Functions”,
+      nicely summarizes the two essential elements of coverages:
+    </p>
+    <ul>
+      <li>
+        <p>
+          A coverage is a function which returns an attribute value from an entered coordinate.
+          The set of values that may be entered is called the domain, while the set of values that may be returned is called the range.
+          The domain is often the spatio-temporal area covered by the data,
+          but nothing in <abbr>SIS</abbr> prevents coverages from extending to other dimensions.
+          For example, thermodynamic studies often use an area where the dimensions are temperature and pressure.
+        </p>
+        <div class="example"><p><b>Example:</b>
+          The pixel values of an image may contain measures for terrain elevation.
+          If the function <var>h</var> = <var>f</var>(φ,λ) allows us to obtain (eventually, with the help of interpolations)
+          the elevation <var>h</var> according the the geographic coordinate (φ,λ),
+          then the geographic envelope of the image defined by the domain — the function <var>f</var> — is the <i>coverage</i>,
+          and the set of values <var>h</var> that this function can return is the <i>range</i>.
+        </p></div>
+      </li>
+      <li>
+        <p>
+          Different types of coverages may be characterized by the geometry of their cells.
+          In particular, a coverage is not necessarily composed of quadrilateral cells.
+          However, given that quadrilateral cells are by far the most frequent (since this is the usual geometry of image pixels),
+          we often use the term “grid coverage” to specify coverages composed of such cells.
+          In <abbr>SIS</abbr>, the geometry of coverages is described by the <code class="SIS">GridGeometry</code> class.
+        </p>
+      </li>
+    </ul>
+    <p>
+      The characteristics of the spatial domain are defined by <abbr>ISO</abbr> 19123 standard,
+      while the characteristics of range are not included in the standard.
+      The standard simply mentions that ranges may be finite or infinite,
+      and are not necessarily numerical.
+      For example, the values returned by a coverage may come from an enumeration (“this is a forest,” “this is a lake,” etc.).
+      However, the standard defines two important types of coverage which have an impact on the types of authorized ranges:
+      <i>discrete</i> coverages and <i>continuous</i> coverages.
+      Stated simply, continuous coverages are functions that can use interpolation methods.
+      Thus, since interpolations are only possible with numeric values, the ranges of non-numeric values may only be used with coverages of the
+      <code class="OGC">CV_DiscreteCoverage</code> type.
+    </p>
+    <aside>
+      <p><b>SIS's <code class="SIS">Range</code> Class and its Relationship to the Standards</b></p>
+      <p>
+        The distinction between the ranges of all types of values and the ranges of numeric values is represented in
+        <abbr>SIS</abbr> by the <code class="SIS">Range</code> and <code class="SIS">NumberRange</code>
+        classes respectively.
+        The <code class="SIS">NumberRange</code> is used more often, and is also the one that most closely approaches the
+        <a href="http://en.wikipedia.org/wiki/Interval_%28mathematics%29">the common mathematical concept of an interval</a>.
+        This textual representation approaches the specifications of <abbr>ISO</abbr> 31-11 standard,
+        except that the comma is replaced by the character “…” as the separator of minimal and maximal values.
+        For example, “[0 … 256)” represents the range of values from 0 inclusive to 256 exclusive.
+      </p>
+      <p>
+        <code class="SIS">Range</code> objects are only indirectly associated with coverages.
+        In <abbr>SIS</abbr>, the values that can return coverages are described by objects of the
+        <code class="SIS">SampleDimension</code> type. It is these that contain instances of <code class="SIS">Range</code>,
+        as well as other information such as <i>transfer function</i> (described later).
+      </p>
+    </aside>
+  </body>
+</html>
