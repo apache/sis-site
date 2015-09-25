@@ -712,16 +712,16 @@ and that this association is mandatory — meaning, in Java, that the method is 
 <code class="comment">/**
  * A 2D coordinate reference system used to approximate the shape of the earth on a planar surface.
  */</code>
-<code class="GeoAPI">@UML</code>(specification = ISO_19111,
+@<code class="GeoAPI">UML</code>(specification = ISO_19111,
      identifier = <i>"<code class="OGC">SC_ProjectedCRS</code>"</i>)
 <b>public</b> <b>interface</b> <code class="GeoAPI">ProjectedCRS</code> <b>extends</b> <code class="GeoAPI">GeneralDerivedCRS</code> {
     <code class="comment">/**
      * Returns the coordinate system, which must be Cartesian.
      */</code>
-    <code class="GeoAPI">@UML</code>(obligation = MANDATORY,
+    @<code class="GeoAPI">UML</code>(obligation = MANDATORY,
          specification = ISO_19111,
          identifier = <i>"<code class="OGC">coordinateSystem</code>"</i>)
-    <code class="GeoAPI">CartesianCS getCoordinateSystem()</code>;
+    <code class="GeoAPI">CartesianCS</code> <code class="GeoAPI">getCoordinateSystem()</code>;
 }</pre>
 
 <p>
@@ -943,10 +943,10 @@ Extensions are made available by the <code class="GeoAPI">valueOf(String)</code>
 creates new instances if the name provided does not correspond to the name of an existing instance.
 </p>
 
-<pre><code class="GeoAPI">MediumName</code> cdRom  = <code class="GeoAPI">MediumName.CD_ROM;</code>
-<code class="GeoAPI">MediumName</code> usbKey = <code class="GeoAPI">MediumName.valueOf</code>(<i>"<code class="GeoAPI">USB_KEY</code>"</i>); <code class="comment">// There is no constraint on this value.
-</code><b>assert</b> <code class="GeoAPI">MediumName.valueOf</code>(<i>"<code class="GeoAPI">CD_ROM</code>"</i>)  == cdRom  : <i>"valueOf must return existing constants."</i>;
-<b>assert</b> <code class="GeoAPI">MediumName.valueOf</code>(<i>"<code class="GeoAPI">USB_KEY</code>"</i>) == usbKey : <i>"valueOf must cache the previously requested values."</i>;</pre>
+<pre><code class="GeoAPI">MediumName</code> cdRom  = <code class="GeoAPI">MediumName</code>.<code class="GeoAPI">CD_ROM;</code>
+<code class="GeoAPI">MediumName</code> usbKey = <code class="GeoAPI">MediumName</code>.<code class="GeoAPI">valueOf</code>(<i>"<code class="GeoAPI">USB_KEY</code>"</i>); <code class="comment">// There is no constraint on this value.
+</code><b>assert</b> <code class="GeoAPI">MediumName</code>.<code class="GeoAPI">valueOf</code>(<i>"<code class="GeoAPI">CD_ROM</code>"</i>)  == cdRom  : <i>"valueOf must return existing constants."</i>;
+<b>assert</b> <code class="GeoAPI">MediumName</code>.<code class="GeoAPI">valueOf</code>(<i>"<code class="GeoAPI">USB_KEY</code>"</i>) == usbKey : <i>"valueOf must cache the previously requested values."</i>;</pre>
 
 
 
@@ -971,8 +971,8 @@ This example only takes the first factory located; if there is more than one fac
 for example when multiple libraries coexist — then the choice is left to the user.
 </p>
 
-<pre><b>import</b> <code class="GeoAPI">org.opengis.referencing.GeodeticDatum</code>;
-<b>import</b> <code class="GeoAPI">org.opengis.referencing.DatumFactory</code>;
+<pre><b>import</b> org.opengis.referencing.<code class="GeoAPI">GeodeticDatum</code>;
+<b>import</b> org.opengis.referencing.<code class="GeoAPI">DatumFactory</code>;
 <b>import</b> java.util.ServiceLoader;
 
 <b>public</b> <b>class</b> MyApplication {
@@ -1168,8 +1168,8 @@ This rule and a few others may be modified globally for all tests executed by th
 as in the following example:
 </p>
 
-<pre><b>import</b> <code class="GeoAPI">org.opengis.metadata.Metadata</code>;
-<b>import</b> <code class="GeoAPI">org.opengis.test.Validators</code>;
+<pre><b>import</b> org.opengis.metadata.<code class="GeoAPI">Metadata</code>;
+<b>import</b> org.opengis.test.<code class="GeoAPI">Validators</code>;
 <b>import</b> org.junit.Test;
 
 <b>public</b> <b>class</b> MyTest {
@@ -1180,14 +1180,14 @@ as in the following example:
      * in a parent class to all test classes.
      */</code>
     <b>static</b> {
-        <code class="GeoAPI">Validators.DEFAULT.metadata.requireMandatoryAttributes</code> = <b>false</b>;
-        <code class="GeoAPI">Validators.DEFAULT.citation.requireMandatoryAttributes</code> = <b>false</b>;
+        <code class="GeoAPI">Validators</code>.<code class="GeoAPI">DEFAULT.metadata.requireMandatoryAttributes</code> = <b>false</b>;
+        <code class="GeoAPI">Validators</code>.<code class="GeoAPI">DEFAULT.citation.requireMandatoryAttributes</code> = <b>false</b>;
     }
 
     @Test
     <b>public</b> <b>void</b> testMyMetadata() {
         <code class="GeoAPI">Metadata</code> myObject = …; <code class="comment">// Create an object here.
-</code>        <code class="GeoAPI">Validators.validate</code>(myObject);
+</code>        <code class="GeoAPI">Validators</code>.<code class="GeoAPI">validate</code>(myObject);
     }
 }</pre>
 
@@ -1196,15 +1196,15 @@ Rules may also be modified for a particular test suite without affecting the def
 This approach requires the creation of a new instance of the validator that we wish to modify the configuration.
 </p>
 
-<pre><b>import</b> <code class="GeoAPI">org.opengis.metadata.Metadata</code>;
-<b>import</b> <code class="GeoAPI">org.opengis.test.ValidatorContainer</code>;
+<pre><b>import</b> org.opengis.metadata.<code class="GeoAPI">Metadata</code>;
+<b>import</b> org.opengis.test.<code class="GeoAPI">ValidatorContainer</code>;
 <b>import</b> org.junit.Test;
 
 <b>public</b> <b>class</b> MyTest {
     <b>private</b> <b>final</b> <code class="GeoAPI">ValidatorContainer</code> validators;
 
     <b>public</b> MyTest() {
-        validators = <b>new</b> <code class="GeoAPI">ValidatorContainer()</code>;
+        validators = <b>new</b> <code class="GeoAPI">ValidatorContainer</code>();
         validators.<code class="GeoAPI">metadata.requireMandatoryAttributes</code> = <b>false</b>;
         validators.<code class="GeoAPI">citation.requireMandatoryAttributes</code> = <b>false</b>;
     }
@@ -1236,7 +1236,7 @@ However, this example adds a supplemental verification, annotated with <code>@Af
 <pre><b>import</b> org.junit.*;
 <b>import</b> org.junit.runner.RunWith;
 <b>import</b> org.junit.runners.JUnit4;
-<b>import</b> <code class="GeoAPI">org.opengis.test.referencing.ParameterizedTransformTest</code>;
+<b>import</b> org.opengis.test.referencing.<code class="GeoAPI">ParameterizedTransformTest</code>;
 <b>import</b> <b>static</b> org.junit.Assert.*;
 
 @RunWith(JUnit4.<b>class</b>)
