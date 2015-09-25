@@ -753,7 +753,7 @@ pas autorisée à retourner la valeur <code>null</code>.
  */</code>
 <code class="GeoAPI">@UML</code>(<var>specification</var> = ISO_19111,
      <var>identifier</var> = "<code class="OGC">SC_ProjectedCRS</code>")
-<b>public interface</b> <code class="GeoAPI">ProjectedCRS</code> <b>extends</b> <code class="GeoAPI">GeneralDerivedCRS</code> {<code class="comment">
+<b>public</b> <b>interface</b> <code class="GeoAPI">ProjectedCRS</code> <b>extends</b> <code class="GeoAPI">GeneralDerivedCRS</code> {<code class="comment">
     /**
      * Returns the coordinate system, which must be Cartesian.
      */</code>
@@ -770,9 +770,9 @@ ou pour écrire des éléments dans un document <abbr>XML</abbr>. L’exemple su
 méthode <code class="GeoAPI">getTitle()</code> de l’interface <code class="GeoAPI">Citation</code>:
 </p>
 
-<pre>Class&lt;?&gt; <var>type</var>   = <code class="GeoAPI">Citation</code>.class;
-Method   <var>method</var> = <var>type</var>.getMethod("<code class="GeoAPI">getTitle</code>", (Class&lt;?&gt;[]) null);
-<code class="GeoAPI">UML</code>      <var>annot</var>  = <var>method</var>.getAnnotation(<code class="GeoAPI">UML</code>.class);
+<pre>Class&lt;?&gt; <var>type</var>   = <code class="GeoAPI">Citation</code>.<b>class</b>;
+Method   <var>method</var> = <var>type</var>.getMethod("<code class="GeoAPI">getTitle</code>", (Class&lt;?&gt;[]) <b>null</b>);
+<code class="GeoAPI">UML</code>      <var>annot</var>  = <var>method</var>.getAnnotation(<code class="GeoAPI">UML</code>.<b>class</b>);
 String   <var>id</var>     = <var>annot</var>.identifier();
 System.out.println("Le nom standard de la méthode " + <var>method</var>.getName() + " est " + <var>id</var>);</pre>
 
@@ -791,7 +791,7 @@ une cache de leur application.
 </p>
 
 <pre>Properties <var>isoToGeoAPI</var> = <b>new</b> Properties();
-<b>try</b> (InputStream in = <code class="GeoAPI">UML</code>.class.getResourceAsStream("<code class="GeoAPI">class-index.properties</code>")) {
+<b>try</b> (InputStream in = <code class="GeoAPI">UML</code>.<b>class</b>.getResourceAsStream("<code class="GeoAPI">class-index.properties</code>")) {
     <var>isoToGeoAPI</var>.load(in);
 }
 String <var>isoName</var> = "<code class="OGC">CI_Citation</code>";
@@ -1018,9 +1018,9 @@ par exemple lorsque plusieurs bibliothèques cohabitent, alors le choix est lais
 <b>import</b> <code class="GeoAPI">org.opengis.referencing.DatumFactory</code>;
 <b>import</b> java.util.ServiceLoader;
 
-<b>public class</b> MyApplication {
-    <b>public void</b> createMyDatum() {
-        ServiceLoader  <var>loader</var> = ServiceLoader.load(<code class="GeoAPI">DatumFactory</code>.class);
+<b>public</b> <b>class</b> MyApplication {
+    <b>public</b> <b>void</b> createMyDatum() {
+        ServiceLoader  <var>loader</var> = ServiceLoader.load(<code class="GeoAPI">DatumFactory</code>.<b>class</b>);
         <code class="GeoAPI">DatumFactory</code>  <var>factory</var> = <var>loader</var>.iterator().next();
         <code class="GeoAPI">GeodeticDatum</code> <var>myDatum</var> = <var>factory</var>.<code class="GeoAPI">createGeodeticDatum</code>(…);
     }
@@ -1228,7 +1228,7 @@ Cette règle et quelques autres peuvent être modifiées globalement pour tous l
 <b>import</b> <code class="GeoAPI">org.opengis.test.Validators</code>;
 <b>import</b> org.junit.Test;
 
-<b>public class</b> MyTest {<code class="comment">
+<b>public</b> <b>class</b> MyTest {<code class="comment">
     /*
      * Tolérer l’absence d’attributs obligatoires dans les paquets metadata et citation.
      * Cette modification s’appliquera à tous les tests exécutés dans la <abbr>JVM</abbr> courante.
@@ -1241,7 +1241,7 @@ Cette règle et quelques autres peuvent être modifiées globalement pour tous l
     }
 
     @Test
-    <b>public void</b> testMyMetadata() {
+    <b>public</b> <b>void</b> testMyMetadata() {
         <code class="GeoAPI">Metadata</code> <var>myObject</var> = …; <code class="comment">// Construisez un objet ici.</code>
         <code class="GeoAPI">Validators.validate</code>(<var>myObject</var>);
     }
@@ -1257,8 +1257,8 @@ Cette approche nécessite de créer une nouvelle instance du validateur dont on 
 <b>import</b> <code class="GeoAPI">org.opengis.test.ValidatorContainer</code>;
 <b>import</b> org.junit.Test;
 
-<b>public class</b> MyTest {
-    <b>private final</b> <code class="GeoAPI">ValidatorContainer</code> <var>validators</var>;
+<b>public</b> <b>class</b> MyTest {
+    <b>private</b> <b>final</b> <code class="GeoAPI">ValidatorContainer</code> <var>validators</var>;
 
     <b>public</b> MyTest() {
         <var>validators</var> = <b>new</b> <code class="GeoAPI">ValidatorContainer()</code>;
@@ -1267,7 +1267,7 @@ Cette approche nécessite de créer une nouvelle instance du validateur dont on 
     }
 
     @Test
-    <b>public void</b> testMyMetadata() {
+    <b>public</b> <b>void</b> testMyMetadata() {
         <code class="GeoAPI">Metadata</code> <var>myObject</var> = …; <code class="comment">// Construisez un objet ici.</code>
         <var>validators</var>.<code class="GeoAPI">validate</code>(<var>myObject</var>);
     }
@@ -1295,10 +1295,10 @@ qui sera exécutée après chacun des tests.
 <b>import</b> org.junit.runner.RunWith;
 <b>import</b> org.junit.runners.JUnit4;
 <b>import</b> <code class="GeoAPI">org.opengis.test.referencing.ParameterizedTransformTest</code>;
-<b>import static</b> org.junit.Assert.*;
+<b>import</b> <b>static</b> org.junit.Assert.*;
 
-@RunWith(JUnit4.class)
-<b>public class</b> MyTest <b>extends</b> <code class="GeoAPI">ParameterizedTransformTest</code> {<code class="comment">
+@RunWith(JUnit4.<b>class</b>)
+<b>public</b> <b>class</b> MyTest <b>extends</b> <code class="GeoAPI">ParameterizedTransformTest</code> {<code class="comment">
     /**
      * Spécifie aux tests de GeoAPI notre propre fabrique de transformations de coordonnées.
      * GeoAPI testera les objets construits par cette fabrique.
@@ -1314,7 +1314,7 @@ qui sera exécutée après chacun des tests.
      */</code>
     @Test
     @Override
-    <b>public void</b> testLambertAzimuthalEqualArea() <b>throws</b> <code class="GeoAPI">FactoryException</code>, <code class="GeoAPI">TransformException</code> {
+    <b>public</b> <b>void</b> testLambertAzimuthalEqualArea() <b>throws</b> <code class="GeoAPI">FactoryException</code>, <code class="GeoAPI">TransformException</code> {
         <code class="GeoAPI"><var>tolerance</var></code> = 0.1; // Tolérance de 10 cm.
         <b>super</b>.<code class="GeoAPI">testLambertAzimuthalEqualArea()</code>;
     }
@@ -1325,7 +1325,7 @@ qui sera exécutée après chacun des tests.
      * travaillait bien dans des espaces bi-dimensionnels.
      */</code>
     @After
-    <b>public void</b> ensureAllTransformAreMath2D() {
+    <b>public</b> <b>void</b> ensureAllTransformAreMath2D() {
         assertTrue(<code class="GeoAPI"><var>transform</var></code> <b>instanceof</b> <code class="GeoAPI">MathTransform2D</code>);
     }
 }</pre>
@@ -1630,8 +1630,8 @@ Par exemple le code suivant définit une valeur pour l’attribut <code class="O
 <b>import</b> <code class="SIS">org.apache.sis.xml.IdentifierSpace</code>;
 <b>import</b> java.util.UUID;
 
-<b>public class</b> MyClass {
-    <b>public void</b> myMethod() {
+<b>public</b> <b>class</b> MyClass {
+    <b>public</b> <b>void</b> myMethod() {
         UUID <var>identifier</var> = UUID.randomUUID();
         <code class="SIS">DefaultMetadata</code> <var>metadata</var> = <b>new</b> <code class="SIS">DefaultMetadata</code>();
         <var>metadata</var>.<code class="SIS">getIdentifierMap().putSpecialized</code>(<code class="SIS">IdentifierSpace.UUID</code>, <var>identifier</var>);

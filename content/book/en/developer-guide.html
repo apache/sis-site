@@ -714,7 +714,7 @@ and that this association is mandatory — meaning, in Java, that the method is 
  */</code>
 <code class="GeoAPI">@UML</code>(<var>specification</var> = ISO_19111,
      <var>identifier</var> = "<code class="OGC">SC_ProjectedCRS</code>")
-<b>public interface</b> <code class="GeoAPI">ProjectedCRS</code> <b>extends</b> <code class="GeoAPI">GeneralDerivedCRS</code> {<code class="comment">
+<b>public</b> <b>interface</b> <code class="GeoAPI">ProjectedCRS</code> <b>extends</b> <code class="GeoAPI">GeneralDerivedCRS</code> {<code class="comment">
     /**
      * Returns the coordinate system, which must be Cartesian.
      */</code>
@@ -731,9 +731,9 @@ or for writing elements in an <abbr>XML</abbr> document.
 The following example displays the standard name for the method <code class="GeoAPI">getTitle()</code> from the <code class="GeoAPI">Citation</code> interface:
 </p>
 
-<pre>Class&lt;?&gt; <var>type</var>   = <code class="GeoAPI">Citation</code>.class;
-Method   <var>method</var> = <var>type</var>.getMethod("<code class="GeoAPI">getTitle</code>", (Class&lt;?&gt;[]) null);
-<code class="GeoAPI">UML</code>      <var>annot</var>  = <var>method</var>.getAnnotation(<code class="GeoAPI">UML</code>.class);
+<pre>Class&lt;?&gt; <var>type</var>   = <code class="GeoAPI">Citation</code>.<b>class</b>;
+Method   <var>method</var> = <var>type</var>.getMethod("<code class="GeoAPI">getTitle</code>", (Class&lt;?&gt;[]) <b>null</b>);
+<code class="GeoAPI">UML</code>      <var>annot</var>  = <var>method</var>.getAnnotation(<code class="GeoAPI">UML</code>.<b>class</b>);
 String   <var>id</var>     = <var>annot</var>.identifier();
 System.out.println("The standard name for the " + <var>method</var>.getName() + " method is " + <var>id</var>);</pre>
 
@@ -750,7 +750,7 @@ Users are always encouraged to only read this file once and then save its conten
 </p>
 
 <pre>Properties <var>isoToGeoAPI</var> = <b>new</b> Properties();
-<b>try</b> (InputStream in = <code class="GeoAPI">UML</code>.class.getResourceAsStream("<code class="GeoAPI">class-index.properties</code>")) {
+<b>try</b> (InputStream in = <code class="GeoAPI">UML</code>.<b>class</b>.getResourceAsStream("<code class="GeoAPI">class-index.properties</code>")) {
     <var>isoToGeoAPI</var>.load(in);
 }
 String <var>isoName</var> = "<code class="OGC">CI_Citation</code>";
@@ -944,7 +944,7 @@ creates new instances if the name provided does not correspond to the name of an
 </p>
 
 <pre><code class="GeoAPI">MediumName</code> <var>cdRom</var>  = <code class="GeoAPI">MediumName.CD_ROM;</code>
-<code class="GeoAPI">MediumName</code> <var>usbKey</var> = <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">USB_KEY</code>"); <code class="comment">// There is no constraint on this value.</code>
+<code class="GeoAPI">MediumName</code> <var>usbKey</var> = <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">USB_KEY</code>"); <code class="comment">// There is no constraint on <b>this</b> value.</code>
 <b>assert</b> <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">CD_ROM</code>")  == <var>cdRom</var>  : "valueOf must return existing constants.";
 <b>assert</b> <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">USB_KEY</code>") == <var>usbKey</var> : "valueOf must cache the previously requested values.";</pre>
 
@@ -975,9 +975,9 @@ for example when multiple libraries coexist — then the choice is left to the u
 <b>import</b> <code class="GeoAPI">org.opengis.referencing.DatumFactory</code>;
 <b>import</b> java.util.ServiceLoader;
 
-<b>public class</b> MyApplication {
-    <b>public void</b> createMyDatum() {
-        ServiceLoader  <var>loader</var> = ServiceLoader.load(<code class="GeoAPI">DatumFactory</code>.class);
+<b>public</b> <b>class</b> MyApplication {
+    <b>public</b> <b>void</b> createMyDatum() {
+        ServiceLoader  <var>loader</var> = ServiceLoader.load(<code class="GeoAPI">DatumFactory</code>.<b>class</b>);
         <code class="GeoAPI">DatumFactory</code>  <var>factory</var> = <var>loader</var>.iterator().next();
         <code class="GeoAPI">GeodeticDatum</code> <var>myDatum</var> = <var>factory</var>.<code class="GeoAPI">createGeodeticDatum</code>(…);
     }
@@ -1172,12 +1172,12 @@ as in the following example:
 <b>import</b> <code class="GeoAPI">org.opengis.test.Validators</code>;
 <b>import</b> org.junit.Test;
 
-<b>public class</b> MyTest {<code class="comment">
+<b>public</b> <b>class</b> MyTest {<code class="comment">
     /*
      * Tolerate the absence of mandatory attributes in metadata and citation packages.
      * This modification applies to all tests executed by the currently running <abbr>JVM</abbr>.
-     * If there are multiple test classes, this initialization may be performed
-     * in a parent class to all test classes.
+     * If there are multiple test classes, <b>this</b> initialization may be performed
+     * in a parent <b>class</b> to all test classes.
      */</code>
     <b>static</b> {
         <code class="GeoAPI">Validators.DEFAULT.metadata.requireMandatoryAttributes</code> = <b>false</b>;
@@ -1185,7 +1185,7 @@ as in the following example:
     }
 
     @Test
-    <b>public void</b> testMyMetadata() {
+    <b>public</b> <b>void</b> testMyMetadata() {
         <code class="GeoAPI">Metadata</code> <var>myObject</var> = …; <code class="comment">// Create an object here.</code>
         <code class="GeoAPI">Validators.validate</code>(<var>myObject</var>);
     }
@@ -1200,8 +1200,8 @@ This approach requires the creation of a new instance of the validator that we w
 <b>import</b> <code class="GeoAPI">org.opengis.test.ValidatorContainer</code>;
 <b>import</b> org.junit.Test;
 
-<b>public class</b> MyTest {
-    <b>private final</b> <code class="GeoAPI">ValidatorContainer</code> <var>validators</var>;
+<b>public</b> <b>class</b> MyTest {
+    <b>private</b> <b>final</b> <code class="GeoAPI">ValidatorContainer</code> <var>validators</var>;
 
     <b>public</b> MyTest() {
         <var>validators</var> = <b>new</b> <code class="GeoAPI">ValidatorContainer()</code>;
@@ -1210,7 +1210,7 @@ This approach requires the creation of a new instance of the validator that we w
     }
 
     @Test
-    <b>public void</b> testMyMetadata() {
+    <b>public</b> <b>void</b> testMyMetadata() {
         <code class="GeoAPI">Metadata</code> <var>myObject</var> = …; <code class="comment">// Create an object here.</code>
         <var>validators</var>.<code class="GeoAPI">validate</code>(<var>myObject</var>);
     }
@@ -1237,37 +1237,37 @@ However, this example adds a supplemental verification, annotated with <code>@Af
 <b>import</b> org.junit.runner.RunWith;
 <b>import</b> org.junit.runners.JUnit4;
 <b>import</b> <code class="GeoAPI">org.opengis.test.referencing.ParameterizedTransformTest</code>;
-<b>import static</b> org.junit.Assert.*;
+<b>import</b> <b>static</b> org.junit.Assert.*;
 
-@RunWith(JUnit4.class)
-<b>public class</b> MyTest <b>extends</b> <code class="GeoAPI">ParameterizedTransformTest</code> {<code class="comment">
+@RunWith(JUnit4.<b>class</b>)
+<b>public</b> <b>class</b> MyTest <b>extends</b> <code class="GeoAPI">ParameterizedTransformTest</code> {<code class="comment">
     /**
-     * Specify our own coordinate transformation factory for the GeoAPI tests.
-     * GeoAPI will test the objects created by this factory.
+     * Specify our own coordinate transformation factory <b>for</b> the GeoAPI tests.
+     * GeoAPI will test the objects created by <b>this</b> factory.
      */</code>
     <b>public</b> MyTest() {
         <b>super</b>(<b>new</b> MyMathTransformFactory());
     }
 <code class="comment">
     /**
-     * Changes the behaviour of a test. This example relaxes the requirements of this test a little,
-     * by accepting errors of up to 10 centimetres, rather than the default value of 1 cm.
-     * This change only applies to this method, and does not affect the other inherited tests.
+     * Changes the behaviour of a test. This example relaxes the requirements of <b>this</b> test a little,
+     * by accepting errors of up to 10 centimetres, rather than the <b>default</b> value of 1 cm.
+     * This change only applies to <b>this</b> method, and does not affect the other inherited tests.
      */</code>
     @Test
     @Override
-    <b>public void</b> testLambertAzimuthalEqualArea() <b>throws</b> <code class="GeoAPI">FactoryException</code>, <code class="GeoAPI">TransformException</code> {
+    <b>public</b> <b>void</b> testLambertAzimuthalEqualArea() <b>throws</b> <code class="GeoAPI">FactoryException</code>, <code class="GeoAPI">TransformException</code> {
         <code class="GeoAPI"><var>tolerance</var></code> = 0.1; // 10 cm tolerance.
         <b>super</b>.<code class="GeoAPI">testLambertAzimuthalEqualArea()</code>;
     }
 <code class="comment">
     /**
      * Supplemental verification performed after each test, inherited or not.
-     * In this example, we are verifying that the transformation tested
+     * In <b>this</b> example, we are verifying that the transformation tested
      * works correctly in two-dimensional spaces.
      */</code>
     @After
-    <b>public void</b> ensureAllTransformAreMath2D() {
+    <b>public</b> <b>void</b> ensureAllTransformAreMath2D() {
         assertTrue(<code class="GeoAPI"><var>transform</var></code> <b>instanceof</b> <code class="GeoAPI">MathTransform2D</code>);
     }
 }</pre>
@@ -1563,8 +1563,8 @@ For example, the following code defines a value for the <code class="OGC">uuid</
 <b>import</b> <code class="SIS">org.apache.sis.xml.IdentifierSpace</code>;
 <b>import</b> java.util.UUID;
 
-<b>public class</b> MyClass {
-    <b>public void</b> myMethod() {
+<b>public</b> <b>class</b> MyClass {
+    <b>public</b> <b>void</b> myMethod() {
         UUID <var>identifier</var> = UUID.randomUUID();
         <code class="SIS">DefaultMetadata</code> <var>metadata</var> = <b>new</b> <code class="SIS">DefaultMetadata</code>();
         <var>metadata</var>.<code class="SIS">getIdentifierMap().putSpecialized</code>(<code class="SIS">IdentifierSpace.UUID</code>, <var>identifier</var>);

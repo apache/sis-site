@@ -229,14 +229,14 @@
       and that this association is mandatory — meaning, in Java, that the method is not allowed to return a <code>null</code> value.
     </p>
 
-<pre><b>package</b> <code class="GeoAPI">org.opengis.referencing.crs</code>;
+<pre>package <code class="GeoAPI">org.opengis.referencing.crs</code>;
 <code class="comment">
 /**
  * A 2D coordinate reference system used to approximate the shape of the earth on a planar surface.
  */</code>
 <code class="GeoAPI">@UML</code>(<var>specification</var> = ISO_19111,
      <var>identifier</var> = "<code class="OGC">SC_ProjectedCRS</code>")
-<b>public interface</b> <code class="GeoAPI">ProjectedCRS</code> <b>extends</b> <code class="GeoAPI">GeneralDerivedCRS</code> {<code class="comment">
+public interface <code class="GeoAPI">ProjectedCRS</code> extends <code class="GeoAPI">GeneralDerivedCRS</code> {<code class="comment">
     /**
      * Returns the coordinate system, which must be Cartesian.
      */</code>
@@ -271,8 +271,8 @@ System.out.println("The standard name for the " + <var>method</var>.getName() + 
       Users are always encouraged to only read this file once and then save its contents in their application's cache.
     </p>
 
-<pre>Properties <var>isoToGeoAPI</var> = <b>new</b> Properties();
-<b>try</b> (InputStream in = <code class="GeoAPI">UML</code>.class.getResourceAsStream("<code class="GeoAPI">class-index.properties</code>")) {
+<pre>Properties <var>isoToGeoAPI</var> = new Properties();
+try (InputStream in = <code class="GeoAPI">UML</code>.class.getResourceAsStream("<code class="GeoAPI">class-index.properties</code>")) {
     <var>isoToGeoAPI</var>.load(in);
 }
 String <var>isoName</var> = "<code class="OGC">CI_Citation</code>";
@@ -467,8 +467,8 @@ System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + <var>isoN
 
 <pre><code class="GeoAPI">MediumName</code> <var>cdRom</var>  = <code class="GeoAPI">MediumName.CD_ROM;</code>
 <code class="GeoAPI">MediumName</code> <var>usbKey</var> = <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">USB_KEY</code>"); <code class="comment">// There is no constraint on this value.</code>
-<b>assert</b> <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">CD_ROM</code>")  == <var>cdRom</var>  : "valueOf must return existing constants.";
-<b>assert</b> <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">USB_KEY</code>") == <var>usbKey</var> : "valueOf must cache the previously requested values.";</pre>
+assert <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">CD_ROM</code>")  == <var>cdRom</var>  : "valueOf must return existing constants.";
+assert <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">USB_KEY</code>") == <var>usbKey</var> : "valueOf must cache the previously requested values.";</pre>
 
 
 
@@ -493,12 +493,12 @@ System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + <var>isoN
       for example when multiple libraries coexist — then the choice is left to the user.
     </p>
 
-<pre><b>import</b> <code class="GeoAPI">org.opengis.referencing.GeodeticDatum</code>;
-<b>import</b> <code class="GeoAPI">org.opengis.referencing.DatumFactory</code>;
-<b>import</b> java.util.ServiceLoader;
+<pre>import <code class="GeoAPI">org.opengis.referencing.GeodeticDatum</code>;
+import <code class="GeoAPI">org.opengis.referencing.DatumFactory</code>;
+import java.util.ServiceLoader;
 
-<b>public class</b> MyApplication {
-    <b>public void</b> createMyDatum() {
+public class MyApplication {
+    public void createMyDatum() {
         ServiceLoader  <var>loader</var> = ServiceLoader.load(<code class="GeoAPI">DatumFactory</code>.class);
         <code class="GeoAPI">DatumFactory</code>  <var>factory</var> = <var>loader</var>.iterator().next();
         <code class="GeoAPI">GeodeticDatum</code> <var>myDatum</var> = <var>factory</var>.<code class="GeoAPI">createGeodeticDatum</code>(…);
@@ -690,24 +690,24 @@ System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + <var>isoN
       as in the following example:
     </p>
 
-<pre><b>import</b> <code class="GeoAPI">org.opengis.metadata.Metadata</code>;
-<b>import</b> <code class="GeoAPI">org.opengis.test.Validators</code>;
-<b>import</b> org.junit.Test;
+<pre>import <code class="GeoAPI">org.opengis.metadata.Metadata</code>;
+import <code class="GeoAPI">org.opengis.test.Validators</code>;
+import org.junit.Test;
 
-<b>public class</b> MyTest {<code class="comment">
+public class MyTest {<code class="comment">
     /*
      * Tolerate the absence of mandatory attributes in metadata and citation packages.
      * This modification applies to all tests executed by the currently running <abbr>JVM</abbr>.
      * If there are multiple test classes, this initialization may be performed
      * in a parent class to all test classes.
      */</code>
-    <b>static</b> {
-        <code class="GeoAPI">Validators.DEFAULT.metadata.requireMandatoryAttributes</code> = <b>false</b>;
-        <code class="GeoAPI">Validators.DEFAULT.citation.requireMandatoryAttributes</code> = <b>false</b>;
+    static {
+        <code class="GeoAPI">Validators.DEFAULT.metadata.requireMandatoryAttributes</code> = false;
+        <code class="GeoAPI">Validators.DEFAULT.citation.requireMandatoryAttributes</code> = false;
     }
 
     @Test
-    <b>public void</b> testMyMetadata() {
+    public void testMyMetadata() {
         <code class="GeoAPI">Metadata</code> <var>myObject</var> = …; <code class="comment">// Create an object here.</code>
         <code class="GeoAPI">Validators.validate</code>(<var>myObject</var>);
     }
@@ -718,21 +718,21 @@ System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + <var>isoN
       This approach requires the creation of a new instance of the validator that we wish to modify the configuration.
     </p>
 
-<pre><b>import</b> <code class="GeoAPI">org.opengis.metadata.Metadata</code>;
-<b>import</b> <code class="GeoAPI">org.opengis.test.ValidatorContainer</code>;
-<b>import</b> org.junit.Test;
+<pre>import <code class="GeoAPI">org.opengis.metadata.Metadata</code>;
+import <code class="GeoAPI">org.opengis.test.ValidatorContainer</code>;
+import org.junit.Test;
 
-<b>public class</b> MyTest {
-    <b>private final</b> <code class="GeoAPI">ValidatorContainer</code> <var>validators</var>;
+public class MyTest {
+    private final <code class="GeoAPI">ValidatorContainer</code> <var>validators</var>;
 
-    <b>public</b> MyTest() {
-        <var>validators</var> = <b>new</b> <code class="GeoAPI">ValidatorContainer()</code>;
-        <var>validators</var>.<code class="GeoAPI">metadata.requireMandatoryAttributes</code> = <b>false</b>;
-        <var>validators</var>.<code class="GeoAPI">citation.requireMandatoryAttributes</code> = <b>false</b>;
+    public MyTest() {
+        <var>validators</var> = new <code class="GeoAPI">ValidatorContainer()</code>;
+        <var>validators</var>.<code class="GeoAPI">metadata.requireMandatoryAttributes</code> = false;
+        <var>validators</var>.<code class="GeoAPI">citation.requireMandatoryAttributes</code> = false;
     }
 
     @Test
-    <b>public void</b> testMyMetadata() {
+    public void testMyMetadata() {
         <code class="GeoAPI">Metadata</code> <var>myObject</var> = …; <code class="comment">// Create an object here.</code>
         <var>validators</var>.<code class="GeoAPI">validate</code>(<var>myObject</var>);
     }
@@ -755,20 +755,20 @@ System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + <var>isoN
       However, this example adds a supplemental verification, annotated with <code>@After</code>, which will be executed after each test.
     </p>
 
-<pre><b>import</b> org.junit.*;
-<b>import</b> org.junit.runner.RunWith;
-<b>import</b> org.junit.runners.JUnit4;
-<b>import</b> <code class="GeoAPI">org.opengis.test.referencing.ParameterizedTransformTest</code>;
-<b>import static</b> org.junit.Assert.*;
+<pre>import org.junit.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import <code class="GeoAPI">org.opengis.test.referencing.ParameterizedTransformTest</code>;
+import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
-<b>public class</b> MyTest <b>extends</b> <code class="GeoAPI">ParameterizedTransformTest</code> {<code class="comment">
+public class MyTest extends <code class="GeoAPI">ParameterizedTransformTest</code> {<code class="comment">
     /**
      * Specify our own coordinate transformation factory for the GeoAPI tests.
      * GeoAPI will test the objects created by this factory.
      */</code>
-    <b>public</b> MyTest() {
-        <b>super</b>(<b>new</b> MyMathTransformFactory());
+    public MyTest() {
+        super(new MyMathTransformFactory());
     }
 <code class="comment">
     /**
@@ -778,9 +778,9 @@ System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + <var>isoN
      */</code>
     @Test
     @Override
-    <b>public void</b> testLambertAzimuthalEqualArea() <b>throws</b> <code class="GeoAPI">FactoryException</code>, <code class="GeoAPI">TransformException</code> {
+    public void testLambertAzimuthalEqualArea() throws <code class="GeoAPI">FactoryException</code>, <code class="GeoAPI">TransformException</code> {
         <code class="GeoAPI"><var>tolerance</var></code> = 0.1; // 10 cm tolerance.
-        <b>super</b>.<code class="GeoAPI">testLambertAzimuthalEqualArea()</code>;
+        super.<code class="GeoAPI">testLambertAzimuthalEqualArea()</code>;
     }
 <code class="comment">
     /**
@@ -789,8 +789,8 @@ System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + <var>isoN
      * works correctly in two-dimensional spaces.
      */</code>
     @After
-    <b>public void</b> ensureAllTransformAreMath2D() {
-        assertTrue(<code class="GeoAPI"><var>transform</var></code> <b>instanceof</b> <code class="GeoAPI">MathTransform2D</code>);
+    public void ensureAllTransformAreMath2D() {
+        assertTrue(<code class="GeoAPI"><var>transform</var></code> instanceof <code class="GeoAPI">MathTransform2D</code>);
     }
 }</pre>
 
