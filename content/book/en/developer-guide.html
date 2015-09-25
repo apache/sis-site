@@ -708,19 +708,19 @@ and that this association is mandatory — meaning, in Java, that the method is 
 </p>
 
 <pre><b>package</b> <code class="GeoAPI">org.opengis.referencing.crs</code>;
-<code class="comment">
-/**
+
+<code class="comment">/**
  * A 2D coordinate reference system used to approximate the shape of the earth on a planar surface.
  */</code>
-<code class="GeoAPI">@UML</code>(<var>specification</var> = ISO_19111,
-     <var>identifier</var> = "<code class="OGC">SC_ProjectedCRS</code>")
-<b>public</b> <b>interface</b> <code class="GeoAPI">ProjectedCRS</code> <b>extends</b> <code class="GeoAPI">GeneralDerivedCRS</code> {<code class="comment">
-    /**
+<code class="GeoAPI">@UML</code>(specification = ISO_19111,
+     identifier = <i>"<code class="OGC">SC_ProjectedCRS</code>"</i>)
+<b>public</b> <b>interface</b> <code class="GeoAPI">ProjectedCRS</code> <b>extends</b> <code class="GeoAPI">GeneralDerivedCRS</code> {
+    <code class="comment">/**
      * Returns the coordinate system, which must be Cartesian.
      */</code>
-    <code class="GeoAPI">@UML</code>(<var>obligation</var> = MANDATORY,
-         <var>specification</var> = ISO_19111,
-         <var>identifier</var> = "<code class="OGC">coordinateSystem</code>")
+    <code class="GeoAPI">@UML</code>(obligation = MANDATORY,
+         specification = ISO_19111,
+         identifier = <i>"<code class="OGC">coordinateSystem</code>"</i>)
     <code class="GeoAPI">CartesianCS getCoordinateSystem()</code>;
 }</pre>
 
@@ -731,11 +731,11 @@ or for writing elements in an <abbr>XML</abbr> document.
 The following example displays the standard name for the method <code class="GeoAPI">getTitle()</code> from the <code class="GeoAPI">Citation</code> interface:
 </p>
 
-<pre>Class&lt;?&gt; <var>type</var>   = <code class="GeoAPI">Citation</code>.<b>class</b>;
-Method   <var>method</var> = <var>type</var>.getMethod("<code class="GeoAPI">getTitle</code>", (Class&lt;?&gt;[]) <b>null</b>);
-<code class="GeoAPI">UML</code>      <var>annot</var>  = <var>method</var>.getAnnotation(<code class="GeoAPI">UML</code>.<b>class</b>);
-String   <var>id</var>     = <var>annot</var>.identifier();
-System.out.println("The standard name for the " + <var>method</var>.getName() + " method is " + <var>id</var>);</pre>
+<pre>Class&lt;?&gt; type   = <code class="GeoAPI">Citation</code>.<b>class</b>;
+Method   method = type.getMethod(<i>"<code class="GeoAPI">getTitle</code>"</i>, (Class&lt;?&gt;[]) <b>null</b>);
+<code class="GeoAPI">UML</code>      annot  = method.getAnnotation(<code class="GeoAPI">UML</code>.<b>class</b>);
+String   id     = annot.identifier();
+System.out.println(<i>"The standard name for the "</i> + method.getName() + <i>" method is "</i> + id);</pre>
 
 <p>
 The class <code class="SIS">org.apache.sis.util.iso.Types</code> provides the
@@ -749,14 +749,14 @@ The following example reads the files just before searching for the name of the 
 Users are always encouraged to only read this file once and then save its contents in their application's cache.
 </p>
 
-<pre>Properties <var>isoToGeoAPI</var> = <b>new</b> Properties();
-<b>try</b> (InputStream in = <code class="GeoAPI">UML</code>.<b>class</b>.getResourceAsStream("<code class="GeoAPI">class-index.properties</code>")) {
-    <var>isoToGeoAPI</var>.load(in);
+<pre>Properties isoToGeoAPI = <b>new</b> Properties();
+<b>try</b> (InputStream in = <code class="GeoAPI">UML</code>.<b>class</b>.getResourceAsStream(<i>"<code class="GeoAPI">class-index.properties</code>"</i>)) {
+    isoToGeoAPI.load(in);
 }
-String <var>isoName</var> = "<code class="OGC">CI_Citation</code>";
-String <var>geoName</var> = getProperty(<var>isoName</var>);
-Class&lt;?&gt;  <var>type</var> = Class.forName(<var>geoName</var>);
-System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + <var>isoName</var> + " is " + <var>type</var>);</pre>
+String isoName = <i>"<code class="OGC">CI_Citation</code>"</i>;
+String geoName = getProperty(isoName);
+Class&lt;?&gt;  type = Class.forName(geoName);
+System.out.println(<i>"The GeoAPI interface for <abbr>ISO</abbr> type "</i> + isoName + <i>" is "</i> + type);</pre>
 
 <p>
 The class <code class="SIS">org.apache.sis.util.iso.Types</code> provides the
@@ -943,10 +943,10 @@ Extensions are made available by the <code class="GeoAPI">valueOf(String)</code>
 creates new instances if the name provided does not correspond to the name of an existing instance.
 </p>
 
-<pre><code class="GeoAPI">MediumName</code> <var>cdRom</var>  = <code class="GeoAPI">MediumName.CD_ROM;</code>
-<code class="GeoAPI">MediumName</code> <var>usbKey</var> = <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">USB_KEY</code>"); <code class="comment">// There is no constraint on <b>this</b> value.</code>
-<b>assert</b> <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">CD_ROM</code>")  == <var>cdRom</var>  : "valueOf must return existing constants.";
-<b>assert</b> <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">USB_KEY</code>") == <var>usbKey</var> : "valueOf must cache the previously requested values.";</pre>
+<pre><code class="GeoAPI">MediumName</code> cdRom  = <code class="GeoAPI">MediumName.CD_ROM;</code>
+<code class="GeoAPI">MediumName</code> usbKey = <code class="GeoAPI">MediumName.valueOf</code>(<i>"<code class="GeoAPI">USB_KEY</code>"</i>); <code class="comment">// There is no constraint on this value.
+</code><b>assert</b> <code class="GeoAPI">MediumName.valueOf</code>(<i>"<code class="GeoAPI">CD_ROM</code>"</i>)  == cdRom  : <i>"valueOf must return existing constants."</i>;
+<b>assert</b> <code class="GeoAPI">MediumName.valueOf</code>(<i>"<code class="GeoAPI">USB_KEY</code>"</i>) == usbKey : <i>"valueOf must cache the previously requested values."</i>;</pre>
 
 
 
@@ -977,9 +977,9 @@ for example when multiple libraries coexist — then the choice is left to the u
 
 <b>public</b> <b>class</b> MyApplication {
     <b>public</b> <b>void</b> createMyDatum() {
-        ServiceLoader  <var>loader</var> = ServiceLoader.load(<code class="GeoAPI">DatumFactory</code>.<b>class</b>);
-        <code class="GeoAPI">DatumFactory</code>  <var>factory</var> = <var>loader</var>.iterator().next();
-        <code class="GeoAPI">GeodeticDatum</code> <var>myDatum</var> = <var>factory</var>.<code class="GeoAPI">createGeodeticDatum</code>(…);
+        ServiceLoader  loader = ServiceLoader.load(<code class="GeoAPI">DatumFactory</code>.<b>class</b>);
+        <code class="GeoAPI">DatumFactory</code>  factory = loader.iterator().next();
+        <code class="GeoAPI">GeodeticDatum</code> myDatum = factory.<code class="GeoAPI">createGeodeticDatum</code>(…);
     }
 }</pre>
 
@@ -1172,12 +1172,12 @@ as in the following example:
 <b>import</b> <code class="GeoAPI">org.opengis.test.Validators</code>;
 <b>import</b> org.junit.Test;
 
-<b>public</b> <b>class</b> MyTest {<code class="comment">
-    /*
+<b>public</b> <b>class</b> MyTest {
+    <code class="comment">/*
      * Tolerate the absence of mandatory attributes in metadata and citation packages.
      * This modification applies to all tests executed by the currently running <abbr>JVM</abbr>.
-     * If there are multiple test classes, <b>this</b> initialization may be performed
-     * in a parent <b>class</b> to all test classes.
+     * If there are multiple test classes, this initialization may be performed
+     * in a parent class to all test classes.
      */</code>
     <b>static</b> {
         <code class="GeoAPI">Validators.DEFAULT.metadata.requireMandatoryAttributes</code> = <b>false</b>;
@@ -1186,8 +1186,8 @@ as in the following example:
 
     @Test
     <b>public</b> <b>void</b> testMyMetadata() {
-        <code class="GeoAPI">Metadata</code> <var>myObject</var> = …; <code class="comment">// Create an object here.</code>
-        <code class="GeoAPI">Validators.validate</code>(<var>myObject</var>);
+        <code class="GeoAPI">Metadata</code> myObject = …; <code class="comment">// Create an object here.
+</code>        <code class="GeoAPI">Validators.validate</code>(myObject);
     }
 }</pre>
 
@@ -1201,18 +1201,18 @@ This approach requires the creation of a new instance of the validator that we w
 <b>import</b> org.junit.Test;
 
 <b>public</b> <b>class</b> MyTest {
-    <b>private</b> <b>final</b> <code class="GeoAPI">ValidatorContainer</code> <var>validators</var>;
+    <b>private</b> <b>final</b> <code class="GeoAPI">ValidatorContainer</code> validators;
 
     <b>public</b> MyTest() {
-        <var>validators</var> = <b>new</b> <code class="GeoAPI">ValidatorContainer()</code>;
-        <var>validators</var>.<code class="GeoAPI">metadata.requireMandatoryAttributes</code> = <b>false</b>;
-        <var>validators</var>.<code class="GeoAPI">citation.requireMandatoryAttributes</code> = <b>false</b>;
+        validators = <b>new</b> <code class="GeoAPI">ValidatorContainer()</code>;
+        validators.<code class="GeoAPI">metadata.requireMandatoryAttributes</code> = <b>false</b>;
+        validators.<code class="GeoAPI">citation.requireMandatoryAttributes</code> = <b>false</b>;
     }
 
     @Test
     <b>public</b> <b>void</b> testMyMetadata() {
-        <code class="GeoAPI">Metadata</code> <var>myObject</var> = …; <code class="comment">// Create an object here.</code>
-        <var>validators</var>.<code class="GeoAPI">validate</code>(<var>myObject</var>);
+        <code class="GeoAPI">Metadata</code> myObject = …; <code class="comment">// Create an object here.
+</code>        validators.<code class="GeoAPI">validate</code>(myObject);
     }
 }</pre>
 
@@ -1240,35 +1240,35 @@ However, this example adds a supplemental verification, annotated with <code>@Af
 <b>import</b> <b>static</b> org.junit.Assert.*;
 
 @RunWith(JUnit4.<b>class</b>)
-<b>public</b> <b>class</b> MyTest <b>extends</b> <code class="GeoAPI">ParameterizedTransformTest</code> {<code class="comment">
-    /**
-     * Specify our own coordinate transformation factory <b>for</b> the GeoAPI tests.
-     * GeoAPI will test the objects created by <b>this</b> factory.
+<b>public</b> <b>class</b> MyTest <b>extends</b> <code class="GeoAPI">ParameterizedTransformTest</code> {
+    <code class="comment">/**
+     * Specify our own coordinate transformation factory for the GeoAPI tests.
+     * GeoAPI will test the objects created by this factory.
      */</code>
     <b>public</b> MyTest() {
         <b>super</b>(<b>new</b> MyMathTransformFactory());
     }
-<code class="comment">
-    /**
-     * Changes the behaviour of a test. This example relaxes the requirements of <b>this</b> test a little,
-     * by accepting errors of up to 10 centimetres, rather than the <b>default</b> value of 1 cm.
-     * This change only applies to <b>this</b> method, and does not affect the other inherited tests.
+
+    <code class="comment">/**
+     * Changes the behaviour of a test. This example relaxes the requirements of this test a little,
+     * by accepting errors of up to 10 centimetres, rather than the default value of 1 cm.
+     * This change only applies to this method, and does not affect the other inherited tests.
      */</code>
     @Test
     @Override
     <b>public</b> <b>void</b> testLambertAzimuthalEqualArea() <b>throws</b> <code class="GeoAPI">FactoryException</code>, <code class="GeoAPI">TransformException</code> {
-        <code class="GeoAPI"><var>tolerance</var></code> = 0.1; // 10 cm tolerance.
-        <b>super</b>.<code class="GeoAPI">testLambertAzimuthalEqualArea()</code>;
+        <code class="GeoAPI">tolerance</code> = 0.1; <code class="comment">// 10 cm tolerance.
+</code>        <b>super</b>.<code class="GeoAPI">testLambertAzimuthalEqualArea()</code>;
     }
-<code class="comment">
-    /**
+
+    <code class="comment">/**
      * Supplemental verification performed after each test, inherited or not.
-     * In <b>this</b> example, we are verifying that the transformation tested
+     * In this example, we are verifying that the transformation tested
      * works correctly in two-dimensional spaces.
      */</code>
     @After
     <b>public</b> <b>void</b> ensureAllTransformAreMath2D() {
-        assertTrue(<code class="GeoAPI"><var>transform</var></code> <b>instanceof</b> <code class="GeoAPI">MathTransform2D</code>);
+        assertTrue(<code class="GeoAPI">transform</code> <b>instanceof</b> <code class="GeoAPI">MathTransform2D</code>);
     }
 }</pre>
 
@@ -1416,7 +1416,8 @@ the value of the <code class="OGC">citedResponsibleParty</code> property is inco
 This practice doubles the depth of the hierarchy, and introduces duplication at all levels for each value,
 as in the following example:
 </p>
-<pre><b>&lt;MD_Metadata&gt;</b>
+
+<pre class="xml"><b>&lt;MD_Metadata&gt;</b>
   &lt;identificationInfo&gt;
     <b>&lt;MD_DataIdentification&gt;</b>
       &lt;citation&gt;
@@ -1516,17 +1517,17 @@ while the part on the right references this element:
 </tr>
 <tr>
 <td>
-<pre style="margin-top: 6pt">&lt;MD_MetaData&gt;
+<pre class="xml" style="margin-top: 6pt">&lt;MD_MetaData&gt;
   &lt;identificationInfo&gt;
-    &lt;MD_DataIdentification id="<b>my_id</b>"&gt;
+    &lt;MD_DataIdentification id=<i>"<b>my_id</b>"</i>&gt;
       <code class="comment">&lt;!-- insert child properties here --&gt;</code>
     &lt;/MD_DataIdentification&gt;
   &lt;/identificationInfo&gt;
 &lt;/MD_MetaData&gt;</pre>
 </td>
 <td>
-<pre style="margin-top: 6pt">&lt;MD_MetaData&gt;
-  &lt;identificationInfo idref="<b>my_id</b>"/&gt;
+<pre class="xml" style="margin-top: 6pt">&lt;MD_MetaData&gt;
+  &lt;identificationInfo idref=<i>"<b>my_id</b>"</i>/&gt;
 &lt;/MD_MetaData&gt;</pre>
 </td>
 </tr>
@@ -1565,9 +1566,9 @@ For example, the following code defines a value for the <code class="OGC">uuid</
 
 <b>public</b> <b>class</b> MyClass {
     <b>public</b> <b>void</b> myMethod() {
-        UUID <var>identifier</var> = UUID.randomUUID();
-        <code class="SIS">DefaultMetadata</code> <var>metadata</var> = <b>new</b> <code class="SIS">DefaultMetadata</code>();
-        <var>metadata</var>.<code class="SIS">getIdentifierMap().putSpecialized</code>(<code class="SIS">IdentifierSpace.UUID</code>, <var>identifier</var>);
+        UUID identifier = UUID.randomUUID();
+        <code class="SIS">DefaultMetadata</code> metadata = <b>new</b> <code class="SIS">DefaultMetadata</code>();
+        metadata.<code class="SIS">getIdentifierMap().putSpecialized</code>(<code class="SIS">IdentifierSpace.UUID</code>, identifier);
     }
 }</pre>
 
@@ -1618,7 +1619,7 @@ But when a <code class="OGC">nilReason</code> is present, the <abbr>SIS</abbr> i
 </tr>
 <tr>
 <td>
-<pre style="margin-top: 6pt">&lt;CI_Citation&gt;
+<pre class="xml" style="margin-top: 6pt">&lt;CI_Citation&gt;
   &lt;series&gt;
     &lt;CI_Series&gt;
       <code class="comment">&lt;!-- insert child properties here --&gt;</code>
@@ -1627,8 +1628,8 @@ But when a <code class="OGC">nilReason</code> is present, the <abbr>SIS</abbr> i
 &lt;/CI_Citation&gt;</pre>
 </td>
 <td>
-<pre style="margin-top: 6pt">&lt;CI_Citation&gt;
-  &lt;series nilReason="unknown"/&gt;
+<pre class="xml" style="margin-top: 6pt">&lt;CI_Citation&gt;
+  &lt;series nilReason=<i>"unknown"</i>/&gt;
 &lt;/CI_Citation&gt;</pre>
 </td>
 </tr>
@@ -1850,20 +1851,20 @@ Thus, instead of the loop on the left below, international applications must gen
 </tr>
 <tr>
 <td>
-<pre style="margin-top: 6pt"><b>for</b> (<b>int</b> <var>i</var>=0; <var>i</var>&lt;<var>string</var>.length(); <var>i</var>++) {
-    <b>char</b> <var>c</var> = <var>string</var>.charAt(<var>i</var>);
-    <b>if</b> (Character.isWhitespace(<var>c</var>)) {
-        <code class="comment">// A blank space was found.</code>
-    }
+<pre style="margin-top: 6pt"><b>for</b> (<b>int</b> i=0; i&lt;string.length(); i++) {
+    <b>char</b> c = string.charAt(i);
+    <b>if</b> (Character.isWhitespace(c)) {
+        <code class="comment">// A blank space was found.
+</code>    }
 }</pre>
 </td>
 <td>
-<pre style="margin-top: 6pt"><b>for</b> (<b>int</b> <var>i</var>=0; <var>i</var>&lt;<var>string</var>.length();) {
-    <b>int</b> <var>c</var> = <var>string</var>.codePointAt(<var>i</var>);
-    <b>if</b> (Character.isWhitespace(<var>c</var>)) {
-        <code class="comment">// A blank space was found.</code>
-    }
-    <var>i</var> += Character.charCount(<var>c</var>);
+<pre style="margin-top: 6pt"><b>for</b> (<b>int</b> i=0; i&lt;string.length();) {
+    <b>int</b> c = string.codePointAt(i);
+    <b>if</b> (Character.isWhitespace(c)) {
+        <code class="comment">// A blank space was found.
+</code>    }
+    i += Character.charCount(c);
 }</pre>
 </td>
 </tr>

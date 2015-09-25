@@ -238,19 +238,18 @@
     </p>
 
 <pre>package <code class="GeoAPI">org.opengis.referencing.crs</code>;
-<code class="comment">
 /**
  * A 2D coordinate reference system used to approximate the shape of the earth on a planar surface.
- */</code>
-<code class="GeoAPI">@UML</code>(<var>specification</var> = ISO_19111,
-     <var>identifier</var> = "<code class="OGC">SC_ProjectedCRS</code>")
-public interface <code class="GeoAPI">ProjectedCRS</code> extends <code class="GeoAPI">GeneralDerivedCRS</code> {<code class="comment">
+ */
+<code class="GeoAPI">@UML</code>(specification = ISO_19111,
+     identifier = "<code class="OGC">SC_ProjectedCRS</code>")
+public interface <code class="GeoAPI">ProjectedCRS</code> extends <code class="GeoAPI">GeneralDerivedCRS</code> {
     /**
      * Returns the coordinate system, which must be Cartesian.
-     */</code>
-    <code class="GeoAPI">@UML</code>(<var>obligation</var> = MANDATORY,
-         <var>specification</var> = ISO_19111,
-         <var>identifier</var> = "<code class="OGC">coordinateSystem</code>")
+     */
+    <code class="GeoAPI">@UML</code>(obligation = MANDATORY,
+         specification = ISO_19111,
+         identifier = "<code class="OGC">coordinateSystem</code>")
     <code class="GeoAPI">CartesianCS getCoordinateSystem()</code>;
 }</pre>
 
@@ -261,11 +260,11 @@ public interface <code class="GeoAPI">ProjectedCRS</code> extends <code class="G
       méthode <code class="GeoAPI">getTitle()</code> de l’interface <code class="GeoAPI">Citation</code>:
     </p>
 
-<pre>Class&lt;?&gt; <var>type</var>   = <code class="GeoAPI">Citation</code>.class;
-Method   <var>method</var> = <var>type</var>.getMethod("<code class="GeoAPI">getTitle</code>", (Class&lt;?&gt;[]) null);
-<code class="GeoAPI">UML</code>      <var>annot</var>  = <var>method</var>.getAnnotation(<code class="GeoAPI">UML</code>.class);
-String   <var>id</var>     = <var>annot</var>.identifier();
-System.out.println("Le nom standard de la méthode " + <var>method</var>.getName() + " est " + <var>id</var>);</pre>
+<pre>Class&lt;?&gt; type   = <code class="GeoAPI">Citation</code>.class;
+Method   method = type.getMethod("<code class="GeoAPI">getTitle</code>", (Class&lt;?&gt;[]) null);
+<code class="GeoAPI">UML</code>      annot  = method.getAnnotation(<code class="GeoAPI">UML</code>.class);
+String   id     = annot.identifier();
+System.out.println("Le nom standard de la méthode " + method.getName() + " est " + id);</pre>
 
     <p>
       La classe <code class="SIS">org.apache.sis.util.iso.Types</code> fournit la méthode de commodité
@@ -281,14 +280,14 @@ System.out.println("Le nom standard de la méthode " + <var>method</var>.getName
       une cache de leur application.
     </p>
 
-<pre>Properties <var>isoToGeoAPI</var> = new Properties();
+<pre>Properties isoToGeoAPI = new Properties();
 try (InputStream in = <code class="GeoAPI">UML</code>.class.getResourceAsStream("<code class="GeoAPI">class-index.properties</code>")) {
-    <var>isoToGeoAPI</var>.load(in);
+    isoToGeoAPI.load(in);
 }
-String <var>isoName</var> = "<code class="OGC">CI_Citation</code>";
-String <var>geoName</var> = getProperty(<var>isoName</var>);
-Class&lt;?&gt;  <var>type</var> = Class.forName(<var>geoName</var>);
-System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + <var>isoName</var> + " est " + <var>type</var>);</pre>
+String isoName = "<code class="OGC">CI_Citation</code>";
+String geoName = getProperty(isoName);
+Class&lt;?&gt;  type = Class.forName(geoName);
+System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + isoName + " est " + type);</pre>
 
     <p>
       La classe <code class="SIS">org.apache.sis.util.iso.Types</code> fournit la méthode de commodité
@@ -477,10 +476,10 @@ System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + <var>
       contrairement à celle de <code>Enum</code>, créeront de nouvelles instances si le nom donné ne correspond pas au nom d’une instance existante.
     </p>
 
-<pre><code class="GeoAPI">MediumName</code> <var>cdRom</var>  = <code class="GeoAPI">MediumName.CD_ROM;</code>
-<code class="GeoAPI">MediumName</code> <var>usbKey</var> = <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">USB_KEY</code>"); <code class="comment">// Aucune constante n’existe pour cette valeur.</code>
-assert <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">CD_ROM</code>")  == <var>cdRom</var>  : "valueOf doit retourner les constantes existantes.";
-assert <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">USB_KEY</code>") == <var>usbKey</var> : "valueOf doit cacher les valeurs précédemment demandées.";</pre>
+<pre><code class="GeoAPI">MediumName</code> cdRom  = <code class="GeoAPI">MediumName.CD_ROM;</code>
+<code class="GeoAPI">MediumName</code> usbKey = <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">USB_KEY</code>"); // Aucune constante n’existe pour cette valeur.
+assert <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">CD_ROM</code>")  == cdRom  : "valueOf doit retourner les constantes existantes.";
+assert <code class="GeoAPI">MediumName.valueOf</code>("<code class="GeoAPI">USB_KEY</code>") == usbKey : "valueOf doit cacher les valeurs précédemment demandées.";</pre>
 
 
 
@@ -511,9 +510,9 @@ import java.util.ServiceLoader;
 
 public class MyApplication {
     public void createMyDatum() {
-        ServiceLoader  <var>loader</var> = ServiceLoader.load(<code class="GeoAPI">DatumFactory</code>.class);
-        <code class="GeoAPI">DatumFactory</code>  <var>factory</var> = <var>loader</var>.iterator().next();
-        <code class="GeoAPI">GeodeticDatum</code> <var>myDatum</var> = <var>factory</var>.<code class="GeoAPI">createGeodeticDatum</code>(…);
+        ServiceLoader  loader = ServiceLoader.load(<code class="GeoAPI">DatumFactory</code>.class);
+        <code class="GeoAPI">DatumFactory</code>  factory = loader.iterator().next();
+        <code class="GeoAPI">GeodeticDatum</code> myDatum = factory.<code class="GeoAPI">createGeodeticDatum</code>(…);
     }
 }</pre>
 
@@ -719,13 +718,13 @@ public class MyApplication {
 import <code class="GeoAPI">org.opengis.test.Validators</code>;
 import org.junit.Test;
 
-public class MyTest {<code class="comment">
+public class MyTest {
     /*
      * Tolérer l’absence d’attributs obligatoires dans les paquets metadata et citation.
      * Cette modification s’appliquera à tous les tests exécutés dans la <abbr>JVM</abbr> courante.
      * S’il existe plusieurs classes de tests, cette initialisation peut être effectuée
      * dans une classe parente à toutes les classes de tests.
-     */</code>
+     */
     static {
         <code class="GeoAPI">Validators.DEFAULT.metadata.requireMandatoryAttributes</code> = false;
         <code class="GeoAPI">Validators.DEFAULT.citation.requireMandatoryAttributes</code> = false;
@@ -733,8 +732,8 @@ public class MyTest {<code class="comment">
 
     @Test
     public void testMyMetadata() {
-        <code class="GeoAPI">Metadata</code> <var>myObject</var> = …; <code class="comment">// Construisez un objet ici.</code>
-        <code class="GeoAPI">Validators.validate</code>(<var>myObject</var>);
+        <code class="GeoAPI">Metadata</code> myObject = …; // Construisez un objet ici.
+        <code class="GeoAPI">Validators.validate</code>(myObject);
     }
 }</pre>
 
@@ -749,18 +748,18 @@ import <code class="GeoAPI">org.opengis.test.ValidatorContainer</code>;
 import org.junit.Test;
 
 public class MyTest {
-    private final <code class="GeoAPI">ValidatorContainer</code> <var>validators</var>;
+    private final <code class="GeoAPI">ValidatorContainer</code> validators;
 
     public MyTest() {
-        <var>validators</var> = new <code class="GeoAPI">ValidatorContainer()</code>;
-        <var>validators</var>.<code class="GeoAPI">metadata.requireMandatoryAttributes</code> = false;
-        <var>validators</var>.<code class="GeoAPI">citation.requireMandatoryAttributes</code> = false;
+        validators = new <code class="GeoAPI">ValidatorContainer()</code>;
+        validators.<code class="GeoAPI">metadata.requireMandatoryAttributes</code> = false;
+        validators.<code class="GeoAPI">citation.requireMandatoryAttributes</code> = false;
     }
 
     @Test
     public void testMyMetadata() {
-        <code class="GeoAPI">Metadata</code> <var>myObject</var> = …; <code class="comment">// Construisez un objet ici.</code>
-        <var>validators</var>.<code class="GeoAPI">validate</code>(<var>myObject</var>);
+        <code class="GeoAPI">Metadata</code> myObject = …; // Construisez un objet ici.
+        validators.<code class="GeoAPI">validate</code>(myObject);
     }
 }</pre>
 
@@ -789,35 +788,35 @@ import <code class="GeoAPI">org.opengis.test.referencing.ParameterizedTransformT
 import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
-public class MyTest extends <code class="GeoAPI">ParameterizedTransformTest</code> {<code class="comment">
+public class MyTest extends <code class="GeoAPI">ParameterizedTransformTest</code> {
     /**
      * Spécifie aux tests de GeoAPI notre propre fabrique de transformations de coordonnées.
      * GeoAPI testera les objets construits par cette fabrique.
-     */</code>
+     */
     public MyTest() {
         super(new MyMathTransformFactory());
     }
-<code class="comment">
+
     /**
      * Modifie le comportement d’un test. Cet exemple assouplit un peu les exigences de ce test,
      * en acceptant des erreurs jusqu’à 10 centimètres plutôt que la valeur par défaut de 1 cm.
      * Ce changement ne s’applique qu’à cette méthode est n’affecte pas les autres tests hérités.
-     */</code>
+     */
     @Test
     @Override
     public void testLambertAzimuthalEqualArea() throws <code class="GeoAPI">FactoryException</code>, <code class="GeoAPI">TransformException</code> {
-        <code class="GeoAPI"><var>tolerance</var></code> = 0.1; // Tolérance de 10 cm.
+        <code class="GeoAPI">tolerance</code> = 0.1; // Tolérance de 10 cm.
         super.<code class="GeoAPI">testLambertAzimuthalEqualArea()</code>;
     }
-<code class="comment">
+
     /**
      * Vérification supplémentaire effectuée après chaque test, hérité ou non.
      * Dans cet exemple, nous vérifions que la transformation qui a été testée
      * travaillait bien dans des espaces bi-dimensionnels.
-     */</code>
+     */
     @After
     public void ensureAllTransformAreMath2D() {
-        assertTrue(<code class="GeoAPI"><var>transform</var></code> instanceof <code class="GeoAPI">MathTransform2D</code>);
+        assertTrue(<code class="GeoAPI">transform</code> instanceof <code class="GeoAPI">MathTransform2D</code>);
     }
 }</pre>
 
