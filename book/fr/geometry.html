@@ -49,9 +49,9 @@
       On y retrouve toutefois des méthodes très similaires telles que <code class="GeoAPI">contains(…)</code> et <code class="GeoAPI">intersects(…)</code>.
     </p>
     <p>
-      Toutes les géométries sont des spécialisations de <code class="GeoAPI">TransfiniteSet</code>.
-      La classe parente de toutes ces géométries est appelée <code class="OGC">GM_Object</code> dans la norme <abbr>ISO</abbr> 19107.
-      Les interfaces de GeoAPI utilisent plutôt le nom <code class="GeoAPI">Geometry</code>, car l’omission du préfixe <code class="OGC">GM_</code>
+      Toutes les géométries sont des spécialisations de <code>TransfiniteSet</code>.
+      La classe parente de toutes ces géométries est appelée <code>GM_Object</code> dans la norme <abbr>ISO</abbr> 19107.
+      Les interfaces de GeoAPI utilisent plutôt le nom <code>Geometry</code>, car l’omission du préfixe <code class="OGC">GM_</code>
       (comme le veut la convention dans GeoAPI) aurait laissé un nom trop proche de la classe <code>Object</code> du Java.
     </p>
 
@@ -60,23 +60,21 @@
     <h3 id="DirectPosition">Points et positions directes</h3>
     <p>
       <abbr>ISO</abbr> 19107 définit deux types de structures pour représenter un point:
-      <code class="OGC">GM_Point</code> et <code class="OGC">DirectPosition</code>.
+      <code>GM_Point</code> et <code class="OGC">DirectPosition</code>.
       Le premier type est une véritable géométrie et peut donc être relativement lourd, selon les implémentations.
       Le second type n’est pas considéré formellement comme une géométrie;
-      il n’étend ni <code class="OGC">GM_Object</code> ni <code class="OGC">TransfiniteSet</code>.
+      il n’étend ni <code>GM_Object</code> ni <code class="OGC">TransfiniteSet</code>.
       Il ne définit pratiquement pas d’opérations autres que le stockage d’une séquence de nombres représentant une coordonnée.
       Il peut donc être un objet plus léger.
     </p>
     <p>
       Afin de permettre à l’<abbr>API</abbr> de travailler indifféremment avec ces deux types de positions,
       <abbr>ISO</abbr> 19107 définit <code class="OGC">Position</code> comme une <cite>union</cite> de
-      <code class="OGC">DirectPosition</code> et <code class="OGC">GM_Point</code>.
+      <code class="OGC">DirectPosition</code> et <code>GM_Point</code>.
       Il s’agit d’une union au sens du C/C++. Pour le langage Java, GeoAPI obtient le même effet en définissant
-      <code class="GeoAPI">Position</code> comme l’interface parente de
-      <code class="GeoAPI">DirectPosition</code> et <code class="GeoAPI">Point</code>.
-      Dans la pratique, la grande majorité des <abbr>API</abbr> de Apache <abbr>SIS</abbr> travaillent sur des
-      <code class="GeoAPI">DirectPosition</code>, ou occasionnellement des
-      <code class="GeoAPI">Position</code> quand il semble utile d’autoriser aussi des points géométriques.
+      <code>Position</code> comme l’interface parente de <code>DirectPosition</code> et <code>Point</code>.
+      Dans la pratique, la grande majorité des <abbr>API</abbr> de Apache <abbr>SIS</abbr> travaillent sur des <code>DirectPosition</code>,
+      ou occasionnellement des <code>Position</code> quand il semble utile d’autoriser aussi des points géométriques.
     </p>
 
 
@@ -159,7 +157,7 @@
       répétées tous les 360°, alors il doit lui-même ramener ses valeurs de longitudes entre -180° et 180° au préalable.
       Toutes les fonctions <code class="SIS">add(…)</code>, <code class="SIS">contains(…)</code>,
       <code class="SIS">intersect(…)</code>, <i>etc.</i> de toutes les enveloppes
-      définies dans le paquet <code class="SIS">org.apache.sis.geometry</code> effectuent leurs calculs selon cette convention.
+      définies dans le paquet <code>org.apache.sis.geometry</code> effectuent leurs calculs selon cette convention.
     </p>
     <aside>
       <h5>Généralisation à d’autres types d’axes</h5>
@@ -167,10 +165,9 @@
         Cette section nomme spécifiquement la longitude car il constitue le cas le plus courant d’axe cyclique.
         Mais dans les enveloppes de Apache <abbr>SIS</abbr>, il n’est fait nul part mention explicite du cas de la longitude, ni de son cycle de 360°.
         Les caractéristiques de la plage de valeurs de chaque axe (ses extremums, unités, type de cycle, <i>etc.</i>)
-        sont des attributs des objets <code class="GeoAPI">CoordinateSystemAxis</code>,
-        indirectement associés aux enveloppes via le système de référence des coordonnées.
+        sont des attributs des objets <code>CoordinateSystemAxis</code>, indirectement associés aux enveloppes via le système de référence des coordonnées.
         Apache <abbr>SIS</abbr> inspecte ces attributs pour déterminer de quelle façon il doit effectuer ses opérations.
-        Ainsi, tout axe associé au code <code class="GeoAPI">RangeMeaning.WRAPAROUND</code> bénéficiera du même traitement que la longitude.
+        Ainsi, tout axe associé au code <code>RangeMeaning.WRAPAROUND</code> bénéficiera du même traitement que la longitude.
         Cela pourrait être par exemple un axe du temps dans des données climatologiques
         (une “année” représentant la température moyenne de tous les mois de janvier, suivit de la moyenne de tous les mois de février,
         <i>etc.</i>).
@@ -183,10 +180,10 @@
       la même plage de valeurs. Ainsi, une enveloppe exprimant les longitudes dans la plage [-180 … +180]°
       n’est pas compatible avec une enveloppe exprimant les longitudes dans la plage [0 … 360]°.
       Les conversions, si nécessaires, sont à la charge de l’utilisateur
-      (la classe <code class="SIS">Envelopes</code> fournit des méthodes de commodités pour ce faire).
+      (la classe <code>Envelopes</code> fournit des méthodes de commodités pour ce faire).
       En outre, les coordonnées de l’enveloppe doivent être comprises dans les limites du système de coordonnées,
       sauf si le développeur souhaite volontairement considérer (par exemple) 300° de longitude
-      comme un position distincte de -60°. La classe <code class="SIS">GeneralEnvelope</code>
+      comme un position distincte de -60°. La classe <code>GeneralEnvelope</code>
       fournit une méthode <code class="SIS">normalize()</code> pour ramener les coordonnées
       dans les limites attendues, au prix parfois de valeurs <cite><i>lower</i></cite>
       supérieures à la valeur <cite><i>upper</i></cite>.
@@ -196,7 +193,7 @@
       <p>
         le Java (ou de manière plus générale, la norme IEEE 754) définit deux valeurs distinctes de zéro:
         un zéro positif et un zéro négatif. Ces deux valeurs sont considérées égales lorsqu’on les compares avec l’opérateur <code>==</code> du Java.
-        Mais dans les enveloppes de <abbr>SIS</abbr>, ils peuvent mener à des résultats opposés pour les axes ayant <code class="GeoAPI">RangeMeaning.WRAPAROUND</code>.
+        Mais dans les enveloppes de <abbr>SIS</abbr>, ils peuvent mener à des résultats opposés pour les axes ayant <code>RangeMeaning.WRAPAROUND</code>.
         Une enveloppe dont la plage est [0 … 0], [-0 … -0] ou [-0 … +0] sera bien considérée comme une enveloppe vide,
         mais la page [+0 … -0] sera au contraire considérée comme incluant la totalité des valeurs, jusqu’à l’infini.
         Ce comportement est conforme à la définition de <code class="SIS">lowerCorner</code> et <code class="SIS">upperCorner</code>

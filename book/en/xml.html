@@ -52,7 +52,7 @@
       <abbr>XML</abbr> documents may use any prefixes,
       but the following prefixes are commonly used.
       They therefore appear by default in documents produced by Apache <abbr>SIS</abbr>.
-      These prefixes are defined in the <code class="SIS">org.apache.sis.xml.Namespaces</code> class.
+      These prefixes are defined in the <code>org.apache.sis.xml.Namespaces</code> class.
     </p>
     <table>
       <caption>Common <abbr>XML</abbr> namespace prefixes</caption>
@@ -61,27 +61,27 @@
         <th>Namespace</th>
       </tr>
       <tr>
-        <td><code class="OGC">gco</code></td>
+        <td><code>gco</code></td>
         <td><code>http://www.isotc211.org/2005/gco</code></td>
       </tr>
       <tr>
-        <td><code class="OGC">gfc</code></td>
+        <td><code>gfc</code></td>
         <td><code>http://www.isotc211.org/2005/gfc</code></td>
       </tr>
       <tr>
-        <td><code class="OGC">gmd</code></td>
+        <td><code>gmd</code></td>
         <td><code>http://www.isotc211.org/2005/gmd</code></td>
       </tr>
       <tr>
-        <td><code class="OGC">gmi</code></td>
+        <td><code>gmi</code></td>
         <td><code>http://www.isotc211.org/2005/gmi</code></td>
       </tr>
       <tr>
-        <td><code class="OGC">gmx</code></td>
+        <td><code>gmx</code></td>
         <td><code>http://www.isotc211.org/2005/gmx</code></td>
       </tr>
       <tr>
-        <td><code class="OGC">gml</code></td>
+        <td><code>gml</code></td>
         <td><code>http://www.opengis.net/gml/3.2</code></td>
       </tr>
       <tr>
@@ -122,18 +122,18 @@
     <h2 id="XML-ISO-19115">Representing Metadata According to <abbr>ISO</abbr> 19115-3</h2>
     <p>
       For each metadata class, there is an <abbr>XML</abbr> type with the same name than in the abstract specification
-      (for example, <code class="OGC">gmd:MD_Metadata</code> and <code class="OGC">gmd:CI_Citation</code>).
+      (for example, <code>gmd:MD_Metadata</code> and <code>gmd:CI_Citation</code>).
       All of these types may be used as the root of an <abbr>XML</abbr> document.
-      It is therefore possible to write a document representing a complete <code class="OGC">MD_Metadata</code> object,
-      or to write a document representing only a <code class="OGC">CI_Citation</code> object.
+      It is therefore possible to write a document representing a complete <code>MD_Metadata</code> object,
+      or to write a document representing only a <code>CI_Citation</code> object.
     </p>
     <p>
       <abbr>ISO</abbr> 19115-3 standard arranges the content of these objects in an unusual way:
       for each property whose value type is itself another class of <abbr>ISO</abbr> 19115,
       the value is wrapped in an element that represents its type, rather than being written directly.
-      For example, in an object of the <code class="OGC">CI_Citation</code> type,
-      the value of the <code class="OGC">citedResponsibleParty</code> property is incorporated into a
-      <code class="OGC">CI_Responsibility</code> element.
+      For example, in an object of the <code>CI_Citation</code> type,
+      the value of the <code class="OGC">citedResponsibleParty</code> property is incorporated
+      into a <code>CI_Responsibility</code> element.
       This practice doubles the depth of the hierarchy, and introduces duplication at all levels for each value,
       as in the following example:
     </p>
@@ -176,16 +176,16 @@
       <li><p>
         It begins with the name of the property, which always begins with a lower-case letter (ignoring prefixes).
         In Java <abbr>API</abbr>s, each property corresponds to a method in its enclosing class.
-        In the example above, <code class="OGC">gmd:identificationInfo</code>  (a property of <code class="OGC">MD_Metadata</code> class)
-        corresponds to the <code class="GeoAPI">Metadata.getIdentificationInfo()</code> method.
+        In the example above, <code>gmd:identificationInfo</code>  (a property of <code>MD_Metadata</code> class)
+        corresponds to the <code>Metadata.getIdentificationInfo()</code> method.
       </p></li>
       <li><p>
         The value type is included under each property, unless it has been replaced with a reference
         (the following <a href="#gco-id">sub-section</a> will elaborate on this subject).
         The value type is an <abbr>XML</abbr> element whose name always begins with an upper-case letter,
         ignoring prefixes.
-        In the example above we had <code class="OGC">MD_DataIdentification</code>,
-        which corresponds to the <code class="GeoAPI">DataIdentification</code> Java interface.
+        In the example above we had <code>MD_DataIdentification</code>,
+        which corresponds to the <code>DataIdentification</code> Java interface.
         It is this <abbr>XML</abbr> element that contains the child properties.
       </p></li>
     </ol>
@@ -202,7 +202,7 @@
     <aside>
       <h3>Implementation Strategy in Apache <abbr>SIS</abbr></h3>
       <p>
-        <code class="SIS">org.apache.sis.internal.jaxb.*</code> packages (non-public) define <abbr>JAXB</abbr> adaptors for all types of <abbr>ISO</abbr> objects.
+        <code>org.apache.sis.internal.jaxb.*</code> packages (non-public) define <abbr>JAXB</abbr> adaptors for all types of <abbr>ISO</abbr> objects.
         These adaptors are required anyway to allow <abbr>JAXB</abbr> to get <abbr>SIS</abbr> classes while implementing GeoAPI interfaces.
         Conveniently, <abbr>SIS</abbr> made both <abbr>JAXB</abbr> adaptors and objects wrapping the “real” object to be read or written.
         This double usage avoids having to double the number of classes (already quite high) present in the internal packages.
@@ -213,8 +213,8 @@
         define a type whose name ends with “<code class="OGC">_PropertyType</code>”.
         For the second group, each element has a type whose name ends with “<code class="OGC">_Type</code>”.
         The “<code class="OGC">_PropertyType</code>” elements may have a group of attributes
-        (such as <code class="OGC">gmd:idref</code>, <code class="OGC">gco:uuidref</code> and <code>xlink:href</code>)
-        which the <abbr>XSD</abbr> schemas collectively name <code class="OGC">gco:ObjectIdentification</code>.
+        (such as <code>gmd:idref</code>, <code>gco:uuidref</code> and <code>xlink:href</code>)
+        which the <abbr>XSD</abbr> schemas collectively name <code>gco:ObjectIdentification</code>.
         These attributes do not have dedicated Java methods, but are accessible indirectly via the
         <code class="SIS">IdentifiedObject</code> interface described in the following subsection.
       </p>
@@ -270,35 +270,35 @@
       </li>
     </ul>
     <p>
-      In the <abbr>SIS</abbr> library, all objects that can be identified in an <abbr>XML</abbr> document implements the
-      <code class="SIS">org.apache.sis.xml.IdentifiedObject</code> interface.
+      In the <abbr>SIS</abbr> library, all objects that can be identified in an <abbr>XML</abbr> document
+      implements the <code>org.apache.sis.xml.IdentifiedObject</code> interface.
       Each instance of this interface provides a view of its identifiers in the form of a <code>Map&lt;Citation,String&gt;</code>,
-      in which the <code class="GeoAPI">Citation</code> key indicates the type of identifier and the value is the identifier itself.
-      Some constants representing different types of identifiers are listed in <code class="SIS">IdentifierSpace</code>,
+      in which the <code>Citation</code> key indicates the type of identifier and the value is the identifier itself.
+      Some constants representing different types of identifiers are listed in <code>IdentifierSpace</code>,
       including <code class="SIS">ID</code>, <code class="SIS">UUID</code> and <code class="SIS">HREF</code>.
       Each of these keys may be associated with a different type of value (usually <code>String</code>,
       <code>UUID</code> or <code>URI</code>) depending on the key.
       For example, the following code defines a value for the <code class="OGC">uuid</code> attribute:
     </p>
 
-<pre>import <code class="SIS">org.apache.sis.metadata.iso.DefaultMetadata</code>;
-import <code class="SIS">org.apache.sis.xml.IdentifierSpace</code>;
+<pre>import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.xml.IdentifierSpace;
 import java.util.UUID;
 
 public class MyClass {
     public void myMethod() {
         UUID identifier = UUID.randomUUID();
         <code class="SIS">DefaultMetadata</code> metadata = new <code class="SIS">DefaultMetadata</code>();
-        metadata.<code class="SIS">getIdentifierMap().putSpecialized</code>(<code class="SIS">IdentifierSpace.UUID</code>, identifier);
+        metadata.<code class="SIS">getIdentifierMap().putSpecialized</code>(IdentifierSpace.UUID, identifier);
     }
 }</pre>
 
     <p>
       Although this mechanism has been defined in order to better support the representation of <abbr>XML</abbr> attributes
-      of the <code class="OGC">gco:ObjectIdentification</code> group,
+      of the <code>gco:ObjectIdentification</code> group,
       it also conveniently allows other types of identifiers to be manipulated.
       For example, the <code class="GeoAPI">ISBN</code> and <code class="GeoAPI">ISSN</code> attributes of
-      <code class="GeoAPI">Citation</code> may be manipulated in this way.
+      <code>Citation</code> may be manipulated in this way.
       The methods of the <code class="SIS">IdentifiedObject</code> interface therefore provides a specific location
       where all types of identifiers (not only <abbr>XML</abbr>) associated with an object may be manipulated.
     </p>
@@ -315,21 +315,21 @@ public class MyClass {
       that the value cannot exist (<code class="OGC">missing</code>),
       or that the value cannot be revealed (<code class="OGC">withheld</code>), <i>etc.</i>
       The transmission of this information requires the use of a non-nul object, even when the value is missing.
-      <abbr>SIS</abbr> will then return an object that, besides implementing the desired GeoAPI interface, also implements the
-      <code class="SIS">org.apache.sis.xml.NilObject</code> interface.
+      <abbr>SIS</abbr> will then return an object that, besides implementing the desired GeoAPI interface,
+      also implements the <code>org.apache.sis.xml.NilObject</code> interface.
       This interface flags the instances where all methods return an empty collection, an empty table, <code>null</code>,
       <code>NaN</code>, <code>0</code> or <code>false</code>, in this preference order, as permitted by the return types of the methods.
-      Each instance that implements <code class="SIS">NilObject</code> provides a <code class="SIS">getNilReason()</code> method
+      Each instance that implements <code>NilObject</code> provides a <code class="SIS">getNilReason()</code> method
       indicating why the object is nil.
     </p>
     <p>
-      In the following example, the left side shows a <code class="OGC">CI_Citation</code> element containing a
-      <code class="OGC">CI_Series</code> element, while on the right side the series is unknown.
-      If the <code class="OGC">CI_Series</code> element had been completely omitted,
-      then the <code class="GeoAPI">Citation.getSeries()</code> method would return <code>null</code> in Java.
+      In the following example, the left side shows a <code>CI_Citation</code> element containing a
+      <code>CI_Series</code> element, while on the right side the series is unknown.
+      If the <code>CI_Series</code> element had been completely omitted,
+      then the <code>Citation.getSeries()</code> method would return <code>null</code> in Java.
       But when a <code class="OGC">nilReason</code> is present, the <abbr>SIS</abbr> implementation of
       <code class="SIS">getSeries()</code> returns instead an object that implements both the
-      <code class="GeoAPI">Series</code> and <code class="SIS">NilReason</code> interfaces, and in which the
+      <code>Series</code> and <code>NilReason</code> interfaces, and in which the
       <code class="SIS">getNilReason()</code> method returns the constant <code class="SIS">UNKNOWN</code>.
     </p>
 

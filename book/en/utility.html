@@ -68,7 +68,7 @@
     </p>
     <p>
       In order to allow developers a certain amount of flexibility, many classes in the <abbr>SIS</abbr>
-      library implement the <code class="SIS">org.apache.sis.util.LenientComparable</code> interface,
+      library implement the <code>org.apache.sis.util.LenientComparable</code> interface,
       which defines a <code class="SIS">equals(Object, ComparisonMode)</code> method.
       The principle modes of comparison are:
     </p>
@@ -127,34 +127,34 @@
       But it is also the case for other less obvious classes like <code>javax.imageio.ImageReader</code>/<code>ImageWriter</code>
       and for <code>Exception</code> subclasses.
       When one of these classes is implemented by <abbr>SIS</abbr>,
-      we identify it by implementing the <code class="SIS">org.apache.sis.util.Localized</code> interface.
+      we identify it by implementing the <code>org.apache.sis.util.Localized</code> interface.
       The <code class="SIS">getLocale()</code> method of this interface can determine the locale conventions
       by which the instance produces its message.
     </p>
     <p>
-      Some sub-classes of <code>Exception</code> defined by <abbr>SIS</abbr> also implement the <code class="SIS">Localized</code> interface.
+      Some sub-classes of <code>Exception</code> defined by <abbr>SIS</abbr> also implement the <code>Localized</code> interface.
       For these exceptions, the error message may be produced according to two locale conventions,
       for either the administrator or the client respectively:
       <code>getMessage()</code> returns the exception message according to the system default conventions,
       while <code>getLocalizedMessage()</code> returns the exception message according to the locale conventions specified
       by <code class="SIS">getLocale()</code>.
-      This <code>Locale</code> will be determined by the <code class="SIS">Localized</code> object that threw the exception.
+      This <code>Locale</code> will be determined by the <code>Localized</code> object that threw the exception.
     </p>
     <div class="example"><p><b>Example:</b>
-      Given an environment in which the default language is English and an <code class="SIS">AngleFormat</code> object is created to
+      Given an environment in which the default language is English and an <code>AngleFormat</code> object is created to
       read angles according to French conventions.
       If a <code>ParseException</code> is thrown when using this formatter, <code>getMessage()</code> returns the error message in English,
       while <code>getLocalizedMessage()</code> returns the error message in French.
     </p></div>
     <p>
-      The exceptions defined by <abbr>SIS</abbr> do not implement all of the <code class="SIS">Localized</code> interface.
+      The exceptions defined by <abbr>SIS</abbr> do not implement all of the <code>Localized</code> interface.
       Only those most likely to be shown to the user are localized in this way.
       <code>ParseException</code> are good candidates because they often occur due to an incorrect entry by the client.
       By contrast, <code>NullPointerException</code> are generally caused by a programming error;
       they may be localized in the system default language, but that is usually all.
     </p>
     <p>
-      The utility class <code class="SIS">org.apache.sis.util.Exceptions</code> provides convenience methods to get messages
+      The utility class <code>org.apache.sis.util.Exceptions</code> provides convenience methods to get messages
       according to the conventions of a given locale, when this information is available.
     </p>
 
@@ -163,24 +163,24 @@
     <h3 id="InternationalString">Single instance for all supported locales</h3>
     <p>
       The <abbr>API</abbr> conventions defined by <abbr>SIS</abbr> or inherited by GeoAPI favour the use of the
-      <code class="GeoAPI">InternationalString</code> type when the value of a <code>String</code> type would likely be localized.
+      <code>InternationalString</code> type when the value of a <code>String</code> type would likely be localized.
       This approach allows us to defer the internationalization process to the time when a character sequence is requested,
       rather than the time when the object that contains them is created.
       This is particularly useful for immutable classes used for creating unique instances independently of locale conventions.
     </p>
     <div class="example"><p><b>Example:</b>
-      <abbr>SIS</abbr> includes only one instance of the <code class="GeoAPI">OperationMethod</code>
+      <abbr>SIS</abbr> includes only one instance of the <code>OperationMethod</code>
       type representing the Mercator projection, regardless of the client's language.
       But its <code class="GeoAPI">getName()</code> method (indirectly) provides an instance of
-      <code class="GeoAPI">InternationalString</code>, so that <code>toString(Locale.ENGLISH)</code> returns <cite>Mercator projection</cite>
+      <code>InternationalString</code>, so that <code>toString(Locale.ENGLISH)</code> returns <cite>Mercator projection</cite>
       while <code>toString(Locale.FRENCH)</code> returns <cite>Projection de Mercator</cite>.
     </p></div>
     <p>
       When defining spatial objects independently of locale conventions, we reduce the risk of computational overload.
       For example, it is easier to detect that two maps use the same cartographic projection if this last is represented by the
-      same instance of <code class="GeoAPI">CoordinateOperation</code>,
+      same instance of <code>CoordinateOperation</code>,
       even if the projection has a different name depending on the country.
-      Moreover, certain types of <code class="GeoAPI">CoordinateOperation</code> may require coordinate transformation matrices,
+      Moreover, certain types of <code>CoordinateOperation</code> may require coordinate transformation matrices,
       so sharing a single instance becomes even more preferable in order to reduce memory consumption.
     </p>
 
