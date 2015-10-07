@@ -213,7 +213,7 @@
         define a type whose name ends with “<code class="OGC">_PropertyType</code>”.
         For the second group, each element has a type whose name ends with “<code class="OGC">_Type</code>”.
         The “<code class="OGC">_PropertyType</code>” elements may have a group of attributes
-        (such as <code>gmd:idref</code>, <code>gco:uuidref</code> and <code>xlink:href</code>)
+        (such as <code>gco:uuidref</code> and <code>xlink:href</code>)
         which the <abbr>XSD</abbr> schemas collectively name <code>gco:ObjectIdentification</code>.
         These attributes do not have dedicated Java methods, but are accessible indirectly via the
         <code class="SIS">IdentifiedObject</code> interface described in the following subsection.
@@ -223,8 +223,7 @@
 
     <h3 id="gco-id">Identification of Already-Defined Instances</h3>
     <p>
-      The parent element may contain an <code class="OGC">id</code>, <code class="OGC">uuid</code> or
-      <code>xlink:href</code> attribute.
+      The parent element may contain an <code class="OGC">id</code> or <code class="OGC">uuid</code> attribute.
       If one of these attributes is present, the parent attribute may be completely omitted;
       it will be replaced at the time of reading by the element referenced by the attribute.
       In the following example, the part on the left defines an element associated with the identifier “<code>my_id</code>,”
@@ -248,7 +247,7 @@
         </td>
         <td>
 <pre class="xml" style="margin-top: 6pt">&lt;MD_MetaData&gt;
-  &lt;identificationInfo idref="<b>my_id</b>"/&gt;
+  &lt;identificationInfo xlink:href="<b>#my_id</b>"/&gt;
 &lt;/MD_MetaData&gt;</pre>
         </td>
       </tr>

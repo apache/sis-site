@@ -1557,7 +1557,7 @@ Les schémas <abbr>XSD</abbr> de l’<abbr title="Open Geospatial Consortium">OG
 un type dont le nom se termine par “<code class="OGC">_PropertyType</code>”.
 Pour le second groupe, chaque élément a un type dont le nom se termine par “<code class="OGC">_Type</code>”.
 Les “<code class="OGC">_PropertyType</code>” peuvent avoir un groupe d’attributs
-(notamment <code class="OGC">gmd:idref</code>, <code class="OGC">gco:uuidref</code> et <code>xlink:href</code>)
+(notamment <code class="OGC">gco:uuidref</code> et <code>xlink:href</code>)
 que les schémas <abbr>XSD</abbr> nomment collectivement <code class="OGC">gco:ObjectReference</code>.
 Ces attributs n’ont pas de méthodes Java dédiées, mais sont accessibles indirectement via l’interface
 <code class="SIS">IdentifiedObject</code> décrite dans la sous-section suivante.
@@ -1567,8 +1567,7 @@ Ces attributs n’ont pas de méthodes Java dédiées, mais sont accessibles ind
 
 <h3 id="gco-id"><span class="section-number">3.1.1.</span> Identification d’instances déjà définies</h3>
 <p>
-L’élément englobant peut contenir un attribut <code class="OGC">id</code>,
-<code class="OGC">uuid</code> ou <code>xlink:href</code>.
+L’élément englobant peut contenir un attribut <code class="OGC">id</code> ou <code class="OGC">uuid</code>.
 Si un de ces attributs est présent, l’élément englobé peut être complètement omis;
 il sera remplacé au moment de la lecture par l’élément référencé par l’attribut.
 Dans l’exemple suivant, la partie gauche définie un élément associé à l’identifiant “<code>mon_id</code>”,
@@ -1592,7 +1591,7 @@ alors que la partie droite référence cet élément:
 </td>
 <td>
 <pre class="xml" style="margin-top: 6pt">&lt;MD_MetaData&gt;
-  &lt;identificationInfo idref=<i>"<b>mon_id</b>"</i>/&gt;
+  &lt;identificationInfo xlink:href=<i>"<b>#mon_id</b>"</i>/&gt;
 &lt;/MD_MetaData&gt;</pre>
 </td>
 </tr>

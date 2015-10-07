@@ -219,7 +219,7 @@
         un type dont le nom se termine par “<code class="OGC">_PropertyType</code>”.
         Pour le second groupe, chaque élément a un type dont le nom se termine par “<code class="OGC">_Type</code>”.
         Les “<code class="OGC">_PropertyType</code>” peuvent avoir un groupe d’attributs
-        (notamment <code>gmd:idref</code>, <code>gco:uuidref</code> et <code>xlink:href</code>)
+        (notamment <code>gco:uuidref</code> et <code>xlink:href</code>)
         que les schémas <abbr>XSD</abbr> nomment collectivement <code>gco:ObjectReference</code>.
         Ces attributs n’ont pas de méthodes Java dédiées, mais sont accessibles indirectement via l’interface
         <code class="SIS">IdentifiedObject</code> décrite dans la sous-section suivante.
@@ -229,8 +229,7 @@
 
     <h3 id="gco-id">Identification d’instances déjà définies</h3>
     <p>
-      L’élément englobant peut contenir un attribut <code class="OGC">id</code>,
-      <code class="OGC">uuid</code> ou <code>xlink:href</code>.
+      L’élément englobant peut contenir un attribut <code class="OGC">id</code> ou <code class="OGC">uuid</code>.
       Si un de ces attributs est présent, l’élément englobé peut être complètement omis;
       il sera remplacé au moment de la lecture par l’élément référencé par l’attribut.
       Dans l’exemple suivant, la partie gauche définie un élément associé à l’identifiant “<code>mon_id</code>”,
@@ -254,7 +253,7 @@
         </td>
         <td>
 <pre class="xml" style="margin-top: 6pt">&lt;MD_MetaData&gt;
-  &lt;identificationInfo idref="<b>mon_id</b>"/&gt;
+  &lt;identificationInfo xlink:href="<b>#mon_id</b>"/&gt;
 &lt;/MD_MetaData&gt;</pre>
         </td>
       </tr>
