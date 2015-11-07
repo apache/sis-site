@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
+  <head>
+    <title>Systèmes de références spatiales par coordonnées</title>
+    <link rel="stylesheet" type="text/css" href="../book.css"/>
+  </head>
+  <body>
+    <header>
+      <h1 id="Referencing">Systèmes de références spatiales</h1>
+    </header>
+    <p>
+      Pour donner une position sur la Terre on peut utiliser des noms tels que celui d'une ville ou une adresse postale
+      — on parle alors de références spatiales par <cite>identifiants</cite> —
+      ou on peut donner des valeurs numériques valides dans un système de coordonnées donné
+      — on parle alors de références spatiales par <cite>coordonnées</cite>.
+      Chaque système implique des approximations telles que:
+    </p>
+    <ul>
+      <li>Le choix de la forme géométrique (géoïde, ellipsoïde, <i>etc.</i>) utilisée comme approximation de la forme de la Terre.</li>
+      <li>Le choix des propriétés géométriques (angles, distances, <i>etc.</i>) à préserver lors de la représentation d'une carte sur une surface plane.</li>
+      <li>Les pertes de précision lorsque l'on doit transformer des positions exprimées selon un système vers des positions exprimées selon un autre système.</li>
+    </ul>
+    <p>
+      En l'absence d'indication contraire, la précision recherchée pour les coordonnées sur la Terre est de 1 centimètre.
+      Mais la maîtrise de cette précision nécessite certaines conditions:
+    </p>
+    <ul>
+      <li>Rester dans la zone de validité du système, telle que donnée par <code>ReferenceSystem.getDomainOfValidity()</code>.</li>
+      <li>Savoir que les mesures de distances dans une projection cartographique donnée ne sont vraies qu'à certains endroits,
+          appelés par exemple « parallèles standards ».</li>
+      <li>Vérifier la précision des transformations de coordonnées, telle que donnée par
+          <code>CoordinateOperation.getCoordinateOperationAccuracy()</code>.</li>
+    </ul>
+    <p>
+      Le module <code>sis-referencing</code> de Apache <abbr>SIS</abbr> fournit une série de classes implémentant
+      les différentes spécialisations de l'interface <code>ReferenceSystem</code> ainsi que leurs composantes.
+      Ces implémentations permettent de stocker une description des systèmes de références spatiales
+      ainsi que leurs méta-données telles que la zone de validité.
+      Toutefois ces objets n'effectuent aucune opération sur les coordonnées.
+      Ces opérations sont le travail d'une autre famille de classes, dont la racine est l'interface <code>CoordinateOperation</code>.
+      Ces classes seront discutées dans <a href="#CoordinateOperation">une autre section</a>,
+      mais nous citons ici deux spécialisations en rapport avec le sujet de la précision des coordonnées:
+    </p>
+    <ul>
+      <li>
+        <p>Les <strong>conversions</strong> de coordonnées sont entièrement définies par une formule mathématique.
+        Les conversions s'effectueraient avec une précision infinie s'il n'y avait pas les inévitables
+        erreurs d'arrondissements inhérents aux calculs sur des nombres réels.</p>
+        <div class="example"><p><b>Exemple:</b> les projections cartographiques.</p></div>
+      </li>
+      <li><p>Les <strong>transformations</strong> de coordonnées sont définies de manière empirique.
+        Elles ont souvent des erreurs de quelques mètres qui ne sont pas dues à des limites de la précision des ordinateurs.
+        Ces erreurs découlent du fait que la transformation utilisée n'est qu'une approximation d'une réalité plus complexe.</p>
+        <div class="example"><p><b>Exemple:</b> les changements de référentiels tel que le passage de la
+        « Nouvelle Triangulation Française » (<abbr>NTF</abbr>) vers le
+        « Réseau Géodésique Français 1993 » (<abbr>RGF93</abbr>),
+        même lorsque la méthode de projection cartographique (Lambert conique conforme) ne change pas.</p>
+        </div>
+      </li>
+    </ul>
+
+
+
+    <h2 id="CRS_Components">Composantes d'un système de références par coordonnées</h2>
+    <p>
+      Les systèmes de références spatiales par coordonnées fournissent les informations nécessaires pour faire
+      correspondre des coordonnées numériques à des positions dans le monde réel. Dans Apache <abbr>SIS</abbr>,
+      ils sont pratiquement tous représentés par des classes dont le nom se termine en <abbr>CRS</abbr>
+      (l'abréviation de <i>Coordinate Reference System</i> en anglais). Ces objets contiennent:
+    </p>
+    <ul>
+      <li>Un identifiant du référentiel (<i>datum</i> en anglais),
+          qui indique entre autres quel ellipsoïde utiliser comme approximation de la forme de la terre.</li>
+      <li>Une description de chaque axe (nom, direction, unité de mesure, limites).</li>
+      <li>Parfois une liste de paramètres permettant de convertir les coordonnées d'un autre système.
+          C'est le cas notamment des projections cartographiques.</li>
+    </ul>
+    <p>
+      Ces systèmes sont décrits par la norme <abbr>ISO</abbr> 19111 (<i>Referencing by coordinates</i>),
+      qui remplace en grande partie une norme plus ancienne mais encore utilisée pour certains aspects,
+      <abbr>OGC 01-009</abbr> (<i>Coordinate Transformation Services</i>).
+      Ces normes sont complétées par deux autres standards définissant des formats d'échanges:
+      <abbr>ISO</abbr> 19136 et 19162 pour respectivement
+      le <cite>Geographic Markup Language</cite> (<abbr>GML</abbr>) — un format <abbr>XML</abbr> précis mais verbeux —
+      et le <cite>Well-Known Text</cite> (<abbr>WKT</abbr>) — un format texte plus facile à lire par les humains.
+    </p>
+
+    <h3 id="Ellipsoid">Géoïde et ellipsoïde</h3>
+    <p>TODO</p>
+
+    <h3 id="ReferenceSystem">Référentiel</h3>
+    <p>TODO</p>
+
+    <h3 id="CoordinateSystem">Systèmes de coordonnées</h3>
+    <p>TODO</p>
+
+    <h3 id="GeographicCRS">Systèmes géographiques</h3>
+    <p>TODO</p>
+
+    <h4 id="GeographicWKT">Format <i>Well-Known Text</i></h4>
+    <p>TODO</p>
+
+    <h3 id="ProjectedCRS">Projections cartographiques</h3>
+    <p>TODO</p>
+
+    <h4 id="ProjectedWKT">Format <i>Well-Known Text</i></h4>
+    <p>TODO</p>
+
+    <h3 id="CompoundCRS">Dimensions verticales et temporelles</h3>
+    <p>TODO</p>
+
+    <h4 id="CompoundWKT">Format <i>Well-Known Text</i></h4>
+    <p>TODO</p>
+
+
+
+    <h2 id="GetCRS">Obtention d'un système de référence spatial</h2>
+    <p>TODO</p>
+
+    <h3 id="CRSAuthorityFactory">Systèmes prédéfinis par des autorités</h3>
+    <p>TODO</p>
+
+    <h3 id="CRSParsing">Lecture d'une définition au format GML ou WKT</h3>
+    <p>TODO</p>
+
+    <h3 id="CRSFactory">Construction programmatique explicite</h3>
+    <p>TODO</p>
+
+    <h3 id="CRS_UserCode">Ajout de définitions</h3>
+    <p>TODO</p>
+
+
+
+    <h2 id="CoordinateOperation">Opérations sur les coordonnées</h2>
+    <p>TODO</p>
+
+    <h3 id="MathTransform">Exécution de opérations</h3>
+    <p>TODO</p>
+  </body>
+</html>
