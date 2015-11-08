@@ -187,12 +187,14 @@
         <li>Il existe d’autres systèmes globaux qui pourraient servir de pivot, par exemple le <cite>Galileo reference frame</cite> (<abbr>GTRF</abbr>)
             mis en place par le concurrent européen du <abbr>GPS</abbr>. Et <abbr>WGS84</abbr> lui-même subit parfois des révisions.</li>
       </ul>
-      <p><abbr>EPSG</abbr> recommande plutôt d’utiliser une approche dite « late binding »,
+      <p>
+        <abbr>EPSG</abbr> recommande plutôt d’utiliser une approche dite « late binding »,
         selon laquelle les paramètres nécessaires aux transformations de coordonnées sont définis pour des paires de
         référentiels « <var>A</var> vers <var>B</var> » plutôt qu’associés à des référentiels pris isolément.
         Apache <abbr>SIS</abbr> est une implémentation de type « late binding »,
-        bien que quelques réminiscences de l’approche « early binding » existe toujours
-        sous la forme de la propriété <code>DefaultGeodeticDatum.getBursaWolfParameters()</code>.</p>
+        bien qu’une réminiscence de l’approche « early binding » existe toujours
+        sous la forme de la propriété <code>DefaultGeodeticDatum.getBursaWolfParameters()</code>.
+      </p>
     </article>
 
     <h3 id="CoordinateSystem">Systèmes de coordonnées</h3>
@@ -205,7 +207,16 @@
     <p>TODO</p>
 
     <h3 id="ProjectedCRS">Projections cartographiques</h3>
-    <p>TODO</p>
+    <p>
+      L’utilité des projections cartographiques est discutée dans de nombreux livres et sites web.
+      Il s’agit de représenter une surface courbe (la Terre) sur une surface plane (une carte ou un écran d’ordinateur)
+      en contrôlant les déformations: on peut préserver les angles ou les surfaces, mais pas les deux à la fois.
+      Les propriétés géométriques à conserver dépendent de l’objet d’étude et du travail à effectuer.
+      Par exemple les pays plutôt allongés dans le sens Est-Ouest utilisent souvent une projection de Lambert,
+      alors que les pays plutôt allongés dans le sens Nord-Sud préfèrent une projection de Mercator Transverse.
+    </p><p>
+      TODO
+    </p>
 
     <h4 id="ProjectedWKT">Format <i>Well-Known Text</i></h4>
     <p>TODO</p>
@@ -240,5 +251,297 @@
 
     <h3 id="MathTransform">Exécution de opérations</h3>
     <p>TODO</p>
+
+    <h3 id="TransformDerivative">Dérivées partielles des opérations</h3>
+    <p>
+      La section précédente indiquait comment calculer les coordonnées d’un point géographique dans une projection au choix.
+      Mais il existe une autre opération moins connue, qui consiste à calculer non pas la <em>coordonnées projetée</em> d’un point,
+      mais plutôt la <em>dérivée de la fonction de projection cartographique</em> en ce point.
+      Cette opération était définie dans une ancienne spécification du consortium Open Geospatial,
+      <a href="http://www.opengeospatial.org/standards/ct">OGC 01-009</a>, aujourd’hui un peu oubliée mais pourtant encore utile.
+    </p>
+
+    <p>
+      Appelons <var>P</var> une projection cartographique qui convertit une longitude et latitude (λ,φ) en degrés
+      vers une coordonnée projetée (<var>x</var>,<var>y</var>) en mètres.
+      Dans l’expression ci-dessous, nous représentons le résultat de la projection cartographique
+      sous forme d’une matrice colonne (la raison sera plus claire bientôt):
+    </p>
+
+    <math display="block" alttext="MathML capable browser required">
+      <mi>P</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo>
+      <mo>=</mo>
+      <mfenced open="[" close="]">
+        <mtable>
+          <mtr><mtd><mi>x</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mtd></mtr>
+          <mtr><mtd><mi>y</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mtd></mtr>
+        </mtable>
+      </mfenced>
+    </math>
+
+    <p>La dérivée de la projection cartographique en ce même point peut se représenter par la matrice Jacobienne définie tel que:</p>
+
+    <math display="block" alttext="MathML capable browser required">
+      <msup><mi>P</mi><mo>′</mo></msup><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo>
+      <mo>=</mo>
+      <msub><mi>JAC</mi><mrow><mi>P</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mrow></msub>
+      <mo>=</mo>
+      <mfenced open="[" close="]">
+        <mtable>
+          <mtr>
+            <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
+            <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+          </mtr>
+          <mtr>
+            <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
+            <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+          </mtr>
+        </mtable>
+      </mfenced>
+    </math>
+
+    <p>
+      Le premier élément de la matrice (∂<var>x</var>/∂λ) nous indique à quel déplacement vers l’<em>Est</em>
+      (<var>x</var> en mètres) correspond un déplacement de un degré de <em>longitude</em> (λ).
+      De même, le dernier élément de la matrice (∂<var>y</var>/∂φ) nous indique à quel déplacement vers le <em>Nord</em>
+      (<var>y</var> en mètres) correspond un déplacement de un degré de <em>latitude</em> (φ).
+      Les autres éléments (∂<var>x</var>/∂φ et ∂<var>y</var>/∂λ) sont des termes croisés (par exemple à quel déplacement
+      en mètres vers le <strong>Nord</strong> correspond un déplacement de un degré de <strong>longitude</strong>).
+      Ces valeurs ne sont généralement valides qu’à la position géographique (λ,φ) donnée.
+      Si on se déplace un peu, ces valeurs changent légèrement.
+    </p>
+
+    <p>
+      On peut se représenter visuellement cette matrice comme ci-dessous.
+      Cette figure représente la dérivée en deux points, <var>P</var><sub>1</sub> et <var>P</var><sub>2</sub>,
+      pour mieux illustrer le fait que le résultat varie en chaque point.
+      Dans cette figure, les vecteurs <var>U</var> et <var>V</var> désignent respectivement
+      la première et deuxième colonne des matrices de dérivées.
+    </p>
+
+    <center><table class="hidden"><tr>
+      <td><img style="border: solid 1px" src="../images/Derivatives.png" alt="Exemple de dérivées d’une projection cartographique"></td>
+      <td style="padding-left: 30px; vertical-align: middle">
+        <p>où les vecteurs sont reliés à la matrice par:</p>
+        <math display="block" alttext="MathML capable browser required">
+          <mtable><mtr>
+            <mtd>
+              <mover><mi>U</mi><mo>→</mo></mover><mo>=</mo>
+              <mfenced open="[" close="]">
+                <mtable>
+                  <mtr>
+                    <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
+                  </mtr>
+                  <mtr>
+                    <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
+                  </mtr>
+                </mtable>
+              </mfenced>
+            </mtd>
+            <mtd><mtext>et</mtext></mtd>
+            <mtd>
+              <mover><mi>V</mi><mo>→</mo></mover><mo>=</mo>
+              <mfenced open="[" close="]">
+                <mtable>
+                  <mtr>
+                    <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+                  </mtr>
+                  <mtr>
+                    <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+                  </mtr>
+                </mtable>
+              </mfenced>
+            </mtd>
+          </mtr></mtable>
+        </math>
+      </td>
+    </tr></table></center>
+
+    <p>
+      Cette figure nous montre déjà une utilisation possible des dérivées:
+      elles donnent la direction des parallèles et des méridiens à une position donnée dans une projection cartographique.
+      Par extension, on peut aussi s’en servir pour déterminer si des axes sont interchangés,
+      ou si la direction d’un axe est renversée. Mais l’intérêt des dérivées ne s’arrête pas là.
+    </p>
+
+    <h4 id="DerivativeAndEnvelope">Utilité des dérivées pour la projection d’enveloppes</h4>
+    <p>
+      Les systèmes d’information géographiques ont très fréquemment besoin de projeter une enveloppe.
+      Mais l’approche naïve, qui consisterait à projeter chacun des 4 coins du rectangle, ne suffit pas.
+      La figure ci-dessous montre une enveloppe avant le projection, et la forme géométrique que l’on obtiendrait
+      si on projetait finement l’enveloppe (pas seulement les 4 coins). Cette forme géométrique est plus complexe
+      qu’un simple rectangle à cause des courbures induites par la projection cartographique.
+      Construire une enveloppe rectangulaire qui engloberait les 4 coins de cette forme géométrique ne suffit pas,
+      car la surface en bas de la forme est plus basse que les 2 coins du bas.
+      Cette surface serait donc en dehors du rectangle.
+    </p>
+    <center><table class="hidden">
+      <tr>
+        <th>Enveloppe avant la projection</th>
+        <th>Forme géométrique après la projection</th>
+      </tr>
+      <tr>
+        <td><img style="border: solid 1px; margin-right: 15px" src="../images/GeographicArea.png" alt="Envelope in a geographic CRS"></td>
+        <td><img style="border: solid 1px; margin-left:  15px" src="../images/ConicArea.png" alt="Shape in a projected CRS"></td>
+      </tr>
+    </table></center>
+    <p>
+      Une façon simple d’atténuer le problème est d’échantillonner un plus grand nombre de points sur chacun des
+      bords de la forme géométrique. On trouve ainsi des bibliothèques de <abbr>SIG</abbr> qui vont par exemple
+      échantillonner 40 points sur chaque bord, et construire un rectangle qui englobe tout ces points.
+      Mais même avec 40 points, les échantillons les plus proches peuvent encore être légèrement à côté du point le plus bas de la figure.
+      Une petite portion de la forme géométrique peut donc toujours se trouver en dehors du rectangle.
+      Il est tentant de considérer cette légère erreur comme négligeable, mais quelques pixels manquants
+      entraînent divers artefacts comme une apparence de quadrillage lors de l’affichage d’images tuilées,
+      ou une “pointe de tarte” manquante lors de la projection d’images sur un pôle.
+      Augmenter artificiellement d’un certain pourcentage la taille de l’enveloppe projetée peut éliminer ces artefacts dans certains cas.
+      Mais un pourcentage trop élevé fera traiter plus de données que nécessaire
+      (en particulier lorsque cela entraîne le chargement de nouvelles tuiles d’images),
+      alors qu’un pourcentage trop faible laissera quelques artefacts.
+    </p><p>
+      Les dérivées des projections cartographiques permettent de résoudre ce problème d’une manière plus efficace que la force brute.
+      La figure ci-dessous reprend la forme projetée en exagérant des déformations.
+      L’approche consiste à calculer la projection cartographiques des 4 coins comme dans l’approche naïve,
+      mais en récupérant aussi les dérivées de la projection de ces 4 coins.
+      Entre deux coins et avec leurs dérivées, on peut faire passer une et une seule courbe cubique
+      (de la forme <i>f(<var>x</var>)</i> = <var>C</var>₀ + <var>C</var>₁<var>x</var> + <var>C</var>₂<var>x</var>² + <var>C</var>₃<var>x</var>³),
+      dont on peut calculer les coefficients <var>C</var>.
+      Cette approximation (représentée en rouge ci-dessous) ne correspond pas tout-à-fait à la courbe désirée (en bleue) mais s’en rapproche.
+      Ce qui nous intéresse n’est pas vraiment les valeurs de l’approximation, mais plutôt la position de son minimum,
+      en particulier la longitude λ où se trouve ce minimum dans notre exemple (ligne pointillée verte).
+      L’avantage est que la position du minimum d’une courbe cubique est facile à calculer lorsque l’on connaît les valeurs de <var>C</var>.
+      En supposant que la longitude du minimum de la courbe cubique est proche de la longitude du minimum de la courbe réelle,
+      il suffit de calculer la projection cartographique d’un point à cette longitude plutôt que d’échantillonner 40 points sur le bord de l’enveloppe.
+    </p>
+    <center><table class="hidden"><tr><td>
+      <img src="../images/Approximation.png" alt="Approximation cubique d’un bord d’une enveloppe">
+    </td><td style="padding-left: 60px">
+      Légende:
+      <ul>
+        <li><b>En bleue:</b> la forme géométrique correspondant à la projection de l’enveloppe.
+          C’est la forme dont on souhaite avoir le rectangle englobant.</li>
+        <li><b>En rouge</b> (sous les hachures): L’approximation
+          <var>y</var> = <var>C</var>₀ + <var>C</var>₁λ + <var>C</var>₂λ² + <var>C</var>₃λ³.</li>
+        <li><b>En vert</b> (pointillés): La position λ<sub>m</sub> du minimum de l’approximation, trouvée en résolvant
+          0 = <var>C</var>₁ + 2<var>C</var>₂λ<sub>m</sub> + 3<var>C</var>₃λ<sub>m</sub>².
+          Il peut y avoir jusqu’à deux minimums pour une même courbe cubique.</li>
+      </ul>
+    </td></tr></table></center>
+    <p>
+      Dans la pratique Apache <abbr>SIS</abbr> utilise 8 points, soit les 4 coins plus un point au centre de chaque bord du rectangle à projeter,
+      afin de réduire le risque d’erreur qu’induirait une courbe trop tordue entre deux points.
+      Selon nos tests, l’utilisation de ces seuls 8 points avec leurs dérivées comme décrit ci-haut
+      donne un résultat plus précis que l’approche “force brute” utilisant un échantillonnage de 160 points sur les 4 bords du rectangle.
+      La précision de <abbr>SIS</abbr> pourrait être encore améliorée en répétant le processus à partir du minimum trouvée
+      (une ou deux itérations suffiraient peut-être).
+    </p><p>
+      Une économie de 150 points n’est pas énorme vu les performances des ordinateurs d’aujourd’hui.
+      Mais toute la discussion précédente utilisait une forme géométrique à deux dimensions en guise d’exemple,
+      alors que l’algorithme est applicable dans un espace à <var>n</var> dimensions.
+      Et de fait, l’implémentation de Apache SIS fonctionne pour un nombre arbitraire de dimensions.
+      Les économies apportées par cet algorithme par rapport à la force brute augmentent de manière exponentielle avec le nombre de dimensions.
+    </p>
+
+
+    <h4 id="DerivativeAndRaster">Utilité des dérivées pour la projection d’images</h4>
+    <p>
+      La projection cartographique d’une image s’effectue en préparant une image initialement vide qui contiendra le résultat de l’opération,
+      puis à remplir cette image en itérant sur tous les pixels. Pour chaque pixel de l’image <em>destination</em>, on obtient la coordonnées
+      du pixel correspondant dans l’image source en utilisant <em>l’inverse</em> de la projection cartographique que l’on souhaite appliquer.
+      La position obtenue ne sera pas nécessairement au centre du pixel de l’image source, ce qui implique qu’une interpolation de la valeur
+      (ou de la couleur dans l’image ci-dessous) peut être nécessaire.
+    </p>
+    <center><table class="hidden">
+      <tr>
+        <th style="text-align: left">Image source</th>
+        <th style="text-align: right">Image destination</th>
+      </tr>
+      <tr>
+        <td colspan="2"><img src="../images/RasterProjection.png" alt="Intersection of derivatives"></td>
+      </tr>
+    </table></center>
+    <p>
+      Toutefois, calculer la projection inverse pour chacun des pixels peut être relativement lent.
+      Afin d’accélérer les calculs, on utilise parfois une <cite>grille d’interpolation</cite>
+      dans laquelle on a pré-calculé les <em>coordonnées</em> de la projection inverse de seulement quelques points.
+      Les coordonnées des autres points se calculent alors par des interpolations bilinéaires entre les points pré-calculés,
+      calculs qui pourraient éventuellement tirer parti d’accélérations matérielles sous forme de <cite>transformations affines</cite>.
+      Cette approche est implémentée par exemple dans la bibliothèque <cite>Java Advanced Imaging</cite> avec l’objet <code>WarpGrid</code>.
+      Elle offre en outre l’avantage de permettre de réutiliser la grille autant de fois que l’on veut si on a plusieurs images de même
+      taille à projeter aux mêmes coordonnées géographiques.
+    </p><p>
+      Mais une difficulté de cette approche est de déterminer combien de points il faut pré-calculer pour que l’erreur
+      (la différence entre une position interpolée et la position réelle) ne dépasse pas un certain seuil (par exemple ¼ de pixel).
+      On peut procéder en commençant par une grille de taille 3×3, puis en augmentant le nombre de points de manière itérative:
+    </p>
+    <center><table class="hidden"><tr>
+      <td><img src="../images/WarpGrid.png" alt="Intersection of derivatives"></td>
+      <td style="padding-left: 60px">
+      Légende:
+      <ul>
+        <li><b>Points bleus:</b>  première itération (9 points).</li>
+        <li><b>Points verts:</b>   seconde itération (25 points, dont 16 nouveaux).</li>
+        <li><b>Points rouges:</b> troisième itération (81 points, dont 56 nouveaux).</li>
+      </ul>
+      Si l’on continue…
+      <ul>
+        <li>Quatrième itération: 289 points, dont 208 nouveaux.</li>
+        <li>Cinquième itération: 1089 points, dont 800 nouveaux.</li>
+        <li>Sixième itération: 4225 points, dont 3136 nouveaux.</li>
+        <li>…</li>
+      </ul>
+    </td></tr></table></center>
+    <p>
+      L’itération s’arrête lorsque, après avoir calculé de nouveaux points, on a vérifié que la différence entre les
+      coordonnées projetées et les coordonnées interpolées de ces nouveaux points est inférieure au seuil qu’on s’est fixé.
+      Malheureusement cette approche nous permet seulement de déterminer <strong>après</strong> avoir calculé de nouveaux points…
+      que ce n’était pas la peine de les calculer. C’est un peu dommage vu que le nombre de nouveaux points requis par chaque itération
+      est environ 3 fois la <em>somme</em> du nombre de nouveaux points de <em>toutes</em> les itérations précédentes.
+    </p><p>
+      Les dérivées des projections cartographiques nous permettent d’améliorer cette situation en estimant
+      si c’est la peine d’effectuer une nouvelle itération <strong>avant</strong> de la faire.
+      L’idée de base est de vérifier si les dérivées de deux points voisins sont presque pareilles,
+      auquel cas on présumera que la transformation entre ces deux points est pratiquement linéaire.
+      Pour quantifier « presque pareil », on procède en calculant l’intersection entre les tangentes aux deux points
+      (une information fournie par les dérivées), et en calculant la distance entre cette intersection et la droite
+      qui relie les deux points (la ligne pointillée dans la figure ci-dessous).
+    </p>
+    <center><img style="border: solid 1px" src="../images/IntersectionOfDerivatives.png" alt="Intersection of derivatives"></center>
+    <p>
+      Dans l’approche sans dérivées, l’itération s’arrête lorsque la distance entre la ligne pointillée (positions interpolées)
+      et la ligne rouge (positions projetées) est inférieure au seuil de tolérance, ce qui implique de calculer la position projetée.
+      Dans l’approche avec dérivées, on remplace la position projetée par l’intersection des deux tangentes (carré bleu foncé).
+      Si la courbe n’est pas trop tordue – ce qui ne devrait pas être le cas entre deux points suffisamment proches –
+      la courbe réelle passera à quelque part entre la droite pointillée et l’intersection.
+      On s’évite ainsi des projections cartographiques, en apparence une seule dans cette illustration,
+      mais en fait beaucoup plus dans une grille de transformation d’image (3× la somme des itérations précédentes).
+    </p>
+
+    <h4>Obtention de la dérivée en un point</h4>
+    <p>
+      Cette discussion n’aurait pas un grand intérêt si le coût du calcul des dérivées des projections cartographiques
+      était élevé par rapport aux coût de la projection des points. Mais lorsque l’on dérive analytiquement les équations
+      des projections, on constate que les calculs des positions et de leurs dérivées ont souvent plusieurs termes en commun.
+      En outre le calcul des dérivées est simplifié lorsque le code Java effectuant les projections ne se concentre que sur le « noyau » non-linéaire,
+      après s’être déchargé des parties linéaires en les déléguant aux transformations affines comme le fait <abbr>SIS</abbr>.
+      Les implémentations des projections cartographiques dans Apache <abbr>SIS</abbr> tirent parti de ces propriétés en ne calculant les dérivées que si elles sont demandées,
+      et en offrant une méthode qui permet de projeter un point et obtenir sa dérivée en une seule opération afin de permettre à <abbr>SIS</abbr> de réutiliser un maximum de termes communs.
+      Exemple:</p>
+
+<pre>AbstractMathTransform projection = ...;         // Une projection cartographique de Apache SIS.
+double[] sourcePoint = {longitude, latitude};   // La coordonnée géographique que l’on veut projeter.
+double[] targetPoint = new double[2];           // Là où on mémorisera le résultat de la projection.
+Matrix   derivative  = projection.transform(sourcePoint, 0, targetPoint, 0, true);</pre>
+
+    <p>
+      Apache <abbr>SIS</abbr> est capable combiner les dérivées des projections cartographiques de la même façon que pour les
+      projections de coordonnées: concaténation d’une chaîne de transformations, inversion, opérer sur un sous-ensemble des
+      dimensions, <i>etc.</i>
+    </p>
+
+    <p>
+      L’approche décrite dans la section sur les <a href="#DerivativeAndEnvelope">projection d’enveloppes</a>
+      est implémentée par la méthode statique <code>Envelopes.transform(CoordinateOperation, Envelope)</code> de <abbr>SIS</abbr>.
+    </p>
   </body>
 </html>
