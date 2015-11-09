@@ -666,7 +666,7 @@
       la première et deuxième colonne des matrices de dérivées.
     </p>
 
-    <center><table class="hidden"><tr>
+    <table class="hidden"><tr>
       <td><img style="border: solid 1px" src="../images/Derivatives.png" alt="Exemple de dérivées d’une projection cartographique"/></td>
       <td style="padding-left: 30px; vertical-align: middle">
         <p>où les vecteurs sont reliés à la matrice par:</p>
@@ -702,7 +702,7 @@
           </mtr></mtable>
         </math>
       </td>
-    </tr></table></center>
+    </tr></table>
 
     <p>
       Cette figure nous montre déjà une utilisation possible des dérivées:
@@ -722,7 +722,7 @@
       car la surface en bas de la forme est plus basse que les 2 coins du bas.
       Cette surface serait donc en dehors du rectangle.
     </p>
-    <center><table class="hidden">
+    <table class="hidden">
       <tr>
         <th>Enveloppe avant la projection</th>
         <th>Forme géométrique après la projection</th>
@@ -731,7 +731,7 @@
         <td><img style="border: solid 1px; margin-right: 15px" src="../images/GeographicArea.png" alt="Envelope in a geographic CRS"/></td>
         <td><img style="border: solid 1px; margin-left:  15px" src="../images/ConicArea.png" alt="Shape in a projected CRS"/></td>
       </tr>
-    </table></center>
+    </table>
     <p>
       Une façon simple d’atténuer le problème est d’échantillonner un plus grand nombre de points sur chacun des
       bords de la forme géométrique. On trouve ainsi des bibliothèques de <abbr>SIG</abbr> qui vont par exemple
@@ -760,7 +760,7 @@
       En supposant que la longitude du minimum de la courbe cubique est proche de la longitude du minimum de la courbe réelle,
       il suffit de calculer la projection cartographique d’un point à cette longitude plutôt que d’échantillonner 40 points sur le bord de l’enveloppe.
     </p>
-    <center><table class="hidden"><tr><td>
+    <table class="hidden"><tr><td>
       <img src="../images/Approximation.png" alt="Approximation cubique d’un bord d’une enveloppe"/>
     </td><td style="padding-left: 60px">
       Légende:
@@ -773,7 +773,7 @@
           0 = <var>C</var>₁ + 2<var>C</var>₂λ<sub>m</sub> + 3<var>C</var>₃λ<sub>m</sub>².
           Il peut y avoir jusqu’à deux minimums pour une même courbe cubique.</li>
       </ul>
-    </td></tr></table></center>
+    </td></tr></table>
     <p>
       Dans la pratique Apache <abbr>SIS</abbr> utilise 8 points, soit les 4 coins plus un point au centre de chaque bord du rectangle à projeter,
       afin de réduire le risque d’erreur qu’induirait une courbe trop tordue entre deux points.
@@ -805,7 +805,7 @@
       La position obtenue ne sera pas nécessairement au centre du pixel de l’image source, ce qui implique qu’une interpolation de la valeur
       (ou de la couleur dans l’image ci-dessous) peut être nécessaire.
     </p>
-    <center><table class="hidden">
+    <table class="hidden">
       <tr>
         <th style="text-align: left">Image source</th>
         <th style="text-align: right">Image destination</th>
@@ -813,7 +813,7 @@
       <tr>
         <td colspan="2"><img src="../images/RasterProjection.png" alt="Intersection of derivatives"/></td>
       </tr>
-    </table></center>
+    </table>
     <p>
       Toutefois, calculer la projection inverse pour chacun des pixels peut être relativement lent.
       Afin d’accélérer les calculs, on utilise parfois une <cite>grille d’interpolation</cite>
@@ -828,7 +828,7 @@
       (la différence entre une position interpolée et la position réelle) ne dépasse pas un certain seuil (par exemple ¼ de pixel).
       On peut procéder en commençant par une grille de taille 3×3, puis en augmentant le nombre de points de manière itérative:
     </p>
-    <center><table class="hidden"><tr>
+    <table class="hidden"><tr>
       <td><img src="../images/WarpGrid.png" alt="Intersection of derivatives"/></td>
       <td style="padding-left: 60px">
       Légende:
@@ -844,7 +844,7 @@
         <li>Sixième itération: 4225 points, dont 3136 nouveaux.</li>
         <li>…</li>
       </ul>
-    </td></tr></table></center>
+    </td></tr></table>
     <p>
       L’itération s’arrête lorsque, après avoir calculé de nouveaux points, on a vérifié que la différence entre les
       coordonnées projetées et les coordonnées interpolées de ces nouveaux points est inférieure au seuil qu’on s’est fixé.
@@ -860,7 +860,7 @@
       (une information fournie par les dérivées), et en calculant la distance entre cette intersection et la droite
       qui relie les deux points (la ligne pointillée dans la figure ci-dessous).
     </p>
-    <center><img style="border: solid 1px" src="../images/IntersectionOfDerivatives.png" alt="Intersection of derivatives"/></center>
+    <p style="text-align:center"><img style="border: solid 1px" src="../images/IntersectionOfDerivatives.png" alt="Intersection of derivatives"/></p>
     <p>
       Dans l’approche sans dérivées, l’itération s’arrête lorsque la distance entre la ligne pointillée (positions interpolées)
       et la ligne rouge (positions projetées) est inférieure au seuil de tolérance, ce qui implique de calculer la position projetée.
@@ -887,7 +887,7 @@
 <pre>AbstractMathTransform projection = ...;         // Une projection cartographique de Apache SIS.
 double[] sourcePoint = {longitude, latitude};   // La coordonnée géographique que l’on veut projeter.
 double[] targetPoint = new double[2];           // Là où on mémorisera le résultat de la projection.
-Matrix   derivative  = projection.<span class="SIS">transform</span>(sourcePoint, 0, targetPoint, 0, true);</pre>
+Matrix   derivative  = projection.<code class="SIS">transform</code>(sourcePoint, 0, targetPoint, 0, true);</pre>
 
     <p>
       Si seule la matrice Jacobienne est désirée (sans la projection du point), alors la méthode
