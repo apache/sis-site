@@ -68,7 +68,7 @@
 <section>
 <header>
 <h1 id="Foreword"><span class="section-number">1.</span> Préface</h1>
-<nav><div class="chapter-links"><div class="next-chapter"><a href="#GeoAPI">Chapitre précédent</a> ➡</div></div></nav>
+<nav><div class="chapter-links"><div class="next-chapter"><a href="#GeoAPI">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc">
 <li><a href="#Standards">Standards et normes</a><ul>
@@ -320,9 +320,16 @@ Enfin, les paquets GeoAPI seront introduits dans le chapitre suivant.
 <td><code class="SIS">org.apache.sis.util.iso</code></td>
 </tr>
 <tr>
-<td><abbr>ISO</abbr> 19115</td>
+<td><abbr>ISO</abbr> 19115-1</td>
 <td>Topic 11</td>
 <td><i>Metadata</i></td>
+<td><code class="GeoAPI">org.opengis.metadata</code></td>
+<td><code class="SIS">org.apache.sis.metadata.iso</code></td>
+</tr>
+<tr>
+<td><abbr>ISO</abbr> 19115-2</td>
+<td/>
+<td><i>Metadata — extensions for imagery and gridded data</i></td>
 <td><code class="GeoAPI">org.opengis.metadata</code></td>
 <td><code class="SIS">org.apache.sis.metadata.iso</code></td>
 </tr>
@@ -377,6 +384,20 @@ Enfin, les paquets GeoAPI seront introduits dans le chapitre suivant.
 <td><i>Metadata <abbr>XML</abbr> schema implementation</i></td>
 <td/>
 <td><code class="SIS">org.apache.sis.xml</code></td>
+</tr>
+<tr>
+<td><abbr>ISO</abbr> 19136</td>
+<td>OGC 07-036</td>
+<td><i>Geography Markup Language (<abbr>GML</abbr>) Encoding Standard</i></td>
+<td/>
+<td><code class="SIS">org.apache.sis.xml</code></td>
+</tr>
+<tr>
+<td><abbr>ISO</abbr> 19162</td>
+<td>OGC 12-063</td>
+<td><i>Well-known text representation of coordinate reference systems</i></td>
+<td/>
+<td><code class="SIS">org.apache.sis.io.wkt</code></td>
 </tr>
 <tr>
 <td><abbr>ISO</abbr> 13249</td>
@@ -524,7 +545,7 @@ Mais un soin particulier doit être apporté aux interfaces entre <abbr>SIS</abb
 <section>
 <header>
 <h1 id="GeoAPI"><span class="section-number">2.</span> GeoAPI</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Foreword">Chapitre suivant</a></div><div class="next-chapter"><a href="#XML-ISO">Chapitre précédent</a> ➡</div></div></nav>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Foreword">Chapitre précédent</a></div><div class="next-chapter"><a href="#XML-ISO">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc">
 <li><a href="#SpecificationToInterfaces">Des spécifications aux interfaces</a><ul>
@@ -1361,7 +1382,7 @@ tout en se gardant la possibilité de basculer plus facilement à une autre bibl
 <section>
 <header>
 <h1 id="XML-ISO"><span class="section-number">3.</span> Représentation des objets en <abbr>XML</abbr></h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#GeoAPI">Chapitre suivant</a></div><div class="next-chapter"><a href="#Utilities">Chapitre précédent</a> ➡</div></div></nav>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#GeoAPI">Chapitre précédent</a></div><div class="next-chapter"><a href="#Utilities">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc">
 <li><a href="#XML-ISO-19115">Représentation des méta-données selon ISO 19115-3</a><ul>
@@ -1371,8 +1392,8 @@ tout en se gardant la possibilité de basculer plus facilement à une autre bibl
 Les objets définis par les standards <abbr title="Open Geospatial Consortium">OGC</abbr>/<abbr title="International Organization for Standardization">ISO</abbr> doivent pouvoir être échangés sur internet
 entre des machines distantes, utilisant des logiciels différents écrits dans des langages différents.
 Quelques uns des formats les plus connus sont
-le <abbr>WKT</abbr> (<i>Well Known Text</i>) et
-le <abbr>WKB</abbr> (<i>Well Known Binary</i>).
+le <abbr>WKT</abbr> (<i>Well-Known Text</i>) et
+le <abbr>WKB</abbr> (<i>Well-Known Binary</i>).
 Mais le format le plus exhaustif et souvent considéré comme la référence est le <abbr>XML</abbr>,
 au point où la façon de représenter les objets <abbr>ISO</abbr> dans ce format fait parfois l’objet d’un standard international à part entière.
 Ainsi, les classes de méta-données sont décrites dans le standard <abbr>ISO</abbr> 19115-1 (une spécification dite <i>abstraite</i>),
@@ -1518,7 +1539,7 @@ est donc constitué d’une alternance systématique de deux types d’élément
 Il y a d’abord le nom de la propriété, qui commence toujours par une lettre minuscule (en ignorant les préfixes).
 Dans les <abbr title="Application Programming Interface">API</abbr> Java, chaque propriété correspond à une méthode de la classe englobante.
 Dans l’exemple ci-haut, <code class="OGC">gmd:identificationInfo</code> (une propriété de la classe <code class="OGC">MD_Metadata</code>)
-correspond à la méthode <code class="GeoAPI">Metadata.getIdentificationInfo()</code>.
+correspond à la méthode <code class="GeoAPI">Metadata​.getIdentificationInfo()</code>.
 </p></li>
 <li><p>
 Sous chaque propriété se trouve le type de la valeur, sauf si elle a été remplacée par une référence
@@ -1671,7 +1692,7 @@ Chaque instance implémentant <code class="SIS">NilObject</code> fournit une mé
 Dans l’exemple suivant, la partie gauche montre un élément <code class="OGC">CI_Citation</code>
 contenant un élément <code class="OGC">CI_Series</code>, alors que dans la partie droite la série est inconnue.
 Si l’élément <code class="OGC">CI_Series</code> avait été complètement omis,
-alors la méthode <code class="GeoAPI">Citation.getSeries()</code> retournerait <code>null</code> en Java.
+alors la méthode <code class="GeoAPI">Citation​.getSeries()</code> retournerait <code>null</code> en Java.
 Mais en présence d’un attribut <code class="OGC">nilReason</code>, l’implémentation <abbr>SIS</abbr>
 de <code class="SIS">getSeries()</code> retournera plutôt un objet implémentant à la fois les interfaces
 <code class="GeoAPI">Series</code> et <code class="SIS">NilReason</code>,
@@ -1704,7 +1725,7 @@ et dont la méthode <code class="SIS">getNilReason()</code> retournera la consta
 <section>
 <header>
 <h1 id="Utilities"><span class="section-number">4.</span> Classes et méthodes utilitaires</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#XML-ISO">Chapitre suivant</a></div><div class="next-chapter"><a href="#Geometry">Chapitre précédent</a> ➡</div></div></nav>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#XML-ISO">Chapitre précédent</a></div><div class="next-chapter"><a href="#Geometry">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc">
 <li><a href="#ComparisonMode">Modes de comparaisons des objets</a></li>
@@ -1721,7 +1742,7 @@ La plupart de ces utilitaires ne sont pas spécifiques aux systèmes d’informa
 
 <h2 id="ComparisonMode"><span class="section-number">4.1.</span> Modes de comparaisons des objets</h2>
 <p>
-Il existe différentes opinions sur la façon d’implémenter la méthode <code>Object.equals(Object)</code> du Java standard.
+Il existe différentes opinions sur la façon d’implémenter la méthode <code>Object​.equals(Object)</code> du Java standard.
 Selon certains, il doit être possible de comparer différentes implémentations d’une même interface ou classe de base.
 Mais cette politique nécessite que chaque interface ou classe de base définisse entièrement dans sa Javadoc les critères ou calculs
 que doivent employer les méthodes <code>equals(Object)</code> et <code>hashCode()</code> dans toutes les implémentations.
@@ -1741,7 +1762,7 @@ Cette contrainte découle des points suivants du contrat des méthodes <code>equ
 Par exemple ces trois contraintes sont violées si <var>A</var> (et éventuellement <var>C</var>)
 peuvent contenir des attributs que <var>B</var> ignore.
 Pour contourner cette difficulté, une approche alternative consiste à exiger que les objets comparés par la méthode
-<code>Object.equals(Object)</code> soient exactement de la même classe, c’est-à-dire que <code>A.getClass() == B.getClass()</code>.
+<code>Object​.equals(Object)</code> soient exactement de la même classe, c’est-à-dire que <code>A.getClass() == B.getClass()</code>.
 Cette approche est parfois considérée contraire aux principes de la programmation orientée objets.
 Dans la pratique, pour des applications relativement complexes, l’importance accordée à ces principes dépend du contexte dans lequel les objets sont comparés:
 si les objets sont ajoutés à un <code>HashSet</code> ou utilisés comme clés dans un <code>HashMap</code>,
@@ -1947,7 +1968,7 @@ pas des caractères supplémentaires, même si la chaîne dans laquelle on fait 
 <h4 id="Whitespaces"><span class="section-number">4.2.4.1.</span> Interprétation des espaces blancs</h4>
 <p>
 Le Java standard fournit deux méthodes pour déterminer si un caractères est un espace blanc:
-<code>Character.isWhitespace(…)</code> et <code>Character.isSpaceChar(…)</code>.
+<code>Character​.isWhitespace(…)</code> et <code>Character​.isSpaceChar(…)</code>.
 Ces deux méthodes diffèrent dans leurs interprétations des espaces insécables, des tabulations et des retours à la ligne.
 La première méthode est conforme à l’interprétation couramment utilisée dans des langages telles que le Java, C/C++ et <abbr>XML</abbr>,
 qui considère les tabulations et retours à la ligne comme des espaces blancs,
@@ -1981,7 +2002,7 @@ de la bibliothèque <abbr>SIS</abbr>.
 <section>
 <header>
 <h1 id="Geometry"><span class="section-number">5.</span> Géométries</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Utilities">Chapitre suivant</a></div><div class="next-chapter"><a href="#Coverage">Chapitre précédent</a> ➡</div></div></nav>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Utilities">Chapitre précédent</a></div><div class="next-chapter"><a href="#Coverage">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc">
 <li><a href="#Geometry-root">Classes de base</a><ul>
@@ -2165,7 +2186,7 @@ est vrai, alors il est garanti que l’enveloppe est vide.
 <section>
 <header>
 <h1 id="Coverage"><span class="section-number">6.</span> Couvertures de données (<i>Coverages</i>)</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Geometry">Chapitre suivant</a></div></div></nav>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Geometry">Chapitre précédent</a></div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc"/></nav>
 <p>

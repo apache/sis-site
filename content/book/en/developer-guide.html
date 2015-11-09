@@ -291,9 +291,16 @@ Finally, GeoAPI packages will be introduced in upcoming chapters.
 <td><code class="SIS">org.apache.sis.util.iso</code></td>
 </tr>
 <tr>
-<td><abbr>ISO</abbr> 19115</td>
+<td><abbr>ISO</abbr> 19115-1</td>
 <td>Topic 11</td>
 <td><i>Metadata</i></td>
+<td><code class="GeoAPI">org.opengis.metadata</code></td>
+<td><code class="SIS">org.apache.sis.metadata.iso</code></td>
+</tr>
+<tr>
+<td><abbr>ISO</abbr> 19115-2</td>
+<td/>
+<td><i>Metadata — extensions for imagery and gridded data</i></td>
 <td><code class="GeoAPI">org.opengis.metadata</code></td>
 <td><code class="SIS">org.apache.sis.metadata.iso</code></td>
 </tr>
@@ -348,6 +355,20 @@ Finally, GeoAPI packages will be introduced in upcoming chapters.
 <td><i>Metadata <abbr>XML</abbr> schema implementation</i></td>
 <td/>
 <td><code class="SIS">org.apache.sis.xml</code></td>
+</tr>
+<tr>
+<td><abbr>ISO</abbr> 19136</td>
+<td>OGC 07-036</td>
+<td><i>Geography Markup Language (<abbr>GML</abbr>) Encoding Standard</i></td>
+<td/>
+<td><code class="SIS">org.apache.sis.xml</code></td>
+</tr>
+<tr>
+<td><abbr>ISO</abbr> 19162</td>
+<td>OGC 12-063</td>
+<td><i>Well-known text representation of coordinate reference systems</i></td>
+<td/>
+<td><code class="SIS">org.apache.sis.io.wkt</code></td>
 </tr>
 <tr>
 <td><abbr>ISO</abbr> 13249</td>
@@ -1311,7 +1332,7 @@ while retaining the ability to switch easily to another library if desired.
 <p>
 Objects defined by <abbr title="Open Geospatial Consortium">OGC</abbr>/<abbr title="International Organization for Standardization">ISO</abbr> standards must be able to communicate with remote machines via the Internet,
 using different software written in different languages.
-Some of the better known formats include <abbr>WKT</abbr> (<i>Well Known Text</i>) and <abbr>WKB</abbr> (<i>Well Known Binary</i>).
+Some of the better known formats include <abbr>WKT</abbr> (<i>Well-Known Text</i>) and <abbr>WKB</abbr> (<i>Well-Known Binary</i>).
 But the most exhaustive and often referred format is <abbr>XML</abbr>,
 to the point where the representation of <abbr>ISO</abbr> objects in this format is itself sometimes
 the entire focus of an international standard.
@@ -1456,7 +1477,7 @@ consists of a systematic alternation of two types of <abbr>XML</abbr> elements:
 It begins with the name of the property, which always begins with a lower-case letter (ignoring prefixes).
 In Java <abbr title="Application Programming Interface">API</abbr>s, each property corresponds to a method in its enclosing class.
 In the example above, <code class="OGC">gmd:identificationInfo</code>  (a property of <code class="OGC">MD_Metadata</code> class)
-corresponds to the <code class="GeoAPI">Metadata.getIdentificationInfo()</code> method.
+corresponds to the <code class="GeoAPI">Metadata​.getIdentificationInfo()</code> method.
 </p></li>
 <li><p>
 The value type is included under each property, unless it has been replaced with a reference
@@ -1604,7 +1625,7 @@ indicating why the object is nil.
 In the following example, the left side shows a <code class="OGC">CI_Citation</code> element containing a
 <code class="OGC">CI_Series</code> element, while on the right side the series is unknown.
 If the <code class="OGC">CI_Series</code> element had been completely omitted,
-then the <code class="GeoAPI">Citation.getSeries()</code> method would return <code>null</code> in Java.
+then the <code class="GeoAPI">Citation​.getSeries()</code> method would return <code>null</code> in Java.
 But when a <code class="OGC">nilReason</code> is present, the <abbr>SIS</abbr> implementation of
 <code class="SIS">getSeries()</code> returns instead an object that implements both the
 <code class="GeoAPI">Series</code> and <code class="SIS">NilReason</code> interfaces, and in which the
@@ -1654,7 +1675,7 @@ Most of these utilities are not specific to spatial information systems.
 
 <h2 id="ComparisonMode"><span class="section-number">4.1.</span> Comparison Modes of Objects</h2>
 <p>
-There are various opinions on how to implement Java standard's <code>Object.equals(Object)</code> method.
+There are various opinions on how to implement Java standard's <code>Object​.equals(Object)</code> method.
 According to some, it should be possible to compare different implementations of the same interface or base class.
 But to follow this policy, each interface or base class's javadoc must define the algorithms that all implementations
 shall use for their <code>equals(Object)</code> and <code>hashCode()</code> methods.
@@ -1674,7 +1695,7 @@ This constraint arises from the following points of the <code>equals(Object)</co
 For example, these three constraints are violated if <var>A</var> (and eventually <var>C</var>) can contain attributes
 which <var>B</var> ignores.
 To bypass this problem, an alternative approach is to require that the objects compared by the
-<code>Object.equals(Object)</code> method be of the same class; in other words, <code>A.getClass() == B.getClass()</code>.
+<code>Object​.equals(Object)</code> method be of the same class; in other words, <code>A.getClass() == B.getClass()</code>.
 This approach is sometimes regarded as contrary to the principles of object oriented programming.
 In practice, for relatively complex applications, the important accorded to these principles depends on the context
 in which the objects are compared:
@@ -1880,7 +1901,7 @@ even if some may be present in the sequence in which we are searching.
 <h4 id="Whitespaces"><span class="section-number">4.2.4.1.</span> The Interpretation of Blank Spaces</h4>
 <p>
 Standard Java provides two methods for determining whether a character is a blank space:
-<code>Character.isWhitespace(…)</code> and <code>Character.isSpaceChar(…)</code>.
+<code>Character​.isWhitespace(…)</code> and <code>Character​.isSpaceChar(…)</code>.
 These two methods differ in their interpretations of non-breaking spaces, tabs and line breaks.
 The first method conforms to the interpretation currently used in languages such as Java, C/C++ and <abbr>XML</abbr>,
 which considers tabs and line breaks to be blank spaces, while non-breaking spaces are read as not blank.
