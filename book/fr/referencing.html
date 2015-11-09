@@ -48,7 +48,7 @@
     <ul>
       <li>Rester dans la zone de validité du système, telle que donnée par <code>ReferenceSystem.getDomainOfValidity()</code>.</li>
       <li>Savoir que les mesures de distances dans une projection cartographique donnée ne sont vraies qu’à certains endroits,
-          appelés par exemple « parallèles standards ».</li>
+          appelés par exemple « parallèles standards ».</li>
       <li>Vérifier la précision des transformations de coordonnées, telle que donnée par
           <code>CoordinateOperation.getCoordinateOperationAccuracy()</code>.</li>
     </ul>
@@ -116,14 +116,14 @@
        Tout en étant nettement plus lisse que la surface topographique,
        le géoïde présente des creux et des bosses liés à l’inégale distribution des masses de la Terre.
        Pour une utilisation mathématiquement plus aisée, le géoïde est donc approximé par un ellipsoïde.
-       Cette « figure de la Terre » est représentée dans GeoAPI par l’interface <code>Ellipsoid</code>,
+       Cette « figure de la Terre » est représentée dans GeoAPI par l’interface <code>Ellipsoid</code>,
        qui constitue un élément fondamental des systèmes de références de type <code>GeographicCRS</code> et <code>ProjectedCRS</code>.
        Plusieurs dizaines d’ellipsoïdes sont couramment employés, certains offrant une excellente approximation pour une région précise
        au détriment des régions pour lesquelles l’ellipsoïde n’a pas été conçu, et d’autres offrant un compromis pour l’ensemble de la planète.
     </p>
     <div class="example"><p><b>Exemple:</b>
       au début du XX<sup>e</sup> siècle aux États-Unis, l’état du Michigan utilisait pour ses cartes un ellipsoïde basé
-      sur l’ellipsoïde « Clarke 1866 » mais auquel la longueur des axes a été allongée de 800 pieds.
+      sur l’ellipsoïde « Clarke 1866 » mais auquel la longueur des axes a été allongée de 800 pieds.
       Cette modification visait à tenir compte du niveau moyen de l’état au dessus du niveau de la mer.</p>
     </div>
 
@@ -133,12 +133,13 @@
       qui épouse au mieux sur l’ensemble du pays la forme locale du géoïde.
       L’écart entre cet ellipsoïde de référence et les creux et les bosses du géoïde reste généralement inférieur à 100 mètres.
       Les paramètres qui permettent de lier un <code>Ellipsoid</code> à la surface de la Terre (par exemple la position de son centre)
-      sont encapsulés dans un objet de type <code>GeodeticDatum</code>, que l’on traduit en français par « référentiel géodésique ».
+      sont encapsulés dans un objet de type <code>GeodeticDatum</code>, que l’on traduit en français par « référentiel géodésique ».
       Plusieurs <code>GeodeticDatum</code> peuvent utiliser le même <code>Ellipsoid</code>, mais centré ou orienté différemment.
     </p><p>
       Avant l’avènement des satellites, les mesures géodésiques se déroulaient exclusivement à la surface de la terre.
       En conséquence, deux îles ou continents qui ne sont pas à portée visuelle l’un de l’autre n’étaient pas rattachés géodésiquement entre eux.
-      Ainsi les référentiels <cite>North American Datum 1983</cite> (<abbr>NAD83</abbr>) et <cite>European Datum 1950</cite> (<abbr>ED50</abbr>) sont indépendants l’un de l’autre:
+      Ainsi les référentiels <cite>North American Datum 1983</cite> (<abbr>NAD83</abbr>) et
+      <cite>European Datum 1950</cite> (<abbr>ED50</abbr>) sont indépendants l’un de l’autre:
       leurs ellipsoïdes de référence ont des centres distincts et des dimensions différentes.
       Une même coordonnée géographique correspondra à des positions différentes dans le monde réel
       selon que la coordonnée se réfère à l’un ou l’autre de ces référentiels.
@@ -164,7 +165,7 @@
     </p>
     <article>
       <header>
-        <h1>Bibliothèques de type « early binding » versus « late binding »</h1>
+        <h1>Bibliothèques de type « early binding » versus « late binding »</h1>
       </header>
       <p>
         Le caractère universel du système <abbr>WGS84</abbr> rend tentante l’idée de l’utiliser comme système pivot,
@@ -174,7 +175,7 @@
         Il suffirait ainsi de stocker dans chaque objet <code>GeodeticDatum</code> les informations nécessaires à la transformation vers <abbr>WGS84</abbr>.
         Cette approche était encouragée dans la version 1 du format <abbr>WKT</abbr>, qui définissait un élément <code>TOWGS84</code> remplissant ce rôle.
       </p><p>
-        Cette approche est désignée par <abbr>EPSG</abbr> sous le nom de « early binding »,
+        Cette approche est désignée par <abbr>EPSG</abbr> sous le nom de « early binding »,
         car elle associe des informations sur la transformations de coordonnées très tôt dans la définition des objets géodésiques.
         Bien que <abbr>EPSG</abbr> reconnaisse que cette approche soit couramment employée, elle n’est pas recommandée pour plusieurs raisons:
       </p>
@@ -188,23 +189,23 @@
             mis en place par le concurrent européen du <abbr>GPS</abbr>. Et <abbr>WGS84</abbr> lui-même subit parfois des révisions.</li>
       </ul>
       <p>
-        <abbr>EPSG</abbr> recommande plutôt d’utiliser une approche dite « late binding »,
+        <abbr>EPSG</abbr> recommande plutôt d’utiliser une approche dite « late binding »,
         selon laquelle les paramètres nécessaires aux transformations de coordonnées sont définis pour des paires de
-        référentiels « <var>A</var> vers <var>B</var> » plutôt qu’associés à des référentiels pris isolément.
-        Apache <abbr>SIS</abbr> est une implémentation de type « late binding »,
-        bien qu’une réminiscence de l’approche « early binding » existe toujours
+        référentiels « <var>A</var> vers <var>B</var> » plutôt qu’associés à des référentiels pris isolément.
+        Apache <abbr>SIS</abbr> est une implémentation de type « late binding »,
+        bien qu’une réminiscence de l’approche « early binding » existe toujours
         sous la forme de la propriété <code>DefaultGeodeticDatum.getBursaWolfParameters()</code>.
       </p>
     </article>
 
     <h3 id="CoordinateSystem">Systèmes de coordonnées</h3>
-    <p>TODO</p>
+    <p style="color: red">TODO</p>
 
     <h3 id="GeographicCRS">Systèmes géographiques</h3>
-    <p>TODO</p>
+    <p style="color: red">TODO</p>
 
     <h4 id="GeographicWKT">Format <i>Well-Known Text</i></h4>
-    <p>TODO</p>
+    <p style="color: red">TODO</p>
 
     <h3 id="ProjectedCRS">Projections cartographiques</h3>
     <p>
@@ -214,43 +215,388 @@
       Les propriétés géométriques à conserver dépendent de l’objet d’étude et du travail à effectuer.
       Par exemple les pays plutôt allongés dans le sens Est-Ouest utilisent souvent une projection de Lambert,
       alors que les pays plutôt allongés dans le sens Nord-Sud préfèrent une projection de Mercator Transverse.
-    </p><p>
-      TODO
     </p>
+    <p style="color: red">TODO</p>
 
     <h4 id="ProjectedWKT">Format <i>Well-Known Text</i></h4>
-    <p>TODO</p>
+    <p style="color: red">TODO</p>
 
     <h3 id="CompoundCRS">Dimensions verticales et temporelles</h3>
-    <p>TODO</p>
+    <p style="color: red">TODO</p>
 
     <h4 id="CompoundWKT">Format <i>Well-Known Text</i></h4>
-    <p>TODO</p>
+    <p style="color: red">TODO</p>
 
 
 
     <h2 id="GetCRS">Obtention d’un système de référence spatial</h2>
-    <p>TODO</p>
+    <p style="color: red">TODO</p>
 
     <h3 id="CRSAuthorityFactory">Systèmes prédéfinis par des autorités</h3>
-    <p>TODO</p>
+    <p style="color: red">TODO</p>
 
     <h3 id="CRSParsing">Lecture d’une définition au format GML ou WKT</h3>
-    <p>TODO</p>
+    <p style="color: red">TODO</p>
 
     <h3 id="CRSFactory">Construction programmatique explicite</h3>
-    <p>TODO</p>
+    <p style="color: red">TODO</p>
 
     <h3 id="CRS_UserCode">Ajout de définitions</h3>
-    <p>TODO</p>
+    <p style="color: red">TODO</p>
 
 
 
     <h2 id="CoordinateOperation">Opérations sur les coordonnées</h2>
-    <p>TODO</p>
+    <p style="color: red">TODO</p>
 
     <h3 id="MathTransform">Exécution de opérations</h3>
-    <p>TODO</p>
+    <p style="color: red">TODO</p>
+
+    <h4 id="AffineTransform">Les transformations affines</h4>
+    <p>
+      Parmi les sortes d’opérations qu’un <abbr>SIG</abbr> doit effectuer sur les coordonnées spatiales, il en est une à la fois simple et très fréquente.
+      Ce sont les opérations linéaires, constituées uniquement d’une combinaison d’additions et de certaines multiplications.
+      Ces opérations n’effectuent pas de projections cartographiques, plus complexes, mais couvrent de nombreux autres cas:
+    </p>
+    <ul>
+      <li>Changer l’ordre des axes, par exemple de (<var>latitude</var>, <var>longitude</var>) vers (<var>longitude</var>, <var>latitude</var>).</li>
+      <li>Changer la direction des axes (par exemple l’axe des <var>y</var> des images pointe souvent vers le bas).</li>
+      <li>Changer de méridien d’origine (par exemple de <cite>Paris</cite> vers <cite>Greenwich</cite>).</li>
+      <li>Changer le nombre de dimensions (par exemple passer des coordonnées 3D vers 2D).</li>
+      <li>Convertir des unités de mesures (par exemple convertir des pieds en mètres).</li>
+      <li>Convertir les coordonnées pixels d’une image en coordonnées géographiques
+          (par exemple la conversion exprimée dans les fichiers <code>.tfw</code> qui accompagnent certaines images <abbr>TIFF</abbr>).</li>
+      <li>Prendre en charge une petite partie des projections cartographiques
+          (par exemple les paramètres <cite>False Easting</cite>, <cite>False Northing</cite> et <cite>Scale factor</cite>).</li>
+      <li>Appliquer des rotations, translations, échelles ou cisaillements (des transformations dites <cite>affines</cite>).</li>
+    </ul>
+    <p>
+      Les opérations linéaires ont la propriété de toujours se combiner:
+      peu importe le nombre d’opérations linéaires que l’on enchaîne, le résultat sera toujours exprimable par une seule opération linéaire.
+      Cette propriété est plus facilement visible lorsque les opérations linéaires sont exprimées sous forme de matrices:
+      pour les combiner, il suffit de multiplier les matrices.
+    </p>
+    <div class="example"><p><b>Example:</b>
+      supposons que nous disposons d’une image dont les coordonnées des pixels sont représentées par (<var>i</var>,<var>j</var>).
+      Supposons que la taille de chaque pixel correspond à un nombre fixe de degrées de longitude et de latitude
+      dans un système géographique donné et qu’il n’y a pas de rotation.
+      La conversion des coordonnées pixels (<var>i</var>,<var>j</var>) vers les coordonnées géographiques (<var>λ</var>,<var>φ</var>)
+      est alors linéaire et peut être représentée par la matrice suivante:</p>
+
+      <table class="hidden"><tr><td>
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
+          <mfenced open="[" close="]">
+            <mtable>
+              <mtr><mtd><mi>λ</mi></mtd></mtr>
+              <mtr><mtd><mi>φ</mi></mtd></mtr>
+              <mtr><mtd><mn>1</mn></mtd></mtr>
+            </mtable>
+          </mfenced>
+          <mo>=</mo>
+          <mfenced open="[" close="]">
+            <mtable>
+              <mtr>
+                <mtd><msub><mi>S</mi><mrow>λ</mrow></msub></mtd>
+                <mtd><msub><mi>H</mi><mrow>λ</mrow></msub></mtd>
+                <mtd><msub><mi>T</mi><mrow>λ</mrow></msub></mtd>
+              </mtr>
+              <mtr>
+                <mtd><msub><mi>H</mi><mrow>φ</mrow></msub></mtd>
+                <mtd><msub><mi>S</mi><mrow>φ</mrow></msub></mtd>
+                <mtd><msub><mi>T</mi><mrow>φ</mrow></msub></mtd>
+              </mtr>
+              <mtr>
+                <mtd><mn>0</mn></mtd>
+                <mtd><mn>0</mn></mtd>
+                <mtd><mn>1</mn></mtd>
+              </mtr>
+            </mtable>
+          </mfenced>
+          <mo>×</mo>
+          <mfenced open="[" close="]">
+            <mtable>
+              <mtr><mtd><mi>i</mi></mtd></mtr>
+              <mtr><mtd><mi>j</mi></mtd></mtr>
+              <mtr><mtd><mn>1</mn></mtd></mtr>
+            </mtable>
+          </mfenced>
+        </math>
+      </td><td style="vertical-align: middle; padding-left: 30px">
+        où
+      </td><td style="vertical-align: middle">
+        <ul>
+          <li><var>S</var> est un facteur d’échelle (<cite>Scale</cite>) correspondant dans cet exemple à la taille des pixels.</li>
+          <li><var>H</var> est un terme de cisaillement (<cite>Shear</cite>), habituellement zéro sauf si l’image a une rotation.</li>
+          <li><var>T</var> est une translation (<cite>Translation</cite>) correspondant dans cet exemple à la coordonnée d’un coin de l’image.</li>
+        </ul>
+      </td></tr></table>
+      <p>
+        Concentrons notre attention sur la matrice du milieu dans l’équation ci-dessus.
+        Si nous n’interchangeons ni n’inversons la direction d’aucun axe, alors une conversion des coordonnées pixels vers les coordonnées géographiques
+        pourrait s’exprimer par la matrice « conversion originale » ci-dessous.
+        Mais si l’on veut en outre inverser la direction de l’axe des <var>j</var> pour se conformer à la convention la plus courante appliquée aux images
+        (« changement 1 ») et interchanger l’ordre des axes pour exprimer la latitude avant la longitude (« changement 2 »),
+        alors on peut exprimer ces modifications par des multiplications matricielles comme suit
+        (l’ordre dans laquelle les opérations sont effectuées sur les coordonnées se lit de droite à gauche):
+      </p>
+      <table class="hidden"><tr>
+        <th>Changement 2</th><th></th>
+        <th>Changement 1</th><th></th>
+        <th>Conversion originale</th><th></th>
+        <th>Conversion modifiée</th>
+      </tr><tr>
+        <td style="vertical-align: middle">
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
+            <mfenced open="[" close="]">
+              <mtable>
+                <mtr>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>1</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                </mtr>
+                <mtr>
+                  <mtd><mn>1</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                </mtr>
+                <mtr>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>1</mn></mtd>
+                </mtr>
+              </mtable>
+            </mfenced>
+          </math>
+        </td>
+        <td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
+        <td style="vertical-align: middle">
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mfenced open="[" close="]">
+              <mtable>
+                <mtr>
+                  <mtd><mn>1</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                </mtr>
+                <mtr>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>-1</mn></mtd>
+                  <mtd><mo>(</mo><msub><mi>j</mi><mrow>max</mrow></msub><mo>-</mo>
+                                 <msub><mi>j</mi><mrow>min</mrow></msub><mo>)</mo></mtd>
+                </mtr>
+                <mtr>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>1</mn></mtd>
+                </mtr>
+              </mtable>
+            </mfenced>
+          </math>
+        </td>
+        <td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
+        <td style="vertical-align: middle">
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mfenced open="[" close="]">
+              <mtable>
+                <mtr>
+                  <mtd><mfrac>
+                    <mrow>
+                      <msub><mi>λ</mi><mrow>max</mrow></msub><mo>-</mo>
+                      <msub><mi>λ</mi><mrow>min</mrow></msub>
+                    </mrow><mrow>
+                      <msub><mi>i</mi><mrow>max</mrow></msub><mo>-</mo>
+                      <msub><mi>i</mi><mrow>min</mrow></msub>
+                    </mrow>
+                  </mfrac></mtd>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><msub><mi>λ</mi><mrow>min</mrow></msub></mtd>
+                </mtr>
+                <mtr>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mfrac>
+                    <mrow>
+                      <msub><mi>φ</mi><mrow>max</mrow></msub><mo>-</mo>
+                      <msub><mi>φ</mi><mrow>min</mrow></msub>
+                    </mrow><mrow>
+                      <msub><mi>j</mi><mrow>max</mrow></msub><mo>-</mo>
+                      <msub><mi>j</mi><mrow>min</mrow></msub>
+                    </mrow>
+                  </mfrac></mtd>
+                  <mtd><msub><mi>φ</mi><mrow>min</mrow></msub></mtd>
+                </mtr>
+                <mtr>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>1</mn></mtd>
+                </mtr>
+              </mtable>
+            </mfenced>
+          </math>
+        </td>
+        <td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">=</td>
+        <td style="vertical-align: middle">
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mfenced open="[" close="]">
+              <mtable>
+                <mtr>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mo>-</mo><mfrac>
+                    <mrow>
+                      <msub><mi>φ</mi><mrow>max</mrow></msub><mo>-</mo>
+                      <msub><mi>φ</mi><mrow>min</mrow></msub>
+                    </mrow><mrow>
+                      <msub><mi>j</mi><mrow>max</mrow></msub><mo>-</mo>
+                      <msub><mi>j</mi><mrow>min</mrow></msub>
+                    </mrow>
+                  </mfrac></mtd>
+                  <mtd><msub><mi>φ</mi><mrow>max</mrow></msub></mtd>
+                </mtr>
+                <mtr>
+                  <mtd><mfrac>
+                    <mrow>
+                      <msub><mi>λ</mi><mrow>max</mrow></msub><mo>-</mo>
+                      <msub><mi>λ</mi><mrow>min</mrow></msub>
+                    </mrow><mrow>
+                      <msub><mi>i</mi><mrow>max</mrow></msub><mo>-</mo>
+                      <msub><mi>i</mi><mrow>min</mrow></msub>
+                    </mrow>
+                  </mfrac></mtd>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><msub><mi>λ</mi><mrow>min</mrow></msub></mtd>
+                </mtr>
+                <mtr>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>1</mn></mtd>
+                </mtr>
+              </mtable>
+            </mfenced>
+          </math>
+        </td>
+      </tr></table>
+      <p>
+        L’élément clé est qu’il n’y a pas besoin d’écrire un code dédié à l’inversion des axes.
+        Cette opération, et bien d’autres, est prise en compte naturellement par l’algèbre matricielle.
+        On y gagne en généricité du code et en performance.
+      </p>
+    </div>
+
+    <p style="color: red">TODO</p>
+
+    <article>
+      <header>
+        <h1>Particularités d’une bibliothèque de calculs matriciels pour un <abbr>SIG</abbr></h1>
+      </header>
+      <p>
+        Les <abbr>SIG</abbr> font un usage intensif de matrices afin d’afficher leurs cartes ou transformer des coordonnées.
+        On pourrait croire que le marché est suffisamment bien pourvu en excellentes bibliothèques de calculs matriciels, libres ou commerciales.
+        Pourtant, les <abbr>SIG</abbr> ont des besoins spécifiques qui divergent un peu des objectifs de plusieurs bibliothèques existantes.
+        Des manipulations de matrices comme l’exemple précédent interviennent dans quasiment toutes les opérations
+        appliquées par Apache <abbr>SIS</abbr> sur des coordonnées.
+        Mais l’analyse de ces opérations révèle quelques patterns:
+      </p>
+      <ul>
+        <li><p>Ces matrices sont presque toujours de petites tailles, dépassant rarement 5 lignes par 5 colonnes.</p></li>
+        <li><p>Les opérations matricielles « lourdes » (multiplications ou inversions de matrices) ne surviennent pas dans des endroits où la performance est importante.
+            Dans la quasi-totalité des cas, elles ne sont effectuées qu’une fois pour toute, à la lecture d’un fichier,
+            ou lors des étapes de préparation avant de convertir des coordonnées.
+            Elles ne surviennent quasiment jamais dans la boucle convertissant chacune des coordonnées.</p></li>
+        <li><p>Dans une succession de multiplications et d’inversions de matrices, les erreurs d’arrondissement s’accumulent et grandissent rapidement
+            au point de se confondre avec certaines opérations légitimes, notamment les changements de référentiel.
+            Ces dernières s’expriment souvent par un changement de la taille, position et orientation de l’ellipsoïde
+            choisi comme approximation de la forme de la Terre. Les changements de la taille s’expriment en parties par million et
+            les rotations en arc-secondes. Retranscrites dans une matrice, ces valeurs sont donc assez petites.</p></li>
+        <li><p>Il arrive fréquemment que des matrices s’annulent en tout ou en partie,
+            c’est-à-dire que leurs multiplications ramènent des facteurs d’échelles à 1 et des translations à 0.
+            Toutefois les erreurs d’arrondissements font que les valeurs obtenues sont rarement exactes,
+            mais plutôt des valeurs s’en rapprochant telles que 0,9999…97 à la place de 1.
+            Malheureusement, les erreurs d’arrondissement sont parfois telles qu’il est difficile de savoir
+            si certains coefficients de la matrices sont des artefacts ou proviennent d’un réel changement de référentiel.</p></li>
+      </ul>
+      <p>
+        Ces points font que, pour un <abbr>SIG</abbr>, la précision d’une bibliothèque de calculs matriciels
+        est plus importante que la performance. Paradoxalement, un bon moyen de gagner en performance est justement d’investir davantage de temps de CPU
+        pour effectuer des opérations matricielles plus précises, car on augmente ainsi les chances de détecter correctement quelles opérations s’annulent.
+        L’effort investit dans cette détection permet de sauver du temps là où ça compte: quand viendra le moment de boucler sur des millions de coordonnées à transformer.
+      </p><p>
+        Mais les bibliothèques dédiées aux calculs matriciels sont souvent conçues pour opérer de manière très performante
+        sur des matrices de grandes tailles, ayant par exemple des milliers de lignes et colonnes.
+        Elles sont ainsi conçues pour être capable de résoudre efficacement des systèmes d’équations linéaires comportant des centaines d’inconnues.
+        Les problèmes qu’elles résolvent sont certes difficiles, mais assez différents de ceux qui intéressent Apache <abbr>SIS</abbr>.
+        Pour cette raison, et aussi à cause d’un autre besoin spécifique détaillé dans la section suivante,
+        Apache <abbr>SIS</abbr> utilise ses propres fonctions de calculs matriciels.
+        Ces fonctions tentent de résoudre le problème de précision en utilisant l’arithmétique « double-double »
+        (une technique permettant de simuler une précision d’environ 120 bits)
+        au prix de la performance dans une partie du code où elle n’est pas jugée critique.
+      </p>
+      <h2>Que faire des matrices qui ne sont pas carrées (et pourquoi)</h2>
+      <p>
+        Apache <abbr>SIS</abbr> a très souvent besoin d’inverser des matrices,
+        afin d’obtenir une conversion de coordonnées qui fasse le contraire de la conversion originale.
+        Mais on n’inverse habituellement que des matrices carrées.
+        Or, Apache <abbr>SIS</abbr> a besoin d’effectuer des inversions de matrices non-carrées.
+        Selon que l’on ait plus de lignes ou plus de colonnes:
+      </p>
+      <ul>
+        <li>Pour <abbr>SIS</abbr>, une matrice non-carrée est une conversion qui ajoute ou supprime une dimension aux coordonnées.</li>
+        <li>Pour les bibliothèques d’algèbre linéaire, une matrice non-carrée est un système d’équations sous-déterminé ou surdéterminé.</li>
+      </ul>
+      <p>
+        Pour mieux comprendre les difficultés que causerait une transposition trop directe des bibliothèques d’algèbre linéaire aux <abbr>SIG</abbr>,
+        imaginons une conversion qui projetterait les points d’un espace 3D vers une surface 2D:
+      </p>
+      <table class="hidden">
+        <tr>
+          <td>(λ₁, φ₁, <var>h</var>) → (λ₂, φ₂)</td>
+          <td style="padding-left: 30px">où</td>
+          <td><ul style="margin-top: 0">
+            <li>λ est la longitude.</li>
+            <li>φ est la latitude.</li>
+            <li>(λ₂, φ₂) n’égale pas forcement (λ₁, φ₁) si la hauteur <var>h</var> n’est pas perpendiculaire à la surface.</li>
+          </ul></td>
+        </tr>
+      </table>
+      <p>
+        Pour des bibliothèques d’algèbre linéaire, la matrice représentant cette conversion serait un système d’équations sous-déterminé, et donc insoluble.
+        C’est-à-dire qu’on ne peut pas inverser cette conversion pour obtenir (λ₂, φ₂) → (λ₁, φ₁, <var>h</var>) puisqu’on ne sait pas quelle valeur donner à <var>h</var>,
+        ce qui implique qu’on ne peut pas trouver (λ₁, φ₁) non-plus car ces valeurs dépendent peut-être de <var>h</var>.
+        Toutefois, dans le cas des <abbr>SIG</abbr>, l’axe des <var>h</var> est très souvent perpendiculaire à la surface sur laquelle sont exprimées les coordonnées (λ, φ).
+        Cette perpendicularité rend λ₁ et φ₁ indépendants de <var>h</var>. Dans ce cas particulier, et ce cas seulement, on peut encore sauver les meubles.
+      </p><p>
+        Apache <abbr>SIS</abbr> procède en vérifiant si les coordonnées <var>h</var> sont indépendantes des coordonnées λ et φ.
+        Nous reconnaissons ce cas en vérifiant quels coefficients de la matrice ont la valeur zéro.
+        Si <abbr>SIS</abbr> arrive à identifier des dimensions indépendantes,
+        il peut les exclure temporairement de manière à inverser sans ambiguïté la conversion dans les dimensions restantes.
+        S’il ne trouve pas de dimension indépendante, alors une exception est levée.
+      </p><p>
+        Si une inversion a été possible, alors il reste à décider du sort des dimensions que <abbr>SIS</abbr> avait temporairement exclues.
+        Dans notre exemple, <abbr>SIS</abbr> assignera la valeur <code>NaN</code> (<cite>Not-a-Number</cite>) aux valeurs de <var>h</var> dans la conversion (λ₂, φ₂) → (λ₁, φ₁, <var>h</var>).
+        Là encore, le choix du coefficient à mettre à <code>NaN</code> dans la matrice est basé sur la présomption qu’elle représente une conversion de coordonnées.
+      </p><p>
+        Le traitement particulier fait par <abbr>SIS</abbr> permet donc d’inverser des matrices que l’on rencontre couramment dans les <abbr>SIG</abbr>,
+        même si en principe le système est sous-déterminé.
+        Dans notre exemple la coordonnée <var>h</var> reste inconnue – nous ne faisons pas surgir de l’information du néant – mais au moins les coordonnées (λ, φ) ont pu être récupérées.
+      </p><p>
+        Le problème inverse, celui des systèmes surdéterminés, est plus subtil.
+        Une approche classique des bibliothèques d’algèbre linéaire est de résoudre les systèmes surdéterminés par la méthode des moindres carrées.
+        Transposée à notre exemple, cette approche proposerait une conversion (λ₂, φ₂, <var>h</var>) → (λ₁, φ₁)
+        qui semble le meilleur compromis pour diverses valeurs de λ₂, φ₂ et <var>h</var>, tout en n’étant (sauf cas particuliers) une solution exacte pour personne.
+        De plus, les éventuelles combinaisons linéaires entre ces trois variables sont délicates compte tenu de l’hétérogénéité des unités de mesures,
+        où les <var>h</var> sont en mètres et (λ, φ) en degrés.
+        Apache <abbr>SIS</abbr> procède plutôt comme pour les systèmes sous-déterminés: en exigeant que certaines dimensions soient indépendantes des autres,
+        faute de quoi la matrice sera considérée non-inversible.
+        Dans le cas des systèmes surdéterminés <abbr>SIS</abbr> refusera donc d’effectuer certaines opérations que les bibliothèques d’algèbre linéaire auraient faite,
+        mais garantira que les conversions obtenues sont exactes (aux erreurs d’arrondissement prêts).
+      </p>
+      <p>
+        En résumé, les besoins qui ont amené Apache <abbr>SIS</abbr> à fournir ses propres fonctions de calculs matriciels sont:
+      </p>
+      <ul>
+        <li>Structure légère pour les petites matrices, particulièrement celles de taille 3×3.</li>
+        <li>Précision accrue avec l’arithmétique « double-double », quitte à sacrifier un peu de performance dans des endroits où elle n’est pas critique.</li>
+        <li>Traitement particulier de l’inversion des matrices non-carrées pour des conversions de coordonnées.</li>
+      </ul>
+    </article>
 
     <h3 id="TransformDerivative">Dérivées partielles des opérations</h3>
     <p>
@@ -262,13 +608,13 @@
     </p>
 
     <p>
-      Appelons <var>P</var> une projection cartographique qui convertit une longitude et latitude (λ,φ) en degrés
+      Appelons <var>P</var> une projection cartographique qui convertit une longitude et latitude (λ, φ) en degrés
       vers une coordonnée projetée (<var>x</var>,<var>y</var>) en mètres.
       Dans l’expression ci-dessous, nous représentons le résultat de la projection cartographique
       sous forme d’une matrice colonne (la raison sera plus claire bientôt):
     </p>
 
-    <math display="block" alttext="MathML capable browser required">
+    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
       <mi>P</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo>
       <mo>=</mo>
       <mfenced open="[" close="]">
@@ -281,7 +627,7 @@
 
     <p>La dérivée de la projection cartographique en ce même point peut se représenter par la matrice Jacobienne définie tel que:</p>
 
-    <math display="block" alttext="MathML capable browser required">
+    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
       <msup><mi>P</mi><mo>′</mo></msup><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo>
       <mo>=</mo>
       <msub><mi>JAC</mi><mrow><mi>P</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mrow></msub>
@@ -301,13 +647,14 @@
     </math>
 
     <p>
+      Dans la suite de ce texte, nous abrégerons ∂<var>x</var>(λ,φ) par ∂<var>x</var> et de même pour ∂<var>y</var>.
       Le premier élément de la matrice (∂<var>x</var>/∂λ) nous indique à quel déplacement vers l’<em>Est</em>
       (<var>x</var> en mètres) correspond un déplacement de un degré de <em>longitude</em> (λ).
       De même, le dernier élément de la matrice (∂<var>y</var>/∂φ) nous indique à quel déplacement vers le <em>Nord</em>
       (<var>y</var> en mètres) correspond un déplacement de un degré de <em>latitude</em> (φ).
       Les autres éléments (∂<var>x</var>/∂φ et ∂<var>y</var>/∂λ) sont des termes croisés (par exemple à quel déplacement
       en mètres vers le <strong>Nord</strong> correspond un déplacement de un degré de <strong>longitude</strong>).
-      Ces valeurs ne sont généralement valides qu’à la position géographique (λ,φ) donnée.
+      Ces valeurs ne sont généralement valides qu’à la position géographique (λ, φ) donnée.
       Si on se déplace un peu, ces valeurs changent légèrement.
     </p>
 
@@ -323,7 +670,7 @@
       <td><img style="border: solid 1px" src="../images/Derivatives.png" alt="Exemple de dérivées d’une projection cartographique"/></td>
       <td style="padding-left: 30px; vertical-align: middle">
         <p>où les vecteurs sont reliés à la matrice par:</p>
-        <math display="block" alttext="MathML capable browser required">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
           <mtable><mtr>
             <mtd>
               <mover><mi>U</mi><mo>→</mo></mover><mo>=</mo>
@@ -364,7 +711,7 @@
       ou si la direction d’un axe est renversée. Mais l’intérêt des dérivées ne s’arrête pas là.
     </p>
 
-    <h4 id="DerivativeAndEnvelope">Utilité des dérivées pour la projection d’enveloppes</h4>
+    <h4 id="DerivativeAndEnvelope">Utilité des dérivées pour la reprojection d’enveloppes</h4>
     <p>
       Les systèmes d’information géographiques ont très fréquemment besoin de projeter une enveloppe.
       Mais l’approche naïve, qui consisterait à projeter chacun des 4 coins du rectangle, ne suffit pas.
@@ -440,10 +787,17 @@
       alors que l’algorithme est applicable dans un espace à <var>n</var> dimensions.
       Et de fait, l’implémentation de Apache SIS fonctionne pour un nombre arbitraire de dimensions.
       Les économies apportées par cet algorithme par rapport à la force brute augmentent de manière exponentielle avec le nombre de dimensions.
+    </p><p>
+      L’approche décrite dans cette section est implémentée dans Apache <abbr>SIS</abbr>
+      par la méthode statique <code>Envelopes.transform(CoordinateOperation, Envelope)</code>.
+      Une méthode <code>Envelopes.transform(MathTransform, Envelope)</code> existe aussi comme alternative,
+      mais cette dernière ne devrait être utilisée que si on ne connaît pas l’objet <code>CoordinateOperation</code> utilisé.
+      La raison est que les objets de type <code>MathTransform</code> ne contiennent pas d’information sur le système de coordonnées sous-jasent,
+      ce qui empêche la méthode <code>Envelopes.transform(…)</code> de savoir comment gérer les points aux pôles.
     </p>
 
 
-    <h4 id="DerivativeAndRaster">Utilité des dérivées pour la projection d’images</h4>
+    <h4 id="DerivativeAndRaster">Utilité des dérivées pour la reprojection d’images</h4>
     <p>
       La projection cartographique d’une image s’effectue en préparant une image initialement vide qui contiendra le résultat de l’opération,
       puis à remplir cette image en itérant sur tous les pixels. Pour chaque pixel de l’image <em>destination</em>, on obtient la coordonnées
@@ -502,7 +856,7 @@
       si c’est la peine d’effectuer une nouvelle itération <strong>avant</strong> de la faire.
       L’idée de base est de vérifier si les dérivées de deux points voisins sont presque pareilles,
       auquel cas on présumera que la transformation entre ces deux points est pratiquement linéaire.
-      Pour quantifier « presque pareil », on procède en calculant l’intersection entre les tangentes aux deux points
+      Pour quantifier « presque pareil », on procède en calculant l’intersection entre les tangentes aux deux points
       (une information fournie par les dérivées), et en calculant la distance entre cette intersection et la droite
       qui relie les deux points (la ligne pointillée dans la figure ci-dessous).
     </p>
@@ -522,26 +876,35 @@
       Cette discussion n’aurait pas un grand intérêt si le coût du calcul des dérivées des projections cartographiques
       était élevé par rapport aux coût de la projection des points. Mais lorsque l’on dérive analytiquement les équations
       des projections, on constate que les calculs des positions et de leurs dérivées ont souvent plusieurs termes en commun.
-      En outre le calcul des dérivées est simplifié lorsque le code Java effectuant les projections ne se concentre que sur le « noyau » non-linéaire,
+      En outre le calcul des dérivées est simplifié lorsque le code Java effectuant les projections ne se concentre que sur le « noyau » non-linéaire,
       après s’être déchargé des parties linéaires en les déléguant aux transformations affines comme le fait <abbr>SIS</abbr>.
-      Les implémentations des projections cartographiques dans Apache <abbr>SIS</abbr> tirent parti de ces propriétés en ne calculant les dérivées que si elles sont demandées,
-      et en offrant une méthode qui permet de projeter un point et obtenir sa dérivée en une seule opération afin de permettre à <abbr>SIS</abbr> de réutiliser un maximum de termes communs.
+      Les implémentations des projections cartographiques dans Apache <abbr>SIS</abbr> tirent parti de ces propriétés
+      en ne calculant les dérivées que si elles sont demandées,
+      et en offrant une méthode qui permet de projeter un point et obtenir sa dérivée en une seule opération
+      afin de permettre à <abbr>SIS</abbr> de réutiliser un maximum de termes communs.
       Exemple:</p>
 
 <pre>AbstractMathTransform projection = ...;         // Une projection cartographique de Apache SIS.
 double[] sourcePoint = {longitude, latitude};   // La coordonnée géographique que l’on veut projeter.
 double[] targetPoint = new double[2];           // Là où on mémorisera le résultat de la projection.
-Matrix   derivative  = projection.transform(sourcePoint, 0, targetPoint, 0, true);</pre>
+Matrix   derivative  = projection.<span class="SIS">transform</span>(sourcePoint, 0, targetPoint, 0, true);</pre>
 
     <p>
-      Apache <abbr>SIS</abbr> est capable combiner les dérivées des projections cartographiques de la même façon que pour les
-      projections de coordonnées: concaténation d’une chaîne de transformations, inversion, opérer sur un sous-ensemble des
-      dimensions, <i>etc.</i>
+      Si seule la matrice Jacobienne est désirée (sans la projection du point), alors la méthode
+      <code>MathTransform.derivative(DirectPosition)</code> offre une alternative plus lisible.
+    </p><p>
+      Apache <abbr>SIS</abbr> est capable combiner les dérivées des projections cartographiques de la même façon que pour les projections de coordonnées:
+      concaténation d’une chaîne de transformations, inversion, opérer sur un sous-ensemble des dimensions, <i>etc.</i>
+      Les opérations inverses (des systèmes projetés vers géographiques)
+      sont souvent beaucoup plus compliquées à implémenter que les opérations originales (des systèmes géographiques vers projetés),
+      mais par chance la matrice Jacobienne d’une fonction inverse est simplement l’inverse de la matrice Jacobienne de la fonction originale.
+      Une fonction inverse peut donc implémenter le calcul de sa dérivée comme suit:
     </p>
-
-    <p>
-      L’approche décrite dans la section sur les <a href="#DerivativeAndEnvelope">projection d’enveloppes</a>
-      est implémentée par la méthode statique <code>Envelopes.transform(CoordinateOperation, Envelope)</code> de <abbr>SIS</abbr>.
-    </p>
+<pre>@Override
+public Matrix derivative(DirectPosition p) throws TransformException {
+    Matrix jac = inverse().derivative(transform(p));
+    return Matrices.inverse(jac);
+}
+</pre>
   </body>
 </html>
