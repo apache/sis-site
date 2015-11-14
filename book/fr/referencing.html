@@ -43,13 +43,13 @@
     </ul>
     <p>
       En l’absence d’indication contraire, la précision recherchée pour les coordonnées sur la Terre est de 1 centimètre.
-      Mais la maîtrise de cette précision nécessite certaines conditions:
+      Mais la maîtrise de cette précision nécessite le respect de certaines conditions:
     </p>
     <ul>
-      <li>Rester dans la zone de validité du système, telle que donnée par <code>ReferenceSystem.getDomainOfValidity()</code>.</li>
+      <li>Rester dans la zone de validité du système telle que donnée par <code>ReferenceSystem.getDomainOfValidity()</code>.</li>
       <li>Savoir que les mesures de distances dans une projection cartographique donnée ne sont vraies qu’à certains endroits,
           appelés par exemple « parallèles standards ».</li>
-      <li>Vérifier la précision des transformations de coordonnées, telle que donnée par
+      <li>Vérifier la précision des transformations de coordonnées, par exemple avec
           <code>CoordinateOperation.getCoordinateOperationAccuracy()</code>.</li>
     </ul>
     <p>
@@ -97,7 +97,7 @@
           C’est le cas notamment des projections cartographiques.</li>
     </ul>
     <p>
-      Ces systèmes sont décrits par la norme <abbr>ISO</abbr> 19111 (<i>Referencing by coordinates</i>),
+      Ces systèmes sont décrits par la norme <abbr>ISO</abbr> 19111 (<i>Referencing by Coordinates</i>),
       qui remplace en grande partie une norme plus ancienne mais encore utilisée pour certains aspects,
       <abbr>OGC 01-009</abbr> (<i>Coordinate Transformation Services</i>).
       Ces normes sont complétées par deux autres standards définissant des formats d’échanges:
@@ -133,7 +133,7 @@
       qui épouse au mieux sur l’ensemble du pays la forme locale du géoïde.
       L’écart entre cet ellipsoïde de référence et les creux et les bosses du géoïde reste généralement inférieur à 100 mètres.
       Les paramètres qui permettent de lier un <code>Ellipsoid</code> à la surface de la Terre (par exemple la position de son centre)
-      sont encapsulés dans un objet de type <code>GeodeticDatum</code>, que l’on traduit en français par « référentiel géodésique ».
+      sont représentées par un objet de type <code>GeodeticDatum</code>, que l’on traduit en français par « référentiel géodésique ».
       Plusieurs <code>GeodeticDatum</code> peuvent utiliser le même <code>Ellipsoid</code>, mais centré ou orienté différemment.
     </p><p>
       Avant l’avènement des satellites, les mesures géodésiques se déroulaient exclusivement à la surface de la terre.
@@ -173,7 +173,7 @@
       <p>
         Le caractère universel du système <abbr>WGS84</abbr> rend tentante l’idée de l’utiliser comme système pivot,
         afin de simplifier l’implémentation d’une bibliothèque de transformation de coordonnées.
-        La transformation d’une coordonnées d’un référentiel <var>A</var> vers un référentiel <var>B</var>
+        La transformation d’une coordonnée d’un référentiel <var>A</var> vers un référentiel <var>B</var>
         pourrait se faire en transformant d’abord de <var>A</var> vers <abbr>WGS84</abbr>, puis de <abbr>WGS84</abbr> vers <var>B</var>.
         Il suffirait ainsi de stocker dans chaque objet <code>GeodeticDatum</code> les informations nécessaires à la transformation vers <abbr>WGS84</abbr>.
         Cette approche était encouragée dans la version 1 du format <abbr>WKT</abbr>, qui définissait un élément <code>TOWGS84</code> remplissant ce rôle.
@@ -183,12 +183,12 @@
         Bien que <abbr>EPSG</abbr> reconnaisse que cette approche soit couramment employée, elle n’est pas recommandée pour plusieurs raisons:
       </p>
       <ul>
-        <li>Il existe parfois plusieurs transformations allant d’un référentiel <var>A</var> vers <abbr>WGS84</abbr>,
+        <li>Il existe parfois plusieurs transformations allant d’un référentiel <var>A</var> vers <var>B</var>,
             chacune étant plus précise pour une région géographique donnée.
             Par exemple il existe une cinquantaine de transformations de <abbr>NAD27</abbr> vers <abbr>NAD83</abbr>.</li>
         <li>Certaines opérations sont conçues spécifiquement pour transformer de <var>A</var> vers <var>B</var>
             et n’ont pas la même précision qu’aurait une autre transformation faisant un détour par <abbr>WGS84</abbr>.</li>
-        <li>Il existe d’autres systèmes globaux qui pourraient servir de pivot, par exemple le <cite>Galileo reference frame</cite> (<abbr>GTRF</abbr>)
+        <li>Il existe d’autres systèmes globaux qui pourraient servir de pivot, par exemple le <cite>Galileo Reference Frame</cite> (<abbr>GTRF</abbr>)
             mis en place par le concurrent européen du <abbr>GPS</abbr>. Et <abbr>WGS84</abbr> lui-même subit parfois des révisions.</li>
       </ul>
       <p>
@@ -277,7 +277,7 @@
       Les opérations linéaires ont la propriété de toujours se combiner:
       peu importe le nombre d’opérations linéaires que l’on enchaîne, le résultat sera toujours exprimable par une seule opération linéaire.
       Cette propriété est plus facilement visible lorsque les opérations linéaires sont exprimées sous forme de matrices:
-      pour les combiner, il suffit de multiplier les matrices.
+      pour combiner les opérations, il suffit de multiplier les matrices.
     </p>
     <div class="example"><p><b>Example:</b>
       supposons que nous disposons d’une image dont les coordonnées des pixels sont représentées par (<var>i</var>,<var>j</var>).
@@ -478,7 +478,7 @@
         </td>
       </tr></table>
       <p>
-        L’élément clé est qu’il n’y a pas besoin d’écrire un code dédié à l’inversion des axes.
+        L’idée principale est qu’il n’y a pas besoin d’écrire un code dédié à l’inversion des axes.
         Cette opération, et bien d’autres, est prise en compte naturellement par l’algèbre matricielle.
         On y gagne en généricité du code et en performance.
       </p>
@@ -526,7 +526,7 @@
         sur des matrices de grandes tailles, ayant par exemple des milliers de lignes et colonnes.
         Elles sont ainsi conçues pour être capable de résoudre efficacement des systèmes d’équations linéaires comportant des centaines d’inconnues.
         Les problèmes qu’elles résolvent sont certes difficiles, mais assez différents de ceux qui intéressent Apache <abbr>SIS</abbr>.
-        Pour cette raison, et aussi à cause d’un autre besoin spécifique détaillé dans la section suivante,
+        Pour cette raison, et aussi à cause d’un autre besoin spécifique détaillé dans les paragraphes suivants,
         Apache <abbr>SIS</abbr> utilise ses propres fonctions de calculs matriciels.
         Ces fonctions tentent de résoudre le problème de précision en utilisant l’arithmétique « double-double »
         (une technique permettant de simuler une précision d’environ 120 bits)
@@ -563,7 +563,7 @@
         Pour des bibliothèques d’algèbre linéaire, la matrice représentant cette conversion serait un système d’équations sous-déterminé, et donc insoluble.
         C’est-à-dire qu’on ne peut pas inverser cette conversion pour obtenir (λ₂, φ₂) → (λ₁, φ₁, <var>h</var>) puisqu’on ne sait pas quelle valeur donner à <var>h</var>,
         ce qui implique qu’on ne peut pas trouver (λ₁, φ₁) non-plus car ces valeurs dépendent peut-être de <var>h</var>.
-        Toutefois, dans le cas des <abbr>SIG</abbr>, l’axe des <var>h</var> est très souvent perpendiculaire à la surface sur laquelle sont exprimées les coordonnées (λ, φ).
+        Toutefois, dans le cas des <abbr>SIG</abbr>, l’axe des <var>h</var> est très souvent perpendiculaire à la surface sur laquelle sont exprimées les coordonnées (<var>λ</var>,<var>φ</var>).
         Cette perpendicularité rend λ₁ et φ₁ indépendants de <var>h</var>. Dans ce cas particulier, et ce cas seulement, on peut encore sauver les meubles.
       </p><p>
         Apache <abbr>SIS</abbr> procède en vérifiant si les coordonnées <var>h</var> sont indépendantes des coordonnées λ et φ.
@@ -578,18 +578,18 @@
       </p><p>
         Le traitement particulier fait par <abbr>SIS</abbr> permet donc d’inverser des matrices que l’on rencontre couramment dans les <abbr>SIG</abbr>,
         même si en principe le système est sous-déterminé.
-        Dans notre exemple la coordonnée <var>h</var> reste inconnue – nous ne faisons pas surgir de l’information du néant – mais au moins les coordonnées (λ, φ) ont pu être récupérées.
+        Dans notre exemple la coordonnée <var>h</var> reste inconnue – nous ne faisons pas surgir de l’information du néant – mais au moins les coordonnées (<var>λ</var>,<var>φ</var>) ont pu être récupérées.
       </p><p>
         Le problème inverse, celui des systèmes surdéterminés, est plus subtil.
         Une approche classique des bibliothèques d’algèbre linéaire est de résoudre les systèmes surdéterminés par la méthode des moindres carrées.
         Transposée à notre exemple, cette approche proposerait une conversion (λ₂, φ₂, <var>h</var>) → (λ₁, φ₁)
         qui semble le meilleur compromis pour diverses valeurs de λ₂, φ₂ et <var>h</var>, tout en n’étant (sauf cas particuliers) une solution exacte pour personne.
         De plus, les éventuelles combinaisons linéaires entre ces trois variables sont délicates compte tenu de l’hétérogénéité des unités de mesures,
-        où les <var>h</var> sont en mètres et (λ, φ) en degrés.
+        où les <var>h</var> sont en mètres et (<var>λ</var>,<var>φ</var>) en degrés.
         Apache <abbr>SIS</abbr> procède plutôt comme pour les systèmes sous-déterminés: en exigeant que certaines dimensions soient indépendantes des autres,
         faute de quoi la matrice sera considérée non-inversible.
         Dans le cas des systèmes surdéterminés <abbr>SIS</abbr> refusera donc d’effectuer certaines opérations que les bibliothèques d’algèbre linéaire auraient faite,
-        mais garantira que les conversions obtenues sont exactes (aux erreurs d’arrondissement prêts).
+        mais garantira que les conversions obtenues seront exactes (aux erreurs d’arrondissement prêts).
       </p>
       <p>
         En résumé, les besoins qui ont amené Apache <abbr>SIS</abbr> à fournir ses propres fonctions de calculs matriciels sont:
@@ -611,7 +611,7 @@
     </p>
 
     <p>
-      Appelons <var>P</var> une projection cartographique qui convertit une longitude et latitude (λ, φ) en degrés
+      Appelons <var>P</var> une projection cartographique qui convertit une longitude et latitude (<var>λ</var>,<var>φ</var>) en degrés
       vers une coordonnée projetée (<var>x</var>,<var>y</var>) en mètres.
       Dans l’expression ci-dessous, nous représentons le résultat de la projection cartographique
       sous forme d’une matrice colonne (la raison sera plus claire bientôt):
@@ -650,15 +650,17 @@
     </math>
 
     <p>
-      Dans la suite de ce texte, nous abrégerons ∂<var>x</var>(λ,φ) par ∂<var>x</var> et de même pour ∂<var>y</var>.
-      Le premier élément de la matrice (∂<var>x</var>/∂λ) nous indique à quel déplacement vers l’<em>Est</em>
-      (<var>x</var> en mètres) correspond un déplacement de un degré de <em>longitude</em> (λ).
-      De même, le dernier élément de la matrice (∂<var>y</var>/∂φ) nous indique à quel déplacement vers le <em>Nord</em>
-      (<var>y</var> en mètres) correspond un déplacement de un degré de <em>latitude</em> (φ).
-      Les autres éléments (∂<var>x</var>/∂φ et ∂<var>y</var>/∂λ) sont des termes croisés (par exemple à quel déplacement
-      en mètres vers le <strong>Nord</strong> correspond un déplacement de un degré de <strong>longitude</strong>).
-      Ces valeurs ne sont généralement valides qu’à la position géographique (λ, φ) donnée.
+      Dans la suite de ce texte nous abrégerons ∂<var>x</var>(<var>λ</var>,<var>φ</var>) par ∂<var>x</var> et de même pour ∂<var>y</var>,
+      mais il faut garder à l'esprit que chacune de ces valeurs dépendent de la coordonnée (<var>λ</var>,<var>φ</var>) originale.
+      Le premier élément de la matrice (∂<var>x</var>/∂<var>λ</var>) nous indique à quel déplacement vers l’Est
+      (<var>x</var> en mètres) correspond un déplacement de un degré de longitude (<var>λ</var>).
+      De même, le dernier élément de la matrice (∂<var>y</var>/∂<var>φ</var>) nous indique à quel déplacement vers le Nord
+      (<var>y</var> en mètres) correspond un déplacement de un degré de latitude (<var>φ</var>).
+      Les autres éléments (∂<var>x</var>/∂<var>φ</var> et ∂<var>y</var>/∂<var>λ</var>) sont des termes croisés (par exemple à quel déplacement
+      en mètres vers le <em>Nord</em> correspond un déplacement de un degré de <em>longitude</em>).
+      Ces valeurs ne sont généralement valides qu’à la position géographique (<var>λ</var>,<var>φ</var>) donnée.
       Si on se déplace un peu, ces valeurs changent légèrement.
+      Cette matrice nous donne toutefois une bonne idée du comportement de la projection dans le voisinage du point projeté.
     </p>
 
     <p>
