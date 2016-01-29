@@ -54,6 +54,7 @@
         </li><li>
           Planar projections
           <ul>
+            <li><a href="#9809">Oblique Stereographic</a></li>
             <li><a href="#9810">Polar Stereographic (variant A)</a></li>
             <li><a href="#9829">Polar Stereographic (variant B)</a></li>
             <li><a href="#9830">Polar Stereographic (variant C)</a></li>
@@ -61,10 +62,34 @@
             <li><a href="#Stereographic_South_Pole">Stereographic_South_Pole</a></li>
           </ul>
         </li><li>
+          Conversions
+          <ul>
+            <li><a href="#Geocentric_To_Ellipsoid">Geocentric_To_Ellipsoid</a></li>
+            <li><a href="#9602">Geographic/geocentric conversions</a></li>
+            <li><a href="#9659">Geographic3D to 2D conversion</a></li>
+          </ul>
+        </li><li>
           Tranformations
           <ul>
+            <li><a href="#9605">Abridged Molodensky</a></li>
             <li><a href="#9624">Affine parametric transformation</a></li>
+            <li><a href="#1032">Coordinate Frame Rotation (geocentric domain)</a></li>
+            <li><a href="#9607">Coordinate Frame Rotation (geog2D domain)</a></li>
+            <li><a href="#1038">Coordinate Frame Rotation (geog3D domain)</a></li>
+            <li><a href="#9655">France geocentric interpolation</a></li>
+            <li><a href="#1031">Geocentric translations (geocentric domain)</a></li>
+            <li><a href="#9603">Geocentric translations (geog2D domain)</a></li>
+            <li><a href="#1035">Geocentric translations (geog3D domain)</a></li>
+            <li><a href="#9619">Geographic2D offsets</a></li>
+            <li><a href="#9660">Geographic3D offsets</a></li>
             <li><a href="#9601">Longitude rotation</a></li>
+            <li><a href="#9604">Molodensky</a></li>
+            <li><a href="#9613">NADCON</a></li>
+            <li><a href="#9615">NTv2</a></li>
+            <li><a href="#1033">Position Vector transformation (geocentric domain)</a></li>
+            <li><a href="#9606">Position Vector transformation (geog2D domain)</a></li>
+            <li><a href="#1037">Position Vector transformation (geog3D domain)</a></li>
+            <li><a href="#9616">Vertical Offset</a></li>
           </ul>
         </li>
       </ul>
@@ -1731,7 +1756,7 @@
           </tr>
           <tr>
             <th>Aliases:</th>
-            <td><span class="non-epsg">OGC:</span><code>Transverse_Mercator</code>, <span class="non-epsg">ESRI:</span><code>Transverse_Mercator</code>, <span class="non-epsg">NetCDF:</span><code>TransverseMercator</code>, <span class="non-epsg">GeoTIFF:</span><code>CT_TransverseMercator</code>, <span class="non-epsg">S57:</span><code>Transverse Mercator</code>, <span class="non-epsg">Proj4:</span><code>tmerc</code>, Gauss-Kruger, <span class="non-epsg">ESRI:</span><code>Gauss_Kruger</code>, Gauss-Boaga, TM, <span class="non-epsg">S57:</span><code>TME</code></td>
+            <td>Gauss-Kruger, Gauss-Boaga, TM, <span class="non-epsg">OGC:</span><code>Transverse_Mercator</code>, <span class="non-epsg">ESRI:</span><code>Transverse_Mercator</code>, <span class="non-epsg">ESRI:</span><code>Gauss_Kruger</code>, <span class="non-epsg">NetCDF:</span><code>TransverseMercator</code>, <span class="non-epsg">GeoTIFF:</span><code>CT_TransverseMercator</code>, <span class="non-epsg">S57:</span><code>Transverse Mercator</code>, <span class="non-epsg">S57:</span><code>TME</code>, <span class="non-epsg">Proj4:</span><code>tmerc</code></td>
           </tr>
         </table>
         <table class="param">
@@ -3440,6 +3465,237 @@
     </article>
     <article>
       <header>
+        <h2 id="9809">Oblique Stereographic</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9809</td>
+          </tr>
+          <tr>
+            <th>Aliases:</th>
+            <td><span class="non-epsg">OGC:</span><code>Oblique_Stereographic</code>, <span class="non-epsg">ESRI:</span><code>Double_Stereographic</code>, <span class="non-epsg">GeoTIFF:</span><code>CT_ObliqueStereographic</code>, <span class="non-epsg">S57:</span><code>Oblique stereographic</code>, <span class="non-epsg">S57:</span><code>OST</code>, <span class="non-epsg">Proj4:</span><code>sterea</code>, Roussilhe</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Major</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_major_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMajor</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>a</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Minor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_minor_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMinor</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>b</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td>8801</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>latitude_of_origin</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Latitude_Of_Origin</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>latitude_of_projection_origin</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>NatOriginLat</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-90</td>
+            <td class="center">…</td>
+            <td class="left">90]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8802</td>
+            <td class="sep">
+              <details>
+                <summary>Longitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>central_meridian</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Central_Meridian</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>longitude_of_projection_origin</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>NatOriginLong</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lon_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-180</td>
+            <td class="center">…</td>
+            <td class="left">180]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8805</td>
+            <td class="sep">
+              <details>
+                <summary>Scale factor at natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>scale_factor</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Scale_Factor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>scale_factor_at_projection_origin</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>ScaleAtNatOrigin</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>k</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞)</td>
+            <td class="sep">1</td>
+          </tr><tr>
+            <td>8806</td>
+            <td class="sep">
+              <details>
+                <summary>False easting</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Easting</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseEasting</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>x_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td>8807</td>
+            <td class="sep">
+              <details>
+                <summary>False northing</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Northing</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseNorthing</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>y_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
         <h2 id="9810">Polar Stereographic (variant A)</h2>
       </header>
       <blockquote>
@@ -4461,6 +4717,362 @@
     </article>
     <article>
       <header>
+        <h2 id="Geocentric_To_Ellipsoid">Geocentric_To_Ellipsoid</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Major</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_major_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMajor</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>a</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Minor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_minor_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMinor</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>b</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9602">Geographic/geocentric conversions</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9602</td>
+          </tr>
+          <tr>
+            <th>Aliases:</th>
+            <td><span class="non-epsg">OGC:</span><code>Ellipsoid_To_Geocentric</code></td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Major</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_major_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMajor</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>a</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Minor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_minor_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMinor</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>b</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9659">Geographic3D to 2D conversion</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9659</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9605">Abridged Molodensky</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9605</td>
+          </tr>
+          <tr>
+            <th>Aliases:</th>
+            <td><span class="non-epsg">OGC:</span><code>Abridged_Molodenski</code></td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>dim</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[2</td>
+            <td class="center">…</td>
+            <td class="left">3]</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>X-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dx</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Y-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dy</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Z-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dz</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Semi-major axis length difference</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Flattening difference</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-1</td>
+            <td class="center">…</td>
+            <td class="left">1]</td>
+            <td class="sep"></td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
         <h2 id="9624">Affine parametric transformation</h2>
       </header>
       <blockquote>
@@ -4584,6 +5196,1129 @@
     </article>
     <article>
       <header>
+        <h2 id="1032">Coordinate Frame Rotation (geocentric domain)</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>1032</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>X-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dx</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Y-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dy</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Z-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dz</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>X-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ex</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Y-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ey</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Z-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ez</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Scale difference</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ppm</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) 1.0E-6</td>
+            <td class="sep">1</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9607">Coordinate Frame Rotation (geog2D domain)</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9607</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>X-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dx</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Y-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dy</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Z-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dz</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>X-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ex</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Y-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ey</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Z-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ez</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Scale difference</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ppm</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) 1.0E-6</td>
+            <td class="sep">1</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="1038">Coordinate Frame Rotation (geog3D domain)</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>1038</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>X-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dx</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Y-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dy</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Z-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dz</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>X-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ex</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Y-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ey</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Z-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ez</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Scale difference</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ppm</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) 1.0E-6</td>
+            <td class="sep">1</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9655">France geocentric interpolation</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9655</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>dim</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[2</td>
+            <td class="center">…</td>
+            <td class="left">3]</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td>8727</td>
+            <td class="sep">
+              <details>
+                <summary>Geocentric translation file</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep center" colspan="3"></td>
+            <td class="sep">gr3df97a.txt</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="1031">Geocentric translations (geocentric domain)</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>1031</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>X-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dx</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Y-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dy</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Z-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dz</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9603">Geocentric translations (geog2D domain)</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9603</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>X-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dx</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Y-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dy</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Z-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dz</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="1035">Geocentric translations (geog3D domain)</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>1035</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>X-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dx</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Y-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dy</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Z-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dz</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9619">Geographic2D offsets</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9619</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td>8601</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude offset</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞)°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8602</td>
+            <td class="sep">
+              <details>
+                <summary>Longitude offset</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞)°</td>
+            <td class="sep">0°</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9660">Geographic3D offsets</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9660</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td>8601</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude offset</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞)°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8602</td>
+            <td class="sep">
+              <details>
+                <summary>Longitude offset</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞)°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8603</td>
+            <td class="sep">
+              <details>
+                <summary>Vertical Offset</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
         <h2 id="9601">Longitude rotation</h2>
       </header>
       <blockquote>
@@ -4611,10 +6346,871 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">[-180</td>
+            <td class="sep right">(-∞</td>
             <td class="center">…</td>
-            <td class="left">180]°</td>
+            <td class="left">∞)°</td>
             <td class="sep">0°</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9604">Molodensky</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9604</td>
+          </tr>
+          <tr>
+            <th>Aliases:</th>
+            <td><span class="non-epsg">OGC:</span><code>Molodenski</code></td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>dim</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[2</td>
+            <td class="center">…</td>
+            <td class="left">3]</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>X-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dx</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Y-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dy</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Z-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dz</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Semi-major axis length difference</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Flattening difference</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-1</td>
+            <td class="center">…</td>
+            <td class="left">1]</td>
+            <td class="sep"></td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9613">NADCON</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9613</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td>8657</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude difference file</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep center" colspan="3"></td>
+            <td class="sep">conus.las</td>
+          </tr><tr>
+            <td>8658</td>
+            <td class="sep">
+              <details>
+                <summary>Longitude difference file</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep center" colspan="3"></td>
+            <td class="sep">conus.los</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9615">NTv2</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9615</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td>8656</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude and longitude difference file</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep center" colspan="3"></td>
+            <td class="sep"></td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="1033">Position Vector transformation (geocentric domain)</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>1033</td>
+          </tr>
+          <tr>
+            <th>Aliases:</th>
+            <td>Helmert transformation</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>X-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dx</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Y-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dy</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Z-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dz</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>X-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ex</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Y-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ey</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Z-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ez</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Scale difference</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ppm</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) 1.0E-6</td>
+            <td class="sep">1</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9606">Position Vector transformation (geog2D domain)</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9606</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>X-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dx</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Y-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dy</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Z-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dz</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>X-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ex</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Y-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ey</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Z-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ez</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Scale difference</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ppm</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) 1.0E-6</td>
+            <td class="sep">1</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="1037">Position Vector transformation (geog3D domain)</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>1037</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>src_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_major</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>tgt_semi_minor</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>X-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dx</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Y-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dy</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Z-axis translation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>dz</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>X-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ex</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Y-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ey</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Z-axis rotation</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ez</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-648,000</td>
+            <td class="center">…</td>
+            <td class="left">648,000]"</td>
+            <td class="sep">0 ''</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary>Scale difference</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>ppm</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) 1.0E-6</td>
+            <td class="sep">1</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9616">Vertical Offset</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9616</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td>8603</td>
+            <td class="sep">
+              <details>
+                <summary>Vertical Offset</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
           </tr>
         </table>
       </blockquote>
