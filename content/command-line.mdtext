@@ -31,16 +31,31 @@ The directory structure will be as below:
     :::text
     apache-sis-0.6
     ├─ bin
-    └─ lib
+    ├─ conf
+    ├─ data
+    ├─ lib
+    └─ log
 
 The `bin` sub-directory contains a `sis` command for Unix systems (Linux or MacOS — we have not yet done a `sis.bat` file for Windows).
 The `bin` sub-directory can be added to the `PATH` environment variable for convenience, but this is not mandatory.
+Example:
+
+    :::bash
+    export PATH=$PWD/apache-sis-0.6/bin:$PATH
+
 The remaining of this page assumes that `bin` is on the search path.
 If not, just prepend the `sis` command by its path (e.g. `./apache-sis-0.6/bin/sis`).
+
+
+Optional dependencies    {#dependencies}
+----------------------------------------
 
 Every JAR files present in the `lib` sub-directory will be included on the classpath during the execution of `sis` command.
 By default, the `lib` directory contains only the SIS archive. However users can add other JAR files in that directory for
 the following optional dependencies:
+
+  * **Derby driver —**
+    needed only if Apache SIS can not locate a JavaDB driver in the JDK installation directory.
 
   * **UCAR NetCDF library —**
     by default, SIS uses its own embedded NetCDF reader which supports only the classical NetCDF format, as standardized by OGC.
@@ -59,9 +74,41 @@ For executing a command, the syntax is:
     :::bash
     sis <command> [options] [files]
 
+Available commands are:
+
+<table>
+  <tr><td><code>help</code></td>       <td>Show a help overview.</td></tr>
+  <tr><td><code>about</code></td>      <td>Show information about Apache SIS and system configuration.</td></tr>
+  <tr><td><code>mime-type</code></td>  <td>Show MIME type for the given file.</td></tr>
+  <tr><td><code>metadata</code></td>   <td>Show metadata information for the given file.</td></tr>
+  <tr><td><code>crs</code></td>        <td>Show Coordinate Reference System information for the given file or code.</td></tr>
+  <tr><td><code>identifier</code></td> <td>Show identifiers for metadata and referencing systems in the given file.</td></tr>
+</table>
+
 The set of legal options and the expected number of file arguments depends on the command being executed.
 However all commands support the `--help` option, which lists the options available for that command.
+Available options will be from the following list:
 
+<table>
+  <tr><td><code>--format</code></td>   <td>The output format: xml, wkt, wkt1 or text.</td></tr>
+  <tr><td><code>--locale</code></td>   <td>The locale to use for the command output.</td></tr>
+  <tr><td><code>--timezone</code></td> <td>The timezone for the dates to be formatted.</td></tr>
+  <tr><td><code>--encoding</code></td> <td>The encoding to use for the command output.</td></tr>
+  <tr><td><code>--colors</code></td>   <td>Whether colorized output shall be enabled.</td></tr>
+  <tr><td><code>--brief</code></td>    <td>Whether the output should contains only brief information.</td></tr>
+  <tr><td><code>--verbose</code></td>  <td>Whether the output should contains more detailed information.</td></tr>
+  <tr><td><code>--debug</code></td>    <td>Prints full stack trace in case of failure.</td></tr>
+  <tr><td><code>--help</code></td>     <td>Lists the options available for a specific command.</td></tr>
+</table>
+
+The `--locale`, `--timezone` and `--encoding` options apply to the command output sent to the standard output stream,
+but usually do not apply to the error messages sent to the standard error stream.
+The reason is that command output may be targeted to a client, while the error messages are usually for the operator.
+
+
+
+Examples    {#examples}
+=======================
 
 Extracting ISO 19111 Coordinate Reference System (CRS)    {#crs}
 ----------------------------------------------------------------
@@ -73,27 +120,27 @@ The following example show the CRS of a GML file accessible from the web:
     :::bash
     sis crs http://svn.apache.org/repos/asf/sis/trunk/core/sis-referencing/src/test/resources/org/apache/sis/referencing/crs/ProjectedCRS.xml --format WKT
 
-The above command output should produce the following output:
-
-    :::text
-    PROJCRS["NTF (Paris) / Lambert zone II",
-      BASEGEODCRS["NTF (Paris)",
-        DATUM["Nouvelle Triangulation Francaise",
-          ELLIPSOID["Clarke 1880 (IGN)", 6378249.2, 293.4660212936269, LENGTHUNIT["metre", 1]]],
-          PRIMEM["Paris", 2.5969213, ANGLEUNIT["grade", 0.015707963267948967]]],
-      CONVERSION["Lambert zone II",
-        METHOD["Lambert Conic Conformal (1SP)", ID["EPSG", 9801]],
-        PARAMETER["Latitude of natural origin", 52.0, ANGLEUNIT["grade", 0.015707963267948967], ID["EPSG", 8801]],
-        PARAMETER["Longitude of natural origin", 0.0, ANGLEUNIT["grade", 0.015707963267948967], ID["EPSG", 8802]],
-        PARAMETER["Scale factor at natural origin", 0.99987742, SCALEUNIT["unity", 1], ID["EPSG", 8805]],
-        PARAMETER["False easting", 600000.0, LENGTHUNIT["metre", 1], ID["EPSG", 8806]],
-        PARAMETER["False northing", 2200000.0, LENGTHUNIT["metre", 1], ID["EPSG", 8807]]],
-      CS[Cartesian, 2],
-        AXIS["Easting (E)", east, ORDER[1]],
-        AXIS["Northing (N)", north, ORDER[2]],
-        LENGTHUNIT["metre", 1],
-      SCOPE["Large and medium scale topographic mapping and engineering survey."],
-      ID["EPSG", 27572, URI["urn:ogc:def:crs:EPSG::27572"]]]
+<details>
+  <summary>The above command output should produce the following output:</summary>
+<pre>PROJCRS["NTF (Paris) / Lambert zone II",
+  BASEGEODCRS["NTF (Paris)",
+    DATUM["Nouvelle Triangulation Francaise",
+      ELLIPSOID["Clarke 1880 (IGN)", 6378249.2, 293.4660212936269, LENGTHUNIT["metre", 1]]],
+      PRIMEM["Paris", 2.5969213, ANGLEUNIT["grade", 0.015707963267948967]]],
+  CONVERSION["Lambert zone II",
+    METHOD["Lambert Conic Conformal (1SP)", ID["EPSG", 9801]],
+    PARAMETER["Latitude of natural origin", 52.0, ANGLEUNIT["grade", 0.015707963267948967], ID["EPSG", 8801]],
+    PARAMETER["Longitude of natural origin", 0.0, ANGLEUNIT["grade", 0.015707963267948967], ID["EPSG", 8802]],
+    PARAMETER["Scale factor at natural origin", 0.99987742, SCALEUNIT["unity", 1], ID["EPSG", 8805]],
+    PARAMETER["False easting", 600000.0, LENGTHUNIT["metre", 1], ID["EPSG", 8806]],
+    PARAMETER["False northing", 2200000.0, LENGTHUNIT["metre", 1], ID["EPSG", 8807]]],
+  CS[Cartesian, 2],
+    AXIS["Easting (E)", east, ORDER[1]],
+    AXIS["Northing (N)", north, ORDER[2]],
+    LENGTHUNIT["metre", 1],
+  SCOPE["Large and medium scale topographic mapping and engineering survey."],
+  ID["EPSG", 27572, URI["urn:ogc:def:crs:EPSG::27572"]]]</pre>
+</details>
 
 
 
@@ -113,44 +160,43 @@ The following example show the metadata of a NetCDF file accessible from the web
 
     :::bash
     sis metadata https://github.com/opengeospatial/geoapi/raw/master/geoapi-netcdf/src/test/resources/org/opengis/wrapper/netcdf/NCEP-SST.nc
-
-Below is an extract of the above command output:
-
-    :::text
-    Metadata
-      ├─Identification info
-      │   ├─Citation
-      │   │   ├─Title……………………………………………………………………………… Sea Surface Temperature Analysis Model
-      │   │   ├─Date
-      │   │   │   ├─Date……………………………………………………………………… Sep 22, 2005 2:00:00 AM
-      │   │   │   └─Date type………………………………………………………… Creation
-      │   │   └─Identifier
-      │   │       ├─Code……………………………………………………………………… NCEP/SST/Global_5x2p5deg/SST_Global_5x2p5deg_20050922_0000.nc
-      │   │       └─Authority
-      │   │           └─Title………………………………………………………… edu.ucar.unidata
-      │   ├─Abstract………………………………………………………………………………… NCEP SST Global 5.0 x 2.5 degree model data
-      │   ├─Descriptive keywords
-      │   │   ├─Keyword………………………………………………………………………… EARTH SCIENCE > Oceans > Ocean Temperature > Sea Surface Temperature
-      │   │   ├─Type………………………………………………………………………………… Theme
-      │   │   └─Thesaurus name
-      │   │       └─Title…………………………………………………………………… GCMD Science Keywords
-      │   ├─Resource constraints
-      │   │   └─Use limitation……………………………………………………… Freely available
-      │   ├─Spatial representation type……………………………… Grid
-      │   └─Extent
-      │       ├─Geographic element
-      │       │   ├─West bound longitude…………………………… 180°W
-      │       │   ├─East bound longitude…………………………… 180°E
-      │       │   ├─South bound latitude…………………………… 90°S
-      │       │   ├─North bound latitude…………………………… 90°N
-      │       │   └─Extent type code……………………………………… true
-      │       └─Vertical element
-      │           ├─Minimum value……………………………………………… 0
-      │           └─Maximum value……………………………………………… 0
-      └─Content info
-          └─Dimension
-              ├─Descriptor………………………………………………………………… Sea temperature
-              └─Sequence identifier………………………………………… SST
+<details>
+  <summary>Below is an extract of the above command output:</summary>
+<pre>Metadata
+  ├─Identification info
+  │   ├─Citation
+  │   │   ├─Title……………………………………………………………………………… Sea Surface Temperature Analysis Model
+  │   │   ├─Date
+  │   │   │   ├─Date……………………………………………………………………… Sep 22, 2005 2:00:00 AM
+  │   │   │   └─Date type………………………………………………………… Creation
+  │   │   └─Identifier
+  │   │       ├─Code……………………………………………………………………… NCEP/SST/Global_5x2p5deg/SST_Global_5x2p5deg_20050922_0000.nc
+  │   │       └─Authority
+  │   │           └─Title………………………………………………………… edu.ucar.unidata
+  │   ├─Abstract………………………………………………………………………………… NCEP SST Global 5.0 x 2.5 degree model data
+  │   ├─Descriptive keywords
+  │   │   ├─Keyword………………………………………………………………………… EARTH SCIENCE &gt; Oceans &gt; Ocean Temperature &gt; Sea Surface Temperature
+  │   │   ├─Type………………………………………………………………………………… Theme
+  │   │   └─Thesaurus name
+  │   │       └─Title…………………………………………………………………… GCMD Science Keywords
+  │   ├─Resource constraints
+  │   │   └─Use limitation……………………………………………………… Freely available
+  │   ├─Spatial representation type……………………………… Grid
+  │   └─Extent
+  │       ├─Geographic element
+  │       │   ├─West bound longitude…………………………… 180°W
+  │       │   ├─East bound longitude…………………………… 180°E
+  │       │   ├─South bound latitude…………………………… 90°S
+  │       │   ├─North bound latitude…………………………… 90°N
+  │       │   └─Extent type code……………………………………… true
+  │       └─Vertical element
+  │           ├─Minimum value……………………………………………… 0
+  │           └─Maximum value……………………………………………… 0
+  └─Content info
+      └─Dimension
+          ├─Descriptor………………………………………………………………… Sea temperature
+          └─Sequence identifier………………………………………… SST</pre>
+</details>
 
 
 Adding the `--format xml` option to the above command will format the same metadata in a XML document.
