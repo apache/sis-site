@@ -90,7 +90,7 @@ However all commands support the `--help` option, which lists the options availa
 Available options will be from the following list:
 
 <table>
-  <tr><td><code>--format</code></td>   <td>The output format: xml, wkt, wkt1 or text.</td></tr>
+  <tr><td><code>--format</code></td>   <td>The output format: <code>xml</code>, <code>wkt</code>, <code>wkt1</code> or <code>text</code>.</td></tr>
   <tr><td><code>--locale</code></td>   <td>The locale to use for the command output.</td></tr>
   <tr><td><code>--timezone</code></td> <td>The timezone for the dates to be formatted.</td></tr>
   <tr><td><code>--encoding</code></td> <td>The encoding to use for the command output.</td></tr>
@@ -113,34 +113,139 @@ Examples    {#examples}
 Extracting ISO 19111 Coordinate Reference System (CRS)    {#crs}
 ----------------------------------------------------------------
 
-SIS can read a Coordinate Reference System definition from the _Well Known Text_ (WKT) format version 1 and 2,
-or from _Geographic Markup Language_ (GML) version 3.2.
-The following example show the CRS of a GML file accessible from the web:
+SIS can read Coordinate Reference System (CRS) definitions from various sources:
+
+  * Code from the EPSG geodetic dataset
+  * _Well Known Text_ (WKT) format version 1 and 2
+  * _Geographic Markup Language_ (GML) version 3.2
+
+The easiest way is see a CRS definition is to use an EPSG code.
+The [EPSG geodetic dataset](http://www.epsg.org/) is a widely-used source of definitions for thousands of Coordinate Reference Systems.
+Appache SIS provides a [list of supported codes](book/tables/CoordinateReferenceSystems.html), which can be queried from the command line.
+For example the following command prints the definition of the _"JGD2011 / Japan Plane Rectangular CS VIII"_ Coordinate Reference System:
 
     :::bash
-    sis crs http://svn.apache.org/repos/asf/sis/trunk/core/sis-referencing/src/test/resources/org/apache/sis/referencing/crs/ProjectedCRS.xml --format WKT
+    sis crs EPSG:6676
+
+The first time that a command requires the EPSG dataset, Apache SIS will propose to download and install a local copy.
+This automatic download happen only when using the command-line tools described in this page.
+Developers who wish to use the EPSG dataset in their applications can use the Maven artifact documented in (TODO).
 
 <details>
-  <summary>The above command output should produce the following output:</summary>
-<pre>PROJCRS["NTF (Paris) / Lambert zone II",
-  BASEGEODCRS["NTF (Paris)",
-    DATUM["Nouvelle Triangulation Francaise",
-      ELLIPSOID["Clarke 1880 (IGN)", 6378249.2, 293.4660212936269, LENGTHUNIT["metre", 1]]],
-      PRIMEM["Paris", 2.5969213, ANGLEUNIT["grade", 0.015707963267948967]]],
-  CONVERSION["Lambert zone II",
-    METHOD["Lambert Conic Conformal (1SP)", ID["EPSG", 9801]],
-    PARAMETER["Latitude of natural origin", 52.0, ANGLEUNIT["grade", 0.015707963267948967], ID["EPSG", 8801]],
-    PARAMETER["Longitude of natural origin", 0.0, ANGLEUNIT["grade", 0.015707963267948967], ID["EPSG", 8802]],
-    PARAMETER["Scale factor at natural origin", 0.99987742, SCALEUNIT["unity", 1], ID["EPSG", 8805]],
-    PARAMETER["False easting", 600000.0, LENGTHUNIT["metre", 1], ID["EPSG", 8806]],
-    PARAMETER["False northing", 2200000.0, LENGTHUNIT["metre", 1], ID["EPSG", 8807]]],
+  <summary>The above command should produce the following output (click to expand):</summary>
+<pre>ProjectedCRS["JGD2011 / Japan Plane Rectangular CS VIII",
+  BaseGeodCRS["JGD2011",
+    Datum["Japanese Geodetic Datum 2011",
+      Ellipsoid["GRS 1980", 6378137.0, 298.257222101]],
+    Unit["degree", 0.017453292519943295]],
+  Conversion["Japan Plane Rectangular CS zone VIII",
+    Method["Transverse Mercator"],
+    Parameter["Latitude of natural origin", 36.0],
+    Parameter["Longitude of natural origin", 138.5],
+    Parameter["Scale factor at natural origin", 0.9999],
+    Parameter["False easting", 0.0],
+    Parameter["False northing", 0.0]],
   CS[Cartesian, 2],
-    AXIS["Easting (E)", east, ORDER[1]],
-    AXIS["Northing (N)", north, ORDER[2]],
-    LENGTHUNIT["metre", 1],
-  SCOPE["Large and medium scale topographic mapping and engineering survey."],
-  ID["EPSG", 27572, URI["urn:ogc:def:crs:EPSG::27572"]]]</pre>
+    Axis["Northing (X)", north],
+    Axis["Easting (Y)", east],
+    Unit["metre", 1],
+  Scope["Large and medium scale topographic mapping, cadastral and engineering survey."],
+  Area["Japan - onshore - Honshu between approximately 137°45'E and 139°E - Niigata-ken; Nagano-ken; Yamanashi-ken; Shizuoka-ken."],
+  BBox[34.54, 137.32, 38.58, 139.91],
+  Id["EPSG", 6676, "8.9", URI["urn:ogc:def:crs:EPSG:8.9:6676"]],
+  Remark["Replaces JGD2000 / Japan Plane Rectangular CS VIII (CRS code 2450) with effect from 21st October 2011."]]</pre>
 </details>
+
+The above output is compatible with version 2 of _Well Known Text_ (WKT) format.
+However some applications are restricted to WKT version 1.
+For an output using the legacy WKT 1 format, one can add the `--format wkt1` option to the above command.
+
+The “WKT 2” specification allows some flexibility in keyword names and in the way to specify units of measurement.
+By default, the command-line uses this flexibility for producing less verbose but still legal WKT 2 output.
+If an output closer to the WKT 2 recommendations is desired, one can add the `--format wkt2` option to the above command.
+
+Apache SIS can also read and write CRS definitions in the _Geographic Markup Language_ (GML) format.
+For GML output, one can add the `--format xml` option to the above command.
+Note that the result is quite verbose.
+
+
+
+Extracting EPSG identifier from a Coordinate Reference System    {#identifier}
+------------------------------------------------------------------------------
+
+Because the EPSG geodetic dataset is so commonly used,
+it is very common to define a CRS by only its EPSG code instead than its full definition.
+Such codes can be written as “`EPSG:4326`” or “`urn:ogc:def:crs:EPSG::4326`” for instance.
+In a _Well Known Text_ (WKT) string, the code appears at the bottom of the definition
+in an element like `ID["EPSG", 4326]` or `AUTHORITY["EPSG", "4326"]`.
+However in many case the code is missing.
+But Apache SIS can find it by comparing a given CRS against the definitions in the EPSG database.
+
+The following example read a WKT for the _“NTF (Paris) / Lambert zone II”_ Coordinate Reference System,
+but in which the `ID["EPSG", 27572]` has been intentionally omitted.
+Furthermore, the _“NTF (Paris) / Lambert zone II”_ name has been replaced by _“NTF (Paris) / zone to be discovered by the demo”_
+Executing the following command:
+
+    :::bash
+    sis identifier http://sis.staging.apache.org/examples/MissingIdentifier.wkt
+
+produces an output like below:
+
+    :::text
+        urn:ogc:def:crs:EPSG:8.9:27572    | NTF (Paris) / Lambert zone II
+
+As we can see, SIS has been able to find back the identifier code and the actual CRS name.
+
+Sometime a WKT declares wrongly an EPSG code.
+The most frequent case is a WKT that defines a Coordinate Reference System with (_longitude_, _latitude_) axes,
+but declare an EPSG code for a CRS with (_latitude_, _longitude_) axes.
+Apache SIS can detect such mismatch.
+For example executing the following command:
+
+    :::bash
+    sis identifier http://sis.staging.apache.org/examples/WrongAxisOrder.wkt
+
+produces an output like below:
+
+    :::text
+    !   urn:ogc:def:crs:EPSG:8.9:4979    | WGS 84
+
+    Legend:
+    !   Identified object matches definition provided by authority except for coordinate system axes.
+
+Apache SIS can perform such analysis because it “understands” the CRS definition.
+This analysis capability can be tested by altering the CRS definition.
+The following example asks the identifier of a CRS which is normally defined as below:
+
+    :::text
+    ProjectedCRS["WGS 84 / Mercator 41",
+      (... definition omitted for brevity ...)
+        Method["Mercator (variant B)"],
+        Parameter["Latitude of 1st standard parallel", -41.0],
+      (... definition omitted for brevity ...)
+
+However in this example, we will provide a CRS defined as below:
+
+    :::text
+    ProjectedCRS["Scaled Mercator",
+      (... definition omitted for brevity ...)
+        Method["Mercator (variant A)"],
+        Parameter["Scale factor at natural origin", 0.7557992272019596"],
+        Parameter["Latitude of natural origin", -0.0],
+      (... definition omitted for brevity ...)
+
+Executing the following command:
+
+    :::bash
+    sis identifier http://sis.staging.apache.org/examples/EquivalentDefinition.wkt
+
+produces an output like below:
+
+    :::text
+        urn:ogc:def:crs:EPSG:8.9:3994    | WGS 84 / Mercator 41
+
+Apache SIS has been able to detect that the second CRS is numerically equivalent to the first one,
+and return the identifier for the CRS that we should use.
 
 
 
