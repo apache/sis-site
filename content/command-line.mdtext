@@ -16,7 +16,7 @@ Notice: Licensed to the Apache Software Foundation (ASF) under one
         specific language governing permissions and limitations
         under the License.
 
-A command-line interface is provided for extracting information from a data file.
+A command-line interface is provided for extracting information from data files or authority codes.
 
 [TOC]
 
@@ -43,16 +43,16 @@ Example:
     :::bash
     export PATH=$PWD/apache-sis-0.6/bin:$PATH
 
-The remaining of this page assumes that `bin` is on the search path.
-If not, just prepend the `sis` command by its path (e.g. `./apache-sis-0.6/bin/sis`).
+The remaining of this page assumes that the `bin` directory is on the search path.
+If not, the same examples can still be executed by replacing the `sis` command by `./apache-sis-0.6/bin/sis`.
 
 
 Optional dependencies    {#dependencies}
 ----------------------------------------
 
-Every JAR files present in the `lib` sub-directory will be included on the classpath during the execution of `sis` command.
-By default, the `lib` directory contains only the SIS archive. However users can add other JAR files in that directory for
-the following optional dependencies:
+Every JAR files present in the `lib` sub-directory will be included on the classpath during `sis` command execution.
+By default, the `lib` directory contains only the `sis.jar` file.
+ However users can add other JAR files in that directory for the following optional dependencies:
 
   * **Derby driver —**
     needed only if Apache SIS can not locate a JavaDB driver in the JDK installation directory.
@@ -68,7 +68,7 @@ the following optional dependencies:
 Usage    {#usage}
 =================
 
-Invoking `sis` without argument show a summary of available commands and all options.
+Invoking `sis` without argument shows a summary of available commands and all options.
 For executing a command, the syntax is:
 
     :::bash
@@ -81,7 +81,7 @@ Available commands are:
   <tr><td><code>about</code></td>      <td>Show information about Apache SIS and system configuration.</td></tr>
   <tr><td><code>mime-type</code></td>  <td>Show MIME type for the given file.</td></tr>
   <tr><td><code>metadata</code></td>   <td>Show metadata information for the given file.</td></tr>
-  <tr><td><code>crs</code></td>        <td>Show Coordinate Reference System information for the given file or code.</td></tr>
+  <tr><td><code>crs</code></td>        <td>Show Coordinate Reference System (CRS) information for the given file or code.</td></tr>
   <tr><td><code>identifier</code></td> <td>Show identifiers for metadata and referencing systems in the given file.</td></tr>
 </table>
 
@@ -119,7 +119,7 @@ SIS can read Coordinate Reference System (CRS) definitions from various sources:
   * _Well Known Text_ (WKT) format version 1 and 2
   * _Geographic Markup Language_ (GML) version 3.2
 
-The easiest way is see a CRS definition is to use an EPSG code.
+The easiest way to see a CRS definition is to use an EPSG code.
 The [EPSG geodetic dataset](http://www.epsg.org/) is a widely-used source of definitions for thousands of Coordinate Reference Systems.
 Appache SIS provides a [list of supported codes](book/tables/CoordinateReferenceSystems.html), which can be queried from the command line.
 For example the following command prints the definition of the _"JGD2011 / Japan Plane Rectangular CS VIII"_ Coordinate Reference System:
@@ -162,11 +162,12 @@ For an output using the legacy WKT 1 format, one can add the `--format wkt1` opt
 
 The “WKT 2” specification allows some flexibility in keyword names and in the way to specify units of measurement.
 By default, the command-line uses this flexibility for producing less verbose but still legal WKT 2 output.
-If an output closer to the WKT 2 recommendations is desired, one can add the `--format wkt2` option to the above command.
+If an output closer to WKT 2 recommendations is desired, one can add the `--format wkt2` option to the above command.
+The result will be slightly more verbose.
 
 Apache SIS can also read and write CRS definitions in the _Geographic Markup Language_ (GML) format.
 For GML output, one can add the `--format xml` option to the above command.
-Note that the result is quite verbose.
+The result will be much more verbose than WKT outputs.
 
 
 
@@ -174,16 +175,22 @@ Extracting EPSG identifier from a Coordinate Reference System    {#identifier}
 ------------------------------------------------------------------------------
 
 Because the EPSG geodetic dataset is so commonly used,
-it is very common to define a CRS by only its EPSG code instead than its full definition.
-Such codes can be written as “`EPSG:4326`” or “`urn:ogc:def:crs:EPSG::4326`” for instance.
-In a _Well Known Text_ (WKT) string, the code appears at the bottom of the definition
-in an element like `ID["EPSG", 4326]` or `AUTHORITY["EPSG", "4326"]`.
-However in many case the code is missing.
-But Apache SIS can find it by comparing a given CRS against the definitions in the EPSG database.
+a very common practice is to specify a CRS using only its EPSG code instead than its full definition.
+Such codes can be written in different ways. For example all the following strings are for the same code:
 
-The following example read a WKT for the _“NTF (Paris) / Lambert zone II”_ Coordinate Reference System,
-but in which the `ID["EPSG", 27572]` has been intentionally omitted.
-Furthermore, the _“NTF (Paris) / Lambert zone II”_ name has been replaced by _“NTF (Paris) / zone to be discovered by the demo”_
+  * `EPSG:4326`
+  * `urn:ogc:def:crs:EPSG::4326`
+  * `http://www​.opengis​.net/def/crs/epsg/0/4326` (not yet supported on the command-line)
+  * `http://www​.opengis​.net/gml/srs/epsg​.xml#4326` (not yet supported on the command-line)
+
+In a _Well Known Text_ (WKT) string, the code can appear at the bottom of the definition
+in an optional element like `ID["EPSG", 4326]` or `AUTHORITY["EPSG", "4326"]`.
+However in many cases the code is missing.
+Sometime Apache SIS can find a missing code by comparing a given CRS against the definitions in the EPSG database.
+
+The following example reads a WKT for the _“NTF (Paris) / Lambert zone II”_ Coordinate Reference System,
+but in which the `ID["EPSG", 27572]` element has been intentionally omitted.
+Furthermore, the _“NTF (Paris) / Lambert zone II”_ name has been replaced by _“NTF (Paris) / zone to be discovered by the demo”_ name.
 Executing the following command:
 
     :::bash
@@ -215,7 +222,7 @@ produces an output like below:
 
 Apache SIS can perform such analysis because it “understands” the CRS definition.
 This analysis capability can be tested by altering the CRS definition.
-The following example asks the identifier of a CRS which is normally defined as below:
+The next example asks the identifier of a CRS which is normally defined as below:
 
     :::text
     ProjectedCRS["WGS 84 / Mercator 41",
@@ -244,8 +251,10 @@ produces an output like below:
     :::text
         urn:ogc:def:crs:EPSG:8.9:3994    | WGS 84 / Mercator 41
 
-Apache SIS has been able to detect that the second CRS is numerically equivalent to the first one,
-and return the identifier for the CRS that we should use.
+In above example, Apache SIS used the fact that a
+_“Mercator (variant A)”_ projection with a _“Scale factor at natural origin”_ parameter value of 0.755799… on the WGS84 datum is numerically equivalent to a
+_“Mercator (variant B)”_ projection with a _“Latitude of 1st standard parallel”_ parameter value of 41° on the same datum.
+This recognition allowed SIS to return the EPSG:3994 code even if it stands for a CRS defined as a _“Mercator (variant B)”_ projection rather than variant A.
 
 
 
@@ -313,5 +322,6 @@ Performance consideration    {#performance}
 ===========================================
 
 If there is a large amount of files to process, invoking the above command many time may be inefficient
-since it would restart a new JVM on every invocation. For such cases, it is more efficient to loop inside
-a small Java program using the [SIS API](apidocs/index.html).
+since it would restart a new JVM on every invocation.
+If the operation requires the EPSG dataset, booting the Derby database also has a significant cost.
+For such cases, it is more efficient to loop inside a small Java program using the [SIS API](apidocs/index.html).
