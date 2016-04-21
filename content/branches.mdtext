@@ -47,6 +47,7 @@ and uses some JDK8 or JDK7-specific features like:
   * Syntax enhancements, mostly in exception handling (_try-with-resources_, _multi-catches_)
     but also on other aspects like _diamond operator_.
   * Leveraging of new API (_suppressed exceptions_, _file systems_, _fork join_).
+  * Functional interfaces and lambda expressions.
 
 
 
@@ -56,7 +57,11 @@ branches/JDK7    {#jdk7}
 The JDK7 branch is a merge of the JDK8 branch ported to the JDK7 platform.
 The JDK7 branch implements the same GeoAPI interfaces than the JDK8 branch;
 the only differences (apart version number) are the modifications necessary
-for building and running on a JDK7 platform.
+for building and running on a JDK7 platform:
+
+  * _Lambda expressions_ replaced by anonymous classes.
+  * New methods on collection interfaces replaced by calls to static methods.
+  * `java.util.function` and `java.time` API replaced by internal placeholder classes.
 
 
 
@@ -64,8 +69,6 @@ branches/JDK6    {#jdk6}
 ------------------------
 
 The JDK6 branch is a merge of the JDK7 branch ported to the JDK6 platform.
-This is the recommended development branch for developers who can not use a JDK7 environment,
-but still want to work closely with latest GeoAPI interfaces.
 The JDK6 branch implements the same GeoAPI interfaces than the JDK7 branch;
 the only differences (apart version number) are the modifications necessary
 for building and running on a JDK6 platform:
@@ -85,11 +88,18 @@ trunk    {#trunk}
 
 The trunk is a merge of the JDK6 branch ported to the interfaces defined by the [GeoAPI stable release][geoapi-stable].
 This is the code which is built by the continuous integration system and deployed on the Maven repository.
-The only differences (apart version number) compared to the JDK6 branch are the modifications
+The main differences (apart version number) compared to the JDK6 branch are the modifications
 necessary for implementing an older version of the GeoAPI interfaces:
 
   * Usages of non-existent GeoAPI interfaces are replaced by direct usages of the
     corresponding Apache SIS implementation.
+
+For security reasons and for avoiding misleading information, two functionalities are disabled on trunk:
+
+  * In `core/sis-utility/src/main/java/org/apache/sis/internal/system/Supervisor.java`, the `ENABLED` flag is set to `false`.
+  * In `core/sis-utility/src/main/java/org/apache/sis/internal/util/TemporalUtilities.java`, the `REPORT_MISSING_MODULE` flag is set to `false`.
+
+Above flag values may be changed in future SIS releases.
 
 
 

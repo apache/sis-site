@@ -173,16 +173,10 @@ Open the root `pom.xml` file in an editor and perform the following changes:
 
   * Remove the whole `<pluginRepositories>` block (including comment), since it should not be needed for releases (and is actually not allowed).
 
-Consider modifying the following flags (those recommendations may be revised in future SIS releases):
-
-  * In `core/sis-utility/src/main/java/org/apache/sis/internal/system/Supervisor.java`, set the `ENABLED` flag to `false`.
-  * In `core/sis-utility/src/main/java/org/apache/sis/internal/util/TemporalUtilities.java`, set the `REPORT_MISSING_MODULE` flag to `false`.
-
-Remove the workaround for the bug in JDK6 `javadoc`, since we perform release with JDK7 or JDK8.
-Remove also the modules that are not yet ready for a release:
+Remove the modules that are not yet ready for a release:
 
     :::bash
-    svn remove core/sis-build-helper/src/main/java/org/opengis
+    svn remove storage/sis-shapefile
     svn remove application/sis-javafx
 
 Commit the changes on the branch:
