@@ -64,6 +64,16 @@ for building and running on a JDK7 platform:
   * `java.util.function` and `java.time` API replaced by internal placeholder classes.
 
 
+### Behavioral differences    {#behavior-jdk7}
+
+The JDK7 branch should behaves in a way close to identical to the JDK8 branch,
+with possible variations in the following aspects:
+
+  * Usage of `java.time.format.DateTimeFormatter` for parsing and formatting ISO 8601 dates
+    are simulated by usage of `java.text.SimpleDateFormat`. Those two formatters may not have
+    the same tolerance to inputs that deviate from the standard.
+
+
 
 branches/JDK6    {#jdk6}
 ------------------------
@@ -82,31 +92,7 @@ for building and running on a JDK6 platform:
   * Other JDK7-specific features resolved on a case-by-case basis.
 
 
-
-trunk    {#trunk}
------------------
-
-The trunk is a merge of the JDK6 branch ported to the interfaces defined by the [GeoAPI stable release][geoapi-stable].
-This is the code which is built by the continuous integration system and deployed on the Maven repository.
-The main differences (apart version number) compared to the JDK6 branch are the modifications
-necessary for implementing an older version of the GeoAPI interfaces:
-
-  * Usages of non-existent GeoAPI interfaces are replaced by direct usages of the
-    corresponding Apache SIS implementation.
-
-For security reasons and for avoiding misleading information, the following functionalities are disabled on trunk
-(but are still enabled on branches as experimental features). In particular the `Supervisor.ENABLED` flag controls
-whether the MBeans documented in the `org.apache.sis.console` package are enabled or not.
-
-  * In `core/sis-utility/src/main/java/org/apache/sis/internal/system/Supervisor.java`, the `ENABLED` flag is set to `false`.
-  * In `core/sis-utility/src/main/java/org/apache/sis/internal/util/TemporalUtilities.java`, the `REPORT_MISSING_MODULE` flag is set to `false`.
-
-Above flag values may change in future SIS releases.
-
-
-
-Behavioral differences between the branches    {#behavior}
-==========================================================
+### Behavioral differences    {#behavior-jdk6}
 
 Some JDK7-specific features are reproduced on the JDK6 branch in an approximative way,
 which may cause some differences in application behavior (ignoring differences in performance).
@@ -124,7 +110,39 @@ or being able to handle information that are unsupported on the JDK6 branch.
     Since uncaught exceptions on JDK7 branch were expected to be bugs, the broad exception handling on JDK6 branch
     may make some potential SIS bugs slightly more difficult to identify.
 
-Regarding all above points, the trunk is identical to the JDK6 branch.
+
+
+trunk    {#trunk}
+-----------------
+
+The trunk is a merge of the JDK6 branch ported to the interfaces defined by the [GeoAPI stable release][geoapi-stable].
+This is the code which is built by the continuous integration system and deployed on the Maven repository.
+The main differences (apart version number) compared to the JDK6 branch are the modifications
+necessary for implementing an older version of the GeoAPI interfaces:
+
+  * Usages of non-existent GeoAPI interfaces are replaced by direct usages of the
+    corresponding Apache SIS implementation.
+
+  * When a new revision of a standard is available,
+    the trunk still uses the old version since the new revision is not available in GeoAPI 3.0.
+    Sometime it results in usage of methods that are deprecated on the SIS development branches.
+
+For security reasons and for avoiding misleading information, the following functionalities are disabled on trunk
+(but are still enabled on branches as experimental features). In particular the `Supervisor.ENABLED` flag controls
+whether the MBeans documented in the `org.apache.sis.console` package are enabled or not.
+
+  * In `core/sis-utility/src/main/java/org/apache/sis/internal/system/Supervisor.java`, the `ENABLED` flag is set to `false`.
+  * In `core/sis-utility/src/main/java/org/apache/sis/internal/util/TemporalUtilities.java`, the `REPORT_MISSING_MODULE` flag is set to `false`.
+
+Above flag values may change in future SIS releases.
+
+
+### Behavioral differences    {#behavior}
+
+Because of changes between GeoAPI 3.0 and GeoAPI 4.0-SNAPSHOT, the following aspects need special care:
+
+  * If `op` is an instance of `PassThroughOperation`, then the `if (op instanceof SingleOperation)` expression
+    evaluates to `true` on trunk but to `false` on SIS development branches.
 
 
 
