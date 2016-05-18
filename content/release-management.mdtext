@@ -40,13 +40,14 @@ number of the previous and the new release respectively, and `$RELEASE_CANDIDATE
 the current release attempt. Those versions shall be set on the command line like below (Unix):
 
     :::bash
-    export OLD_VERSION=0.6
-    export NEW_VERSION=0.7
+    export OLD_VERSION=0.7
+    export NEW_VERSION=0.8
     export RELEASE_CANDIDATE=1
     export SIGNING_KEY=<your key ID>
     export BOOTCLASSPATH=<path to the rt.jar file of a JDK6 installation>
 
-The key ID value can be found be executing `gpg --list-keys`.
+The key ID value is an hexadecimal numbers with 8 digits.
+It can be found be executing `gpg --list-keys`.
 The boot class path value is highly system-dependent. Some examples are:
 
   * `/usr/lib/jvm/java-6/jre/lib/rt.jar` on some Linux distributions (replace `java-6` by the actual directory name).
@@ -84,7 +85,7 @@ Java updates    {#java-update}
 
 While we need a JDK6 installation for the `bootclasspath` option, we do not recommend to use it for generating
 the binaries since JDK6 has reached its end of public updates (but not the end of commercial support).
-We recommend to create the release with JDK7 or JDK8 instead. Make sure that the JDK installation
+We recommend to create the release with JDK8 instead. Make sure that the JDK installation
 to be used for the release has been updated recently, since compilers may receive critical bug fixes.
 For example the `javadoc` tool of older JDK versions was known to generate HTML pages with a vulnerability in them.
 
