@@ -1,4 +1,4 @@
-Title:  SIS downloads
+Title:  Apache SIS downloads
 Notice: Licensed to the Apache Software Foundation (ASF) under one
         or more contributor license agreements.  See the NOTICE file
         distributed with this work for additional information
@@ -18,7 +18,8 @@ Notice: Licensed to the Apache Software Foundation (ASF) under one
 
 
 
-All downloads can be verified using the Apache SIS code signing [KEYS][keys].
+Apache SIS 0.7 is now available.
+See the [release notes](release-notes/0.7.html) for a list of changes since the previous version.
 
 Apache SIS releases are available under the [Apache License, Version 2.0][license].
 See the `NOTICE` file contained in each release artifact for applicable copyright attribution notices.
@@ -30,13 +31,21 @@ See the `NOTICE` file contained in each release artifact for applicable copyrigh
 Download ZIP files    {#bundles}
 ================================
 
-Apache SIS 0.7 is now available.
-See the `CHANGES` file for more information on the list of updates in this initial release.
+Apache SIS is distributed in the form of Java source code in a multi-modules Apache Maven project.
+For convenience, an aggregated Javadoc and a pre-compiled JAR file are available as separated downloads.
+The precompiled JAR file contains most modules and dependencies in a single archive for easier inclusion
+in a classpath.
 
   * [Apache SIS 0.7 sources][src] [[PGP][src-PGP]]
   * [Apache SIS 0.7 javadoc][doc] [[PGP][doc-PGP]]
   * [Apache SIS 0.7 binary][bin] [[PGP][bin-PGP]]
 
+
+
+Verify signatures    {#release-gpg}
+-----------------------------------
+
+All downloads can be verified using the Apache SIS code signing [KEYS][keys].
 The PGP (_Pretty Good Privacy_) signatures can be verified using any OpenPGP implementation, for example GPG (_GNU Privacy Guard_).
 First download the `[KEYS][keys]` file as well as the `.asc` signature files for the relevant release packages.
 Make sure you get these files from the main distribution directory, rather than from a mirror.
@@ -62,23 +71,12 @@ Using PGP version 5:
 
 
 
-Release notes    {#release-notes}
----------------------------------
-
-See the [release notes](release-notes/0.7.html) for a list of changes since the previous version.
-
-
-
 Download as a Maven dependency    {#maven}
 ==========================================
 
 An easy approach to integrate SIS into a Java project uses the [Apache Maven][maven]
 dependency management tool to automatically obtain the required Java Archives (JAR) files from the network.
 Below are examples of declarations in a `pom.xml` file for building a project with the SIS core module:
-
-
-Using SIS releases    {#maven-release}
---------------------------------------
 
     :::xml
     <properties>
@@ -95,35 +93,40 @@ Using SIS releases    {#maven-release}
 
 
 
-Using SIS development snapshots    {#maven-snapshot}
-----------------------------------------------------
+Using EPSG geodetic dataset    {#epsg}
+--------------------------------------
+
+The [EPSG geodetic dataset][EPSG] is optional but strongly recommended.
+The EPSG dataset provides [thousands of Coordinate Reference System definitions](tables/CoordinateReferenceSystems.html)
+together with information about how to perform coordinate operations, their accuracies and their domains of validity.
+However usage of EPSG dataset requires acceptation of [Terms of Use][EPSG-ToU].
+If you accept those terms of use, the following dependency can be added:
 
     :::xml
-    <properties>
-      <sis.version>0.8-SNAPSHOT</sis.version>
-    </properties>
-
     <dependencies>
       <dependency>
-        <groupId>org.apache.sis.core</groupId>
-        <artifactId>sis-referencing</artifactId>
+        <groupId>org.apache.sis.non-free</groupId>
+        <artifactId>sis-epsg</artifactId>
         <version>${sis.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <!-- Following dependency can be omitted on Oracle JDK6, JDK7 or JDK8
+           since those Java distributions contain Derby (a.k.a JavaDB). -->
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derby</artifactId>
+        <version>10.12.1.1</version>
+        <scope>runtime</scope>
       </dependency>
     </dependencies>
 
-    <repositories>
-      <repository>
-        <id>apache.snapshots</id>
-        <name>Apache Snapshot Repository</name>
-        <url>http://repository.apache.org/snapshots</url>
-        <releases>
-          <enabled>false</enabled>
-        </releases>
-      </repository>
-    </repositories>
+In addition, user should set the `SIS_DATA` environment variable to an initially empty directory
+where Apache SIS will store the EPSG geodetic database.
+See [How to use EPSG geodetic dataset](epsg.html) page for more information.
 
 
-[maven]:    http://maven.apache.org
+[maven]:    http://maven.apache.org/
 [keys]:     http://www.apache.org/dist/sis/KEYS
 [license]:  http://www.apache.org/licenses/LICENSE-2.0
 [src]:      http://www.apache.org/dyn/closer.cgi/sis/0.7/apache-sis-0.7-src.zip
@@ -132,3 +135,5 @@ Using SIS development snapshots    {#maven-snapshot}
 [src-PGP]:  http://www.apache.org/dist/sis/0.7/apache-sis-0.7-src.zip.asc
 [doc-PGP]:  http://www.apache.org/dist/sis/0.7/apache-sis-0.7-doc.zip.asc
 [bin-PGP]:  http://www.apache.org/dist/sis/0.7/apache-sis-0.7-bin.zip.asc
+[EPSG]:     http://www.epsg.org/
+[EPSG-ToU]: http://www.epsg.org/TermsOfUse
