@@ -85,15 +85,15 @@ Java updates    {#java-update}
 
 While we need a JDK6 installation for the `bootclasspath` option, we do not recommend to use it for generating
 the binaries since JDK6 has reached its end of public updates (but not the end of commercial support).
-We recommend to create the release with JDK8 instead. Make sure that the JDK installation
-to be used for the release has been updated recently, since compilers may receive critical bug fixes.
+We recommend to create the release with JDK7 instead (JDK8 `javadoc` tool seems to have a bug that prevent its use with SIS).
+Make sure that the JDK installation to be used for the release has been updated recently, since compilers may receive critical bug fixes.
 For example the `javadoc` tool of older JDK versions was known to generate HTML pages with a vulnerability in them.
 
 
 
 
-Prepare site and source code    {#prepare-source}
-=================================================
+Prepare web site and source code    {#prepare-source}
+=====================================================
 
 Before to start the release process:
 
@@ -140,6 +140,24 @@ Commit:
 
 The new web site will be published in the [staging area](http://sis.staging.apache.org).
 It will not yet be published on `http://sis.apache.org`.
+
+
+
+Source code    {#prepare-code}
+------------------------------
+
+Replace the `$OLD_VERSION` number by `$NEW_VERSION` in the following literals.
+Those changes need to be applied on the development branch and merged with all other branches and trunk.
+
+  * `DOWNLOAD_URL` in `application/sis-console/src/main/java/org/apache/sis/console/ResourcesDownloader.java` file.
+
+Commit and merge to other branches and to trunk.
+
+    :::bash
+    svn commit --message "Set the EPSG geodetic dataset URL to its expected location after release."
+    cd ../JDK7
+    svn merge ../JDK8
+    # Repeat the above commit and the merge commands for other branches until the changes are merged to trunk.
 
 
 
@@ -281,14 +299,11 @@ additional test worth to do before deployment.
     mvn clean install --define bootclasspath=$BOOTCLASSPATH
     mvn org.apache.sis.core:sis-build-helper:$NEW_VERSION:dist --non-recursive
 
-If the above succeeded, deploy. We temporarily delete the Maven site descriptors (`site.xml`)
-for preventing Maven to deploy them, since there is no apparent reason why users would want to
-download site descriptors from a Maven repository.
+If the above succeeded, deploy:
 
     :::bash
-    find . -name "site.xml" -delete
+    chmod a-w target/distribution/*.zip
     mvn deploy --activate-profiles apache-release --define bootclasspath=$BOOTCLASSPATH
-    svn revert . --recursive
 
 
 
@@ -328,6 +343,27 @@ the availability of this temporary repository for testing purpose.
 
 
 
+Deploy non-free resources to Nexus    {#maven-nonfree}
+------------------------------------------------------
+
+We deploy the non-free resources in a separated Nexus repository for allowing deployment of those resources to Maven Central
+before deployment of the rest of Apache SIS. This allows to test that the URL to those resources in Apache SIS are correct.
+
+Go to the directory that contains a checkout of `https://svn.apache.org/repos/asf/sis/data/non-free/sis-epsg`.
+Replace occurrences of `<version>$OLD_VERSION</version>` by `<version>$NEW_VERSION</version>` in the root `pom.xml`.
+Deploy:
+
+    :::bash
+    mvn deploy --activate-profiles apache-release --define bootclasspath=$BOOTCLASSPATH
+
+In Nexus:
+
+  * Delete all `*-source-release.zip.*` files since they duplicate the `*-source.zip.*` files.
+  * In the `sis-epsg-$NEW_VERSION.jar` file, verify that `META-INF/LICENSE` contain the EPSG terms of use.
+  * Close the repository and take note of its URL.
+
+
+
 Test the Nexus release artifacts    {#nexus-text}
 -------------------------------------------------
 
@@ -340,13 +376,26 @@ Usually, only the 3 last digits need to be updated.
     :::bash
     cd ../../release-test/maven
     vim pom.xml
+    mvn compile
     svn commit -m "Test project for SIS $NEW_VERSION-RC$RELEASE_CANDIDATE"
+
+Create a temporary directory where Apache SIS will write the EPSG dataset.
+
+    :::bash
+    mkdir target/SpatialMetadata
+    export SIS_DATA=`pwd`/target/SpatialMetadata
 
 Clear the local Maven repository in order to force downloads from the Nexus repository, then test.
 This will also verify the checksums.
 
+    :::bash
     rm -r ~/.m2/repository/org/apache/sis
     mvn package --strict-checksums
+
+Verify that the EPSG dataset has been created, then cleanup:
+
+    :::bash
+    ll $SIS_DATA
     mvn clean
 
 
@@ -361,12 +410,23 @@ and keeping the `diff` smaller on the SVN repository of SIS web site.
 If JDK8 is *not* used, then omit the `cp` command below.
 
     :::bash
+    cd $TAG_DIR
     cp ../../JDK8/src/main/javadoc/stylesheet.css src/main/javadoc/
-    mvn javadoc:aggregate --define bootclasspath=$BOOTCLASSPATH
+    mvn javadoc:aggregate
     svn revert src/main/javadoc/stylesheet.css
     cd target/site
     zip -9 -r apache-sis-$NEW_VERSION-doc.zip apidocs
     cd ../..
+
+Note: if Javadoc fails because of [JDK-8061305](https://bugs.openjdk.java.net/browse/JDK-8061305) bug,
+a workaround is to temporarily copy the OpenGIS annotations into the `sis-metadata` module
+(only the time needed for building the javadoc):
+
+    :::bash
+    mkdir core/sis-metadata/src/main/java/org/opengis
+    cd core/sis-metadata/src/main/java/org/opengis
+    ln -s <path to GeoAPI project>/geoapi/src/main/java/org/opengis/annotation
+    cd -
 
 
 
@@ -378,6 +438,7 @@ The `$RELEASE_CANDIDATE` variable shall be the number of current release attempt
 
     :::bash
     cd ../../distribution
+    svn update
     mkdir -p $NEW_VERSION/RC$RELEASE_CANDIDATE
     svn add $NEW_VERSION
     cd $NEW_VERSION/RC$RELEASE_CANDIDATE
@@ -411,21 +472,21 @@ Sign and commit    {#sign}
 Sign the source, javadoc and binary artifacts:
 
     :::bash
-    gpg --print-md SHA512 apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.sha
-    gpg --print-md MD5    apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.md5
+    shasum --algorithm 512 apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.sha
+    md5sum                 apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.md5
 
     gpg --use-agent --armor --detach-sign --default-key $SIGNING_KEY apache-sis-$NEW_VERSION-doc.zip
-    gpg --print-md SHA512 apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.sha
-    gpg --print-md MD5    apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.md5
+    shasum --algorithm 512 apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.sha
+    md5sum                 apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.md5
 
     gpg --use-agent --armor --detach-sign --default-key $SIGNING_KEY apache-sis-$NEW_VERSION-bin.zip
-    gpg --print-md SHA512 apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.sha
-    gpg --print-md MD5    apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.md5
+    shasum --algorithm 512 apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.sha
+    md5sum                 apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.md5
 
 Verify checksums and signatures:
 
     :::bash
-    find . -name "*.md5" -exec shasum --check '{}' \;
+    find . -name "*.md5" -exec md5sum --check '{}' \;
     find . -name "*.sha" -exec shasum --check '{}' \;
     find . -name "*.asc" -exec gpg --verify '{}' \;
 
