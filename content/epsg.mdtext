@@ -1,0 +1,99 @@
+Title:  How to use EPSG geodetic dataset
+Notice: Licensed to the Apache Software Foundation (ASF) under one
+        or more contributor license agreements.  See the NOTICE file
+        distributed with this work for additional information
+        regarding copyright ownership.  The ASF licenses this file
+        to you under the Apache License, Version 2.0 (the
+        "License"); you may not use this file except in compliance
+        with the License.  You may obtain a copy of the License at
+        .
+          http://www.apache.org/licenses/LICENSE-2.0
+        .
+        Unless required by applicable law or agreed to in writing,
+        software distributed under the License is distributed on an
+        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+        KIND, either express or implied.  See the License for the
+        specific language governing permissions and limitations
+        under the License.
+
+
+
+The [EPSG geodetic dataset][EPSG] is a de-facto standard providing
+[thousands of Coordinate Reference System (CRS) definitions](tables/CoordinateReferenceSystems.html)
+together with information about how to perform coordinate operations, their accuracies and their domains of validity.
+The EPSG dataset is owned and maintained by the [International Association of Oil & Gas producers][IOGP].
+Usage of EPSG dataset with Apache SIS is optional but strongly recommended:
+without that geodetic dataset, only a small subset of CRS definitions will be available
+(basically the constants enumerated in the `CommonCRS` Java class)
+unless full definitions are provided in _Well Known Text_ (WKT) or _Geographic Markup Language_ (GML) formats.
+Furthermore, coordinate operations between any given pair of CRS may be less accurate
+and their domains of validity may be unspecified if Apache SIS can not query EPSG.
+
+The EPSG geodetic dataset is not distributed with Apache SIS because the [EPSG terms of use][EPSG-ToU]
+are incompatible with Apache license. The following items are quoted from those terms of use:
+
+  * The [EPSG][EPSG] Facilities are published by [IOGP][IOGP] at no charge. Distribution for profit is forbidden.
+  * The data may be included in any commercial package provided that any commerciality is based on value added
+    by the provider and not on a value ascribed to the EPSG Dataset which is made available at no charge.
+  * Ownership of the EPSG Dataset by IOGP must be acknowledged in any publication or transmission
+    (by whatever means) thereof (including permitted modifications).
+  * Modification of parameter values is permitted as described in the table 1 to allow change to the content
+    of the information provided that numeric equivalence is achieved.
+  * No data that has been modified other than as permitted in these Terms of Use shall be attributed to the EPSG Dataset.
+
+In order to use the EPSG geodetic dataset with Apache SIS, there is two possibilities:
+
+
+
+
+Install a local copy with command-line tool    {#command-line}
+==============================================================
+
+If the [command-line tool](command-line.html) has been downloaded and installed, just query any CRS.
+For example:
+
+    :::bash
+    sis crs EPSG:6676
+
+The first time that the command-line tool needs to query EPSG, it will prompt the user for authorization
+to download EPSG geodetic dataset from Maven Central. If the user accepts EPSG terms of use, then a local
+copy of the EPSG geodetic dataset will be created and stored in the `apache-sis-0.7/data` sub-directory.
+
+If the command-line tool does not offer to download the EPSG geodetic dataset,
+try adding a `derby-<version>.jar` file ([download lib-distribution][Derby]) in the `apache-sis-0.7/lib` sub-directory.
+This is normally not needed with Oracle JDK6, JDK7 or JDK8 because Apache SIS tries to use the JavaDB embedded
+in those distributions, but may be necessary with other distributions or in security-constrained environments.
+
+For using the installed EPSG geodetic dataset in your own application, apply *one* of the following choices:
+
+  * Set the `SIS_DATA` environment variable to the path to the `apache-sis-0.7/data` directory _(preferred choice)_.
+  * Set the `derby.system.home` Java property to the path to the `apache-sis-0.7/data/Databases` directory.
+
+Alternatively `SIS_DATA` or `derby.system.home` can be set to the path of any other directory which contain the same files.
+
+
+
+
+Add a Maven dependency    {#maven}
+==============================================================
+
+Maven projects can get the EPSG geodetic dataset automatically, _without any prompt for terms of use agreement_,
+if they add a dependency to the `org.apache.sis.non-free:sis-epsg:0.7` artifact in their project.
+We assume that developers who add this dependency explicitely in their projects agree with the terms of use.
+The `<dependency>` fragment to use in the `pom.xml` file is given in the [download](download.html#epsg) page.
+
+In addition, users need to apply *one* of the following choices:
+
+  * Set the `SIS_DATA` environment variable to the path of an initially empty directory _(preferred choice)_.
+  * Set the `derby.system.home` Java property to the path of an initially empty directory,
+    or a directory that contain other Derby databases.
+
+The directory references by `SIS_DATA` or `derby.system.home` must exist.
+Sub-directories in that directory will be created as needed.
+
+
+
+[IOGP]:     http://www.iogp.org/
+[EPSG]:     http://www.epsg.org/
+[EPSG-ToU]: http://www.epsg.org/TermsOfUse
+[Derby]:    http://db.apache.org/derby/derby_downloads.html
