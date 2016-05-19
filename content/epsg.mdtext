@@ -139,33 +139,33 @@ When Apache SIS is used in a JavaEE container, the data source can be configured
 2. If using Derby, copy `derby.war` into the `$CATALINA_HOME/webapps` directory and specify the directory where
    the Derby databases are located (skip this step if another database is used):
 
-       :::bash
-       export JAVA_OPTS=-Dderby.system.home=$SIS_DATA/Databases
+        :::bash
+        export JAVA_OPTS=-Dderby.system.home=$SIS_DATA/Databases
 
 3. Declare the JNDI name in application `WEB-INF/web.xml` file:
 
-       :::xml
-       <resource-ref>
-         <description>EPSG dataset and other metadata used by Apache SIS.</description>
-         <res-ref-name>jdbc/SpatialMetadata</res-ref-name>
-         <res-type>javax.sql.DataSource</res-type>
-         <res-auth>Container</res-auth>
-       </resource-ref>
+        :::xml
+        <resource-ref>
+          <description>EPSG dataset and other metadata used by Apache SIS.</description>
+          <res-ref-name>jdbc/SpatialMetadata</res-ref-name>
+          <res-type>javax.sql.DataSource</res-type>
+          <res-auth>Container</res-auth>
+        </resource-ref>
 
 4. Configure the data source in `$CATALINA_HOME/conf/context.xml` or in application `META-INF/context.xml` file
    (change attribute values as needed for the chosen JDBC driver):
 
-       :::xml
-       <Context crossContext="true">
-         <WatchedResource>WEB-INF/web.xml</WatchedResource>
-         <Resource name            = "jdbc/SpatialMetadata"
-                   auth            = "Container"
-                   type            = "javax.sql.DataSource"
-                   username        = "sa"
-                   password        = "sa"
-                   driverClassName = "org.apache.derby.jdbc.EmbeddedDriver"
-                   url             = "jdbc:derby:SpatialMetadata"/>
-       </Context>
+        :::xml
+        <Context crossContext="true">
+          <WatchedResource>WEB-INF/web.xml</WatchedResource>
+          <Resource name            = "jdbc/SpatialMetadata"
+                    auth            = "Container"
+                    type            = "javax.sql.DataSource"
+                    username        = "sa"
+                    password        = "sa"
+                    driverClassName = "org.apache.derby.jdbc.EmbeddedDriver"
+                    url             = "jdbc:derby:SpatialMetadata"/>
+        </Context>
 
 5. If using Derby, verify on the `localhost:8080/derby/derbynet` page (skip this step if another database is used).
 
