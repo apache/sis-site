@@ -175,7 +175,7 @@ plus facilement des informations géographiques.
 Outre ces organisations formelles de normalisation, il existe aussi des organisations qui ne sont pas officiellement
 dédiées à l’élaboration de normes mais dont les travaux ont été largement adoptés comme standards de fait.
 En particulier, la base de données <a href="http://www.epsg.org">EPSG</a> fournit des codes numériques permettant d’identifier
-facilement un système de référence des coordonnées parmi <a href="../tables/CoordinateReferenceSystems.html">plusieurs milliers</a>.
+facilement un système de référence des coordonnées parmi <a href="../../tables/CoordinateReferenceSystems.html">plusieurs milliers</a>.
 Cette base de données est offerte par des compagnies pétrolières qui ont vu leur intérêt à ce que leurs prospections se fassent
 bien à l’endroit voulu, sachant qu’elles ne contrôlent pas toujours la production des cartes sur lesquelles elles se positionnent.
 D’autres exemples de standards de fait sont les formats
@@ -2064,13 +2064,13 @@ Chaque système implique des approximations telles que:
 </ul>
 <p>
 En l’absence d’indication contraire, la précision recherchée pour les coordonnées sur la Terre est de 1 centimètre.
-Mais la maîtrise de cette précision nécessite certaines conditions:
+Mais la maîtrise de cette précision nécessite le respect de certaines conditions:
 </p>
 <ul>
-<li>Rester dans la zone de validité du système, telle que donnée par <code class="GeoAPI">ReferenceSystem​.getDomainOfValidity()</code>.</li>
+<li>Rester dans la zone de validité du système telle que donnée par <code class="GeoAPI">ReferenceSystem​.getDomainOfValidity()</code>.</li>
 <li>Savoir que les mesures de distances dans une projection cartographique donnée ne sont vraies qu’à certains endroits,
 appelés par exemple « parallèles standards ».</li>
-<li>Vérifier la précision des transformations de coordonnées, telle que donnée par
+<li>Vérifier la précision des transformations de coordonnées, par exemple avec
 <code class="GeoAPI">CoordinateOperation​.getCoordinateOperationAccuracy()</code>.</li>
 </ul>
 <p>
@@ -2118,7 +2118,7 @@ qui indique entre autres quel ellipsoïde utiliser comme approximation de la for
 C’est le cas notamment des projections cartographiques.</li>
 </ul>
 <p>
-Ces systèmes sont décrits par la norme <abbr title="International Organization for Standardization">ISO</abbr> 19111 (<i>Referencing by coordinates</i>),
+Ces systèmes sont décrits par la norme <abbr title="International Organization for Standardization">ISO</abbr> 19111 (<i>Referencing by Coordinates</i>),
 qui remplace en grande partie une norme plus ancienne mais encore utilisée pour certains aspects,
 <abbr>OGC 01-009</abbr> (<i>Coordinate Transformation Services</i>).
 Ces normes sont complétées par deux autres standards définissant des formats d’échanges:
@@ -2154,7 +2154,7 @@ Pour définir un système géodésique dans un pays, l’état met en place un e
 qui épouse au mieux sur l’ensemble du pays la forme locale du géoïde.
 L’écart entre cet ellipsoïde de référence et les creux et les bosses du géoïde reste généralement inférieur à 100 mètres.
 Les paramètres qui permettent de lier un <code class="GeoAPI">Ellipsoid</code> à la surface de la Terre (par exemple la position de son centre)
-sont encapsulés dans un objet de type <code class="GeoAPI">GeodeticDatum</code>, que l’on traduit en français par « référentiel géodésique ».
+sont représentées par un objet de type <code class="GeoAPI">GeodeticDatum</code>, que l’on traduit en français par « référentiel géodésique ».
 Plusieurs <code class="GeoAPI">GeodeticDatum</code> peuvent utiliser le même <code class="GeoAPI">Ellipsoid</code>, mais centré ou orienté différemment.
 </p><p>
 Avant l’avènement des satellites, les mesures géodésiques se déroulaient exclusivement à la surface de la terre.
@@ -2183,6 +2183,9 @@ La Terre bouge sous l’effet de la tectonique des plaques et de nouveaux systè
 Même le système <abbr>WGS84</abbr>, sensé correspondre à une définition à un instant donné,
 a subit des révisions dues notamment à l’amélioration de la précision des instruments.
 Ainsi il existe aujourd’hui au moins six versions de <abbr>WGS84</abbr>, avec des écarts entre elles allant jusqu’à 7 centimetres.
+En outre beaucoups de bordures ont été définies légalement dans des référentiels plus anciens, par exemple <abbr>NAD27</abbr> aux États-Unis.
+Mettre à jour dans un nouveau référentiel obligerait à transformer des lignes droites ou des formes géométriques simples en des formes beaucoup plus irrégulières
+si on ne veut pas que des parcelles de terrain changent de propriétaire.
 </p>
 <article>
 <header>
@@ -2191,7 +2194,7 @@ Ainsi il existe aujourd’hui au moins six versions de <abbr>WGS84</abbr>, avec 
 <p>
 Le caractère universel du système <abbr title="World Geodetic System 1984">WGS84</abbr> rend tentante l’idée de l’utiliser comme système pivot,
 afin de simplifier l’implémentation d’une bibliothèque de transformation de coordonnées.
-La transformation d’une coordonnées d’un référentiel <var>A</var> vers un référentiel <var>B</var>
+La transformation d’une coordonnée d’un référentiel <var>A</var> vers un référentiel <var>B</var>
 pourrait se faire en transformant d’abord de <var>A</var> vers <abbr>WGS84</abbr>, puis de <abbr>WGS84</abbr> vers <var>B</var>.
 Il suffirait ainsi de stocker dans chaque objet <code class="GeoAPI">GeodeticDatum</code> les informations nécessaires à la transformation vers <abbr>WGS84</abbr>.
 Cette approche était encouragée dans la version 1 du format <abbr>WKT</abbr>, qui définissait un élément <code class="OGC">TOWGS84</code> remplissant ce rôle.
@@ -2201,12 +2204,12 @@ car elle associe des informations sur la transformations de coordonnées très t
 Bien que <abbr>EPSG</abbr> reconnaisse que cette approche soit couramment employée, elle n’est pas recommandée pour plusieurs raisons:
 </p>
 <ul>
-<li>Il existe parfois plusieurs transformations allant d’un référentiel <var>A</var> vers <abbr>WGS84</abbr>,
+<li>Il existe parfois plusieurs transformations allant d’un référentiel <var>A</var> vers <var>B</var>,
 chacune étant plus précise pour une région géographique donnée.
 Par exemple il existe une cinquantaine de transformations de <abbr>NAD27</abbr> vers <abbr>NAD83</abbr>.</li>
 <li>Certaines opérations sont conçues spécifiquement pour transformer de <var>A</var> vers <var>B</var>
 et n’ont pas la même précision qu’aurait une autre transformation faisant un détour par <abbr>WGS84</abbr>.</li>
-<li>Il existe d’autres systèmes globaux qui pourraient servir de pivot, par exemple le <cite>Galileo reference frame</cite> (<abbr>GTRF</abbr>)
+<li>Il existe d’autres systèmes globaux qui pourraient servir de pivot, par exemple le <cite>Galileo Reference Frame</cite> (<abbr>GTRF</abbr>)
 mis en place par le concurrent européen du <abbr title="Global Positioning System">GPS</abbr>. Et <abbr>WGS84</abbr> lui-même subit parfois des révisions.</li>
 </ul>
 <p>
@@ -2295,7 +2298,7 @@ Ces opérations n’effectuent pas de projections cartographiques, plus complexe
 Les opérations linéaires ont la propriété de toujours se combiner:
 peu importe le nombre d’opérations linéaires que l’on enchaîne, le résultat sera toujours exprimable par une seule opération linéaire.
 Cette propriété est plus facilement visible lorsque les opérations linéaires sont exprimées sous forme de matrices:
-pour les combiner, il suffit de multiplier les matrices.
+pour combiner les opérations, il suffit de multiplier les matrices.
 </p>
 <div class="example"><p><b>Example:</b>
 supposons que nous disposons d’une image dont les coordonnées des pixels sont représentées par (<var>i</var>,<var>j</var>).
@@ -2496,7 +2499,7 @@ alors on peut exprimer ces modifications par des multiplications matricielles co
 </td>
 </tr></table>
 <p>
-L’élément clé est qu’il n’y a pas besoin d’écrire un code dédié à l’inversion des axes.
+L’idée principale est qu’il n’y a pas besoin d’écrire un code dédié à l’inversion des axes.
 Cette opération, et bien d’autres, est prise en compte naturellement par l’algèbre matricielle.
 On y gagne en généricité du code et en performance.
 </p>
@@ -2544,7 +2547,7 @@ Mais les bibliothèques dédiées aux calculs matriciels sont souvent conçues p
 sur des matrices de grandes tailles, ayant par exemple des milliers de lignes et colonnes.
 Elles sont ainsi conçues pour être capable de résoudre efficacement des systèmes d’équations linéaires comportant des centaines d’inconnues.
 Les problèmes qu’elles résolvent sont certes difficiles, mais assez différents de ceux qui intéressent Apache <abbr>SIS</abbr>.
-Pour cette raison, et aussi à cause d’un autre besoin spécifique détaillé dans la section suivante,
+Pour cette raison, et aussi à cause d’un autre besoin spécifique détaillé dans les paragraphes suivants,
 Apache <abbr>SIS</abbr> utilise ses propres fonctions de calculs matriciels.
 Ces fonctions tentent de résoudre le problème de précision en utilisant l’arithmétique « double-double »
 (une technique permettant de simuler une précision d’environ 120 bits)
@@ -2581,7 +2584,7 @@ imaginons une conversion qui projetterait les points d’un espace 3D vers une s
 Pour des bibliothèques d’algèbre linéaire, la matrice représentant cette conversion serait un système d’équations sous-déterminé, et donc insoluble.
 C’est-à-dire qu’on ne peut pas inverser cette conversion pour obtenir (λ₂, φ₂) → (λ₁, φ₁, <var>h</var>) puisqu’on ne sait pas quelle valeur donner à <var>h</var>,
 ce qui implique qu’on ne peut pas trouver (λ₁, φ₁) non-plus car ces valeurs dépendent peut-être de <var>h</var>.
-Toutefois, dans le cas des <abbr>SIG</abbr>, l’axe des <var>h</var> est très souvent perpendiculaire à la surface sur laquelle sont exprimées les coordonnées (λ, φ).
+Toutefois, dans le cas des <abbr>SIG</abbr>, l’axe des <var>h</var> est très souvent perpendiculaire à la surface sur laquelle sont exprimées les coordonnées (<var>λ</var>,<var>φ</var>).
 Cette perpendicularité rend λ₁ et φ₁ indépendants de <var>h</var>. Dans ce cas particulier, et ce cas seulement, on peut encore sauver les meubles.
 </p><p>
 Apache <abbr>SIS</abbr> procède en vérifiant si les coordonnées <var>h</var> sont indépendantes des coordonnées λ et φ.
@@ -2596,18 +2599,18 @@ Là encore, le choix du coefficient à mettre à <code>NaN</code> dans la matric
 </p><p>
 Le traitement particulier fait par <abbr>SIS</abbr> permet donc d’inverser des matrices que l’on rencontre couramment dans les <abbr>SIG</abbr>,
 même si en principe le système est sous-déterminé.
-Dans notre exemple la coordonnée <var>h</var> reste inconnue – nous ne faisons pas surgir de l’information du néant – mais au moins les coordonnées (λ, φ) ont pu être récupérées.
+Dans notre exemple la coordonnée <var>h</var> reste inconnue – nous ne faisons pas surgir de l’information du néant – mais au moins les coordonnées (<var>λ</var>,<var>φ</var>) ont pu être récupérées.
 </p><p>
 Le problème inverse, celui des systèmes surdéterminés, est plus subtil.
 Une approche classique des bibliothèques d’algèbre linéaire est de résoudre les systèmes surdéterminés par la méthode des moindres carrées.
 Transposée à notre exemple, cette approche proposerait une conversion (λ₂, φ₂, <var>h</var>) → (λ₁, φ₁)
 qui semble le meilleur compromis pour diverses valeurs de λ₂, φ₂ et <var>h</var>, tout en n’étant (sauf cas particuliers) une solution exacte pour personne.
 De plus, les éventuelles combinaisons linéaires entre ces trois variables sont délicates compte tenu de l’hétérogénéité des unités de mesures,
-où les <var>h</var> sont en mètres et (λ, φ) en degrés.
+où les <var>h</var> sont en mètres et (<var>λ</var>,<var>φ</var>) en degrés.
 Apache <abbr>SIS</abbr> procède plutôt comme pour les systèmes sous-déterminés: en exigeant que certaines dimensions soient indépendantes des autres,
 faute de quoi la matrice sera considérée non-inversible.
 Dans le cas des systèmes surdéterminés <abbr>SIS</abbr> refusera donc d’effectuer certaines opérations que les bibliothèques d’algèbre linéaire auraient faite,
-mais garantira que les conversions obtenues sont exactes (aux erreurs d’arrondissement prêts).
+mais garantira que les conversions obtenues seront exactes (aux erreurs d’arrondissement prêts).
 </p>
 <p>
 En résumé, les besoins qui ont amené Apache <abbr>SIS</abbr> à fournir ses propres fonctions de calculs matriciels sont:
@@ -2629,7 +2632,7 @@ Cette opération était définie dans une ancienne spécification du consortium 
 </p>
 
 <p>
-Appelons <var>P</var> une projection cartographique qui convertit une longitude et latitude (λ, φ) en degrés
+Appelons <var>P</var> une projection cartographique qui convertit une longitude et latitude (<var>λ</var>,<var>φ</var>) en degrés
 vers une coordonnée projetée (<var>x</var>,<var>y</var>) en mètres.
 Dans l’expression ci-dessous, nous représentons le résultat de la projection cartographique
 sous forme d’une matrice colonne (la raison sera plus claire bientôt):
@@ -2668,15 +2671,17 @@ sous forme d’une matrice colonne (la raison sera plus claire bientôt):
 </math>
 
 <p>
-Dans la suite de ce texte, nous abrégerons ∂<var>x</var>(λ,φ) par ∂<var>x</var> et de même pour ∂<var>y</var>.
-Le premier élément de la matrice (∂<var>x</var>/∂λ) nous indique à quel déplacement vers l’<em>Est</em>
-(<var>x</var> en mètres) correspond un déplacement de un degré de <em>longitude</em> (λ).
-De même, le dernier élément de la matrice (∂<var>y</var>/∂φ) nous indique à quel déplacement vers le <em>Nord</em>
-(<var>y</var> en mètres) correspond un déplacement de un degré de <em>latitude</em> (φ).
-Les autres éléments (∂<var>x</var>/∂φ et ∂<var>y</var>/∂λ) sont des termes croisés (par exemple à quel déplacement
-en mètres vers le <strong>Nord</strong> correspond un déplacement de un degré de <strong>longitude</strong>).
-Ces valeurs ne sont généralement valides qu’à la position géographique (λ, φ) donnée.
+Dans la suite de ce texte nous abrégerons ∂<var>x</var>(<var>λ</var>,<var>φ</var>) par ∂<var>x</var> et de même pour ∂<var>y</var>,
+mais il faut garder à l'esprit que chacune de ces valeurs dépendent de la coordonnée (<var>λ</var>,<var>φ</var>) originale.
+Le premier élément de la matrice (∂<var>x</var>/∂<var>λ</var>) nous indique à quel déplacement vers l’Est
+(<var>x</var> en mètres) correspond un déplacement de un degré de longitude (<var>λ</var>).
+De même, le dernier élément de la matrice (∂<var>y</var>/∂<var>φ</var>) nous indique à quel déplacement vers le Nord
+(<var>y</var> en mètres) correspond un déplacement de un degré de latitude (<var>φ</var>).
+Les autres éléments (∂<var>x</var>/∂<var>φ</var> et ∂<var>y</var>/∂<var>λ</var>) sont des termes croisés (par exemple à quel déplacement
+en mètres vers le <em>Nord</em> correspond un déplacement de un degré de <em>longitude</em>).
+Ces valeurs ne sont généralement valides qu’à la position géographique (<var>λ</var>,<var>φ</var>) donnée.
 Si on se déplace un peu, ces valeurs changent légèrement.
+Cette matrice nous donne toutefois une bonne idée du comportement de la projection dans le voisinage du point projeté.
 </p>
 
 <p>
@@ -2687,7 +2692,7 @@ Dans cette figure, les vecteurs <var>U</var> et <var>V</var> désignent respecti
 la première et deuxième colonne des matrices de dérivées.
 </p>
 
-<center><table class="hidden"><tr>
+<table class="hidden"><tr>
 <td><img alt="Exemple de dérivées d’une projection cartographique" src="../images/Derivatives.png" style="border: solid 1px"/></td>
 <td style="padding-left: 30px; vertical-align: middle">
 <p>où les vecteurs sont reliés à la matrice par:</p>
@@ -2723,7 +2728,7 @@ la première et deuxième colonne des matrices de dérivées.
 </mtr></mtable>
 </math>
 </td>
-</tr></table></center>
+</tr></table>
 
 <p>
 Cette figure nous montre déjà une utilisation possible des dérivées:
@@ -2743,7 +2748,7 @@ Construire une enveloppe rectangulaire qui engloberait les 4 coins de cette form
 car la surface en bas de la forme est plus basse que les 2 coins du bas.
 Cette surface serait donc en dehors du rectangle.
 </p>
-<center><table class="hidden">
+<table class="hidden">
 <tr>
 <th>Enveloppe avant la projection</th>
 <th>Forme géométrique après la projection</th>
@@ -2752,7 +2757,7 @@ Cette surface serait donc en dehors du rectangle.
 <td><img alt="Envelope in a geographic CRS" src="../images/GeographicArea.png" style="border: solid 1px; margin-right: 15px"/></td>
 <td><img alt="Shape in a projected CRS" src="../images/ConicArea.png" style="border: solid 1px; margin-left:  15px"/></td>
 </tr>
-</table></center>
+</table>
 <p>
 Une façon simple d’atténuer le problème est d’échantillonner un plus grand nombre de points sur chacun des
 bords de la forme géométrique. On trouve ainsi des bibliothèques de <abbr>SIG</abbr> qui vont par exemple
@@ -2781,7 +2786,7 @@ L’avantage est que la position du minimum d’une courbe cubique est facile à
 En supposant que la longitude du minimum de la courbe cubique est proche de la longitude du minimum de la courbe réelle,
 il suffit de calculer la projection cartographique d’un point à cette longitude plutôt que d’échantillonner 40 points sur le bord de l’enveloppe.
 </p>
-<center><table class="hidden"><tr><td>
+<table class="hidden"><tr><td>
 <img alt="Approximation cubique d’un bord d’une enveloppe" src="../images/Approximation.png"/>
 </td><td style="padding-left: 60px">
 Légende:
@@ -2794,12 +2799,12 @@ C’est la forme dont on souhaite avoir le rectangle englobant.</li>
 0 = <var>C</var>₁ + 2<var>C</var>₂λ<sub>m</sub> + 3<var>C</var>₃λ<sub>m</sub>².
 Il peut y avoir jusqu’à deux minimums pour une même courbe cubique.</li>
 </ul>
-</td></tr></table></center>
+</td></tr></table>
 <p>
 Dans la pratique Apache <abbr title="Spatial Information System">SIS</abbr> utilise 8 points, soit les 4 coins plus un point au centre de chaque bord du rectangle à projeter,
 afin de réduire le risque d’erreur qu’induirait une courbe trop tordue entre deux points.
 Selon nos tests, l’utilisation de ces seuls 8 points avec leurs dérivées comme décrit ci-haut
-donne un résultat plus précis que l’approche “force brute” utilisant un échantillonnage de 160 points sur les 4 bords du rectangle.
+donne un résultat plus précis que l’approche « force brute » utilisant un échantillonnage de 160 points sur les 4 bords du rectangle.
 La précision de <abbr>SIS</abbr> pourrait être encore améliorée en répétant le processus à partir du minimum trouvée
 (une ou deux itérations suffiraient peut-être).
 </p><p>
@@ -2826,7 +2831,7 @@ du pixel correspondant dans l’image source en utilisant <em>l’inverse</em> d
 La position obtenue ne sera pas nécessairement au centre du pixel de l’image source, ce qui implique qu’une interpolation de la valeur
 (ou de la couleur dans l’image ci-dessous) peut être nécessaire.
 </p>
-<center><table class="hidden">
+<table class="hidden">
 <tr>
 <th style="text-align: left">Image source</th>
 <th style="text-align: right">Image destination</th>
@@ -2834,7 +2839,7 @@ La position obtenue ne sera pas nécessairement au centre du pixel de l’image 
 <tr>
 <td colspan="2"><img alt="Intersection of derivatives" src="../images/RasterProjection.png"/></td>
 </tr>
-</table></center>
+</table>
 <p>
 Toutefois, calculer la projection inverse pour chacun des pixels peut être relativement lent.
 Afin d’accélérer les calculs, on utilise parfois une <cite>grille d’interpolation</cite>
@@ -2849,7 +2854,7 @@ Mais une difficulté de cette approche est de déterminer combien de points il f
 (la différence entre une position interpolée et la position réelle) ne dépasse pas un certain seuil (par exemple ¼ de pixel).
 On peut procéder en commençant par une grille de taille 3×3, puis en augmentant le nombre de points de manière itérative:
 </p>
-<center><table class="hidden"><tr>
+<table class="hidden"><tr>
 <td><img alt="Intersection of derivatives" src="../images/WarpGrid.png"/></td>
 <td style="padding-left: 60px">
 Légende:
@@ -2865,7 +2870,7 @@ Si l’on continue…
 <li>Sixième itération: 4225 points, dont 3136 nouveaux.</li>
 <li>…</li>
 </ul>
-</td></tr></table></center>
+</td></tr></table>
 <p>
 L’itération s’arrête lorsque, après avoir calculé de nouveaux points, on a vérifié que la différence entre les
 coordonnées projetées et les coordonnées interpolées de ces nouveaux points est inférieure au seuil qu’on s’est fixé.
@@ -2881,7 +2886,7 @@ Pour quantifier « presque pareil », on procède en calculant l’intersectio
 (une information fournie par les dérivées), et en calculant la distance entre cette intersection et la droite
 qui relie les deux points (la ligne pointillée dans la figure ci-dessous).
 </p>
-<center><img alt="Intersection of derivatives" src="../images/IntersectionOfDerivatives.png" style="border: solid 1px"/></center>
+<p style="text-align:center"><img alt="Intersection of derivatives" src="../images/IntersectionOfDerivatives.png" style="border: solid 1px"/></p>
 <p>
 Dans l’approche sans dérivées, l’itération s’arrête lorsque la distance entre la ligne pointillée (positions interpolées)
 et la ligne rouge (positions projetées) est inférieure au seuil de tolérance, ce qui implique de calculer la position projetée.
@@ -2908,7 +2913,7 @@ Exemple:</p>
 <pre><code class="SIS">AbstractMathTransform</code> projection = ...;         <code class="comment">// Une projection cartographique de Apache SIS.
 </code><b>double</b>[] sourcePoint = {longitude, latitude};   <code class="comment">// La coordonnée géographique que l’on veut projeter.
 </code><b>double</b>[] targetPoint = <b>new</b> <b>double</b>[2];           <code class="comment">// Là où on mémorisera le résultat de la projection.
-</code><code class="GeoAPI">Matrix</code>   derivative  = projection.<span class="SIS">transform</span>(sourcePoint, 0, targetPoint, 0, <b>true</b>);</pre>
+</code><code class="GeoAPI">Matrix</code>   derivative  = projection.<code class="SIS">transform</code>(sourcePoint, 0, targetPoint, 0, <b>true</b>);</pre>
 
 <p>
 Si seule la matrice Jacobienne est désirée (sans la projection du point), alors la méthode
@@ -3047,9 +3052,9 @@ et <code class="SIS">upperCorner</code> apparaissent encore en bas et en haut du
 Mais les positions gauche et droite sont interchangées.
 Ce cas est représenté par le rectangle rouge dans la figure ci-dessous.
 </p>
-<center>
+<p style="text-align:center">
 <img alt="Exemples d’enveloppes avec et sans croisement de l’antiméridien." src="../../apidocs/org/apache/sis/geometry/doc-files/AntiMeridian.png"/>
-</center>
+</p>
 <p>
 Les notions d’inclusion et d’intersection s’interprètent toutefois de manière légèrement différente dans ces deux cas.
 Dans le cas habituel où l’on ne traverse pas l’antiméridien, le rectangle vert délimite bien une région d’inclusion.
