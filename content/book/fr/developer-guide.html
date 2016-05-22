@@ -28,9 +28,9 @@
 <ul class="toc">
 <li><a href="#Foreword">Préface</a><ul>
 <li><a href="#Standards">Standards et normes</a><ul>
-<li><a href="#SpecificationTypes">Les différents types de spécifications</a></li></ul></li>
+<li><a href="#SpecificationTypes">Les types de spécifications</a></li></ul></li>
 <li><a href="#About">Conventions utilisées dans ce guide</a><ul>
-<li><a href="#DefinitionOfTerms">Définitions des termes</a></li></ul></li></ul></li>
+<li><a href="#CodeColors">Code de couleurs</a></li></ul></li></ul></li>
 <li><a href="#GeoAPI">GeoAPI</a><ul>
 <li><a href="#SpecificationToInterfaces">Des spécifications aux interfaces</a><ul>
 <li><a href="#UML-annotation">Correspondances explicitées par l’annotation @UML</a></li>
@@ -95,9 +95,9 @@
 </header>
 <nav>Dans ce chapitre:<ul class="toc">
 <li><a href="#Standards">Standards et normes</a><ul>
-<li><a href="#SpecificationTypes">Les différents types de spécifications</a></li></ul></li>
+<li><a href="#SpecificationTypes">Les types de spécifications</a></li></ul></li>
 <li><a href="#About">Conventions utilisées dans ce guide</a><ul>
-<li><a href="#DefinitionOfTerms">Définitions des termes</a></li></ul></li></ul></nav>
+<li><a href="#CodeColors">Code de couleurs</a></li></ul></li></ul></nav>
 <p>
 Une communauté d’informations géospatiales est un ensemble de systèmes ou d’individus capables d’échanger
 leurs données géospatiales grâce à des définitions et des standards communs ainsi qu’une reconnaissance réciproque.
@@ -265,7 +265,7 @@ hébergés en dehors des structures de l’<abbr>OGC</abbr>.
 
 
 
-<h3 id="SpecificationTypes"><span class="section-number">1.1.1.</span> Les différents types de spécifications</h3>
+<h3 id="SpecificationTypes"><span class="section-number">1.1.1.</span> Les types de spécifications</h3>
 <p>
 Les standards <abbr title="Open Geospatial Consortium">OGC</abbr> sont spécifiés dans plusieurs dizaines de documents.
 Chaque document élabore un service, par exemple les transformations de coordonnées.
@@ -278,7 +278,15 @@ Leurs concepts peuvent se concrétiser dans un langage de programmation, une bas
 Il existe toutefois une part d’arbitraire dans la façon de concrétiser une spécification abstraite, étant donné que des ajustements sont souvent nécessaires
 pour tenir compte des contraintes ou des conventions du langage ciblé.
 Certaines structures de données n’existent que dans quelques langages, par exemple les unions qui existent en C/C++ mais pas en Java.
-</p><p>
+</p>
+
+
+
+<article id="implementation-standard">
+<header>
+<h1>Note historique</h1>
+</header>
+<p>
 Au tournant du millénaire, les spécifications abstraites étaient explicitement concrétisées dans des <i>spécifications d’implémentations</i>.
 Le terme « implémentation » était ici à prendre au sens de tout type d’interfaces (Java ou autres) dérivées des diagrammes
 <abbr title="Unified Modeling Language">UML</abbr> — et non pas d’implémentations au sens du Java.
@@ -316,11 +324,13 @@ tout en puisant dans les archives de l’<abbr title="Open Geospatial Consortium
 pour compléter certains standards abstraits ou les rendre un peu plus facile d’utilisation.
 Certaines anciennes définitions sont conservées comme « méthodes de commodités »,
 n’apportant pas toujours de nouvelles fonctionnalités mais facilitant l’usage pratique d’une bibliothèque.
-</p><p>
+</p>
+</article>
+<p>
 Le tableau suivant liste les principales normes utilisées par le projet.
 Plusieurs normes sont publiées à la fois comme standard <abbr title="International Organization for Standardization">ISO</abbr> et comme standard <abbr>OGC</abbr>,
 d’où la disposition côte-à-côte des deux premières colonnes.
-Les normes dépréciées mais malgré tout utilisées apparaissent <s>barrées</s>.
+Les normes dépréciées mais malgré tout partiellement utilisées apparaissent <s>barrées</s>.
 Enfin, les paquets GeoAPI seront introduits dans le chapitre suivant.
 </p>
 <table>
@@ -515,6 +525,27 @@ Enfin, les paquets GeoAPI seront introduits dans le chapitre suivant.
 
 <h2 id="About"><span class="section-number">1.2.</span> Conventions utilisées dans ce guide</h2>
 <p>
+Les standards privilégient parfois l’application de certains termes génériques à des contextes particuliers,
+qui peuvent différer du contexte dans lequel d’autres communautés emploient ces termes.
+Par exemple les termes <i>domain</i> et <i>range</i> peuvent s’appliquer à des fonctions arbitraires
+pour désigner l’ensemble des valeurs possibles en entrés et en sorties respectivement.
+Mais les fonctions auxquelles certains standards <abbr title="International Organization for Standardization">ISO</abbr>
+les appliquent ne sont pas les mêmes que les fonctions auxquelles d’autres bibliothèques les appliquent.
+Par exemple <abbr>ISO</abbr> 19123 applique ces termes aux objets <code class="OGC">CV_Coverage</code>,
+vus comme des fonctions dont le domaine est l’ensemble des coordonnées spatio-temporelles de la couverture de données
+et le <i>range</i> l’ensemble des valeurs de la couverture.
+Mais la bibliothèque <abbr title="Network Common Data Form">NetCDF</abbr> de l’<abbr title="University Corporation for Atmospheric Research">UCAR</abbr>
+applique plutôt ces termes à la fonction convertissant les indices de pixels (son domaine) vers les coordonnées spatio-temporelles (son <i>range</i>).
+Ainsi, un <i>range</i> de la bibliothèque de l’<abbr>UCAR</abbr> peut être le domaine de <abbr>ISO</abbr> 19123.
+</p><p>
+La bibliothèque Apache <abbr title="Spatial Information System">SIS</abbr> privilégie autant que possible l’utilisation des termes dans le sens des normes <abbr title="Open Geospatial Consortium">OGC</abbr> et <abbr>ISO</abbr>.
+Mais un soin particulier doit être apporté aux interfaces entre <abbr>SIS</abbr> et certaines bibliothèques externes, afin de réduire les risques de confusions.
+</p>
+
+
+
+<h3 id="CodeColors"><span class="section-number">1.2.1.</span> Code de couleurs</h3>
+<p>
 Les éléments définis dans un langage informatique, tels que les classes ou méthodes en Java
 ainsi que les éléments dans un fichier <abbr>XML</abbr>, apparaissent avec une police de caractères mono-espacée.
 Afin de faciliter la compréhension des liens qui existent entre Apache <abbr title="Spatial Information System">SIS</abbr> et les standards,
@@ -542,27 +573,6 @@ Exemple: <code>String</code>.
 <p>
 Des compléments d’information apparaissent dans des boîtes grises.
 Le lecteur peut ignorer ces boîtes grises sans que cela ne nuise à la compréhension du texte.
-</p>
-
-
-
-<h3 id="DefinitionOfTerms"><span class="section-number">1.2.1.</span> Définitions des termes</h3>
-<p>
-Les standards privilégient parfois l’application de certains termes génériques à des contextes particuliers,
-qui peuvent différer du contexte dans lequel d’autres communautés emploient ces termes.
-Par exemple les termes <i>domain</i> et <i>range</i> peuvent s’appliquer à des fonctions arbitraires
-pour désigner l’ensemble des valeurs possibles en entrés et en sorties respectivement.
-Mais les fonctions auxquelles certains standards <abbr title="International Organization for Standardization">ISO</abbr>
-les appliquent ne sont pas les mêmes que les fonctions auxquelles d’autres bibliothèques les appliquent.
-Par exemple <abbr>ISO</abbr> 19123 applique ces termes aux objets <code class="OGC">CV_Coverage</code>,
-vus comme des fonctions dont le domaine est l’ensemble des coordonnées spatio-temporelles de la couverture de données
-et le <i>range</i> l’ensemble des valeurs de la couverture.
-Mais la bibliothèque <abbr title="Network Common Data Form">NetCDF</abbr> de l’<abbr title="University Corporation for Atmospheric Research">UCAR</abbr>
-applique plutôt ces termes à la fonction convertissant les indices de pixels (son domaine) vers les coordonnées spatio-temporelles (son <i>range</i>).
-Ainsi, un <i>range</i> de la bibliothèque de l’<abbr>UCAR</abbr> peut être le domaine de <abbr>ISO</abbr> 19123.
-</p><p>
-La bibliothèque Apache <abbr title="Spatial Information System">SIS</abbr> privilégie autant que possible l’utilisation des termes dans le sens des normes <abbr title="Open Geospatial Consortium">OGC</abbr> et <abbr>ISO</abbr>.
-Mais un soin particulier doit être apporté aux interfaces entre <abbr>SIS</abbr> et certaines bibliothèques externes, afin de réduire les risques de confusions.
 </p>
 </section>
 <section>

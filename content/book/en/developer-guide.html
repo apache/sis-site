@@ -28,9 +28,9 @@
 <ul class="toc">
 <li><a href="#Foreword">Foreward</a><ul>
 <li><a href="#Standards">Standards and Norms</a><ul>
-<li><a href="#SpecificationTypes">Different Types of Specifications</a></li></ul></li>
+<li><a href="#SpecificationTypes">Types of Specifications</a></li></ul></li>
 <li><a href="#About">Conventions Used in This Guide</a><ul>
-<li><a href="#DefinitionOfTerms">Definition of Terms</a></li></ul></li></ul></li>
+<li><a href="#CodeColors">Code Colors</a></li></ul></li></ul></li>
 <li><a href="#GeoAPI">GeoAPI</a><ul>
 <li><a href="#SpecificationToInterfaces">Interface Specifications</a><ul>
 <li><a href="#UML-annotation">Mapping Given by @UML Annotations</a></li>
@@ -72,9 +72,9 @@
 </header>
 <nav>In this chapter:<ul class="toc">
 <li><a href="#Standards">Standards and Norms</a><ul>
-<li><a href="#SpecificationTypes">Different Types of Specifications</a></li></ul></li>
+<li><a href="#SpecificationTypes">Types of Specifications</a></li></ul></li>
 <li><a href="#About">Conventions Used in This Guide</a><ul>
-<li><a href="#DefinitionOfTerms">Definition of Terms</a></li></ul></li></ul></nav>
+<li><a href="#CodeColors">Code Colors</a></li></ul></li></ul></nav>
 <p>
 A geospatial information community is a collection of systems or individuals capable of exchanging their geospatial data
 through the use of common standards, allowing them to communicate with one another.
@@ -226,7 +226,7 @@ Some working groups use other parallel systems for submissions, for example GitH
 </article>
 
 
-<h3 id="SpecificationTypes"><span class="section-number">1.1.1.</span> Different Types of Specifications</h3>
+<h3 id="SpecificationTypes"><span class="section-number">1.1.1.</span> Types of Specifications</h3>
 <p>
 <abbr title="Open Geospatial Consortium">OGC</abbr> standards are specified in several dozen documents.
 Each document outlines a service — for example, the transformation of coordinates.
@@ -238,7 +238,15 @@ Their concepts may be applied more or less directly to a programming language, a
 There is always an element of arbitrariness in the method of applying an abstract specification,
 given that adjustments are often necessary to take into account the constraints or conventions of the target language.
 Certain data structures only exist in a few languages — for example, unions that exist in C/C++ but not in Java.
-</p><p>
+</p>
+
+
+
+<article id="implementation-standard">
+<header>
+<h1>Historical note</h1>
+</header>
+<p>
 At the turn of the millennium, the abstract specifications were explicitly concretized in <i>implementation specifications</i>.
 The term “implementation” is used here in the sense of all types of interfaces (Java or others) derived from
 <abbr title="Unified Modeling Language">UML</abbr> diagrams, and not implementations in the Java sense.
@@ -252,7 +260,7 @@ Older implementation specifications were deprecated,
 and <abbr title="XML Schema Definition">XSD</abbr> schemas became the main concretization of abstract specifications.
 Even the way abstract specifications are designed has evolved: they are less likely to define operations, and so what remains is closer to descriptions of database schemas.
 Some operations that were defined in older standards now appear, in another form, in web service specifications.
-Finally, the term “implementation specification” has been deprecated, to be subsumed under the term “<abbr>OGC</abbr> standard.”
+Finally, the term “implementation specification” has been deprecated, to be subsumed under the term “<abbr title="Open Geospatial Consortium">OGC</abbr> standard.”
 But despite their depreciation, <a href="http://www.opengeospatial.org/standards/retired">old implementation specifications</a> remain useful to programs in Java, because:
 </p>
 <ul>
@@ -264,11 +272,13 @@ But despite their depreciation, <a href="http://www.opengeospatial.org/standards
 The Apache <abbr title="Spatial Information System">SIS</abbr> project is based on the most recent specifications,
 drawing from the archives of the <abbr>OGC</abbr> to complete certain abstract standards or make them more usable.
 Some old definitions are preserved as “convenience methods”, not always bringing new functionality, but facilitating the practical use of a library.
-</p><p>
+</p>
+</article>
+<p>
 The following table lists the main norms used by the project.
 Many norms are published both as <abbr>ISO</abbr> standards and as <abbr>OGC</abbr> standards,
 and their corresponding names are listed next to one another in the first two columns.
-Standards that are deprecated but still used appear <s>struck through</s>.
+Standards that are deprecated but still partially used appear <s>struck through</s>.
 Finally, GeoAPI packages will be introduced in upcoming chapters.
 </p>
 <table>
@@ -463,6 +473,27 @@ Finally, GeoAPI packages will be introduced in upcoming chapters.
 
 <h2 id="About"><span class="section-number">1.2.</span> Conventions Used in This Guide</h2>
 <p>
+Standards sometimes favour the application of certain generic terms to particular contexts,
+which may differ from the context in which other communities use these terms.
+For example, the terms <i>domain</i> and <i>range</i> may apply to arbitrary functions in order to designate
+a set of possible values of inputs and outputs respectively.
+But the functions to which they are applied by certain <abbr>ISO</abbr> standards are not the same as the functions to which they are applied by other libraries.
+For example, <abbr>ISO</abbr> 19123 applies these terms to <code class="OGC">CV_Coverage</code> objects,
+seen as functions in which the <i>domain</i> is the set of spatio-temporal coordinates encompassed by the data,
+and the <i>range</i> is the set of values encompassed.
+But <abbr title="University Corporation for Atmospheric Research">UCAR</abbr>'s <abbr title="Network Common Data Form">NetCDF</abbr> library
+applies these terms instead to the function of converting pixel indices (its <i>domain</i>) to spatial-temporal coordinates (its <i>range</i>).
+Thus the <abbr>UCAR</abbr> library's <i>range</i> may be the <i>domain</i> of <abbr>ISO</abbr> 19123.
+</p><p>
+The Apache <abbr title="Spatial Information System">SIS</abbr> library prefers as much as possible to use terms in the sense of <abbr title="Open Geospatial Consortium">OGC</abbr> and <abbr>ISO</abbr> norms.
+Particular care must be taken, however, with the interfaces between <abbr>SIS</abbr> and certain other external libraries,
+in order to reduce the risk of confusion.
+</p>
+
+
+
+<h3 id="CodeColors"><span class="section-number">1.2.1.</span> Code Colors</h3>
+<p>
 The elements defined in a computer language, such as classes and methods in Java or elements in an <abbr>XML</abbr> document,
 appear in monospaced font.
 In order to facilitate an understanding of the relationships between Apache <abbr title="Spatial Information System">SIS</abbr> and the standards, these elements are also represented using the following colour codes:
@@ -488,27 +519,6 @@ Example: <code>String</code>.
 </ul>
 <p>
 Text in gray boxes are for information purpose only and can be ignored.
-</p>
-
-
-
-<h3 id="DefinitionOfTerms"><span class="section-number">1.2.1.</span> Definition of Terms</h3>
-<p>
-Standards sometimes favour the application of certain generic terms to particular contexts,
-which may differ from the context in which other communities use these terms.
-For example, the terms <i>domain</i> and <i>range</i> may apply to arbitrary functions in order to designate
-a set of possible values of inputs and outputs respectively.
-But the functions to which they are applied by certain <abbr title="International Organization for Standardization">ISO</abbr> standards are not the same as the functions to which they are applied by other libraries.
-For example, <abbr>ISO</abbr> 19123 applies these terms to <code class="OGC">CV_Coverage</code> objects,
-seen as functions in which the <i>domain</i> is the set of spatio-temporal coordinates encompassed by the data,
-and the <i>range</i> is the set of values encompassed.
-But <abbr title="University Corporation for Atmospheric Research">UCAR</abbr>'s <abbr title="Network Common Data Form">NetCDF</abbr> library
-applies these terms instead to the function of converting pixel indices (its <i>domain</i>) to spatial-temporal coordinates (its <i>range</i>).
-Thus the <abbr>UCAR</abbr> library's <i>range</i> may be the <i>domain</i> of <abbr>ISO</abbr> 19123.
-</p><p>
-The Apache <abbr title="Spatial Information System">SIS</abbr> library prefers as much as possible to use terms in the sense of <abbr title="Open Geospatial Consortium">OGC</abbr> and <abbr>ISO</abbr> norms.
-Particular care must be taken, however, with the interfaces between <abbr>SIS</abbr> and certain other external libraries,
-in order to reduce the risk of confusion.
 </p>
 </section>
 <section>
