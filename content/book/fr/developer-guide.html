@@ -26,14 +26,14 @@
 <p><b style="font-size: 20pt">Table des matières</b></p>
 <nav>
 <ul class="toc">
-<li><a href="#Foreword">Préface</a><ul>
-<li><a href="#Standards">Standards et normes</a></li>
+<li><a href="#Standards">Standards et normes</a><ul>
+<li><a href="#ConceptualModels">Sources des modèles conceptuels de Apache SIS</a></li>
+<li><a href="#GeoAPI">Des modèles conceptuels vers des interfaces Java: GeoAPI</a><ul>
+<li><a href="#UML-annotation">Correspondances explicites entre GeoAPI et les spécifications abstraites</a></li>
+<li><a href="#MappingToJDK">Correspondances implicites avec le JDK standard</a></li>
+<li><a href="#GeoAPI-implementation">Implémentations fournies par Apache SIS</a></li></ul></li>
 <li><a href="#About">Conventions utilisées dans ce guide</a><ul>
 <li><a href="#CodeColors">Code de couleurs</a></li></ul></li></ul></li>
-<li><a href="#GeoAPI">GeoAPI</a><ul>
-<li><a href="#UML-annotation">Correspondances entre GeoAPI et les spécifications abstraites</a><ul>
-<li><a href="#MappingToJDK">Correspondances implicites avec le JDK standard</a></li></ul></li>
-<li><a href="#GeoAPI-implementation">Implémentations des interfaces</a></li></ul></li>
 <li><a href="#Utilities">Classes et méthodes utilitaires</a><ul>
 <li><a href="#ComparisonMode">Modes de comparaisons des objets</a></li>
 <li><a href="#Internationalization">Internationalisation</a><ul>
@@ -89,11 +89,15 @@
 <main>
 <section>
 <header>
-<h1 id="Foreword"><span class="section-number">1.</span> Préface</h1>
-<nav><div class="chapter-links"><div class="next-chapter"><a href="#GeoAPI">Chapitre suivant</a> ➡</div></div></nav>
+<h1 id="Standards"><span class="section-number">1.</span> Standards et normes</h1>
+<nav><div class="chapter-links"><div class="next-chapter"><a href="#Utilities">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc">
-<li><a href="#Standards">Standards et normes</a></li>
+<li><a href="#ConceptualModels">Sources des modèles conceptuels de Apache SIS</a></li>
+<li><a href="#GeoAPI">Des modèles conceptuels vers des interfaces Java: GeoAPI</a><ul>
+<li><a href="#UML-annotation">Correspondances explicites entre GeoAPI et les spécifications abstraites</a></li>
+<li><a href="#MappingToJDK">Correspondances implicites avec le JDK standard</a></li>
+<li><a href="#GeoAPI-implementation">Implémentations fournies par Apache SIS</a></li></ul></li>
 <li><a href="#About">Conventions utilisées dans ce guide</a><ul>
 <li><a href="#CodeColors">Code de couleurs</a></li></ul></li></ul></nav>
 <p>
@@ -142,7 +146,7 @@ mais qui risquent de le rattraper avant la fin.
 
 
 
-<h2 id="Standards"><span class="section-number">1.1.</span> Standards et normes</h2>
+<h2 id="ConceptualModels"><span class="section-number">1.1.</span> Sources des modèles conceptuels de Apache SIS</h2>
 <p>
 La majorité des standards utilisés par Apache <abbr title="Spatial Information System">SIS</abbr> ont été élaborés
 par le <a href="http://www.opengeospatial.org">consortium <i>Open Geospatial</i></a> (<abbr>OGC</abbr>),
@@ -507,67 +511,7 @@ Enfin, les paquets GeoAPI seront introduits dans le chapitre suivant.
 
 
 
-<h2 id="About"><span class="section-number">1.2.</span> Conventions utilisées dans ce guide</h2>
-<p>
-Les standards privilégient parfois l’application de certains termes génériques à des contextes particuliers,
-qui peuvent différer du contexte dans lequel d’autres communautés emploient ces termes.
-Par exemple les termes <i>domain</i> et <i>range</i> peuvent s’appliquer à des fonctions arbitraires
-pour désigner l’ensemble des valeurs possibles en entrés et en sorties respectivement.
-Mais les fonctions auxquelles certains standards <abbr title="International Organization for Standardization">ISO</abbr>
-les appliquent ne sont pas les mêmes que les fonctions auxquelles d’autres bibliothèques les appliquent.
-Par exemple <abbr>ISO</abbr> 19123 applique ces termes aux objets <code class="OGC">CV_Coverage</code>,
-vus comme des fonctions dont le domaine est l’ensemble des coordonnées spatio-temporelles de la couverture de données
-et le <i>range</i> l’ensemble des valeurs de la couverture.
-Mais la bibliothèque <abbr title="Network Common Data Form">NetCDF</abbr> de l’<abbr title="University Corporation for Atmospheric Research">UCAR</abbr>
-applique plutôt ces termes à la fonction convertissant les indices de pixels (son domaine) vers les coordonnées spatio-temporelles (son <i>range</i>).
-Ainsi, un <i>range</i> de la bibliothèque de l’<abbr>UCAR</abbr> peut être le domaine de <abbr>ISO</abbr> 19123.
-</p><p>
-La bibliothèque Apache <abbr title="Spatial Information System">SIS</abbr> privilégie autant que possible l’utilisation des termes dans le sens des normes <abbr title="Open Geospatial Consortium">OGC</abbr> et <abbr>ISO</abbr>.
-Mais un soin particulier doit être apporté aux interfaces entre <abbr>SIS</abbr> et certaines bibliothèques externes, afin de réduire les risques de confusions.
-</p>
-
-
-
-<h3 id="CodeColors"><span class="section-number">1.2.1.</span> Code de couleurs</h3>
-<p>
-Les éléments définis dans un langage informatique, tels que les classes ou méthodes en Java
-ainsi que les éléments dans un fichier <abbr>XML</abbr>, apparaissent avec une police de caractères mono-espacée.
-Afin de faciliter la compréhension des liens qui existent entre Apache <abbr title="Spatial Information System">SIS</abbr> et les standards,
-ces éléments sont en outre représentés en utilisant les codes de couleurs suivants:
-</p>
-<ul>
-<li>
-Les éléments définis dans un standard de l’<abbr title="Open Geospatial Consortium">OGC</abbr>
-ou de l’<abbr title="International Organization for Standardization">ISO</abbr> apparaissent en bleu.
-Exemple: <code class="OGC">CD_Ellipsoid</code>.
-</li>
-<li>
-Les éléments définis dans GeoAPI apparaissent en vert.
-Exemple: <code class="GeoAPI">Ellipsoid</code>.
-</li>
-<li>
-Les éléments définis dans Apache <abbr title="Spatial Information System">SIS</abbr> apparaissent en brun.
-Exemple: <code class="SIS">DefaultEllipsoid</code>.
-</li>
-<li>
-Les autres éléments, notamment ceux du Java standard, sont laissés en noir.
-Exemple: <code>String</code>.
-</li>
-</ul>
-<p>
-Des compléments d’information apparaissent dans des boîtes grises.
-Le lecteur peut ignorer ces boîtes grises sans que cela ne nuise à la compréhension du texte.
-</p>
-</section>
-<section>
-<header>
-<h1 id="GeoAPI"><span class="section-number">2.</span> GeoAPI</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Foreword">Chapitre précédent</a></div><div class="next-chapter"><a href="#Utilities">Chapitre suivant</a> ➡</div></div></nav>
-</header>
-<nav>Dans ce chapitre:<ul class="toc">
-<li><a href="#UML-annotation">Correspondances entre GeoAPI et les spécifications abstraites</a><ul>
-<li><a href="#MappingToJDK">Correspondances implicites avec le JDK standard</a></li></ul></li>
-<li><a href="#GeoAPI-implementation">Implémentations des interfaces</a></li></ul></nav>
+<h2 id="GeoAPI"><span class="section-number">1.2.</span> Des modèles conceptuels vers des interfaces Java: GeoAPI</h2>
 <p>
 Le projet <a href="http://www.geoapi.org">GeoAPI</a> offre un ensemble d’interfaces Java pour les applications géo-spatiales.
 Dans une séries de paquets <code class="GeoAPI">org.opengis.*</code>, GeoAPI définit des structures représentant des méta-données,
@@ -830,7 +774,7 @@ pour certaines fonctions.
 <li><p>
 <b><code class="GeoAPI">geoapi-netcdf</code></b> — contient une implémentation partielle des paquets
 <code class="GeoAPI">org.opengis.referencing</code> et <code class="GeoAPI">org.opengis.coverage</code>
-sous forme d’adaptateurs basés sur la bibliothèque <abbr title="Network Common Data Form">NetCDF</abbr> de l’<abbr title="University Corporation for Atmospheric Research">UCAR</abbr>.
+sous forme d’adaptateurs basés sur la bibliothèque <abbr>NetCDF</abbr> de l’<abbr>UCAR</abbr>.
 La suite de tests de ce module a été conçue de manière à être réutilisable par d’autres projets.
 Apache <abbr>SIS</abbr> l’utilise pour tester son propre module <code class="SIS">sis-netcdf</code>.
 </p></li>
@@ -848,7 +792,7 @@ un <i>add-in</i> pour les suites bureautiques Libre/OpenOffice.org.
 
 
 
-<h2 id="UML-annotation"><span class="section-number">2.1.</span> Correspondances entre GeoAPI et les spécifications abstraites</h2>
+<h3 id="UML-annotation"><span class="section-number">1.2.1.</span> Correspondances explicites entre GeoAPI et les spécifications abstraites</h3>
 <p>
 Pour chaque classe, méthode et constante définie à partir d’un standard <abbr title="Open Geospatial Consortium">OGC</abbr> ou <abbr title="International Organization for Standardization">ISO</abbr>,
 GeoAPI indique sa provenance à l’aide d’annotations définies dans le paquet <code class="GeoAPI">org.opengis.annotation</code>.
@@ -898,7 +842,7 @@ trouveront des indications dans un <a href="#UML-annotation-geoapi">chapitre sé
 </p>
 
 
-<h3 id="MappingToJDK"><span class="section-number">2.1.1.</span> Correspondances implicites avec le <abbr>JDK</abbr> standard</h3>
+<h3 id="MappingToJDK"><span class="section-number">1.2.2.</span> Correspondances implicites avec le <abbr>JDK</abbr> standard</h3>
 <p>
 Certaines classes et méthodes n’ont ni annotation <code class="GeoAPI">@UML</code>,
 ni entrée dans le fichier <code class="GeoAPI">class-index.properties</code>.
@@ -1085,7 +1029,7 @@ contrairement à celle de <code>Enum</code>, créeront de nouvelles instances si
 
 
 
-<h2 id="GeoAPI-implementation"><span class="section-number">2.2.</span> Implémentations des interfaces</h2>
+<h3 id="GeoAPI-implementation"><span class="section-number">1.2.3.</span> Implémentations fournies par Apache SIS</h3>
 <p>
 Apache SIS implémente la plupart des interfaces de GeoAPI avec une classe du même nom que l’interface,
 mais préfixée de « <code>Abstract</code> », « <code>Default</code> » ou « <code>General</code> ».
@@ -1130,11 +1074,65 @@ Ces classes peuvent être instanciées par l’instruction <code>new AbstractXXX
 Mais ces instanciations ne devraient être faites qu’en dernier recours,
 lorsqu’il n’est vraiment pas possible de déterminer le sous-type exact.
 </p>
+
+
+
+<h2 id="About"><span class="section-number">1.3.</span> Conventions utilisées dans ce guide</h2>
+<p>
+Les standards privilégient parfois l’application de certains termes génériques à des contextes particuliers,
+qui peuvent différer du contexte dans lequel d’autres communautés emploient ces termes.
+Par exemple les termes <i>domain</i> et <i>range</i> peuvent s’appliquer à des fonctions arbitraires
+pour désigner l’ensemble des valeurs possibles en entrés et en sorties respectivement.
+Mais les fonctions auxquelles certains standards <abbr title="International Organization for Standardization">ISO</abbr>
+les appliquent ne sont pas les mêmes que les fonctions auxquelles d’autres bibliothèques les appliquent.
+Par exemple <abbr>ISO</abbr> 19123 applique ces termes aux objets <code class="OGC">CV_Coverage</code>,
+vus comme des fonctions dont le domaine est l’ensemble des coordonnées spatio-temporelles de la couverture de données
+et le <i>range</i> l’ensemble des valeurs de la couverture.
+Mais la bibliothèque <abbr title="Network Common Data Form">NetCDF</abbr> de l’<abbr title="University Corporation for Atmospheric Research">UCAR</abbr>
+applique plutôt ces termes à la fonction convertissant les indices de pixels (son domaine) vers les coordonnées spatio-temporelles (son <i>range</i>).
+Ainsi, un <i>range</i> de la bibliothèque de l’<abbr>UCAR</abbr> peut être le domaine de <abbr>ISO</abbr> 19123.
+</p><p>
+La bibliothèque Apache <abbr title="Spatial Information System">SIS</abbr> privilégie autant que possible l’utilisation des termes dans le sens des normes <abbr title="Open Geospatial Consortium">OGC</abbr> et <abbr>ISO</abbr>.
+Mais un soin particulier doit être apporté aux interfaces entre <abbr>SIS</abbr> et certaines bibliothèques externes, afin de réduire les risques de confusions.
+</p>
+
+
+
+<h3 id="CodeColors"><span class="section-number">1.3.1.</span> Code de couleurs</h3>
+<p>
+Les éléments définis dans un langage informatique, tels que les classes ou méthodes en Java
+ainsi que les éléments dans un fichier <abbr>XML</abbr>, apparaissent avec une police de caractères mono-espacée.
+Afin de faciliter la compréhension des liens qui existent entre Apache <abbr title="Spatial Information System">SIS</abbr> et les standards,
+ces éléments sont en outre représentés en utilisant les codes de couleurs suivants:
+</p>
+<ul>
+<li>
+Les éléments définis dans un standard de l’<abbr title="Open Geospatial Consortium">OGC</abbr>
+ou de l’<abbr title="International Organization for Standardization">ISO</abbr> apparaissent en bleu.
+Exemple: <code class="OGC">CD_Ellipsoid</code>.
+</li>
+<li>
+Les éléments définis dans GeoAPI apparaissent en vert.
+Exemple: <code class="GeoAPI">Ellipsoid</code>.
+</li>
+<li>
+Les éléments définis dans Apache <abbr title="Spatial Information System">SIS</abbr> apparaissent en brun.
+Exemple: <code class="SIS">DefaultEllipsoid</code>.
+</li>
+<li>
+Les autres éléments, notamment ceux du Java standard, sont laissés en noir.
+Exemple: <code>String</code>.
+</li>
+</ul>
+<p>
+Des compléments d’information apparaissent dans des boîtes grises.
+Le lecteur peut ignorer ces boîtes grises sans que cela ne nuise à la compréhension du texte.
+</p>
 </section>
 <section>
 <header>
-<h1 id="Utilities"><span class="section-number">3.</span> Classes et méthodes utilitaires</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#GeoAPI">Chapitre précédent</a></div><div class="next-chapter"><a href="#Referencing">Chapitre suivant</a> ➡</div></div></nav>
+<h1 id="Utilities"><span class="section-number">2.</span> Classes et méthodes utilitaires</h1>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Standards">Chapitre précédent</a></div><div class="next-chapter"><a href="#Referencing">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc">
 <li><a href="#ComparisonMode">Modes de comparaisons des objets</a></li>
@@ -1149,7 +1147,7 @@ Ce chapitre décrit des aspects de Apache <abbr title="Spatial Information Syste
 La plupart de ces utilitaires ne sont pas spécifiques aux systèmes d’information spatiales.
 </p>
 
-<h2 id="ComparisonMode"><span class="section-number">3.1.</span> Modes de comparaisons des objets</h2>
+<h2 id="ComparisonMode"><span class="section-number">2.1.</span> Modes de comparaisons des objets</h2>
 <p>
 Il existe différentes opinions sur la façon d’implémenter la méthode <code>Object​.equals(Object)</code> du Java standard.
 Selon certains, il doit être possible de comparer différentes implémentations d’une même interface ou classe de base.
@@ -1219,7 +1217,7 @@ sans se soucier de savoir si <code>B</code> en connaît davantage.
 
 
 
-<h2 id="Internationalization"><span class="section-number">3.2.</span> Internationalisation</h2>
+<h2 id="Internationalization"><span class="section-number">2.2.</span> Internationalisation</h2>
 <p>
 Dans une architecture où un programme exécuté sur un serveur fournit ses données à plusieurs clients,
 les conventions locales du serveur ne sont pas nécessairement les mêmes que celles des clients.
@@ -1231,7 +1229,7 @@ ou au niveau des objets produisant les messages. L’approche utilisée détermi
 possible de partager une même instance d’un objet pour toutes les langues.
 </p>
 
-<h3 id="LocalizedString"><span class="section-number">3.2.1.</span> Chaînes de caractères distinctes pour chaque conventions locales</h3>
+<h3 id="LocalizedString"><span class="section-number">2.2.1.</span> Chaînes de caractères distinctes pour chaque conventions locales</h3>
 <p>
 Certaines classes ne sont conçues que pour fonctionner selon une convention locale à la fois.
 C’est évidemment le cas des implémentations standards de <code>java.text.Format</code>,
@@ -1273,7 +1271,7 @@ lorsque cette information est disponible.
 
 
 
-<h3 id="InternationalString"><span class="section-number">3.2.2.</span> Instance unique pour toutes les conventions locales</h3>
+<h3 id="InternationalString"><span class="section-number">2.2.2.</span> Instance unique pour toutes les conventions locales</h3>
 <p>
 Les <abbr title="Application Programming Interface">API</abbr> définit par <abbr title="Spatial Information System">SIS</abbr> ou hérités de GeoAPI privilégient plutôt l’utilisation du type
 <code class="GeoAPI">InternationalString</code> là où une valeur de type <code>String</code> serait susceptible d’être localisée.
@@ -1301,7 +1299,7 @@ pour des raisons d’économie de mémoire.
 
 
 
-<h3 id="Locale.ROOT"><span class="section-number">3.2.3.</span> Convention <code>Locale.ROOT</code></h3>
+<h3 id="Locale.ROOT"><span class="section-number">2.2.3.</span> Convention <code>Locale.ROOT</code></h3>
 <p>
 Toutes les méthodes <abbr title="Spatial Information System">SIS</abbr> recevant ou retournant une valeur de type <code>Locale</code>
 acceptent la valeur <code>Locale.ROOT</code>. Cette valeur est interprétée comme signifiant de ne pas localiser le texte.
@@ -1326,7 +1324,7 @@ Il en résulte des différences dans le nombre de chiffres significatifs, l’ut
 
 
 
-<h3 id="UnicodePoint"><span class="section-number">3.2.4.</span> Traitement des caractères</h3>
+<h3 id="UnicodePoint"><span class="section-number">2.2.4.</span> Traitement des caractères</h3>
 <p>
 Les chaînes de caractères en Java utilisent l’encodage UTF-16. Il existe une correspondance directe
 entre les valeurs de type <code>char</code> et la très grande majorité des caractères, ce
@@ -1374,7 +1372,7 @@ pas des caractères supplémentaires, même si la chaîne dans laquelle on fait 
 
 
 
-<h4 id="Whitespaces"><span class="section-number">3.2.4.1.</span> Interprétation des espaces blancs</h4>
+<h4 id="Whitespaces"><span class="section-number">2.2.4.1.</span> Interprétation des espaces blancs</h4>
 <p>
 Le Java standard fournit deux méthodes pour déterminer si un caractères est un espace blanc:
 <code>Character​.isWhitespace(…)</code> et <code>Character​.isSpaceChar(…)</code>.
@@ -1410,7 +1408,7 @@ de la bibliothèque <abbr>SIS</abbr>.
 </section>
 <section>
 <header>
-<h1 id="Referencing"><span class="section-number">4.</span> Systèmes de références spatiales</h1>
+<h1 id="Referencing"><span class="section-number">3.</span> Systèmes de références spatiales</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Utilities">Chapitre précédent</a></div><div class="next-chapter"><a href="#Geometry">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc">
@@ -1489,7 +1487,7 @@ même lorsque la méthode de projection cartographique (Lambert conique conforme
 
 
 
-<h2 id="CRS_Components"><span class="section-number">4.1.</span> Composantes d’un système de références par coordonnées</h2>
+<h2 id="CRS_Components"><span class="section-number">3.1.</span> Composantes d’un système de références par coordonnées</h2>
 <p>
 Les systèmes de références spatiales par coordonnées fournissent les informations nécessaires pour faire
 correspondre des coordonnées numériques à des positions dans le monde réel. Dans Apache <abbr title="Spatial Information System">SIS</abbr>,
@@ -1513,7 +1511,7 @@ le <cite>Geographic Markup Language</cite> (<abbr>GML</abbr>) — un format <ab
 et le <cite>Well-Known Text</cite> (<abbr>WKT</abbr>) — un format texte plus facile à lire par les humains.
 </p>
 
-<h3 id="Ellipsoid"><span class="section-number">4.1.1.</span> Géoïde et ellipsoïde</h3>
+<h3 id="Ellipsoid"><span class="section-number">3.1.1.</span> Géoïde et ellipsoïde</h3>
 <p>La surface topographique réelle étant difficile à représenter mathématiquement, elle n’est pas utilisée directement en cartographie.
 Une autre surface un peu plus facilement utilisable est le géoïde,
 une surface sur laquelle la force gravitationnelle a partout la même valeur (surface équipotentielle du champ de gravité terrestre).
@@ -1534,7 +1532,7 @@ sur l’ellipsoïde « Clarke 1866 » mais auquel la longueur des axes a été
 Cette modification visait à tenir compte du niveau moyen de l’état au dessus du niveau de la mer.</p>
 </div>
 
-<h3 id="GeodeticDatum"><span class="section-number">4.1.2.</span> Référentiel géodésique</h3>
+<h3 id="GeodeticDatum"><span class="section-number">3.1.2.</span> Référentiel géodésique</h3>
 <p>
 Pour définir un système géodésique dans un pays, l’état met en place un ellipsoïde de référence
 qui épouse au mieux sur l’ensemble du pays la forme locale du géoïde.
@@ -1608,16 +1606,16 @@ sous la forme de la propriété <code class="SIS">DefaultGeodeticDatum​.getBur
 </p>
 </article>
 
-<h3 id="CoordinateSystem"><span class="section-number">4.1.3.</span> Systèmes de coordonnées</h3>
+<h3 id="CoordinateSystem"><span class="section-number">3.1.3.</span> Systèmes de coordonnées</h3>
 <p style="color: red">TODO</p>
 
-<h3 id="GeographicCRS"><span class="section-number">4.1.4.</span> Systèmes géographiques</h3>
+<h3 id="GeographicCRS"><span class="section-number">3.1.4.</span> Systèmes géographiques</h3>
 <p style="color: red">TODO</p>
 
-<h4 id="GeographicWKT"><span class="section-number">4.1.4.1.</span> Format <i>Well-Known Text</i></h4>
+<h4 id="GeographicWKT"><span class="section-number">3.1.4.1.</span> Format <i>Well-Known Text</i></h4>
 <p style="color: red">TODO</p>
 
-<h3 id="ProjectedCRS"><span class="section-number">4.1.5.</span> Projections cartographiques</h3>
+<h3 id="ProjectedCRS"><span class="section-number">3.1.5.</span> Projections cartographiques</h3>
 <p>
 L’utilité des projections cartographiques est discutée dans de nombreux livres et sites web.
 Il s’agit de représenter une surface courbe (la Terre) sur une surface plane (une carte ou un écran d’ordinateur)
@@ -1628,41 +1626,41 @@ alors que les pays plutôt allongés dans le sens Nord-Sud préfèrent une proje
 </p>
 <p style="color: red">TODO</p>
 
-<h4 id="ProjectedWKT"><span class="section-number">4.1.5.1.</span> Format <i>Well-Known Text</i></h4>
+<h4 id="ProjectedWKT"><span class="section-number">3.1.5.1.</span> Format <i>Well-Known Text</i></h4>
 <p style="color: red">TODO</p>
 
-<h3 id="CompoundCRS"><span class="section-number">4.1.6.</span> Dimensions verticales et temporelles</h3>
+<h3 id="CompoundCRS"><span class="section-number">3.1.6.</span> Dimensions verticales et temporelles</h3>
 <p style="color: red">TODO</p>
 
-<h4 id="CompoundWKT"><span class="section-number">4.1.6.1.</span> Format <i>Well-Known Text</i></h4>
-<p style="color: red">TODO</p>
-
-
-
-<h2 id="GetCRS"><span class="section-number">4.2.</span> Obtention d’un système de référence spatial</h2>
-<p style="color: red">TODO</p>
-
-<h3 id="CRSAuthorityFactory"><span class="section-number">4.2.1.</span> Systèmes prédéfinis par des autorités</h3>
-<p style="color: red">TODO</p>
-
-<h3 id="CRSParsing"><span class="section-number">4.2.2.</span> Lecture d’une définition au format GML ou WKT</h3>
-<p style="color: red">TODO</p>
-
-<h3 id="CRSFactory"><span class="section-number">4.2.3.</span> Construction programmatique explicite</h3>
-<p style="color: red">TODO</p>
-
-<h3 id="CRS_UserCode"><span class="section-number">4.2.4.</span> Ajout de définitions</h3>
+<h4 id="CompoundWKT"><span class="section-number">3.1.6.1.</span> Format <i>Well-Known Text</i></h4>
 <p style="color: red">TODO</p>
 
 
 
-<h2 id="CoordinateOperation"><span class="section-number">4.3.</span> Opérations sur les coordonnées</h2>
+<h2 id="GetCRS"><span class="section-number">3.2.</span> Obtention d’un système de référence spatial</h2>
 <p style="color: red">TODO</p>
 
-<h3 id="MathTransform"><span class="section-number">4.3.1.</span> Exécution de opérations</h3>
+<h3 id="CRSAuthorityFactory"><span class="section-number">3.2.1.</span> Systèmes prédéfinis par des autorités</h3>
 <p style="color: red">TODO</p>
 
-<h4 id="AffineTransform"><span class="section-number">4.3.1.1.</span> Les transformations affines</h4>
+<h3 id="CRSParsing"><span class="section-number">3.2.2.</span> Lecture d’une définition au format GML ou WKT</h3>
+<p style="color: red">TODO</p>
+
+<h3 id="CRSFactory"><span class="section-number">3.2.3.</span> Construction programmatique explicite</h3>
+<p style="color: red">TODO</p>
+
+<h3 id="CRS_UserCode"><span class="section-number">3.2.4.</span> Ajout de définitions</h3>
+<p style="color: red">TODO</p>
+
+
+
+<h2 id="CoordinateOperation"><span class="section-number">3.3.</span> Opérations sur les coordonnées</h2>
+<p style="color: red">TODO</p>
+
+<h3 id="MathTransform"><span class="section-number">3.3.1.</span> Exécution de opérations</h3>
+<p style="color: red">TODO</p>
+
+<h4 id="AffineTransform"><span class="section-number">3.3.1.1.</span> Les transformations affines</h4>
 <p>
 Parmi les sortes d’opérations qu’un <abbr>SIG</abbr> doit effectuer sur les coordonnées spatiales, il en est une à la fois simple et très fréquente.
 Ce sont les opérations linéaires, constituées uniquement d’une combinaison d’additions et de certaines multiplications.
@@ -2008,7 +2006,7 @@ En résumé, les besoins qui ont amené Apache <abbr>SIS</abbr> à fournir ses p
 </ul>
 </article>
 
-<h3 id="TransformDerivative"><span class="section-number">4.3.2.</span> Dérivées partielles des opérations</h3>
+<h3 id="TransformDerivative"><span class="section-number">3.3.2.</span> Dérivées partielles des opérations</h3>
 <p>
 La section précédente indiquait comment calculer les coordonnées d’un point géographique dans une projection au choix.
 Mais il existe une autre opération moins connue, qui consiste à calculer non pas la <em>coordonnées projetée</em> d’un point,
@@ -2123,7 +2121,7 @@ Par extension, on peut aussi s’en servir pour déterminer si des axes sont int
 ou si la direction d’un axe est renversée. Mais l’intérêt des dérivées ne s’arrête pas là.
 </p>
 
-<h4 id="DerivativeAndEnvelope"><span class="section-number">4.3.2.1.</span> Utilité des dérivées pour la reprojection d’enveloppes</h4>
+<h4 id="DerivativeAndEnvelope"><span class="section-number">3.3.2.1.</span> Utilité des dérivées pour la reprojection d’enveloppes</h4>
 <p>
 Les systèmes d’information géographiques ont très fréquemment besoin de projeter une enveloppe.
 Mais l’approche naïve, qui consisterait à projeter chacun des 4 coins du rectangle, ne suffit pas.
@@ -2209,7 +2207,7 @@ ce qui empêche la méthode <code class="SIS">Envelopes​.transform(…)</code>
 </p>
 
 
-<h4 id="DerivativeAndRaster"><span class="section-number">4.3.2.2.</span> Utilité des dérivées pour la reprojection d’images</h4>
+<h4 id="DerivativeAndRaster"><span class="section-number">3.3.2.2.</span> Utilité des dérivées pour la reprojection d’images</h4>
 <p>
 La projection cartographique d’une image s’effectue en préparant une image initialement vide qui contiendra le résultat de l’opération,
 puis à remplir cette image en itérant sur tous les pixels. Pour chaque pixel de l’image <em>destination</em>, on obtient la coordonnées
@@ -2283,7 +2281,7 @@ On s’évite ainsi des projections cartographiques, en apparence une seule dans
 mais en fait beaucoup plus dans une grille de transformation d’image (3× la somme des itérations précédentes).
 </p>
 
-<h4 id="GetDerivative"><span class="section-number">4.3.2.3.</span> Obtention de la dérivée en un point</h4>
+<h4 id="GetDerivative"><span class="section-number">3.3.2.3.</span> Obtention de la dérivée en un point</h4>
 <p>
 Cette discussion n’aurait pas un grand intérêt si le coût du calcul des dérivées des projections cartographiques
 était élevé par rapport aux coût de la projection des points. Mais lorsque l’on dérive analytiquement les équations
@@ -2321,7 +2319,7 @@ Une fonction inverse peut donc implémenter le calcul de sa dérivée comme suit
 </section>
 <section>
 <header>
-<h1 id="Geometry"><span class="section-number">5.</span> Géométries</h1>
+<h1 id="Geometry"><span class="section-number">4.</span> Géométries</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Referencing">Chapitre précédent</a></div><div class="next-chapter"><a href="#Coverage">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc">
@@ -2336,7 +2334,7 @@ et les classes de Apache <abbr title="Spatial Information System">SIS</abbr> qui
 
 
 
-<h2 id="Geometry-root"><span class="section-number">5.1.</span> Classes de base</h2>
+<h2 id="Geometry-root"><span class="section-number">4.1.</span> Classes de base</h2>
 <p>
 Chaque objet géométrique est considéré comme un ensemble infini de points.
 En tant qu’ensemble, leurs opérations les plus fondamentales sont de même nature que les opérations standards des collections du Java.
@@ -2357,7 +2355,7 @@ Les interfaces de GeoAPI utilisent plutôt le nom <code class="GeoAPI">Geometry<
 
 
 
-<h3 id="DirectPosition"><span class="section-number">5.1.1.</span> Points et positions directes</h3>
+<h3 id="DirectPosition"><span class="section-number">4.1.1.</span> Points et positions directes</h3>
 <p>
 <abbr title="International Organization for Standardization">ISO</abbr> 19107 définit deux types de structures pour représenter un point:
 <code class="OGC">GM_Point</code> et <code class="OGC">DirectPosition</code>.
@@ -2379,7 +2377,7 @@ ou occasionnellement des <code class="GeoAPI">Position</code> quand il semble ut
 
 
 
-<h3 id="Envelope"><span class="section-number">5.1.2.</span> Enveloppes</h3>
+<h3 id="Envelope"><span class="section-number">4.1.2.</span> Enveloppes</h3>
 <p>
 Les enveloppes stockent les valeurs minimales et maximales des coordonnées d’une géométrie.
 Les enveloppes <em>ne sont pas</em> elles-mêmes des géométries; ce ne sont pas des ensembles
@@ -2412,7 +2410,7 @@ doivent être comprises au sens mathématique plutôt que visuel.
 
 
 
-<h4 id="AntiMeridian"><span class="section-number">5.1.2.1.</span> Enveloppes traversant l’antiméridien</h4>
+<h4 id="AntiMeridian"><span class="section-number">4.1.2.1.</span> Enveloppes traversant l’antiméridien</h4>
 <p>
 Les minimums et maximums sont les valeurs les plus souvent assignées aux <code class="OGC">lowerCorner</code>
 et <code class="OGC">upperCorner</code>. Mais les choses se compliquent dans le cas d’une enveloppe traversant
@@ -2505,7 +2503,7 @@ est vrai, alors il est garanti que l’enveloppe est vide.
 </section>
 <section>
 <header>
-<h1 id="Coverage"><span class="section-number">6.</span> Couvertures de données (<i>Coverages</i>)</h1>
+<h1 id="Coverage"><span class="section-number">5.</span> Couvertures de données (<i>Coverages</i>)</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Geometry">Chapitre précédent</a></div><div class="next-chapter"><a href="#XML-ISO">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc"/></nav>
@@ -2582,7 +2580,7 @@ des instances de <code class="SIS">Range</code> ainsi que d’autres information
 </section>
 <section>
 <header>
-<h1 id="XML-ISO"><span class="section-number">7.</span> Représentation des objets en <abbr>XML</abbr></h1>
+<h1 id="XML-ISO"><span class="section-number">6.</span> Représentation des objets en <abbr>XML</abbr></h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Coverage">Chapitre précédent</a></div><div class="next-chapter"><a href="#annexes">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc">
@@ -2682,7 +2680,7 @@ Les <i>features</i> en sont un exemple, car leur structure est dynamique.
 
 
 
-<h2 id="XML-ISO-19115"><span class="section-number">7.1.</span> Représentation des méta-données selon <abbr title="International Organization for Standardization">ISO</abbr> 19115-3</h2>
+<h2 id="XML-ISO-19115"><span class="section-number">6.1.</span> Représentation des méta-données selon <abbr title="International Organization for Standardization">ISO</abbr> 19115-3</h2>
 <p>
 Pour chaque classe de méta-donnée, il existe un type <abbr>XML</abbr> portant le même nom que dans la spécification abstraite
 (par exemple <code class="OGC">gmd:MD_Metadata</code> et <code class="OGC">gmd:CI_Citation</code>).
@@ -2787,7 +2785,7 @@ Ces attributs n’ont pas de méthodes Java dédiées, mais sont accessibles ind
 </aside>
 
 
-<h3 id="gco-id"><span class="section-number">7.1.1.</span> Identification d’instances déjà définies</h3>
+<h3 id="gco-id"><span class="section-number">6.1.1.</span> Identification d’instances déjà définies</h3>
 <p>
 L’élément englobant peut contenir un attribut <code class="OGC">id</code> ou <code class="OGC">uuid</code>.
 Si un de ces attributs est présent, l’élément englobé peut être complètement omis;
@@ -2871,7 +2869,7 @@ où peuvent être manipulés tous types d’identifiants (pas seulement <abbr>XM
 
 
 
-<h3 id="nilReason"><span class="section-number">7.1.2.</span> Représentation de valeurs manquantes</h3>
+<h3 id="nilReason"><span class="section-number">6.1.2.</span> Représentation de valeurs manquantes</h3>
 <p>
 Lorsqu’une propriété n’est pas définie, la méthode correspondante de GeoAPI retourne généralement <code>null</code>.
 Toutefois les choses se compliquent lorsque la propriété manquante est une valeur considérée comme obligatoire par le standard <abbr title="International Organization for Standardization">ISO</abbr> 19115.
@@ -2925,7 +2923,7 @@ et dont la méthode <code class="SIS">getNilReason()</code> retournera la consta
 </section>
 <section>
 <header>
-<h1 id="annexes"><span class="section-number">8.</span> Annexes</h1>
+<h1 id="annexes"><span class="section-number">7.</span> Annexes</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#XML-ISO">Chapitre précédent</a></div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc">
@@ -2936,7 +2934,7 @@ et dont la méthode <code class="SIS">getNilReason()</code> retournera la consta
 <li><a href="#tests">Les suites de tests</a><ul>
 <li><a href="#GeoAPI-validators">Validations des instances</a></li>
 <li><a href="#GeoAPI-tests">Exécution des tests pré-définis</a></li></ul></li></ul></nav>
-<h2 id="reduce-direct-dependency"><span class="section-number">8.1.</span> Réduire la dépendance directe envers Apache SIS</h2>
+<h2 id="reduce-direct-dependency"><span class="section-number">7.1.</span> Réduire la dépendance directe envers Apache SIS</h2>
 <p>
 Les chapitres précédents utilisaient des méthodes statiques de Apache SIS par commodité.
 Dans certains cas, il est possible de remplacer ces méthodes statiques par du code ne faisant appel qu’à des méthodes de GeoAPI.
@@ -2946,7 +2944,7 @@ Mais cela peut amener ces applications à écrire leur propres méthodes de comm
 Les sections suivantes donnent quelques pistes pour faciliter cette tâche.
 </p>
 
-<h3 id="UML-annotation-geoapi"><span class="section-number">8.1.1.</span> Correspondances entre GeoAPI et les spécifications abstraites</h3>
+<h3 id="UML-annotation-geoapi"><span class="section-number">7.1.1.</span> Correspondances entre GeoAPI et les spécifications abstraites</h3>
 <p>
 Pour chaque classe, méthode et constante définie à partir d’un standard <abbr title="Open Geospatial Consortium">OGC</abbr> ou <abbr title="International Organization for Standardization">ISO</abbr>,
 GeoAPI indique sa provenance à l’aide d’annotations définies dans le paquet <code class="GeoAPI">org.opengis.annotation</code>.
@@ -2988,7 +2986,7 @@ La méthode de commodité de <code class="SIS">org.apache.sis.util.iso.Types</co
 
 
 
-<h3 id="ServiceLoader"><span class="section-number">8.1.2.</span> Obtenir une implémentation des interfaces de GeoAPI</h3>
+<h3 id="ServiceLoader"><span class="section-number">7.1.2.</span> Obtenir une implémentation des interfaces de GeoAPI</h3>
 <p>
 GeoAPI définit des fabriques (<code class="GeoAPI">Factory</code>) permettant de créer des implémentations de ses interfaces.
 Par exemple <code class="GeoAPI">DatumFactory</code> fournit des méthodes permettant de créer des instances
@@ -3023,7 +3021,7 @@ par exemple lorsque plusieurs bibliothèques cohabitent, alors le choix est lais
 
 
 
-<h4 id="GeoAPI-simple"><span class="section-number">8.1.2.1.</span> Fournir sa propre implémentation</h4>
+<h4 id="GeoAPI-simple"><span class="section-number">7.1.2.1.</span> Fournir sa propre implémentation</h4>
 <p>
 Implémenter soi-même GeoAPI n’est pas si difficile si on se contente de besoins bien précis.
 Un développeur peut se concentrer sur une poignée d’interfaces parmi les centaines de disponibles,
@@ -3112,7 +3110,7 @@ tout en se gardant la possibilité de basculer plus facilement à une autre bibl
 </p>
 
 
-<h2 id="tests"><span class="section-number">8.2.</span> Les suites de tests</h2>
+<h2 id="tests"><span class="section-number">7.2.</span> Les suites de tests</h2>
 <p>
 En plus des tests propres au projet, Apache SIS utilise aussi des tests définis par GeoAPI.
 Ces tests ont l’avantage d’utiliser une source externe définissant ce que doivent être les résultats
@@ -3135,7 +3133,7 @@ a lui-même sa propre suite de tests et est appliqué à d’autres implémentat
 
 
 
-<h3 id="GeoAPI-validators"><span class="section-number">8.2.1.</span> Validations des instances</h3>
+<h3 id="GeoAPI-validators"><span class="section-number">7.2.1.</span> Validations des instances</h3>
 <p>
 GeoAPI peut valider une instance de ses interfaces en vérifiant que certaines contraintes sont respectées.
 Certaines contraintes ne peuvent pas être exprimées dans la signature de la méthode. Ces contraintes sont
@@ -3225,7 +3223,7 @@ Cette approche nécessite de créer une nouvelle instance du validateur dont on 
 
 
 
-<h3 id="GeoAPI-tests"><span class="section-number">8.2.2.</span> Exécution des tests pré-définis</h3>
+<h3 id="GeoAPI-tests"><span class="section-number">7.2.2.</span> Exécution des tests pré-définis</h3>
 <p>
 Des classes de tests JUnit sont définies dans des sous-paquets de <code class="GeoAPI">org.opengis.test</code>.
 Toutes les classes de tests portent un nom se terminant en "<code>Test</code>".
