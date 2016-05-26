@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>Test suites</title>
+    <link rel="stylesheet" type="text/css" href="../book.css"/>
+  </head>
+  <body>
+    <header>
+      <h1 id="tests">Test suites</h1>
+    </header>
+    <p>
+      In addition to its own tests, Apache SIS uses tests defined by GeoAPI.
+      One advantages is that those tests provide an external source for the definition of expected results
+      (for example the numerical values of coordinates obtained after a map projection).
+      Such external source reduce the risk that some tests are actually anti-regression tests
+      instead of correctness tests.
+      Those tests can also be used by projects other than Apache SIS.
+    </p>
+    <p id="GeoAPI-conformance">
+      The <code>geoapi-conformance</code> module provides <i>validators</i>, a JUnit <i>test suite</i>, and <i>report generators</i>
+      in the form of <abbr title="Hypertext Markup Language">HTML</abbr> pages.
+      This module may be used with any GeoAPI implementation.
+      For developers of a geospatial library, it offers the following advantages:
+    </p>
+    <ul>
+      <li>Reduces the tedious task of writing tests by using existing tests.</li>
+      <li>Increases confidence in the validity of tests,
+        since <code>geoapi-conformance</code> has its own test suite and is applied to other implementations.</li>
+      <li>Facilitates comparison with other implementations.</li>
+    </ul>
+
+
+
+    <h2 id="GeoAPI-validators">Instance Validations</h2>
+    <p>
+      GeoAPI can validate an instance of its interfaces by checking that certain constraints are observed.
+      Many constraints can not be expressed in the method signature. Those constraints
+      are usually described textually in the abstract specifications or in the javadoc.
+    </p>
+    <div class="example"><p><b>Example:</b>
+      A coordinate conversion or transformation (<code>CC_CoordinateOperation</code>) may require a sequence of several steps.
+      In such a sequence of operations (<code>CC_ConcatenatedOperation</code>), for each step (<code>CC_SingleOperation</code>)
+      the number of output dimensions must equal the number of input dimensions in the next operation.
+      Expressed in Java, this constraint stipulates that for the entire index 0 &lt; <var>i</var> &lt; <var>n</var> where <var>n</var>
+      is the number of operations, we have <code>coordOperation[i].targetDimensions == coordOperation[i-1].sourceDimensions</code>.
+    </p></div>
+
+    <p>
+      The easiest way to perform these verifications is to call the static methods <code class="GeoAPI">validate(…)</code>
+      of the <code>org.opengis.test.Validators</code> class.
+      As all of <code>Validators</code> methods bear the same name, it is enough to write “<code>validate(<var>value</var>)</code>”
+      and then let the compiler choose the most appropriate method for the type of object given in argument.
+      If the object type is not known at the time of compilation,
+      the <code class="GeoAPI">dispatch(Object)</code> method can be invoked for redirecting the work to the most appropriate <code class="GeoAPI">validate(…)</code> method.
+    </p>
+    <p>
+      All <code class="GeoAPI">validate(…)</code> functions follow a chain of dependencies,
+      meaning that they will also validate each component of the object to be validated.
+      For example, the validation of a <code>GeographicCRS</code> implies the validation of its component
+      <code>GeodeticDatum</code>, which itself implies the validation of its component <code>Ellipsoid</code>, and so on.
+      Thus it is unnecessary to validate the components explicitely, unless the developer wishes to isolate the test for a particular item known to cause problems.
+    </p>
+    <p>
+      By default, validations are as strict as possible. It is always possible to relax certain rules.
+      The most common is to tolerate the absence of attributes that would normally be mandatory.
+      This rule and a few others may be modified globally for all tests executed by the currently running <abbr title="Java Virtual Machine">JVM</abbr>,
+      as in the following example:
+    </p>
+
+<pre>import org.opengis.metadata.Metadata;
+import org.opengis.test.Validators;
+import org.junit.Test;
+
+public class MyTest {
+    /*
+     * Tolerate the absence of mandatory attributes in metadata and citation packages.
+     * This modification applies to all tests executed by the currently running <abbr>JVM</abbr>.
+     * If there are multiple test classes, this initialization may be performed
+     * in a parent class to all test classes.
+     */
+    static {
+        Validators.<code class="GeoAPI">DEFAULT.metadata.requireMandatoryAttributes</code> = false;
+        Validators.<code class="GeoAPI">DEFAULT.citation.requireMandatoryAttributes</code> = false;
+    }
+
+    @Test
+    public void testMyMetadata() {
+        Metadata myObject = …; // Create an object here.
+        Validators.<code class="GeoAPI">validate</code>(myObject);
+    }
+}</pre>
+
+    <p>
+      Rules may also be modified for a particular test suite without affecting the default configuration of the standard <abbr>JVM</abbr>.
+      This approach requires the creation of a new instance of the validator that we wish to modify the configuration.
+    </p>
+
+<pre>import org.opengis.metadata.Metadata;
+import org.opengis.test.ValidatorContainer;
+import org.junit.Test;
+
+public class MyTest {
+    private final ValidatorContainer validators;
+
+    public MyTest() {
+        validators = new ValidatorContainer();
+        validators.<code class="GeoAPI">metadata.requireMandatoryAttributes</code> = false;
+        validators.<code class="GeoAPI">citation.requireMandatoryAttributes</code> = false;
+    }
+
+    @Test
+    public void testMyMetadata() {
+        Metadata myObject = …; // Create an object here.
+        validators.<code class="GeoAPI">validate</code>(myObject);
+    }
+}</pre>
+
+
+
+    <h2 id="GeoAPI-tests">Executing Pre-defined Tests</h2>
+    <p>
+      JUnit tests are defined in the <code>org.opengis.test</code> sub-packages.
+      All test classes bear a name ending in "<code>Test</code>".
+      GeoAPI also provides an <code>org.opengis.test.TestSuite</code> class including all test classes defined in the
+      <code>geoapi-conformance</code> module, but Apache <abbr>SIS</abbr> does not use it.
+      Instead, Apache <abbr>SIS</abbr> inherits GeoAPI’s <code class="GeoAPI">*Test</code> classes on a case-by-case basis,
+      in the appropriate modules.
+      The example below gives an example of a customized GeoAPI test:
+      The <a href="http://www.geoapi.org/geoapi-conformance/apidocs/org/opengis/test/referencing/ParameterizedTransformTest.html">parent test javadoc</a>
+      documents the tests performed in detail.
+      In this example, only one test is modified and all the others are inherited as they are (it is not necessary to repeat them in the sub-class).
+      However, this example adds a supplemental verification, annotated with <code>@After</code>, which will be executed after each test.
+    </p>
+
+<pre>import org.junit.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.opengis.test.referencing.ParameterizedTransformTest;
+import static org.junit.Assert.*;
+
+@RunWith(JUnit4.class)
+public class MyTest extends ParameterizedTransformTest {
+    /**
+     * Specify our own coordinate transformation factory for the GeoAPI tests.
+     * GeoAPI will test the objects created by this factory.
+     */
+    public MyTest() {
+        super(new MyMathTransformFactory());
+    }
+
+    /**
+     * Changes the behaviour of a test. This example relaxes the requirements of this test a little,
+     * by accepting errors of up to 10 centimetres, rather than the default value of 1 cm.
+     * This change only applies to this method, and does not affect the other inherited tests.
+     */
+    @Test
+    @Override
+    public void testLambertAzimuthalEqualArea() throws FactoryException, TransformException {
+        <code class="GeoAPI">tolerance</code> = 0.1; // 10 cm tolerance.
+        super.<code class="GeoAPI">testLambertAzimuthalEqualArea()</code>;
+    }
+
+    /**
+     * Supplemental verification performed after each test, inherited or not.
+     * In this example, we are verifying that the transformation tested
+     * works correctly in two-dimensional spaces.
+     */
+    @After
+    public void ensureAllTransformAreMath2D() {
+        assertTrue(<code class="GeoAPI">transform</code> instanceof MathTransform2D);
+    }
+}</pre>
+  </body>
+</html>
