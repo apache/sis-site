@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html>
 
 <!--
   Licensed to the Apache Software Foundation (ASF)
@@ -10,6 +9,7 @@
   See the files in the ../../../book/ directory instead.
 -->
 
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
 <head>
 <title>Introduction à Apache SIS</title>
@@ -75,13 +75,14 @@
 <li><a href="#XML-ISO-19115">Représentation des méta-données selon ISO 19115-3</a><ul>
 <li><a href="#gco-id">Identification d’instances déjà définies</a></li>
 <li><a href="#nilReason">Représentation de valeurs manquantes</a></li></ul></li></ul></li>
+<li><a href="#annexes">Annexes</a><ul>
 <li><a href="#reduce-direct-dependency">Réduire la dépendance directe envers Apache SIS</a><ul>
 <li><a href="#UML-annotation-geoapi">Correspondances entre GeoAPI et les spécifications abstraites</a></li>
 <li><a href="#ServiceLoader">Obtenir une implémentation des interfaces de GeoAPI</a><ul>
 <li><a href="#GeoAPI-simple">Fournir sa propre implémentation</a></li></ul></li></ul></li>
 <li><a href="#tests">Les suites de tests</a><ul>
 <li><a href="#GeoAPI-validators">Validations des instances</a></li>
-<li><a href="#GeoAPI-tests">Exécution des tests pré-définis</a></li></ul></li>
+<li><a href="#GeoAPI-tests">Exécution des tests pré-définis</a></li></ul></li></ul></li>
 </ul>
 </nav>
 
@@ -2582,7 +2583,7 @@ des instances de <code class="SIS">Range</code> ainsi que d’autres information
 <section>
 <header>
 <h1 id="XML-ISO"><span class="section-number">7.</span> Représentation des objets en <abbr>XML</abbr></h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Coverage">Chapitre précédent</a></div><div class="next-chapter"><a href="#reduce-direct-dependency">Chapitre suivant</a> ➡</div></div></nav>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Coverage">Chapitre précédent</a></div><div class="next-chapter"><a href="#annexes">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc">
 <li><a href="#XML-ISO-19115">Représentation des méta-données selon ISO 19115-3</a><ul>
@@ -2924,13 +2925,18 @@ et dont la méthode <code class="SIS">getNilReason()</code> retournera la consta
 </section>
 <section>
 <header>
-<h1 id="reduce-direct-dependency"><span class="section-number">8.</span> Réduire la dépendance directe envers Apache SIS</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#XML-ISO">Chapitre précédent</a></div><div class="next-chapter"><a href="#tests">Chapitre suivant</a> ➡</div></div></nav>
+<h1 id="annexes"><span class="section-number">8.</span> Annexes</h1>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#XML-ISO">Chapitre précédent</a></div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc">
+<li><a href="#reduce-direct-dependency">Réduire la dépendance directe envers Apache SIS</a><ul>
 <li><a href="#UML-annotation-geoapi">Correspondances entre GeoAPI et les spécifications abstraites</a></li>
 <li><a href="#ServiceLoader">Obtenir une implémentation des interfaces de GeoAPI</a><ul>
-<li><a href="#GeoAPI-simple">Fournir sa propre implémentation</a></li></ul></li></ul></nav>
+<li><a href="#GeoAPI-simple">Fournir sa propre implémentation</a></li></ul></li></ul></li>
+<li><a href="#tests">Les suites de tests</a><ul>
+<li><a href="#GeoAPI-validators">Validations des instances</a></li>
+<li><a href="#GeoAPI-tests">Exécution des tests pré-définis</a></li></ul></li></ul></nav>
+<h2 id="reduce-direct-dependency"><span class="section-number">8.1.</span> Réduire la dépendance directe envers Apache SIS</h2>
 <p>
 Les chapitres précédents utilisaient des méthodes statiques de Apache SIS par commodité.
 Dans certains cas, il est possible de remplacer ces méthodes statiques par du code ne faisant appel qu’à des méthodes de GeoAPI.
@@ -2940,7 +2946,7 @@ Mais cela peut amener ces applications à écrire leur propres méthodes de comm
 Les sections suivantes donnent quelques pistes pour faciliter cette tâche.
 </p>
 
-<h2 id="UML-annotation-geoapi"><span class="section-number">8.1.</span> Correspondances entre GeoAPI et les spécifications abstraites</h2>
+<h3 id="UML-annotation-geoapi"><span class="section-number">8.1.1.</span> Correspondances entre GeoAPI et les spécifications abstraites</h3>
 <p>
 Pour chaque classe, méthode et constante définie à partir d’un standard <abbr title="Open Geospatial Consortium">OGC</abbr> ou <abbr title="International Organization for Standardization">ISO</abbr>,
 GeoAPI indique sa provenance à l’aide d’annotations définies dans le paquet <code class="GeoAPI">org.opengis.annotation</code>.
@@ -2982,7 +2988,7 @@ La méthode de commodité de <code class="SIS">org.apache.sis.util.iso.Types</co
 
 
 
-<h2 id="ServiceLoader"><span class="section-number">8.2.</span> Obtenir une implémentation des interfaces de GeoAPI</h2>
+<h3 id="ServiceLoader"><span class="section-number">8.1.2.</span> Obtenir une implémentation des interfaces de GeoAPI</h3>
 <p>
 GeoAPI définit des fabriques (<code class="GeoAPI">Factory</code>) permettant de créer des implémentations de ses interfaces.
 Par exemple <code class="GeoAPI">DatumFactory</code> fournit des méthodes permettant de créer des instances
@@ -3017,7 +3023,7 @@ par exemple lorsque plusieurs bibliothèques cohabitent, alors le choix est lais
 
 
 
-<h3 id="GeoAPI-simple"><span class="section-number">8.2.1.</span> Fournir sa propre implémentation</h3>
+<h4 id="GeoAPI-simple"><span class="section-number">8.1.2.1.</span> Fournir sa propre implémentation</h4>
 <p>
 Implémenter soi-même GeoAPI n’est pas si difficile si on se contente de besoins bien précis.
 Un développeur peut se concentrer sur une poignée d’interfaces parmi les centaines de disponibles,
@@ -3080,9 +3086,6 @@ Le tableau suivant énumère quelques combinaisons possibles:
 <td>Description d’un ensemble de paramètres associés à leurs valeurs.</td>
 </tr>
 </table>
-
-
-
 <p id="GeoAPI-examples">
 Le module <code class="GeoAPI">geoapi-examples</code> fournit des exemples d’implémentations simples.
 Plusieurs de ces classes implémentent plus d’une interface à la fois afin de proposer un modèle conceptuel plus simple.
@@ -3107,15 +3110,9 @@ une partie des fonctionnalités de bibliothèques externes (Proj.4 et <abbr titl
 L’avantage de passer par ces interfaces est de disposer d’un modèle unifié pour exploiter deux <abbr title="Application Programming Interface">API</abbr> très différents,
 tout en se gardant la possibilité de basculer plus facilement à une autre bibliothèque si désiré.
 </p>
-</section>
-<section>
-<header>
-<h1 id="tests"><span class="section-number">9.</span> Les suites de tests</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#reduce-direct-dependency">Chapitre précédent</a></div></div></nav>
-</header>
-<nav>Dans ce chapitre:<ul class="toc">
-<li><a href="#GeoAPI-validators">Validations des instances</a></li>
-<li><a href="#GeoAPI-tests">Exécution des tests pré-définis</a></li></ul></nav>
+
+
+<h2 id="tests"><span class="section-number">8.2.</span> Les suites de tests</h2>
 <p>
 En plus des tests propres au projet, Apache SIS utilise aussi des tests définis par GeoAPI.
 Ces tests ont l’avantage d’utiliser une source externe définissant ce que doivent être les résultats
@@ -3138,7 +3135,7 @@ a lui-même sa propre suite de tests et est appliqué à d’autres implémentat
 
 
 
-<h2 id="GeoAPI-validators"><span class="section-number">9.1.</span> Validations des instances</h2>
+<h3 id="GeoAPI-validators"><span class="section-number">8.2.1.</span> Validations des instances</h3>
 <p>
 GeoAPI peut valider une instance de ses interfaces en vérifiant que certaines contraintes sont respectées.
 Certaines contraintes ne peuvent pas être exprimées dans la signature de la méthode. Ces contraintes sont
@@ -3228,7 +3225,7 @@ Cette approche nécessite de créer une nouvelle instance du validateur dont on 
 
 
 
-<h2 id="GeoAPI-tests"><span class="section-number">9.2.</span> Exécution des tests pré-définis</h2>
+<h3 id="GeoAPI-tests"><span class="section-number">8.2.2.</span> Exécution des tests pré-définis</h3>
 <p>
 Des classes de tests JUnit sont définies dans des sous-paquets de <code class="GeoAPI">org.opengis.test</code>.
 Toutes les classes de tests portent un nom se terminant en "<code>Test</code>".
