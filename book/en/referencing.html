@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:xi = "http://www.w3.org/2001/XInclude">
+  <head>
+    <title>Spatial reference systems</title>
+    <link rel="stylesheet" type="text/css" href="../book.css"/>
+  </head>
+  <body>
+    <header>
+      <h1 id="Referencing">Spatial reference systems</h1>
+    </header>
+    <p>
+      For locating a point on Earth one can use identifiers like city name or postal address
+      — an approach known as <cite>spatial reference systems by identifiers</cite> —
+      or use numerical values valid in a given coordinate system
+      — an approach known as <cite>spatial reference systems by coordinates</cite>.
+      Each system implies approximations as:
+    </p>
+    <ul>
+      <li>Choice of a figure of the Earth (geoid, ellipsoid, <i>etc.</i>) used as an approximation of Earth shape.</li>
+      <li>Choice of geometric properties (angles, distances, <i>etc.</i>) to be preserved when a map is shown on plane surface.</li>
+      <li>Lost of precision when a coordinates is transformed from one referencing system to another system.</li>
+    </ul>
+    <p>
+      Unless otherwise specified, Apache SIS aims to represent coordinates on Earth with an accuracy of one centimetre or better.
+      But the accuracy can be altered by various situations:
+    </p>
+    <ul>
+      <li>Points should be inside the domain of validity as given by <code>ReferenceSystem.getDomainOfValidity()</code>.</li>
+      <li>Distance measurements in a given map projection are true only is some special locations,
+          named for instance “standards parallels”.</li>
+      <li>Positional accuracy is reduced after coordinate transformations. The new accuracy is described by
+          <code>CoordinateOperation.getCoordinateOperationAccuracy()</code>.</li>
+    </ul>
+    <p>
+      The <code>sis-referencing</code> module provides a set of classes implementing
+      different specializations of the <code>ReferenceSystem</code> interface, together with required components.
+      Those implementations store spatial reference system descriptions, together with metadata like their domain of validity.
+      However those objects do not perform any operation on coordinate values.
+      Those operations are performed by another family of types, with <code>CoordinateOperation</code> as the root interface.
+      Those types will be discussed in <a href="#CoordinateOperation">another section</a>,
+      but we mention here two sub-types related to the coordinate accuracy topic:
+    </p>
+    <ul>
+      <li>
+        <p>Coordinate <strong>conversions</strong> are fully determined by mathematic formulas.
+        Those conversions would have an infinite precision if it was not for the unavoidable rounding errors
+        inherent to floating-point calculations.</p>
+        <div class="example"><p><b>Example:</b> map projections.</p></div>
+      </li><li>
+        <p>Coordinate <strong>transformations</strong> are defined empirically.
+        They usually have a few meters error which is not caused by limitation in computer accuracy.
+        Those errors exist because transformations are only approximations of a more complex reality.</p>
+
+        <div class="example"><p><b>Example:</b> datum changes from
+        <cite>North American Datum 1927</cite> (<abbr>NAD27</abbr>) to
+        <cite>North American Datum 1983</cite> (<abbr>NAD83</abbr>),
+        even if the map projection method (e.g. Lambert Conformal or Transverse Mercator) does not change.</p>
+        </div>
+      </li>
+    </ul>
+
+
+
+    <h2 id="CRS_Components">Components of a reference system by coordinates</h2>
+    <p>
+      Spatial reference systems by coordinates provide necessary information for mapping numerical coordinate values
+      to real-world locations. In Apache <abbr>SIS</abbr>, most information is contained (directly or indirectly) in
+      classes with a name ending in <abbr>CRS</abbr>, the abbreviation of <i>Coordinate Reference System</i>.
+      Those objects contain:
+    </p>
+    <ul>
+      <li>A <i>datum</i>, which specifies among other things which ellipsoid to use as an Earth shape approximation.</li>
+      <li>A description for each axis: name, direction, units of measurement, range of values.</li>
+      <li>Sometime a list of parameters. A well-known example is when the <abbr>CRS</abbr> uses a map projection.</li>
+    </ul>
+    <p>
+      Those systems are described by the <abbr>ISO</abbr> 19111 standard (<i>Referencing by Coordinates</i>),
+      which replaces for most parts the older <abbr>OGC 01-009</abbr> standard (<i>Coordinate Transformation Services</i>).
+      Those standards are completed by two other standards defining exchange formats:
+      <abbr>ISO</abbr> 19136 and 19162 respectively for the
+      <cite>Geographic Markup Language</cite> (<abbr>GML</abbr>) — a <abbr>XML</abbr> format which is quite detailed but verbose —
+      and the <cite>Well-Known Text</cite> (<abbr>WKT</abbr>) — a text format easier to read by humans.
+    </p>
+
+    <h3 id="Ellipsoid">Geoid et ellipsoid</h3>
+    <p>
+      Since the real topographic surface is difficult to represent mathematically, it is not used directly.
+      A slightly more convenient surface is the geoid,
+      a surface where the gravitational field has the same value everywhere (an equipotential surface).
+      This surface is perpendicular to the direction of a plumb line at all points.
+      The geoid surface would be equivalent to the mean sea level if all oceans where at rest,
+      without winds or permanent currents like the Gulf Stream.
+    </p><p>
+      While much smoother than topographic surface, the geoid surface still have hollows and bumps
+      caused by the uneven distribution of mass inside Earth.
+      For more convenient mathematical operations, the geoid surface is approximated by an ellipsoid.
+      This “figure of Earth” is represented in GeoAPI by the <code>Ellipsoid</code> interface,
+      a fundamental component in coordinate reference systems of kind <code>GeographicCRS</code> and <code>ProjectedCRS</code>.
+      Tenth of ellipsoids are commonly used for datum definitions.
+      Some of them provide a very good approximation for a particular geographic area
+      at the expense of the rest of the world for which the datum was not designed.
+      Other datums are compromises applicable to the whole world.
+    </p>
+    <div class="example"><p><b>Example:</b>
+      At the beginning of XX<sup>th</sup> century in <abbr>USA</abbr>, the Michigan state used an ellipsoid based on the
+      “Clarke 1866” ellipsoid but with axis lengths expanded by 800 feet.
+      This modification aimed to take in account the average state height above mean sea level.</p>
+    </div>
+
+    <h3 id="GeodeticDatum">Geodetic datum</h3>
+    <p>
+      For defining a geodetic system in a country, a national authority selects an ellipsoid matching closely the country surface.
+      Differences between that ellipsoid and the geoid’s hollows and bumps are usually less than 100 metres.
+      Parameters that relate an <code>Ellipsoid</code> to the Earth surface (for example the position of ellipsoid center)
+      are represented by instances of <code>GeodeticDatum</code>.
+      Many <code>GeodeticDatum</code> definitions can use the same <code>Ellipsoid</code>,
+      but with different orientations or center positions.
+    </p><p>
+      Before the satellite era, geodetic measurements were performed exclusively from Earth surface.
+      Consequently, two islands or continents not in range of sight from each other were not geodetically related.
+      So the <cite>North American Datum 1983</cite> (<abbr>NAD83</abbr>) and the <cite>European Datum 1950</cite> (<abbr>ED50</abbr>)
+      are independent: their ellipsoids have different sizes and are centered at a different positions.
+      The same geographic coordinate will map different locations on Earth depending on whether the coordinate
+      uses one reference system or the other.
+    </p><p>
+      The <abbr title="Global Positioning System">GPS</abbr> invention implied the creation of a
+      world geodetic system named <abbr title="World Geodetic System 1984">WGS84</abbr>.
+      The ellipsoid is then unique and centered at the Earth gravity center.
+      <abbr>GPS</abbr> provide at any moment the receptor absolute position on that world geodetic system.
+      But since <abbr>WGS84</abbr> is a world-wide system, it may be differ significantly from local systems.
+      For example the difference between <abbr>WGS84</abbr> and the European system <abbr>ED50</abbr> is about 150 metres,
+      and the average difference between <abbr>WGS84</abbr> and the <cite>Réunion 1947</cite> system is 1.5 kilometres.
+      Consequently we shall not blindly use <abbr>GPS</abbr> coordinates on a map,
+      as transformations to the local system may be required.
+      Those transformations are represented in GeoAPI by instances of the <code>Transformation</code> interface
+      (a kind of operation mentioned in <a href="#Referencing">this chapter introduction</a>).
+    </p><p>
+      The <abbr>WGS84</abbr> ubiquity tends to reduce the need for <code>Transformation</code> operations with recent data,
+      but does not eliminate it.
+      The Earth moves under the effect of plate tectonic and new systems are defined every years for taking that fact in account.
+      For example while <abbr>NAD83</abbr> was originally defined as practically equivalent to <abbr>WGS84</abbr>,
+      there is now (as of 2016) a 1.5 metres difference.
+      The <cite>Japanese Geodetic Datum 2000</cite> was also defined as practically equivalent to <abbr>WGS84</abbr>,
+      but the <cite>Japanese Geodetic Datum 2011</cite> now differs.
+      Even the <abbr>WGS84</abbr> datum, which was a terrestrial model realization at a specific time,
+      got revisions because of improvements in instruments accuracy.
+      Today, at least six <abbr>WGS84</abbr> versions exist.
+      Furthermore many borders were legally defined in legacy datums, for example <abbr>NAD27</abbr> in <abbr>USA</abbr>.
+      Updating data to the new datum would imply transforming some straight lines or simple geometric shapes
+      into more irregular shapes, if the shapes are large enough.
+    </p>
+    <article>
+      <header>
+        <h1>“Early binding” versus “late binding” implementations</h1>
+      </header>
+      <p>
+        Because of the <abbr>WGS84</abbr> ubiquity, it is tempting to use that system as a hub or a pivot system
+        for all coordinate transformations.
+        The use of an “universal” system as a pivot simplifies the design of coordinate transformations libraries.
+        For example transformations from datum <var>A</var> to datum <var>B</var> can be done by first transforming
+        from <var>A</var> to <abbr>WGS84</abbr>, then from <abbr>WGS84</abbr> to <var>B</var>.
+        With such approach, a coordinate transformations library would only need to associate each
+        <code>GeodeticDatum</code> instance with the transformation parameters from that datum to <abbr>WGS84</abbr>.
+        This approach was encouraged in version 1 of <abbr>WKT</abbr> format, since that format specified a
+        <code>TOWGS84[…]</code> element (removed in <abbr>WKT</abbr> version 2) precisely for that purpose.
+        This approach is known in <abbr>EPSG</abbr> guidance notes as “early binding” implementations
+        since information about coordinate transformations are associated early in geodetic object definitions,
+        usually right at <code>GeographicCRS</code> creation time.
+        While <abbr>EPSG</abbr> acknowledges that this approach is commonly used,
+        this is not a recommended strategy for the following reasons:
+      </p>
+      <ul>
+        <li>More than one transformation may exist from datum <var>A</var> to datum <var>B</var>,
+            where each transformation is designed for a different geographic area.</li>
+        <li>Some operations are designed specifically for transformations from <var>A</var> to <var>B</var>
+            and do not have the same accuracy than an operation using <abbr>WGS84</abbr> as an intermediate step.</li>
+        <li><abbr>WGS84</abbr> itself has been updated many times,
+            which makes it a kind of moving target (admittedly slowly) for coordinate transformations libraries.</li>
+        <li>Different systems could be used as the pivot system, for example the <cite>Galileo Reference Frame</cite>
+            (<abbr>GTRF</abbr>) created for the European <abbr>GPS</abbr> competitor.</li>
+      </ul>
+      <div class="example"><p><b>Example:</b>
+        the <abbr>EPSG</abbr> geodetic dataset defines about 50 transformations from <abbr>NAD27</abbr> to <abbr>NAD83</abbr>.
+        In an early binding approach, the same geographic <abbr>CRS</abbr> (namely “<abbr>NAD27</abbr>”) in the <abbr>WKT</abbr> 1
+        format would need to be defined with a <code>TOWGS84[-8, 160, 176]</code> element for coordinates in <abbr>USA</abbr>
+        or with a <code>TOWGS84[-10, 158, 187]</code> element for coordinates in Canada.
+        Different parameter values exist for other regions like Cuba, so it is not possible to represent such diversity
+        with a single <code>TOWGS84[…]</code> element associated to a <abbr>CRS</abbr>.
+        But even when restricting <abbr>CRS</abbr> usage to the domain of validity of its single <code>TOWGS84[…]</code> element,
+        those transformations are still approximative with a 10 metres accuracy in the <abbr>USA</abbr> case.
+        More accurate transformations exist in the form of <abbr>NADCON</abbr> grid shift files,
+        but those transformations are from <abbr>NAD27</abbr> to <abbr>NAD83</abbr> (which move together on the same continental plate),
+        not to <abbr>WGS84</abbr> (which move independently).
+        The difference was often ignored when <abbr>NAD83</abbr> and <abbr>WGS84</abbr> were considered as practically equivalent,
+        but that assumption is subject to more caution today.
+      </p></div>
+      <p>
+        <abbr>EPSG</abbr> rather recommends the use of “late binding” approach,
+        in which coordinate transformation methods and parameters are defined for
+        “<var>A</var> to <var>B</var>” pairs of systems (eventually completed with domain of validity)
+        rather than associated to standalone datums.
+        Apache <abbr>SIS</abbr> is a “late binding” implementation,
+        while some reminiscences of “early binding” approach still exist in the form of the
+        <code>DefaultGeodeticDatum.getBursaWolfParameters()</code> property.
+        The later is used only if <abbr>SIS</abbr> fails to apply the late binding approach for given reference systems.
+      </p>
+    </article>
+
+    <h3 id="CoordinateSystem">Coordinate systems</h3>
+    <p style="color: red">TODO</p>
+
+    <h3 id="GeographicCRS">Geographic reference systems</h3>
+    <p style="color: red">TODO</p>
+
+    <h4 id="GeographicWKT"><i>Well-Known Text</i> format</h4>
+    <p style="color: red">TODO</p>
+
+    <h3 id="ProjectedCRS">Map projections</h3>
+    <p>
+      Map projections represent a curved surface (the Earth) on a plane surface (a map or a computer screen)
+      with some control over deformations: one can preserve either the angles or the areas, but not both in same time.
+      The geometric properties to preserve depend on the feature to represent and the work to do on that feature.
+      For example countries elongated along the East-West axis often use a Lambert projection,
+      while countries elongated along the North-South axis prefer a Transverse Mercator projection.
+    </p>
+    <p style="color: red">TODO</p>
+
+    <h4 id="ProjectedWKT"><i>Well-Known Text</i> format</h4>
+    <p style="color: red">TODO</p>
+
+    <h3 id="CompoundCRS">Vertical and temporal dimensions</h3>
+    <p style="color: red">TODO</p>
+
+    <h4 id="CompoundWKT"><i>Well-Known Text</i> format</h4>
+    <p style="color: red">TODO</p>
+
+
+
+    <h2 id="GetCRS">Fetching a spatial reference system</h2>
+    <p style="color: red">TODO</p>
+
+    <h3 id="CRSAuthorityFactory">Looking <abbr>CRS</abbr> defined by authorities</h3>
+    <p style="color: red">TODO</p>
+
+    <h3 id="CRSParsing">Reading definitions in GML or WKT format</h3>
+    <p style="color: red">TODO</p>
+
+    <h3 id="CRSFactory">Constructing programmatically</h3>
+    <p style="color: red">TODO</p>
+
+    <h3 id="CRS_UserCode">Adding new <abbr>CRS</abbr> definitions</h3>
+    <p style="color: red">TODO</p>
+
+
+
+    <h2 id="CoordinateOperation">Coordinate operations</h2>
+    <p style="color: red">TODO</p>
+
+    <h3 id="MathTransform">Executing an operation on coordinate values</h3>
+    <p style="color: red">TODO</p>
+
+    <h4 id="AffineTransform">Affine transform</h4>
+    <p>
+      Among the many kinds of operations performed by <abbr>GIS</abbr> softwares on spatial coordinates,
+      <cite>linear operations</cite> are both simple and very common.
+      Linear operations are combinations of only additions and some multiplications.
+      Linear operations do not include map projections, which are more complex, but cover many other cases:
+    </p>
+    <ul>
+      <li>Change axis order, for example from (<var>latitude</var>, <var>longitude</var>) to (<var>longitude</var>, <var>latitude</var>).</li>
+      <li>Change axis direction (for example the <var>y</var> axis in images is often oriented toward down).</li>
+      <li>Change the prime meridian (for example from <cite>Paris</cite> to <cite>Greenwich</cite>).</li>
+      <li>Change the number of dimensions (for example from 3-dimensional coordinates to 2-dimensional coordinates).</li>
+      <li>Convert units of measurement (for example convert feet to metres).</li>
+      <li>Convert pixel coordinates in an image to geodetic coordinates
+          (for example the conversion represented in the <code>.tfw</code> files associated to some <abbr>TIFF</abbr> images).</li>
+      <li>Handle a small part of map projection task
+          (for example the <cite>False Easting</cite>, <cite>False Northing</cite> and <cite>Scale factor</cite> parameters).</li>
+      <li>Apply rotations, translations, scales and shears (part of <cite>affines</cite> transforms).</li>
+    </ul>
+    <p>
+      Linear operations can be concatenated efficiently.
+      No matter how many linear operations are chained, the result can be represented by a single linear operation.
+      This property is more easily seen when linear operations are represented by matrices:
+      in order to concatenate those operations, we only need to multiply the matrices.
+    </p>
+    <div class="example"><p><b>Example:</b>
+      give an image with pixel coordinates represented by (<var>i</var>,<var>j</var>) coordinates,
+      assuming that all pixels have the same size in longitude and latitude degrees,
+      and assuming there there is no rotation, then conversion from
+      (<var>i</var>,<var>j</var>) pixel coordinates to (<var>λ</var>,<var>φ</var>) geographic coordinates
+      can be represented by the following matrices:</p>
+
+      <table class="hidden"><tr><td>
+        <xi:include href="../math/PixelToGeographic.html"/>
+      </td><td style="vertical-align: middle; padding-left: 30px">
+        where
+      </td><td style="vertical-align: middle">
+        <ul>
+          <li><var>S</var> is a scale factor which, in this example, is equals to the pixel size in degrees.</li>
+          <li><var>H</var> is a shear factor, usually equals to zero except if the image is rotated.</li>
+          <li><var>T</var> is a translation term which, in this example, is equals to the geographic coordinate of an image corner.</li>
+        </ul>
+      </td></tr></table>
+      <p>
+        <span style="color: red">TODO</span>
+      </p>
+      <table class="hidden"><tr>
+        <th>Change 2</th><th></th>
+        <th>Change 1</th><th></th>
+        <th>Original conversion</th><th></th>
+        <th>Modified conversion</th>
+      </tr><tr>
+        <td style="vertical-align: middle">
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
+            <mfenced open="[" close="]">
+              <mtable>
+                <mtr>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>1</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                </mtr>
+                <mtr>
+                  <mtd><mn>1</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                </mtr>
+                <mtr>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>1</mn></mtd>
+                </mtr>
+              </mtable>
+            </mfenced>
+          </math>
+        </td>
+        <td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
+        <td style="vertical-align: middle">
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mfenced open="[" close="]">
+              <mtable>
+                <mtr>
+                  <mtd><mn>1</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                </mtr>
+                <mtr>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>-1</mn></mtd>
+                  <mtd><mo>(</mo><msub><mi>j</mi><mrow>max</mrow></msub><mo>-</mo>
+                                 <msub><mi>j</mi><mrow>min</mrow></msub><mo>)</mo></mtd>
+                </mtr>
+                <mtr>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>1</mn></mtd>
+                </mtr>
+              </mtable>
+            </mfenced>
+          </math>
+        </td>
+        <td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
+        <td style="vertical-align: middle">
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mfenced open="[" close="]">
+              <mtable>
+                <mtr>
+                  <mtd><mfrac>
+                    <mrow>
+                      <msub><mi>λ</mi><mrow>max</mrow></msub><mo>-</mo>
+                      <msub><mi>λ</mi><mrow>min</mrow></msub>
+                    </mrow><mrow>
+                      <msub><mi>i</mi><mrow>max</mrow></msub><mo>-</mo>
+                      <msub><mi>i</mi><mrow>min</mrow></msub>
+                    </mrow>
+                  </mfrac></mtd>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><msub><mi>λ</mi><mrow>min</mrow></msub></mtd>
+                </mtr>
+                <mtr>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mfrac>
+                    <mrow>
+                      <msub><mi>φ</mi><mrow>max</mrow></msub><mo>-</mo>
+                      <msub><mi>φ</mi><mrow>min</mrow></msub>
+                    </mrow><mrow>
+                      <msub><mi>j</mi><mrow>max</mrow></msub><mo>-</mo>
+                      <msub><mi>j</mi><mrow>min</mrow></msub>
+                    </mrow>
+                  </mfrac></mtd>
+                  <mtd><msub><mi>φ</mi><mrow>min</mrow></msub></mtd>
+                </mtr>
+                <mtr>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>1</mn></mtd>
+                </mtr>
+              </mtable>
+            </mfenced>
+          </math>
+        </td>
+        <td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">=</td>
+        <td style="vertical-align: middle">
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mfenced open="[" close="]">
+              <mtable>
+                <mtr>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mo>-</mo><mfrac>
+                    <mrow>
+                      <msub><mi>φ</mi><mrow>max</mrow></msub><mo>-</mo>
+                      <msub><mi>φ</mi><mrow>min</mrow></msub>
+                    </mrow><mrow>
+                      <msub><mi>j</mi><mrow>max</mrow></msub><mo>-</mo>
+                      <msub><mi>j</mi><mrow>min</mrow></msub>
+                    </mrow>
+                  </mfrac></mtd>
+                  <mtd><msub><mi>φ</mi><mrow>max</mrow></msub></mtd>
+                </mtr>
+                <mtr>
+                  <mtd><mfrac>
+                    <mrow>
+                      <msub><mi>λ</mi><mrow>max</mrow></msub><mo>-</mo>
+                      <msub><mi>λ</mi><mrow>min</mrow></msub>
+                    </mrow><mrow>
+                      <msub><mi>i</mi><mrow>max</mrow></msub><mo>-</mo>
+                      <msub><mi>i</mi><mrow>min</mrow></msub>
+                    </mrow>
+                  </mfrac></mtd>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><msub><mi>λ</mi><mrow>min</mrow></msub></mtd>
+                </mtr>
+                <mtr>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>0</mn></mtd>
+                  <mtd><mn>1</mn></mtd>
+                </mtr>
+              </mtable>
+            </mfenced>
+          </math>
+        </td>
+      </tr></table>
+      <p>
+        <span style="color: red">TODO</span>
+      </p>
+    </div>
+
+    <p style="color: red">TODO</p>
+
+    <h3 id="TransformDerivative">Partial derivatives of coordinate operations</h3>
+    <p>
+      <span style="color: red">TODO</span>
+    </p>
+
+    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
+      <mi>P</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo>
+      <mo>=</mo>
+      <mfenced open="[" close="]">
+        <mtable>
+          <mtr><mtd><mi>x</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mtd></mtr>
+          <mtr><mtd><mi>y</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mtd></mtr>
+        </mtable>
+      </mfenced>
+    </math>
+
+    <p>The map projection partial derivate at this point can be represented by the Jacobian matrix:</p>
+
+    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
+      <msup><mi>P</mi><mo>′</mo></msup><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo>
+      <mo>=</mo>
+      <msub><mi>JAC</mi><mrow><mi>P</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mrow></msub>
+      <mo>=</mo>
+      <mfenced open="[" close="]">
+        <mtable>
+          <mtr>
+            <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
+            <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+          </mtr>
+          <mtr>
+            <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
+            <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+          </mtr>
+        </mtable>
+      </mfenced>
+    </math>
+
+    <p>
+      <span style="color: red">TODO</span>
+    </p>
+
+    <table class="hidden"><tr>
+      <td><img style="border: solid 1px" src="../images/Derivatives.png" alt="Exemple de dérivées d’une projection cartographique"/></td>
+      <td style="padding-left: 30px; vertical-align: middle">
+        <p>where vectors are related to the matrix by:</p>
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
+          <mtable><mtr>
+            <mtd>
+              <mover><mi>U</mi><mo>→</mo></mover><mo>=</mo>
+              <mfenced open="[" close="]">
+                <mtable>
+                  <mtr>
+                    <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
+                  </mtr>
+                  <mtr>
+                    <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
+                  </mtr>
+                </mtable>
+              </mfenced>
+            </mtd>
+            <mtd><mtext>et</mtext></mtd>
+            <mtd>
+              <mover><mi>V</mi><mo>→</mo></mover><mo>=</mo>
+              <mfenced open="[" close="]">
+                <mtable>
+                  <mtr>
+                    <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+                  </mtr>
+                  <mtr>
+                    <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+                  </mtr>
+                </mtable>
+              </mfenced>
+            </mtd>
+          </mtr></mtable>
+        </math>
+      </td>
+    </tr></table>
+
+    <p>
+      <span style="color: red">TODO</span>
+    </p>
+
+    <h4 id="DerivativeAndEnvelope">Transform derivatives applied to envelopes</h4>
+    <p>
+      <span style="color: red">TODO</span>
+    </p>
+    <table class="hidden">
+      <tr>
+        <th>Envelope before projection</th>
+        <th>Geometric shape after projection</th>
+      </tr>
+      <tr>
+        <td><img style="border: solid 1px; margin-right: 15px" src="../images/GeographicArea.png" alt="Envelope in a geographic CRS"/></td>
+        <td><img style="border: solid 1px; margin-left:  15px" src="../images/ConicArea.png" alt="Shape in a projected CRS"/></td>
+      </tr>
+    </table>
+    <p>
+      <span style="color: red">TODO</span>
+    </p>
+    <table class="hidden"><tr><td>
+      <img src="../images/Approximation.png" alt="Cubic approximation of an envelope bounds"/>
+    </td><td style="padding-left: 60px">
+      Legend:
+      <ul>
+        <li><b>Blue:</b> the geometric shape of the envelope after projection.
+          This is the shape from which to get a new envelope.</li>
+        <li><b>Red</b> (with hash): The
+          <var>y</var> = <var>C</var>₀ + <var>C</var>₁λ + <var>C</var>₂λ² + <var>C</var>₃λ³ approximation.</li>
+        <li><b>Green</b> (dashed line): Position λ<sub>m</sub> of approximation minimum, obtained by resolving
+          0 = <var>C</var>₁ + 2<var>C</var>₂λ<sub>m</sub> + 3<var>C</var>₃λ<sub>m</sub>².
+          The same cubic line can have two minimums.</li>
+      </ul>
+    </td></tr></table>
+    <p>
+      <span style="color: red">TODO</span>
+    </p>
+
+
+    <h4 id="DerivativeAndRaster">Transform derivatives applied to rasters</h4>
+    <p>
+      <span style="color: red">TODO</span>
+    </p>
+    <table class="hidden">
+      <tr>
+        <th style="text-align: left">Source image</th>
+        <th style="text-align: right">Destination image</th>
+      </tr>
+      <tr>
+        <td colspan="2"><img src="../images/RasterProjection.png" alt="Intersection of derivatives"/></td>
+      </tr>
+    </table>
+    <p>
+      <span style="color: red">TODO</span>
+    </p>
+    <table class="hidden"><tr>
+      <td><img src="../images/WarpGrid.png" alt="Intersection of derivatives"/></td>
+      <td style="padding-left: 60px">
+      Legend:
+      <ul>
+        <li><b>Blue dots:</b>  first  iteration (9 points).</li>
+        <li><b>Green dots:</b> second iteration (25 points, including 16 news).</li>
+        <li><b>Red dots:</b>   third  iteration (81 points, including 56 news).</li>
+      </ul>
+      Continuing…
+      <ul>
+        <li>Forth iteration:  289 points, including  208 news.</li>
+        <li>Fifth iteration: 1089 points, including  800 news.</li>
+        <li>Sixth iteration: 4225 points, including 3136 news.</li>
+        <li>…</li>
+      </ul>
+    </td></tr></table>
+    <p>
+      <span style="color: red">TODO</span>
+    </p>
+    <p style="text-align:center"><img style="border: solid 1px" src="../images/IntersectionOfDerivatives.png" alt="Intersection of derivatives"/></p>
+    <p>
+      <span style="color: red">TODO</span>
+    </p>
+
+    <h4 id="GetDerivative">Getting the derivative at a point</h4>
+    <p>
+      <span style="color: red">TODO</span>
+      Example:</p>
+
+<pre>AbstractMathTransform projection = ...;         // An Apache SIS map projection.
+double[] sourcePoint = {longitude, latitude};   // The geographic coordinate to project.
+double[] targetPoint = new double[2];           // Where to store the projection result.
+Matrix   derivative  = projection.<code class="SIS">transform</code>(sourcePoint, 0, targetPoint, 0, true);</pre>
+
+    <p>
+      <span style="color: red">TODO</span>
+    </p>
+<pre>@Override
+public Matrix derivative(DirectPosition p) throws TransformException {
+    Matrix jac = inverse().derivative(transform(p));
+    return Matrices.inverse(jac);
+}
+</pre>
+  </body>
+</html>

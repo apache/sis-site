@@ -1458,14 +1458,14 @@ appelés par exemple « parallèles standards ».</li>
 <code class="GeoAPI">CoordinateOperation​.getCoordinateOperationAccuracy()</code>.</li>
 </ul>
 <p>
-Le module <code class="SIS">sis-referencing</code> de Apache <abbr title="Spatial Information System">SIS</abbr> fournit une série de classes implémentant
+Le module <code class="SIS">sis-referencing</code> de Apache <abbr title="Spatial Information System">SIS</abbr> fournit un ensemble de classes implémentant
 les différentes spécialisations de l’interface <code class="GeoAPI">ReferenceSystem</code> ainsi que leurs composantes.
 Ces implémentations permettent de stocker une description des systèmes de références spatiales
 ainsi que leurs méta-données telles que la zone de validité.
 Toutefois ces objets n’effectuent aucune opération sur les coordonnées.
 Ces opérations sont le travail d’une autre famille de classes, dont la racine est l’interface <code class="GeoAPI">CoordinateOperation</code>.
 Ces classes seront discutées dans <a href="#CoordinateOperation">une autre section</a>,
-mais nous citons ici deux spécialisations en rapport avec le sujet de la précision des coordonnées:
+mais nous mentionnons ici deux spécialisations en rapport avec le sujet de la précision des coordonnées:
 </p>
 <ul>
 <li>
@@ -1473,15 +1473,15 @@ mais nous citons ici deux spécialisations en rapport avec le sujet de la préci
 Les conversions s’effectueraient avec une précision infinie s’il n’y avait pas les inévitables
 erreurs d’arrondissements inhérents aux calculs sur des nombres réels.</p>
 <div class="example"><p><b>Exemple:</b> les projections cartographiques.</p></div>
-</li>
-<li><p>Les <strong>transformations</strong> de coordonnées sont définies de manière empirique.
+</li><li>
+<p>Les <strong>transformations</strong> de coordonnées sont définies de manière empirique.
 Elles ont souvent des erreurs de quelques mètres qui ne sont pas dues à des limites de la précision des ordinateurs.
 Ces erreurs découlent du fait que la transformation utilisée n’est qu’une approximation d’une réalité plus complexe.</p>
+
 <div class="example"><p><b>Exemple:</b> les changements de référentiels tel que le passage de la
 <cite>Nouvelle Triangulation Française</cite> (<abbr>NTF</abbr>) vers le
 <cite>Réseau Géodésique Français 1993</cite> (<abbr>RGF93</abbr>),
-même lorsque la méthode de projection cartographique (Lambert conique conforme) ne change pas.</p>
-</div>
+même lorsque la méthode de projection cartographique (Lambert conique conforme) ne change pas.</p></div>
 </li>
 </ul>
 
@@ -1495,11 +1495,11 @@ ils sont pratiquement tous représentés par des classes dont le nom se termine 
 (l’abréviation de <i>Coordinate Reference System</i> en anglais). Ces objets contiennent:
 </p>
 <ul>
-<li>Un identifiant du référentiel (<i>datum</i> en anglais),
+<li>Un référentiel (<i>datum</i> en anglais),
 qui indique entre autres quel ellipsoïde utiliser comme approximation de la forme de la terre.</li>
 <li>Une description de chaque axe (nom, direction, unité de mesure, limites).</li>
 <li>Parfois une liste de paramètres permettant de convertir les coordonnées d’un autre système.
-C’est le cas notamment des projections cartographiques.</li>
+C’est le cas notamment lorsqu’on utilise des projections cartographiques.</li>
 </ul>
 <p>
 Ces systèmes sont décrits par la norme <abbr title="International Organization for Standardization">ISO</abbr> 19111 (<i>Referencing by Coordinates</i>),
@@ -1512,7 +1512,8 @@ et le <cite>Well-Known Text</cite> (<abbr>WKT</abbr>) — un format texte plus 
 </p>
 
 <h3 id="Ellipsoid"><span class="section-number">3.1.1.</span> Géoïde et ellipsoïde</h3>
-<p>La surface topographique réelle étant difficile à représenter mathématiquement, elle n’est pas utilisée directement en cartographie.
+<p>
+La surface topographique réelle étant difficile à représenter mathématiquement, elle n’est pas utilisée directement en cartographie.
 Une autre surface un peu plus facilement utilisable est le géoïde,
 une surface sur laquelle la force gravitationnelle a partout la même valeur (surface équipotentielle du champ de gravité terrestre).
 Cette surface est en tout point perpendiculaire à la direction indiquée par un fil à plomb (verticale du lieu).
@@ -1523,8 +1524,10 @@ le géoïde présente des creux et des bosses liés à l’inégale distribution
 Pour une utilisation mathématiquement plus aisée, le géoïde est donc approximé par un ellipsoïde.
 Cette « figure de la Terre » est représentée dans GeoAPI par l’interface <code class="GeoAPI">Ellipsoid</code>,
 qui constitue un élément fondamental des systèmes de références de type <code class="GeoAPI">GeographicCRS</code> et <code class="GeoAPI">ProjectedCRS</code>.
-Plusieurs dizaines d’ellipsoïdes sont couramment employés, certains offrant une excellente approximation pour une région précise
-au détriment des régions pour lesquelles l’ellipsoïde n’a pas été conçu, et d’autres offrant un compromis pour l’ensemble de la planète.
+Plusieurs dizaines d’ellipsoïdes sont couramment employés pour la définition de référentiels.
+Certains offrent une excellente approximation pour une région précise
+au détriment des régions pour lesquelles le référentiel n’a pas été conçu,
+et d’autres offrant un compromis pour l’ensemble de la planète.
 </p>
 <div class="example"><p><b>Exemple:</b>
 au début du XX<sup>e</sup> siècle aux États-Unis, l’état du Michigan utilisait pour ses cartes un ellipsoïde basé
@@ -1564,11 +1567,15 @@ et sont représentées dans GeoAPI sous forme d’objets de type <code class="Ge
 Les généralisation de l’usage du système <abbr>WGS84</abbr> tend à réduire le besoin d’utiliser
 les objets <code class="GeoAPI">Transformation</code> pour les données récentes, mais ne l’élimine pas complètement.
 La Terre bouge sous l’effet de la tectonique des plaques et de nouveaux systèmes sont définis chaque année pour en tenir compte.
-Même le système <abbr>WGS84</abbr>, sensé correspondre à une définition à un instant donné,
+Par exemple bien que le référentiel <abbr>NAD83</abbr> a été défini à l’origine comme pratiquement équivalent à <abbr>WGS84</abbr>,
+il existe maintenant (en 2016) un écart d’environ 1.5 mètres entre ces deux systèmes.
+Le référentiel <cite>Japanese Geodetic Datum 2000</cite> était aussi défini comme pratiquement équivalent à <abbr>WGS84</abbr>,
+mais le nouveau référentiel <cite>Japanese Geodetic Datum 2011</cite> s’en écarte.
+Le référentiel <abbr>WGS84</abbr> lui-même, sensé correspondre à une définition à un instant donné,
 a subit des révisions dues notamment à l’amélioration de la précision des instruments.
-Ainsi il existe aujourd’hui au moins six versions de <abbr>WGS84</abbr>, avec des écarts entre elles allant jusqu’à 7 centimetres.
+Ainsi il existe aujourd’hui au moins six versions de <abbr>WGS84</abbr>.
 En outre beaucoups de bordures ont été définies légalement dans des référentiels plus anciens, par exemple <abbr>NAD27</abbr> aux États-Unis.
-Mettre à jour dans un nouveau référentiel obligerait à transformer des lignes droites ou des formes géométriques simples en des formes beaucoup plus irrégulières
+Mettre à jour dans un nouveau référentiel peut obliger à transformer des lignes droites ou des formes géométriques simples en des formes plus irrégulières
 si on ne veut pas que des parcelles de terrain changent de propriétaire.
 </p>
 <article>
@@ -1581,28 +1588,47 @@ afin de simplifier l’implémentation d’une bibliothèque de transformation d
 La transformation d’une coordonnée d’un référentiel <var>A</var> vers un référentiel <var>B</var>
 pourrait se faire en transformant d’abord de <var>A</var> vers <abbr>WGS84</abbr>, puis de <abbr>WGS84</abbr> vers <var>B</var>.
 Il suffirait ainsi de stocker dans chaque objet <code class="GeoAPI">GeodeticDatum</code> les informations nécessaires à la transformation vers <abbr>WGS84</abbr>.
-Cette approche était encouragée dans la version 1 du format <abbr>WKT</abbr>, qui définissait un élément <code class="OGC">TOWGS84</code> remplissant ce rôle.
-</p><p>
-Cette approche est désignée par <abbr>EPSG</abbr> sous le nom de « early binding »,
-car elle associe des informations sur la transformations de coordonnées très tôt dans la définition des objets géodésiques.
+Cette approche était encouragée dans la version 1 du format <abbr>WKT</abbr>, qui définissait un élément <code>TOWGS84[…]</code> remplissant ce rôle.
+Cette approche est désignée par <abbr>EPSG</abbr> sous le nom de « early binding »
+car elle associe des informations sur la transformations de coordonnées très tôt dans la définition des objets géodésiques,
+souvent directement au moment de la construction d’un object <code class="GeoAPI">GeographicCRS</code>.
 Bien que <abbr>EPSG</abbr> reconnaisse que cette approche soit couramment employée, elle n’est pas recommandée pour plusieurs raisons:
 </p>
 <ul>
 <li>Il existe parfois plusieurs transformations allant d’un référentiel <var>A</var> vers <var>B</var>,
-chacune étant plus précise pour une région géographique donnée.
-Par exemple il existe une cinquantaine de transformations de <abbr>NAD27</abbr> vers <abbr>NAD83</abbr>.</li>
+chacune étant plus précise pour une région géographique donnée.</li>
 <li>Certaines opérations sont conçues spécifiquement pour transformer de <var>A</var> vers <var>B</var>
 et n’ont pas la même précision qu’aurait une autre transformation faisant un détour par <abbr>WGS84</abbr>.</li>
+<li><abbr>WGS84</abbr> lui-même subit parfois des révisions, ce qui en fait une cible mouvante (bien que très lentement)
+pour les bibliothèques de transformations de coordonnées.</li>
 <li>Il existe d’autres systèmes globaux qui pourraient servir de pivot, par exemple le <cite>Galileo Reference Frame</cite> (<abbr>GTRF</abbr>)
-mis en place par le concurrent européen du <abbr title="Global Positioning System">GPS</abbr>. Et <abbr>WGS84</abbr> lui-même subit parfois des révisions.</li>
+mis en place par le concurrent européen du <abbr title="Global Positioning System">GPS</abbr>.</li>
 </ul>
+<div class="example"><p><b>Exemple:</b>
+la base de données géodésiques <abbr>EPSG</abbr> définie une cinquantaine de transformations de <abbr>NAD27</abbr> vers <abbr>NAD83</abbr>.
+Dans une approche de type « early binding », le même système de référence « <abbr>NAD27</abbr> » représenté dans le format <abbr>WKT</abbr> 1
+aurait besoin d’être défini avec un élément <code>TOWGS84[-8, 160, 176]</code> pour des coordonnées aux États-Unis,
+ou avec un élément <code>TOWGS84[-10, 158, 187]</code> pour coordonnées aux Canada.
+Différents paramètres existent aussi pour d’autres régions telles que Cuba.
+Il n’est donc pas possible de représenter une telle diversité en associant un seul élément <code>TOWGS84[…]</code> à un système de référence des coordonnées.
+Même en restreignant l’usage d’un référenciel au domaine de validité de son élément <code>TOWGS84[…]</code>,
+ces transformations resteraient approximatives avec une précision de 10 mètres dans le cas des États-Unis.
+Des transformations plus précises existent sous la forme des grilles de changements de référentiel <abbr>NADCON</abbr>,
+mais ces grilles sont pour des transformations de <abbr>NAD27</abbr> vers <abbr>NAD83</abbr>
+(qui se déplacent ensemble sur la même plaque continentale) et non vers <abbr>WGS84</abbr> (qui se déplace indépendamment).
+Cette différence était souvent ignorée lorsque l’on considérait que <abbr>NAD83</abbr> et <abbr>WGS84</abbr>
+étaient pratiquement équivalents, mais cette supposition est aujourd’hui à prendre avec plus de précautions.
+</p></div>
 <p>
 <abbr>EPSG</abbr> recommande plutôt d’utiliser une approche dite « late binding »,
-selon laquelle les paramètres nécessaires aux transformations de coordonnées sont définis pour des paires de
-référentiels « <var>A</var> vers <var>B</var> » plutôt qu’associés à des référentiels pris isolément.
+selon laquelle les méthodes et paramètres nécessaires aux transformations de coordonnées sont définis pour des paires
+de référentiels « <var>A</var> vers <var>B</var> » (éventuellement complétées par leurs domaines de validité)
+plutôt qu’associés à des référentiels pris isolément.
 Apache <abbr title="Spatial Information System">SIS</abbr> est une implémentation de type « late binding »,
 bien qu’une réminiscence de l’approche « early binding » existe toujours
 sous la forme de la propriété <code class="SIS">DefaultGeodeticDatum​.getBursaWolfParameters()</code>.
+<abbr>SIS</abbr> n’utilise cette dernière que comme solution de dernier recours
+s’il ne peut pas appliquer l’approche « late binding » avec les systèmes de références donnés.
 </p>
 </article>
 
@@ -1617,8 +1643,7 @@ sous la forme de la propriété <code class="SIS">DefaultGeodeticDatum​.getBur
 
 <h3 id="ProjectedCRS"><span class="section-number">3.1.5.</span> Projections cartographiques</h3>
 <p>
-L’utilité des projections cartographiques est discutée dans de nombreux livres et sites web.
-Il s’agit de représenter une surface courbe (la Terre) sur une surface plane (une carte ou un écran d’ordinateur)
+Les projections cartographiques représentent une surface courbe (la Terre) sur une surface plane (une carte ou un écran d’ordinateur)
 en contrôlant les déformations: on peut préserver les angles ou les surfaces, mais pas les deux à la fois.
 Les propriétés géométriques à conserver dépendent de l’objet d’étude et du travail à effectuer.
 Par exemple les pays plutôt allongés dans le sens Est-Ouest utilisent souvent une projection de Lambert,
@@ -1679,8 +1704,8 @@ Ces opérations n’effectuent pas de projections cartographiques, plus complexe
 <li>Appliquer des rotations, translations, échelles ou cisaillements (des transformations dites <cite>affines</cite>).</li>
 </ul>
 <p>
-Les opérations linéaires ont la propriété de toujours se combiner:
-peu importe le nombre d’opérations linéaires que l’on enchaîne, le résultat sera toujours exprimable par une seule opération linéaire.
+Les opérations linéaires peuvent se combiner efficacement:
+peu importe le nombre d’opérations linéaires que l’on enchaîne, le résultat sera exprimable par une seule opération linéaire.
 Cette propriété est plus facilement visible lorsque les opérations linéaires sont exprimées sous forme de matrices:
 pour combiner les opérations, il suffit de multiplier les matrices.
 </p>
@@ -1733,9 +1758,9 @@ est alors linéaire et peut être représentée par la matrice suivante:</p>
 où
 </td><td style="vertical-align: middle">
 <ul>
-<li><var>S</var> est un facteur d’échelle (<cite>Scale</cite>) correspondant dans cet exemple à la taille des pixels.</li>
+<li><var>S</var> est un facteur d’échelle (<cite>Scale</cite>) correspondant dans cet exemple à la taille des pixels en degrés.</li>
 <li><var>H</var> est un terme de cisaillement (<cite>Shear</cite>), habituellement zéro sauf si l’image a une rotation.</li>
-<li><var>T</var> est une translation (<cite>Translation</cite>) correspondant dans cet exemple à la coordonnée d’un coin de l’image.</li>
+<li><var>T</var> est une translation (<cite>Translation</cite>) correspondant dans cet exemple à la coordonnée géographique d’un coin de l’image.</li>
 </ul>
 </td></tr></table>
 <p>
@@ -2056,7 +2081,7 @@ sous forme d’une matrice colonne (la raison sera plus claire bientôt):
 
 <p>
 Dans la suite de ce texte nous abrégerons ∂<var>x</var>(<var>λ</var>,<var>φ</var>) par ∂<var>x</var> et de même pour ∂<var>y</var>,
-mais il faut garder à l'esprit que chacune de ces valeurs dépendent de la coordonnée (<var>λ</var>,<var>φ</var>) originale.
+mais il faut garder à l’esprit que chacune de ces valeurs dépendent de la coordonnée (<var>λ</var>,<var>φ</var>) originale.
 Le premier élément de la matrice (∂<var>x</var>/∂<var>λ</var>) nous indique à quel déplacement vers l’Est
 (<var>x</var> en mètres) correspond un déplacement de un degré de longitude (<var>λ</var>).
 De même, le dernier élément de la matrice (∂<var>y</var>/∂<var>φ</var>) nous indique à quel déplacement vers le Nord
