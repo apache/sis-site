@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>How to use EPSG geodetic dataset</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="http://www.apache.org/css/code.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/sis.css">
+
+    
+
+    
+    <!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.  See the NOTICE file distributed with this work for additional information regarding copyright ownership.  The ASF licenses this file to you under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use this file except in compliance with the License.  You may obtain a copy of the License at . http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the License for the specific language governing permissions and limitations under the License. -->
+  </head>
+
+  <body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="/index.html"> Apache SIS&trade; </a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">About<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="mail-lists.html">Mailing Lists</a></li>
+                  <li><a href="license.html">Project License</a></li>
+                  <li><a href="team-list.html">Project Team</a></li>
+                </ul>
+              </li>
+              <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">Project Documentation<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="book/en/developer-guide.html">Developer guide</a></li>
+                  <li><a href="apidocs/index.html">Online Javadoc</a></li>
+                  <li><a href="downloads.html">Downloads</a></li>
+                  <li><a href="source.html">Source Code</a></li>
+                  <li><a href="code-patterns.html">Code patterns</a></li>
+                  <li><a href="faq.html">FAQ</a></li>
+                  <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+                </ul>
+              </li>
+              <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">ASF <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="http://www.apache.org">The Foundation</a></li>
+                  <li><a href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
+                  <li><a href="http://www.apache.org/foundation/sponsorship.html">Become a Sponsor</a></li>
+                  <li><a href="http://www.apache.org/security/">Security</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div> <!-- /.nav-collapse -->
+        </div><!-- /.container -->
+      </div><!-- /.navbar-inner -->
+    </div>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span2">
+          <img src="img/logo.png"/>
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              <li class="active"><a href="index.html">Home</a></li>
+              <li><a href="mail-lists.html">Mailing Lists</a></li>
+              <li><a href="license.html">Project License</a></li>
+              <li><a href="team-list.html">Project Team</a></li>
+              <li class="nav-header">Project Documentation</li>
+              <li><a href="book/en/developer-guide.html">Developer guide</a></li>
+              <li><a href="apidocs/index.html">Online Javadoc</a></li>
+              <li><a href="downloads.html">Downloads</a></li>
+              <li><a href="source.html">Source Code</a></li>
+              <li><a href="code-patterns.html">Code patterns</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+              <li class="nav-header">ASF</li>
+              <li><a href="http://www.apache.org">The Foundation</a></li>
+              <li><a href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
+              <li><a href="http://www.apache.org/foundation/sponsorship.html">Become a Sponsor</a></li>
+              <li><a href="http://www.apache.org/security/">Security</a></li>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+        <div class="span10">
+          <section id="content" class="row">
+            <article class="span12">
+              <p class="page-title">How to use EPSG geodetic dataset</p>
+              <style type="text/css">
+/* The following code is added by mdx_elementid.py
+   It was originally lifted from http://subversion.apache.org/style/site.css */
+/*
+ * Hide class="elementid-permalink", except when an enclosing heading
+ * has the :hover property.
+ */
+.headerlink, .elementid-permalink {
+  visibility: hidden;
+}
+h2:hover > .headerlink, h3:hover > .headerlink, h1:hover > .headerlink, h6:hover > .headerlink, h4:hover > .headerlink, h5:hover > .headerlink, dt:hover > .elementid-permalink { visibility: visible }</style>
+<p>The <a href="http://www.epsg.org/">EPSG geodetic dataset</a> is a de-facto standard providing
+<a href="tables/CoordinateReferenceSystems.html">thousands of Coordinate Reference System (CRS) definitions</a>
+together with information about how to perform coordinate operations, their accuracies and their domains of validity.
+The EPSG dataset is owned and maintained by the <a href="http://www.iogp.org/">International Association of Oil &amp; Gas producers</a>.
+Usage of EPSG dataset with Apache SIS is optional but strongly recommended:
+without that geodetic dataset, only a small subset of CRS definitions will be available
+(basically the constants enumerated in the <code>CommonCRS</code> Java class)
+unless full definitions are provided in <em>Well Known Text</em> (WKT) or <em>Geographic Markup Language</em> (GML) formats.
+Furthermore, coordinate operations between any given pair of CRS may be less accurate
+and their domains of validity may be unspecified if Apache SIS can not query EPSG.</p>
+<p>The EPSG geodetic dataset is not distributed with Apache SIS because the <a href="http://www.epsg.org/TermsOfUse">EPSG terms of use</a>
+are incompatible with Apache license. The following items are quoted from those terms of use:</p>
+<ul>
+<li>The <a href="http://www.epsg.org/">EPSG</a> Facilities are published by <a href="http://www.iogp.org/">IOGP</a> at no charge. Distribution for profit is forbidden.</li>
+<li>The data may be included in any commercial package provided that any commerciality is based on value added
+    by the provider and not on a value ascribed to the EPSG Dataset which is made available at no charge.</li>
+<li>Ownership of the EPSG Dataset by IOGP must be acknowledged in any publication or transmission
+    (by whatever means) thereof (including permitted modifications).</li>
+<li>Modification of parameter values is permitted as described in the table 1 to allow change to the content
+    of the information provided that numeric equivalence is achieved.</li>
+<li>No data that has been modified other than as permitted in these Terms of Use shall be attributed to the EPSG Dataset.</li>
+</ul>
+<p>In order to use the EPSG geodetic dataset with Apache SIS, apply <em>one</em> of the following choices:</p>
+<div class="toc">
+<ul>
+<li><a href="#command-line">Install a local copy with command-line tool</a></li>
+<li><a href="#maven">Add a Maven dependency</a></li>
+<li><a href="#jndi">Use Java Naming and Directory Interface</a><ul>
+<li><a href="#jndi-java">Registration by Java code</a></li>
+<li><a href="#jndi-webapp">Registration in web application containers</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="command-line">Install a local copy with command-line tool<a class="headerlink" href="#command-line" title="Permanent link">&para;</a></h1>
+<p>If the <a href="command-line.html">command-line tool</a> has been downloaded and installed, just query any CRS.
+For example:</p>
+<div class="codehilite"><pre>sis crs EPSG:6676
+</pre></div>
+
+
+<p>The first time that the command-line tool needs to query EPSG, it will prompt the user for authorization
+to download EPSG geodetic dataset from Maven Central. If the user accepts EPSG terms of use, then a local
+copy of the EPSG geodetic dataset will be created and stored in the <code>apache-sis-0.7/data</code> sub-directory.</p>
+<p>If the command-line tool does not offer to download the EPSG geodetic dataset,
+try adding a <code>derby-&lt;version&gt;.jar</code> file (download lib-distribution from <a href="http://db.apache.org/derby/derby_downloads.html">Derby project</a>) in the <code>apache-sis-0.7/lib</code> sub-directory.
+This is normally not needed with Oracle JDK6, JDK7 or JDK8 because Apache SIS tries to use the JavaDB embedded
+in those distributions, but may be necessary with other distributions or in security-constrained environments.</p>
+<p>For using the installed EPSG geodetic dataset in your own application, apply <em>one</em> of the following choices:</p>
+<ul>
+<li>Set the <code>SIS_DATA</code> environment variable to the path to the <code>apache-sis-0.7/data</code> directory <em>(preferred choice)</em>.</li>
+<li>Set the <code>derby.system.home</code> Java property to the path to the <code>apache-sis-0.7/data/Databases</code> directory.</li>
+</ul>
+<p>Alternatively <code>SIS_DATA</code> or <code>derby.system.home</code> can be set to the path of any other directory which contain the same files.</p>
+<h1 id="maven">Add a Maven dependency<a class="headerlink" href="#maven" title="Permanent link">&para;</a></h1>
+<p>Maven projects can get the EPSG geodetic dataset automatically, <em>without any prompt for terms of use agreement</em>,
+if they add a dependency to the
+<code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​0.7</code>
+artifact in their project.
+We assume that developers who add this dependency explicitely in their project agree with EPSG terms of use.
+The <code>&lt;dependency&gt;</code> fragment to use in <code>pom.xml</code> files is given in the <a href="downloads.html#epsg">download</a> page.</p>
+<p>In addition, users need to apply <em>one</em> of the following choices:</p>
+<ul>
+<li>Set the <code>SIS_DATA</code> environment variable to the path of an initially empty directory <em>(preferred choice)</em>.</li>
+<li>Set the <code>derby.system.home</code> Java property to the path of an initially empty directory,
+    or a directory that contain other Derby databases.</li>
+<li>Register a <code>DataSource</code> under the <code>java:comp/env/jdbc/SpatialMetadata</code> name in a JNDI directory
+    (see <a href="#jndi">next section</a>). The database must exist but can be initially empty.</li>
+</ul>
+<p>The directory referenced by <code>SIS_DATA</code> or <code>derby.system.home</code> must exist.
+Sub-directories in that directory will be created as needed.</p>
+<h1 id="jndi">Use Java Naming and Directory Interface<a class="headerlink" href="#jndi" title="Permanent link">&para;</a></h1>
+<p>While Apache SIS uses Apache Derby by default, it is also possible to use another database software like HSQL or PostgreSQL.
+The database must exist but can be empty, in which case it will be populated with an EPSG schema when first needed
+if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​0.7</code> dependency is on the classpath
+(see <a href="#maven">above section</a>).</p>
+<p>For using an arbitrary database, register a <code>javax.sql.DataSource</code> instance through the Java Naming and Directory Interface (JNDI).
+That registration can be done programmatically (by Java code) or by configuring XML files in some environments.</p>
+<h2 id="jndi-java">Registration by Java code<a class="headerlink" href="#jndi-java" title="Permanent link">&para;</a></h2>
+<p>Registration can be done by the following Java code, provided that a JNDI implementation is available on the classpath:</p>
+<div class="codehilite"><pre><span class="c1">// Example using PostgreSQL data source (org.postgresql.ds.PGSimpleDataSource)</span>
+<span class="n">PGSimpleDataSource</span> <span class="n">ds</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PGSimpleDataSource</span><span class="o">();</span>
+<span class="n">ds</span><span class="o">.</span><span class="na">setServerName</span><span class="o">(</span><span class="s">&quot;localhost&quot;</span><span class="o">);</span>
+<span class="n">ds</span><span class="o">.</span><span class="na">setDatabaseName</span><span class="o">(</span><span class="s">&quot;SpatialMetadata&quot;</span><span class="o">);</span>
+
+<span class="c1">// Registration assuming that a JNDI implementation is available</span>
+<span class="n">Context</span> <span class="n">env</span> <span class="o">=</span> <span class="o">(</span><span class="n">Context</span><span class="o">)</span> <span class="n">InitialContext</span><span class="o">.</span><span class="na">doLookup</span><span class="o">(</span><span class="s">&quot;java:comp/env&quot;</span><span class="o">);</span>
+<span class="n">env</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="s">&quot;jdbc/SpatialMetadata&quot;</span><span class="o">,</span> <span class="n">ds</span><span class="o">);</span>
+</pre></div>
+
+
+<h2 id="jndi-webapp">Registration in web application containers<a class="headerlink" href="#jndi-webapp" title="Permanent link">&para;</a></h2>
+<p>JNDI implementations are provided by web application containers like Apache Tomcat.
+When Apache SIS is used in a JavaEE container, the data source can be configured as below:</p>
+<ol>
+<li>
+<p>Make the JDBC driver available to the web container and its applications.
+   On Tomcat, this is accomplished by installing the driver's JAR files into the <code>$CATALINA_HOME/lib</code> directory.</p>
+</li>
+<li>
+<p>If using Derby, copy <code>derby.war</code> into the <code>$CATALINA_HOME/webapps</code> directory and specify the directory where
+   the Derby databases are located (skip this step if another database is used):</p>
+<div class="codehilite"><pre><span class="nb">export </span><span class="nv">JAVA_OPTS</span><span class="o">=</span>-Dderby.system.home<span class="o">=</span><span class="nv">$SIS_DATA</span>/Databases
+</pre></div>
+
+
+</li>
+<li>
+<p>Declare the JNDI name in application <code>WEB-INF/web.xml</code> file:</p>
+<div class="codehilite"><pre><span class="nt">&lt;resource-ref&gt;</span>
+  <span class="nt">&lt;description&gt;</span>EPSG dataset and other metadata used by Apache SIS.<span class="nt">&lt;/description&gt;</span>
+  <span class="nt">&lt;res-ref-name&gt;</span>jdbc/SpatialMetadata<span class="nt">&lt;/res-ref-name&gt;</span>
+  <span class="nt">&lt;res-type&gt;</span>javax.sql.DataSource<span class="nt">&lt;/res-type&gt;</span>
+  <span class="nt">&lt;res-auth&gt;</span>Container<span class="nt">&lt;/res-auth&gt;</span>
+<span class="nt">&lt;/resource-ref&gt;</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>Configure the data source in <code>$CATALINA_HOME/conf/context.xml</code> or in application <code>META-INF/context.xml</code> file
+   (change attribute values as needed for the chosen JDBC driver):</p>
+<div class="codehilite"><pre><span class="nt">&lt;Context</span> <span class="na">crossContext=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;WatchedResource&gt;</span>WEB-INF/web.xml<span class="nt">&lt;/WatchedResource&gt;</span>
+  <span class="nt">&lt;Resource</span> <span class="na">name            =</span> <span class="s">&quot;jdbc/SpatialMetadata&quot;</span>
+            <span class="na">auth            =</span> <span class="s">&quot;Container&quot;</span>
+            <span class="na">type            =</span> <span class="s">&quot;javax.sql.DataSource&quot;</span>
+            <span class="na">username        =</span> <span class="s">&quot;sa&quot;</span>
+            <span class="na">password        =</span> <span class="s">&quot;sa&quot;</span>
+            <span class="na">driverClassName =</span> <span class="s">&quot;org.apache.derby.jdbc.EmbeddedDriver&quot;</span>
+            <span class="na">url             =</span> <span class="s">&quot;jdbc:derby:SpatialMetadata&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/Context&gt;</span>
+</pre></div>
+
+
+</li>
+<li>
+<p>If using Derby, verify on the <code>localhost:8080/derby/derbynet</code> page (skip this step if another database is used).</p>
+</li>
+</ol>
+<p>More advanced configurations are possible. For example Tomcat can invoke a custom Java method instead than
+fetching the data source from the <code>context.xml</code> file.</p>
+            </article>
+          </section>
+        </div><!--/span-->
+      </div><!--/row-fluid-->
+    </div><!--/container-fluid-->
+
+  <footer class="footer">
+    <div class="container">
+      <p>Copyright &copy; 2013-2016 The Apache Software Foundation, Licensed under the
+        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
+          Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+    </div>
+  </footer>
+
+  <script src="js/jquery-1.9.1.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+
+</body>
+</html>

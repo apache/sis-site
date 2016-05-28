@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>SIS downloads</title>
+    <title>Apache SIS downloads</title>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="http://www.apache.org/css/code.css">
@@ -81,7 +81,7 @@
         <div class="span10">
           <section id="content" class="row">
             <article class="span12">
-              <p class="page-title">SIS downloads</p>
+              <p class="page-title">Apache SIS downloads</p>
               <style type="text/css">
 /* The following code is added by mdx_elementid.py
    It was originally lifted from http://subversion.apache.org/style/site.css */
@@ -93,31 +93,35 @@
   visibility: hidden;
 }
 h2:hover > .headerlink, h3:hover > .headerlink, h1:hover > .headerlink, h6:hover > .headerlink, h4:hover > .headerlink, h5:hover > .headerlink, dt:hover > .elementid-permalink { visibility: visible }</style>
-<p>All downloads can be verified using the Apache SIS code signing <a href="http://www.apache.org/dist/sis/KEYS">KEYS</a>.</p>
+<p>Apache SIS 0.7 is now available.
+See the <a href="release-notes/0.7.html">release notes</a> for a list of changes since the previous version.</p>
 <p>Apache SIS releases are available under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.
 See the <code>NOTICE</code> file contained in each release artifact for applicable copyright attribution notices.</p>
 <div class="toc">
 <ul>
 <li><a href="#bundles">Download ZIP files</a><ul>
-<li><a href="#release-notes">Release notes</a></li>
+<li><a href="#release-gpg">Verify signatures</a></li>
 </ul>
 </li>
 <li><a href="#maven">Download as a Maven dependency</a><ul>
-<li><a href="#maven-release">Using SIS releases</a></li>
-<li><a href="#maven-snapshot">Using SIS development snapshots</a></li>
+<li><a href="#epsg">Using EPSG geodetic dataset</a></li>
 </ul>
 </li>
 </ul>
 </div>
 <h1 id="bundles">Download ZIP files<a class="headerlink" href="#bundles" title="Permanent link">&para;</a></h1>
-<p>Apache SIS 0.6 is now available.
-See the <code>CHANGES</code> file for more information on the list of updates in this initial release.</p>
+<p>Apache SIS is distributed in the form of Java source code in a multi-modules Apache Maven project.
+For convenience, an aggregated Javadoc and a pre-compiled JAR file are available as separated downloads.
+The precompiled JAR file contains most modules and dependencies in a single archive for easier inclusion
+in a classpath.</p>
 <ul>
-<li><a href="http://www.apache.org/dyn/closer.cgi/sis/0.6/apache-sis-0.6-src.zip">Apache SIS-0.6 sources</a> [<a href="http://www.apache.org/dist/sis/0.6/apache-sis-0.6-src.zip.asc">PGP</a>]</li>
-<li><a href="http://www.apache.org/dyn/closer.cgi/sis/0.6/apache-sis-0.6-doc.zip">Apache SIS-0.6 javadoc</a> [<a href="http://www.apache.org/dist/sis/0.6/apache-sis-0.6-doc.zip.asc">PGP</a>]</li>
-<li><a href="http://www.apache.org/dyn/closer.cgi/sis/0.6/apache-sis-0.6-bin.zip">Apache SIS 0.6 binary</a> [<a href="http://www.apache.org/dist/sis/0.6/apache-sis-0.6-bin.zip.asc">PGP</a>]</li>
+<li><a href="http://www.apache.org/dyn/closer.cgi/sis/0.7/apache-sis-0.7-src.zip">Apache SIS 0.7 sources</a> [<a href="http://www.apache.org/dist/sis/0.7/apache-sis-0.7-src.zip.asc">PGP</a>]</li>
+<li><a href="http://www.apache.org/dyn/closer.cgi/sis/0.7/apache-sis-0.7-doc.zip">Apache SIS 0.7 javadoc</a> [<a href="http://www.apache.org/dist/sis/0.7/apache-sis-0.7-doc.zip.asc">PGP</a>]</li>
+<li><a href="http://www.apache.org/dyn/closer.cgi/sis/0.7/apache-sis-0.7-bin.zip">Apache SIS 0.7 binary</a> [<a href="http://www.apache.org/dist/sis/0.7/apache-sis-0.7-bin.zip.asc">PGP</a>]</li>
 </ul>
-<p>The PGP (<em>Pretty Good Privacy</em>) signatures can be verified using any OpenPGP implementation, for example GPG (<em>GNU Privacy Guard</em>).
+<h2 id="release-gpg">Verify signatures<a class="headerlink" href="#release-gpg" title="Permanent link">&para;</a></h2>
+<p>All downloads can be verified using the Apache SIS code signing <a href="http://www.apache.org/dist/sis/KEYS">KEYS</a>.
+The PGP (<em>Pretty Good Privacy</em>) signatures can be verified using any OpenPGP implementation, for example GPG (<em>GNU Privacy Guard</em>).
 First download the <code>[KEYS][keys]</code> file as well as the <code>.asc</code> signature files for the relevant release packages.
 Make sure you get these files from the main distribution directory, rather than from a mirror.
 Then verify the signatures using the following:</p>
@@ -139,15 +143,12 @@ pgpv apache-sis-X.Y.Z.zip.asc
 </pre></div>
 
 
-<h2 id="release-notes">Release notes<a class="headerlink" href="#release-notes" title="Permanent link">&para;</a></h2>
-<p>See the <a href="release-notes/0.6.html">release notes</a> for a list of changes since the previous version.</p>
 <h1 id="maven">Download as a Maven dependency<a class="headerlink" href="#maven" title="Permanent link">&para;</a></h1>
-<p>An easy approach to integrate SIS into a Java project uses the <a href="http://maven.apache.org">Apache Maven</a>
+<p>An easy approach to integrate Apache SIS into a Java project uses the <a href="http://maven.apache.org/">Apache Maven</a>
 dependency management tool to automatically obtain the required Java Archives (JAR) files from the network.
 Below are examples of declarations in a <code>pom.xml</code> file for building a project with the SIS core module:</p>
-<h2 id="maven-release">Using SIS releases<a class="headerlink" href="#maven-release" title="Permanent link">&para;</a></h2>
 <div class="codehilite"><pre><span class="nt">&lt;properties&gt;</span>
-  <span class="nt">&lt;sis.version&gt;</span>0.6<span class="nt">&lt;/sis.version&gt;</span>
+  <span class="nt">&lt;sis.version&gt;</span>0.7<span class="nt">&lt;/sis.version&gt;</span>
 <span class="nt">&lt;/properties&gt;</span>
 
 <span class="nt">&lt;dependencies&gt;</span>
@@ -160,30 +161,36 @@ Below are examples of declarations in a <code>pom.xml</code> file for building a
 </pre></div>
 
 
-<h2 id="maven-snapshot">Using SIS development snapshots<a class="headerlink" href="#maven-snapshot" title="Permanent link">&para;</a></h2>
-<div class="codehilite"><pre><span class="nt">&lt;properties&gt;</span>
-  <span class="nt">&lt;sis.version&gt;</span>0.7-SNAPSHOT<span class="nt">&lt;/sis.version&gt;</span>
-<span class="nt">&lt;/properties&gt;</span>
-
-<span class="nt">&lt;dependencies&gt;</span>
+<h2 id="epsg">Using EPSG geodetic dataset<a class="headerlink" href="#epsg" title="Permanent link">&para;</a></h2>
+<p>The <a href="http://www.epsg.org/">EPSG geodetic dataset</a> is optional but strongly recommended.
+The EPSG dataset is a de-facto standard providing
+<a href="tables/CoordinateReferenceSystems.html">thousands of Coordinate Reference System (CRS) definitions</a>
+together with information about how to perform coordinate operations, their accuracies and their domains of validity.
+However usage of EPSG dataset requires acceptation of <a href="http://www.epsg.org/TermsOfUse">EPSG terms of use</a>.
+If you accept those terms of use, then the following dependency can be added:</p>
+<div class="codehilite"><pre><span class="nt">&lt;dependencies&gt;</span>
   <span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>org.apache.sis.core<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>sis-referencing<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.sis.non-free<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>sis-epsg<span class="nt">&lt;/artifactId&gt;</span>
     <span class="nt">&lt;version&gt;</span>${sis.version}<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+  <span class="nt">&lt;/dependency&gt;</span>
+
+  <span class="c">&lt;!-- Following dependency can be omitted on Oracle JDK6, JDK7 or JDK8</span>
+<span class="c">       since those Java distributions contain Derby (a.k.a JavaDB). --&gt;</span>
+  <span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.derby<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>derby<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>10.12.1.1<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
   <span class="nt">&lt;/dependency&gt;</span>
 <span class="nt">&lt;/dependencies&gt;</span>
-
-<span class="nt">&lt;repositories&gt;</span>
-  <span class="nt">&lt;repository&gt;</span>
-    <span class="nt">&lt;id&gt;</span>apache.snapshots<span class="nt">&lt;/id&gt;</span>
-    <span class="nt">&lt;name&gt;</span>Apache Snapshot Repository<span class="nt">&lt;/name&gt;</span>
-    <span class="nt">&lt;url&gt;</span>http://repository.apache.org/snapshots<span class="nt">&lt;/url&gt;</span>
-    <span class="nt">&lt;releases&gt;</span>
-      <span class="nt">&lt;enabled&gt;</span>false<span class="nt">&lt;/enabled&gt;</span>
-    <span class="nt">&lt;/releases&gt;</span>
-  <span class="nt">&lt;/repository&gt;</span>
-<span class="nt">&lt;/repositories&gt;</span>
 </pre></div>
+
+
+<p>In addition, user should set the <code>SIS_DATA</code> environment variable to an initially empty directory
+where Apache SIS will store the EPSG geodetic database.
+See <a href="epsg.html">How to use EPSG geodetic dataset</a> page for more information.</p>
             </article>
           </section>
         </div><!--/span-->
@@ -192,7 +199,7 @@ Below are examples of declarations in a <code>pom.xml</code> file for building a
 
   <footer class="footer">
     <div class="container">
-      <p>Copyright &copy; 2013-2015 The Apache Software Foundation, Licensed under the
+      <p>Copyright &copy; 2013-2016 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
           Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
     </div>

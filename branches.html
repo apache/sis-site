@@ -104,12 +104,20 @@ for making merges easier, then provides the steps to follow for performing the m
 <ul>
 <li><a href="#development">The development branches</a><ul>
 <li><a href="#jdk8">branches/JDK8</a></li>
-<li><a href="#jdk7">branches/JDK7</a></li>
-<li><a href="#jdk6">branches/JDK6</a></li>
-<li><a href="#trunk">trunk</a></li>
+<li><a href="#jdk7">branches/JDK7</a><ul>
+<li><a href="#behavior-jdk7">Behavioral differences</a></li>
 </ul>
 </li>
-<li><a href="#behavior">Behavioral differences between the branches</a></li>
+<li><a href="#jdk6">branches/JDK6</a><ul>
+<li><a href="#behavior-jdk6">Behavioral differences</a></li>
+</ul>
+</li>
+<li><a href="#trunk">trunk</a><ul>
+<li><a href="#behavior">Behavioral differences</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a href="#recommendations">Coding recommendations</a><ul>
 <li><a href="#formatting">Formatting</a></li>
 <li><a href="#imports">Import statements</a></li>
@@ -133,16 +141,28 @@ and uses some JDK8 or JDK7-specific features like:</p>
 <li>Syntax enhancements, mostly in exception handling (<em>try-with-resources</em>, <em>multi-catches</em>)
     but also on other aspects like <em>diamond operator</em>.</li>
 <li>Leveraging of new API (<em>suppressed exceptions</em>, <em>file systems</em>, <em>fork join</em>).</li>
+<li>Functional interfaces and lambda expressions.</li>
 </ul>
 <h2 id="jdk7">branches/JDK7<a class="headerlink" href="#jdk7" title="Permanent link">&para;</a></h2>
 <p>The JDK7 branch is a merge of the JDK8 branch ported to the JDK7 platform.
 The JDK7 branch implements the same GeoAPI interfaces than the JDK8 branch;
 the only differences (apart version number) are the modifications necessary
-for building and running on a JDK7 platform.</p>
+for building and running on a JDK7 platform:</p>
+<ul>
+<li><em>Lambda expressions</em> replaced by anonymous classes.</li>
+<li>New methods on collection interfaces replaced by calls to static methods.</li>
+<li><code>java.util.function</code> and <code>java.time</code> API replaced by internal placeholder classes.</li>
+</ul>
+<h3 id="behavior-jdk7">Behavioral differences<a class="headerlink" href="#behavior-jdk7" title="Permanent link">&para;</a></h3>
+<p>The JDK7 branch should behaves in a way close to identical to the JDK8 branch,
+with possible variations in the following aspects:</p>
+<ul>
+<li>Usage of <code>java.time.format.DateTimeFormatter</code> for parsing and formatting ISO 8601 dates
+    are simulated by usage of <code>java.text.SimpleDateFormat</code>. Those two formatters may not have
+    the same tolerance to inputs that deviate from the standard.</li>
+</ul>
 <h2 id="jdk6">branches/JDK6<a class="headerlink" href="#jdk6" title="Permanent link">&para;</a></h2>
 <p>The JDK6 branch is a merge of the JDK7 branch ported to the JDK6 platform.
-This is the recommended development branch for developers who can not use a JDK7 environment,
-but still want to work closely with latest GeoAPI interfaces.
 The JDK6 branch implements the same GeoAPI interfaces than the JDK7 branch;
 the only differences (apart version number) are the modifications necessary
 for building and running on a JDK6 platform:</p>
@@ -155,16 +175,7 @@ for building and running on a JDK6 platform:</p>
 <li>Imports of <code>java.util.Objects</code> replaced by imports of <code>org.apache.sis.internal.util.Objects</code>.</li>
 <li>Other JDK7-specific features resolved on a case-by-case basis.</li>
 </ul>
-<h2 id="trunk">trunk<a class="headerlink" href="#trunk" title="Permanent link">&para;</a></h2>
-<p>The trunk is a merge of the JDK6 branch ported to the interfaces defined by the <a href="http://www.geoapi.org/3.0/index.html">GeoAPI stable release</a>.
-This is the code which is built by the continuous integration system and deployed on the Maven repository.
-The only differences (apart version number) compared to the JDK6 branch are the modifications
-necessary for implementing an older version of the GeoAPI interfaces:</p>
-<ul>
-<li>Usages of non-existent GeoAPI interfaces are replaced by direct usages of the
-    corresponding Apache SIS implementation.</li>
-</ul>
-<h1 id="behavior">Behavioral differences between the branches<a class="headerlink" href="#behavior" title="Permanent link">&para;</a></h1>
+<h3 id="behavior-jdk6">Behavioral differences<a class="headerlink" href="#behavior-jdk6" title="Permanent link">&para;</a></h3>
 <p>Some JDK7-specific features are reproduced on the JDK6 branch in an approximative way,
 which may cause some differences in application behavior (ignoring differences in performance).
 Most differences are about the JDK7 branch being slightly stricter than the JDK6 branch is,
@@ -184,7 +195,36 @@ or being able to handle information that are unsupported on the JDK6 branch.</p>
     may make some potential SIS bugs slightly more difficult to identify.</p>
 </li>
 </ul>
-<p>Regarding all above points, the trunk is identical to the JDK6 branch.</p>
+<h2 id="trunk">trunk<a class="headerlink" href="#trunk" title="Permanent link">&para;</a></h2>
+<p>The trunk is a merge of the JDK6 branch ported to the interfaces defined by the <a href="http://www.geoapi.org/3.0/index.html">GeoAPI stable release</a>.
+This is the code which is built by the continuous integration system and deployed on the Maven repository.
+The main differences (apart version number) compared to the JDK6 branch are the modifications
+necessary for implementing an older version of the GeoAPI interfaces:</p>
+<ul>
+<li>
+<p>Usages of non-existent GeoAPI interfaces are replaced by direct usages of the
+    corresponding Apache SIS implementation.</p>
+</li>
+<li>
+<p>When a new revision of a standard is available,
+    the trunk still uses the old version since the new revision is not available in GeoAPI 3.0.
+    Sometime it results in usage of methods that are deprecated on the SIS development branches.</p>
+</li>
+</ul>
+<p>For security reasons and for avoiding misleading information, the following functionalities are disabled on trunk
+(but are still enabled on branches as experimental features). In particular the <code>Supervisor.ENABLED</code> flag controls
+whether the MBeans documented in the <code>org.apache.sis.console</code> package are enabled or not.</p>
+<ul>
+<li>In <code>core/sis-utility/src/main/java/org/apache/sis/internal/system/Supervisor.java</code>, the <code>ENABLED</code> flag is set to <code>false</code>.</li>
+<li>In <code>core/sis-utility/src/main/java/org/apache/sis/internal/util/TemporalUtilities.java</code>, the <code>REPORT_MISSING_MODULE</code> flag is set to <code>false</code>.</li>
+</ul>
+<p>Above flag values may change in future SIS releases.</p>
+<h3 id="behavior">Behavioral differences<a class="headerlink" href="#behavior" title="Permanent link">&para;</a></h3>
+<p>Because of changes between GeoAPI 3.0 and GeoAPI 4.0-SNAPSHOT, the following aspects need special care:</p>
+<ul>
+<li>If <code>op</code> is an instance of <code>PassThroughOperation</code>, then the <code>if (op instanceof SingleOperation)</code> expression
+    evaluates to <code>true</code> on trunk but to <code>false</code> on SIS development branches.</li>
+</ul>
 <h1 id="recommendations">Coding recommendations<a class="headerlink" href="#recommendations" title="Permanent link">&para;</a></h1>
 <p>The following recommendations aim to make the merges easier by reducing the extend of potential conflicts.</p>
 <h2 id="formatting">Formatting<a class="headerlink" href="#formatting" title="Permanent link">&para;</a></h2>
@@ -315,7 +355,7 @@ svn commit --message <span class="s2">&quot;Skip JDK7-specific changes.&quot;</s
 
   <footer class="footer">
     <div class="container">
-      <p>Copyright &copy; 2013-2015 The Apache Software Foundation, Licensed under the
+      <p>Copyright &copy; 2013-2016 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
           Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
     </div>

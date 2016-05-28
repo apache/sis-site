@@ -104,9 +104,10 @@ The intended audiences are SIS release managers.</p>
 <li><a href="#java-update">Java updates</a></li>
 </ul>
 </li>
-<li><a href="#prepare-source">Prepare site and source code</a><ul>
+<li><a href="#prepare-source">Prepare web site and source code</a><ul>
 <li><a href="#prepare-documentation">Documentation</a></li>
 <li><a href="#prepare-website">Web site</a></li>
+<li><a href="#prepare-code">Source code</a></li>
 </ul>
 </li>
 <li><a href="#branch">Create branch and tag</a><ul>
@@ -116,6 +117,7 @@ The intended audiences are SIS release managers.</p>
 </li>
 <li><a href="#maven-deploy">Deploy Maven artifacts</a><ul>
 <li><a href="#nexus-close">Verify and close the Nexus release artifacts</a></li>
+<li><a href="#maven-nonfree">Deploy non-free resources to Nexus</a></li>
 <li><a href="#nexus-text">Test the Nexus release artifacts</a></li>
 </ul>
 </li>
@@ -151,15 +153,16 @@ The intended audiences are SIS release managers.</p>
 <p>For all instructions in this page, <code>$OLD_VERSION</code> and <code>$NEW_VERSION</code> stand for the version
 number of the previous and the new release respectively, and <code>$RELEASE_CANDIDATE</code> stands for
 the current release attempt. Those versions shall be set on the command line like below (Unix):</p>
-<div class="codehilite"><pre><span class="nb">export </span><span class="nv">OLD_VERSION</span><span class="o">=</span>0.6
-<span class="nb">export </span><span class="nv">NEW_VERSION</span><span class="o">=</span>0.7
+<div class="codehilite"><pre><span class="nb">export </span><span class="nv">OLD_VERSION</span><span class="o">=</span>0.7
+<span class="nb">export </span><span class="nv">NEW_VERSION</span><span class="o">=</span>0.8
 <span class="nb">export </span><span class="nv">RELEASE_CANDIDATE</span><span class="o">=</span>1
 <span class="nb">export </span><span class="nv">SIGNING_KEY</span><span class="o">=</span>&lt;your key ID&gt;
 <span class="nb">export </span><span class="nv">BOOTCLASSPATH</span><span class="o">=</span>&lt;path to the rt.jar file of a JDK6 installation&gt;
 </pre></div>
 
 
-<p>The key ID value can be found be executing <code>gpg --list-keys</code>.
+<p>The key ID value is an hexadecimal numbers with 8 digits.
+It can be found be executing <code>gpg --list-keys</code>.
 The boot class path value is highly system-dependent. Some examples are:</p>
 <ul>
 <li><code>/usr/lib/jvm/java-6/jre/lib/rt.jar</code> on some Linux distributions (replace <code>java-6</code> by the actual directory name).</li>
@@ -189,10 +192,10 @@ in this page shall be adjusted accordingly.</p>
 <h2 id="java-update">Java updates<a class="headerlink" href="#java-update" title="Permanent link">&para;</a></h2>
 <p>While we need a JDK6 installation for the <code>bootclasspath</code> option, we do not recommend to use it for generating
 the binaries since JDK6 has reached its end of public updates (but not the end of commercial support).
-We recommend to create the release with JDK7 or JDK8 instead. Make sure that the JDK installation
-to be used for the release has been updated recently, since compilers may receive critical bug fixes.
+We recommend to create the release with JDK7 instead (JDK8 <code>javadoc</code> tool seems to have a bug that prevent its use with SIS).
+Make sure that the JDK installation to be used for the release has been updated recently, since compilers may receive critical bug fixes.
 For example the <code>javadoc</code> tool of older JDK versions was known to generate HTML pages with a vulnerability in them.</p>
-<h1 id="prepare-source">Prepare site and source code<a class="headerlink" href="#prepare-source" title="Permanent link">&para;</a></h1>
+<h1 id="prepare-source">Prepare web site and source code<a class="headerlink" href="#prepare-source" title="Permanent link">&para;</a></h1>
 <p>Before to start the release process:</p>
 <ul>
 <li>Review and update the <code>README</code> file on the <code>trunk</code> source code repository.</li>
@@ -220,6 +223,7 @@ Add a new <code>&lt;release&gt;</code> block for the new release with the estima
 <li><code>content/index.mdtext</code></li>
 <li><code>content/downloads.mdtext</code> (need also to update <code>$NEW_VERSION-SNAPSHOT</code> to the next snapshot version)</li>
 <li><code>content/command-line.mdtext</code></li>
+<li><code>content/epsg.mdtext</code></li>
 </ul>
 <p>Commit:</p>
 <div class="codehilite"><pre>svn add content/release-notes/<span class="nv">$NEW_VERSION</span>.html
@@ -229,6 +233,20 @@ svn commit --message <span class="s2">&quot;Prepare documentation for the $NEW_V
 
 <p>The new web site will be published in the <a href="http://sis.staging.apache.org">staging area</a>.
 It will not yet be published on <code>http://sis.apache.org</code>.</p>
+<h2 id="prepare-code">Source code<a class="headerlink" href="#prepare-code" title="Permanent link">&para;</a></h2>
+<p>Replace the <code>$OLD_VERSION</code> number by <code>$NEW_VERSION</code> in the following literals.
+Those changes need to be applied on the development branch and merged with all other branches and trunk.</p>
+<ul>
+<li><code>DOWNLOAD_URL</code> in <code>application/sis-console/src/main/java/org/apache/sis/console/ResourcesDownloader.java</code> file.</li>
+</ul>
+<p>Commit and merge to other branches and to trunk.</p>
+<div class="codehilite"><pre>svn commit --message <span class="s2">&quot;Set the EPSG geodetic dataset URL to its expected location after release.&quot;</span>
+<span class="nb">cd</span> ../JDK7
+svn merge ../JDK8
+<span class="c"># Repeat the above commit and the merge commands for other branches until the changes are merged to trunk.</span>
+</pre></div>
+
+
 <h1 id="branch">Create branch and tag<a class="headerlink" href="#branch" title="Permanent link">&para;</a></h1>
 <p>Execute the following command:</p>
 <div class="codehilite"><pre>svn copy https://svn.apache.org/repos/asf/sis/trunk <span class="se">\</span>
@@ -258,14 +276,8 @@ Note that this command does <em>not</em> yet remove the <code>-SNAPSHOT</code> s
 <ul>
 <li>Remove the whole <code>&lt;pluginRepositories&gt;</code> block (including comment), since it should not be needed for releases (and is actually not allowed).</li>
 </ul>
-<p>Consider modifying the following flags (those recommendations may be revised in future SIS releases):</p>
-<ul>
-<li>In <code>core/sis-utility/src/main/java/org/apache/sis/internal/system/Supervisor.java</code>, set the <code>ENABLED</code> flag to <code>false</code>.</li>
-<li>In <code>core/sis-utility/src/main/java/org/apache/sis/internal/util/TemporalUtilities.java</code>, set the <code>REPORT_MISSING_MODULE</code> flag to <code>false</code>.</li>
-</ul>
-<p>Remove the workaround for the bug in JDK6 <code>javadoc</code>, since we perform release with JDK7 or JDK8.
-Remove also the modules that are not yet ready for a release:</p>
-<div class="codehilite"><pre>svn remove core/sis-build-helper/src/main/java/org/opengis
+<p>Remove the modules that are not yet ready for a release:</p>
+<div class="codehilite"><pre>svn remove storage/sis-shapefile
 svn remove application/sis-javafx
 </pre></div>
 
@@ -358,12 +370,9 @@ mvn org.apache.sis.core:sis-build-helper:<span class="nv">$NEW_VERSION</span>:di
 </pre></div>
 
 
-<p>If the above succeeded, deploy. We temporarily delete the Maven site descriptors (<code>site.xml</code>)
-for preventing Maven to deploy them, since there is no apparent reason why users would want to
-download site descriptors from a Maven repository.</p>
-<div class="codehilite"><pre>find . -name <span class="s2">&quot;site.xml&quot;</span> -delete
+<p>If the above succeeded, deploy:</p>
+<div class="codehilite"><pre>chmod a-w target/distribution/*.zip
 mvn deploy --activate-profiles apache-release --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
-svn revert . --recursive
 </pre></div>
 
 
@@ -396,6 +405,22 @@ so try to see at least one code snippet.</p>
 </ul>
 <p>We will announce later (in the <cite>Put the release candidate up for a vote</cite> section) on the <code>dev@</code> mailing list
 the availability of this temporary repository for testing purpose.</p>
+<h2 id="maven-nonfree">Deploy non-free resources to Nexus<a class="headerlink" href="#maven-nonfree" title="Permanent link">&para;</a></h2>
+<p>We deploy the non-free resources in a separated Nexus repository for allowing deployment of those resources to Maven Central
+before deployment of the rest of Apache SIS. This allows to test that the URL to those resources in Apache SIS are correct.</p>
+<p>Go to the directory that contains a checkout of <code>https://svn.apache.org/repos/asf/sis/data/non-free/sis-epsg</code>.
+Replace occurrences of <code>&lt;version&gt;$OLD_VERSION&lt;/version&gt;</code> by <code>&lt;version&gt;$NEW_VERSION&lt;/version&gt;</code> in the root <code>pom.xml</code>.
+Deploy:</p>
+<div class="codehilite"><pre>mvn deploy --activate-profiles apache-release --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
+</pre></div>
+
+
+<p>In Nexus:</p>
+<ul>
+<li>Delete all <code>*-source-release.zip.*</code> files since they duplicate the <code>*-source.zip.*</code> files.</li>
+<li>In the <code>sis-epsg-$NEW_VERSION.jar</code> file, verify that <code>META-INF/LICENSE</code> contain the EPSG terms of use.</li>
+<li>Close the repository and take note of its URL.</li>
+</ul>
 <h2 id="nexus-text">Test the Nexus release artifacts<a class="headerlink" href="#nexus-text" title="Permanent link">&para;</a></h2>
 <p>Go to the test Maven project.
 Open the root <code>pom.xml</code> file and set the <code>&lt;version&gt;</code> number to the SIS release to be tested.
@@ -404,15 +429,27 @@ of the temporary Maven repository created by Nexus.
 Usually, only the 3 last digits need to be updated.</p>
 <div class="codehilite"><pre><span class="nb">cd</span> ../../release-test/maven
 vim pom.xml
+mvn compile
 svn commit -m <span class="s2">&quot;Test project for SIS $NEW_VERSION-RC$RELEASE_CANDIDATE&quot;</span>
+</pre></div>
+
+
+<p>Create a temporary directory where Apache SIS will write the EPSG dataset.</p>
+<div class="codehilite"><pre>mkdir target/SpatialMetadata
+<span class="nb">export </span><span class="nv">SIS_DATA</span><span class="o">=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/target/SpatialMetadata
 </pre></div>
 
 
 <p>Clear the local Maven repository in order to force downloads from the Nexus repository, then test.
 This will also verify the checksums.</p>
-<div class="codehilite"><pre><span class="n">rm</span> <span class="o">-</span><span class="n">r</span> <span class="o">~/</span><span class="p">.</span><span class="n">m2</span><span class="o">/</span><span class="n">repository</span><span class="o">/</span><span class="n">org</span><span class="o">/</span><span class="n">apache</span><span class="o">/</span><span class="n">sis</span>
-<span class="n">mvn</span> <span class="n">package</span> <span class="o">--</span><span class="n">strict</span><span class="o">-</span><span class="n">checksums</span>
-<span class="n">mvn</span> <span class="n">clean</span>
+<div class="codehilite"><pre>rm -r ~/.m2/repository/org/apache/sis
+mvn package --strict-checksums
+</pre></div>
+
+
+<p>Verify that the EPSG dataset has been created, then cleanup:</p>
+<div class="codehilite"><pre>ll <span class="nv">$SIS_DATA</span>
+mvn clean
 </pre></div>
 
 
@@ -422,8 +459,9 @@ getting the Javadoc enhancements expected in future JDK releases (more dynamic p
 avoiding the security vulnerability discovered in the Javadoc tools of older JDK releases,
 and keeping the <code>diff</code> smaller on the SVN repository of SIS web site.
 If JDK8 is <em>not</em> used, then omit the <code>cp</code> command below.</p>
-<div class="codehilite"><pre>cp ../../JDK8/src/main/javadoc/stylesheet.css src/main/javadoc/
-mvn javadoc:aggregate --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
+<div class="codehilite"><pre><span class="nb">cd</span> <span class="nv">$TAG_DIR</span>
+cp ../../JDK8/src/main/javadoc/stylesheet.css src/main/javadoc/
+mvn javadoc:aggregate
 svn revert src/main/javadoc/stylesheet.css
 <span class="nb">cd </span>target/site
 zip -9 -r apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip apidocs
@@ -431,10 +469,21 @@ zip -9 -r apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip apidocs
 </pre></div>
 
 
+<p>Note: if Javadoc fails because of <a href="https://bugs.openjdk.java.net/browse/JDK-8061305">JDK-8061305</a> bug,
+a workaround is to temporarily copy the OpenGIS annotations into the <code>sis-metadata</code> module
+(only the time needed for building the javadoc):</p>
+<div class="codehilite"><pre>mkdir core/sis-metadata/src/main/java/org/opengis
+<span class="nb">cd </span>core/sis-metadata/src/main/java/org/opengis
+ln -s &lt;path to GeoAPI project&gt;/geoapi/src/main/java/org/opengis/annotation
+<span class="nb">cd</span> -
+</pre></div>
+
+
 <h2 id="dist">Initialize the distribution directory<a class="headerlink" href="#dist" title="Permanent link">&para;</a></h2>
 <p>Create the directory for the new version and release candidate within the distribution directory.
 The <code>$RELEASE_CANDIDATE</code> variable shall be the number of current release attempt.</p>
 <div class="codehilite"><pre><span class="nb">cd</span> ../../distribution
+svn update
 mkdir -p <span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span>
 svn add <span class="nv">$NEW_VERSION</span>
 <span class="nb">cd</span> <span class="nv">$NEW_VERSION</span>/RC<span class="nv">$RELEASE_CANDIDATE</span>
@@ -464,21 +513,21 @@ mv sis-<span class="nv">$NEW_VERSION</span>-source-release.zip.asc apache-sis-<s
 
 <h2 id="sign">Sign and commit<a class="headerlink" href="#sign" title="Permanent link">&para;</a></h2>
 <p>Sign the source, javadoc and binary artifacts:</p>
-<div class="codehilite"><pre>gpg --print-md SHA512 apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.sha
-gpg --print-md MD5    apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.md5
+<div class="codehilite"><pre>shasum --algorithm 512 apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.sha
+md5sum                 apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.md5
 
 gpg --use-agent --armor --detach-sign --default-key <span class="nv">$SIGNING_KEY</span> apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip
-gpg --print-md SHA512 apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip.sha
-gpg --print-md MD5    apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip.md5
+shasum --algorithm 512 apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip.sha
+md5sum                 apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip.md5
 
 gpg --use-agent --armor --detach-sign --default-key <span class="nv">$SIGNING_KEY</span> apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip
-gpg --print-md SHA512 apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip.sha
-gpg --print-md MD5    apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip.md5
+shasum --algorithm 512 apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip.sha
+md5sum                 apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip.md5
 </pre></div>
 
 
 <p>Verify checksums and signatures:</p>
-<div class="codehilite"><pre>find . -name <span class="s2">&quot;*.md5&quot;</span> -exec shasum --check <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
+<div class="codehilite"><pre>find . -name <span class="s2">&quot;*.md5&quot;</span> -exec md5sum --check <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
 find . -name <span class="s2">&quot;*.sha&quot;</span> -exec shasum --check <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
 find . -name <span class="s2">&quot;*.asc&quot;</span> -exec gpg --verify <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
 </pre></div>
@@ -647,7 +696,7 @@ all directories starting with the old version number. The sub-directories need t
 
   <footer class="footer">
     <div class="container">
-      <p>Copyright &copy; 2013-2015 The Apache Software Foundation, Licensed under the
+      <p>Copyright &copy; 2013-2016 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
           Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
     </div>
