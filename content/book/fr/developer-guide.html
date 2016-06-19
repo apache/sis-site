@@ -83,7 +83,11 @@
 <li><a href="#GeoAPI-simple">Fournir sa propre implémentation</a></li></ul></li></ul></li>
 <li><a href="#Tests">Les suites de tests</a><ul>
 <li><a href="#GeoAPI-validators">Validations des instances</a></li>
-<li><a href="#GeoAPI-tests">Exécution des tests pré-définis</a></li></ul></li></ul></li>
+<li><a href="#GeoAPI-tests">Exécution des tests pré-définis</a></li></ul></li>
+<li><a href="#DesignNote">Notes de design</a><ul>
+<li><a href="#MatrixLibrary">Particularités d’une bibliothèque de calculs matriciels pour un SIG</a><ul>
+<li><a href="#NonSquareMatrix">Que faire des matrices qui ne sont pas carrées (et pourquoi)</a></li>
+<li><a href="#MatrixLibrarySummary">La bibliothèque matricielle de Apache SIS</a></li></ul></li></ul></li></ul></li>
 </ul>
 </nav>
 
@@ -1982,121 +1986,6 @@ Il n’y a par exemple aucun code dédié au changement de l’ordre des ordonn�
 </p>
 </div>
 
-<article>
-<header>
-<h1>Particularités d’une bibliothèque de calculs matriciels pour un <abbr>SIG</abbr></h1>
-</header>
-<p>
-Les <abbr>SIG</abbr> font un usage intensif de matrices afin d’afficher leurs cartes ou transformer des coordonnées.
-On pourrait croire que le marché est suffisamment bien pourvu en excellentes bibliothèques de calculs matriciels, libres ou commerciales.
-Pourtant, les <abbr>SIG</abbr> ont des besoins spécifiques qui divergent un peu des objectifs de plusieurs bibliothèques existantes.
-Des manipulations de matrices comme l’exemple précédent interviennent dans quasiment toutes les opérations
-appliquées par Apache <abbr title="Spatial Information System">SIS</abbr> sur des coordonnées.
-Mais l’analyse de ces opérations révèle quelques patterns:
-</p>
-<ul>
-<li><p>Ces matrices sont presque toujours de petites tailles, dépassant rarement 5 lignes par 5 colonnes.</p></li>
-<li><p>Les opérations matricielles « lourdes » (multiplications ou inversions de matrices) ne surviennent pas dans des endroits où la performance est importante.
-Dans la quasi-totalité des cas, elles ne sont effectuées qu’une fois pour toute, à la lecture d’un fichier,
-ou lors des étapes de préparation avant de convertir des coordonnées.
-Elles ne surviennent quasiment jamais dans la boucle convertissant chacune des coordonnées.</p></li>
-<li><p>Dans une succession de multiplications et d’inversions de matrices, les erreurs d’arrondissement s’accumulent et grandissent rapidement
-au point de se confondre avec certaines opérations légitimes, notamment les changements de référentiel.
-Ces dernières s’expriment souvent par un changement de la taille, position et orientation de l’ellipsoïde
-choisi comme approximation de la forme de la Terre. Les changements de la taille s’expriment en parties par million et
-les rotations en arc-secondes. Retranscrites dans une matrice, ces valeurs sont donc assez petites.</p></li>
-<li><p>Il arrive fréquemment que des matrices s’annulent en tout ou en partie,
-c’est-à-dire que leurs multiplications ramènent des facteurs d’échelles à 1 et des translations à 0.
-Toutefois les erreurs d’arrondissements font que les valeurs obtenues sont rarement exactes,
-mais plutôt des valeurs s’en rapprochant telles que 0,9999…97 à la place de 1.
-Malheureusement, les erreurs d’arrondissement sont parfois telles qu’il est difficile de savoir
-si certains coefficients de la matrices sont des artefacts ou proviennent d’un réel changement de référentiel.</p></li>
-</ul>
-<p>
-Ces points font que, pour un <abbr>SIG</abbr>, la précision d’une bibliothèque de calculs matriciels
-est plus importante que la performance. Paradoxalement, un bon moyen de gagner en performance est justement d’investir davantage de temps de CPU
-pour effectuer des opérations matricielles plus précises, car on augmente ainsi les chances de détecter correctement quelles opérations s’annulent.
-L’effort investit dans cette détection permet de sauver du temps là où ça compte: quand viendra le moment de boucler sur des millions de coordonnées à transformer.
-</p><p>
-Mais les bibliothèques dédiées aux calculs matriciels sont souvent conçues pour opérer de manière très performante
-sur des matrices de grandes tailles, ayant par exemple des milliers de lignes et colonnes.
-Elles sont ainsi conçues pour être capable de résoudre efficacement des systèmes d’équations linéaires comportant des centaines d’inconnues.
-Les problèmes qu’elles résolvent sont certes difficiles, mais assez différents de ceux qui intéressent Apache <abbr>SIS</abbr>.
-Pour cette raison, et aussi à cause d’un autre besoin spécifique détaillé dans les paragraphes suivants,
-Apache <abbr>SIS</abbr> utilise ses propres fonctions de calculs matriciels.
-Ces fonctions tentent de résoudre le problème de précision en utilisant l’arithmétique « double-double »
-(une technique permettant de simuler une précision d’environ 120 bits)
-au prix de la performance dans une partie du code où elle n’est pas jugée critique.
-</p>
-<h2>Que faire des matrices qui ne sont pas carrées (et pourquoi)</h2>
-<p>
-Apache <abbr title="Spatial Information System">SIS</abbr> a très souvent besoin d’inverser des matrices,
-afin d’obtenir une conversion de coordonnées qui fasse le contraire de la conversion originale.
-Mais on n’inverse habituellement que des matrices carrées.
-Or, Apache <abbr>SIS</abbr> a besoin d’effectuer des inversions de matrices non-carrées.
-Selon que l’on ait plus de lignes ou plus de colonnes:
-</p>
-<ul>
-<li>Pour <abbr>SIS</abbr>, une matrice non-carrée est une conversion qui ajoute ou supprime une dimension aux coordonnées.</li>
-<li>Pour les bibliothèques d’algèbre linéaire, une matrice non-carrée est un système d’équations sous-déterminé ou surdéterminé.</li>
-</ul>
-<p>
-Pour mieux comprendre les difficultés que causerait une transposition trop directe des bibliothèques d’algèbre linéaire aux <abbr>SIG</abbr>,
-imaginons une conversion qui projetterait les points d’un espace 3D vers une surface 2D:
-</p>
-<table class="hidden">
-<tr>
-<td>(λ₁, φ₁, <var>h</var>) → (λ₂, φ₂)</td>
-<td style="padding-left: 30px">où</td>
-<td><ul style="margin-top: 0">
-<li>λ est la longitude.</li>
-<li>φ est la latitude.</li>
-<li>(λ₂, φ₂) n’égale pas forcement (λ₁, φ₁) si la hauteur <var>h</var> n’est pas perpendiculaire à la surface.</li>
-</ul></td>
-</tr>
-</table>
-<p>
-Pour des bibliothèques d’algèbre linéaire, la matrice représentant cette conversion serait un système d’équations sous-déterminé, et donc insoluble.
-C’est-à-dire qu’on ne peut pas inverser cette conversion pour obtenir (λ₂, φ₂) → (λ₁, φ₁, <var>h</var>) puisqu’on ne sait pas quelle valeur donner à <var>h</var>,
-ce qui implique qu’on ne peut pas trouver (λ₁, φ₁) non-plus car ces valeurs dépendent peut-être de <var>h</var>.
-Toutefois, dans le cas des <abbr>SIG</abbr>, l’axe des <var>h</var> est très souvent perpendiculaire à la surface sur laquelle sont exprimées les coordonnées (<var>λ</var>,<var>φ</var>).
-Cette perpendicularité rend λ₁ et φ₁ indépendants de <var>h</var>. Dans ce cas particulier, et ce cas seulement, on peut encore sauver les meubles.
-</p><p>
-Apache <abbr>SIS</abbr> procède en vérifiant si les coordonnées <var>h</var> sont indépendantes des coordonnées λ et φ.
-Nous reconnaissons ce cas en vérifiant quels coefficients de la matrice ont la valeur zéro.
-Si <abbr>SIS</abbr> arrive à identifier des dimensions indépendantes,
-il peut les exclure temporairement de manière à inverser sans ambiguïté la conversion dans les dimensions restantes.
-S’il ne trouve pas de dimension indépendante, alors une exception est levée.
-</p><p>
-Si une inversion a été possible, alors il reste à décider du sort des dimensions que <abbr>SIS</abbr> avait temporairement exclues.
-Dans notre exemple, <abbr>SIS</abbr> assignera la valeur <code>NaN</code> (<cite>Not-a-Number</cite>) aux valeurs de <var>h</var> dans la conversion (λ₂, φ₂) → (λ₁, φ₁, <var>h</var>).
-Là encore, le choix du coefficient à mettre à <code>NaN</code> dans la matrice est basé sur la présomption qu’elle représente une conversion de coordonnées.
-</p><p>
-Le traitement particulier fait par <abbr>SIS</abbr> permet donc d’inverser des matrices que l’on rencontre couramment dans les <abbr>SIG</abbr>,
-même si en principe le système est sous-déterminé.
-Dans notre exemple la coordonnée <var>h</var> reste inconnue – nous ne faisons pas surgir de l’information du néant – mais au moins les coordonnées (<var>λ</var>,<var>φ</var>) ont pu être récupérées.
-</p><p>
-Le problème inverse, celui des systèmes surdéterminés, est plus subtil.
-Une approche classique des bibliothèques d’algèbre linéaire est de résoudre les systèmes surdéterminés par la méthode des moindres carrées.
-Transposée à notre exemple, cette approche proposerait une conversion (λ₂, φ₂, <var>h</var>) → (λ₁, φ₁)
-qui semble le meilleur compromis pour diverses valeurs de λ₂, φ₂ et <var>h</var>, tout en n’étant (sauf cas particuliers) une solution exacte pour personne.
-De plus, les éventuelles combinaisons linéaires entre ces trois variables sont délicates compte tenu de l’hétérogénéité des unités de mesures,
-où les <var>h</var> sont en mètres et (<var>λ</var>,<var>φ</var>) en degrés.
-Apache <abbr>SIS</abbr> procède plutôt comme pour les systèmes sous-déterminés: en exigeant que certaines dimensions soient indépendantes des autres,
-faute de quoi la matrice sera considérée non-inversible.
-Dans le cas des systèmes surdéterminés <abbr>SIS</abbr> refusera donc d’effectuer certaines opérations que les bibliothèques d’algèbre linéaire auraient faite,
-mais garantira que les conversions obtenues seront exactes (aux erreurs d’arrondissement prêts).
-</p>
-<p>
-En résumé, les besoins qui ont amené Apache <abbr>SIS</abbr> à fournir ses propres fonctions de calculs matriciels sont:
-</p>
-<ul>
-<li>Structure légère pour les petites matrices, particulièrement celles de taille 3×3.</li>
-<li>Précision accrue avec l’arithmétique « double-double », quitte à sacrifier un peu de performance dans des endroits où elle n’est pas critique.</li>
-<li>Traitement particulier de l’inversion des matrices non-carrées pour des conversions de coordonnées.</li>
-</ul>
-</article>
-
 <h4 id="AffineTransformAPI"><span class="section-number">3.3.1.2.</span> Intégration avec les bibliothèques graphiques</h4>
 <p>
 A peu près toutes les bibliothèques graphiques supportent une forme de transformation de coordonnées,
@@ -3065,7 +2954,11 @@ et dont la méthode <code class="SIS">getNilReason()</code> retournera la consta
 <li><a href="#GeoAPI-simple">Fournir sa propre implémentation</a></li></ul></li></ul></li>
 <li><a href="#Tests">Les suites de tests</a><ul>
 <li><a href="#GeoAPI-validators">Validations des instances</a></li>
-<li><a href="#GeoAPI-tests">Exécution des tests pré-définis</a></li></ul></li></ul></nav>
+<li><a href="#GeoAPI-tests">Exécution des tests pré-définis</a></li></ul></li>
+<li><a href="#DesignNote">Notes de design</a><ul>
+<li><a href="#MatrixLibrary">Particularités d’une bibliothèque de calculs matriciels pour un SIG</a><ul>
+<li><a href="#NonSquareMatrix">Que faire des matrices qui ne sont pas carrées (et pourquoi)</a></li>
+<li><a href="#MatrixLibrarySummary">La bibliothèque matricielle de Apache SIS</a></li></ul></li></ul></li></ul></nav>
 <h2 id="ReduceDependency"><span class="section-number">7.1.</span> Réduire la dépendance directe envers Apache SIS</h2>
 <p>
 Les chapitres précédents utilisaient des méthodes statiques de Apache SIS par commodité.
@@ -3409,6 +3302,173 @@ qui sera exécutée après chacun des tests.
         assertTrue(<code class="GeoAPI">transform</code> <b>instanceof</b> <code class="GeoAPI">MathTransform2D</code>);
     }
 }</pre>
+
+
+
+<h2 id="DesignNote"><span class="section-number">7.3.</span> Notes de design</h2>
+<p>Les chapitres suivants expliquent les raisons derrières certains choix d'implémentation de Apache <abbr title="Spatial Information System">SIS</abbr>.</p>
+
+<h3 id="MatrixLibrary"><span class="section-number">7.3.1.</span> Particularités d’une bibliothèque de calculs matriciels pour un <abbr>SIG</abbr></h3>
+<p>
+Les <abbr>SIG</abbr> font un usage intensif de matrices afin d’afficher leurs cartes ou transformer des coordonnées.
+On pourrait croire que le marché est suffisamment bien pourvu en excellentes bibliothèques de calculs matriciels, libres ou commerciales.
+Pourtant, les <abbr>SIG</abbr> ont des besoins spécifiques qui divergent un peu des objectifs de plusieurs bibliothèques existantes.
+Des manipulations de matrices comme celles décrites dans <a href="#AffineTransform">le chapitre sur les transformations affines</a>
+interviennent dans quasiment toutes les opérations appliquées par Apache <abbr title="Spatial Information System">SIS</abbr> sur des coordonnées.
+Mais l’analyse de ces opérations révèle quelques patterns:
+</p>
+<ul>
+<li><p>Ces matrices sont presque toujours de petites tailles, dépassant rarement 5 lignes par 5 colonnes.</p></li>
+<li><p>Les opérations matricielles « lourdes » (multiplications ou inversions de matrices) ne surviennent pas dans des endroits où la performance est importante.
+Dans la quasi-totalité des cas, elles ne sont effectuées qu’une fois pour toute, à la lecture d’un fichier,
+ou lors des étapes de préparation avant de convertir des coordonnées.
+Elles ne surviennent quasiment jamais dans la boucle convertissant chacune des coordonnées.</p></li>
+<li><p>Dans une succession de multiplications et d’inversions de matrices, les erreurs d’arrondissement s’accumulent et grandissent rapidement
+au point de se confondre avec certaines opérations légitimes, notamment les changements de référentiel.
+Ces dernières s’expriment souvent par un changement de la taille, position et orientation de l’ellipsoïde
+choisi comme approximation de la forme de la Terre.
+Or ces changements de taille s’expriment en parties par million et les rotations en arc-secondes.
+Retranscrites dans une matrice, ces valeurs sont donc assez petites.</p></li>
+<li><p>Il arrive fréquemment que des matrices s’annulent en tout ou en partie lorsqu’elles sont combinées,
+c’est-à-dire que leurs multiplications ramènent des facteurs d’échelles à 1 et des translations à 0.
+Toutefois les erreurs d’arrondissements font que les valeurs obtenues sont rarement exactes,
+mais plutôt des valeurs s’en rapprochant telles que 0,9999…97 à la place de 1.
+L’approche habituelle pour contourner ce problème est d’effectuer les comparaisons de nombres à virgule flottante en tolérant un léger écart.
+Mais il est difficile de choisir un seuil de tolérance qui gommera la plupart des erreurs d’arrondissement
+sans considérer à tord un changement de référentiel comme un artefact (voir point précédent).</p></li>
+</ul>
+<p>
+Ces points font que, pour un <abbr>SIG</abbr> comme Apache <abbr>SIS</abbr>, la précision d’une bibliothèque de calculs matriciels
+est plus importante que la performance. Paradoxalement, un bon moyen de gagner en performance est justement d’investir davantage de temps de CPU
+pour effectuer des opérations matricielles plus précises dans la phase de <em>préparation</em> (non d’<em>exécution</em>) de la transformation de coordonnées,
+car on augmente ainsi les chances de détecter correctement quelles opérations s’annulent.
+L’effort investit dans cette détection permet de sauver du temps là où ça compte: quand viendra le moment de boucler sur des millions de coordonnées à transformer.
+</p><p>
+Mais les bibliothèques dédiées aux calculs matriciels sont souvent conçues pour opérer de manière très performante
+sur des matrices de grandes tailles, ayant par exemple des milliers de lignes et colonnes.
+Elles sont ainsi conçues pour être capable de résoudre efficacement des systèmes d’équations linéaires comportant des centaines d’inconnues.
+Les problèmes qu’elles résolvent sont certes difficiles, mais assez différents de ceux qui intéressent Apache <abbr>SIS</abbr>.
+Pour cette raison, et aussi à cause d’un autre besoin spécifique détaillé dans les paragraphes suivants,
+Apache <abbr>SIS</abbr> utilise ses propres fonctions de calculs matriciels.
+Ces fonctions tentent de résoudre le problème de précision en utilisant l’arithmétique « double-double »
+(une technique permettant de simuler une précision d’environ 120 bits)
+au prix de la performance pendant une étape (la <em>préparation</em> de la transformation) où elle n’est pas jugée critique.
+</p>
+
+<h4 id="NonSquareMatrix"><span class="section-number">7.3.1.1.</span> Que faire des matrices qui ne sont pas carrées (et pourquoi)</h4>
+<p>
+Apache <abbr title="Spatial Information System">SIS</abbr> a très souvent besoin d’inverser des matrices,
+afin d’obtenir une conversion de coordonnées dans la direction inverse de la conversion originale.
+Mais on n’inverse habituellement que des matrices carrées.
+Or, <abbr>SIS</abbr> a besoin d’effectuer des inversions de matrices non-carrées.
+Selon que l’on ait plus de lignes ou plus de colonnes:
+</p>
+<ul>
+<li>Pour <abbr>SIS</abbr>, une matrice non-carrée est une conversion qui ajoute ou supprime une dimension aux coordonnées.</li>
+<li>Pour les bibliothèques d’algèbre linéaire, une matrice non-carrée est un système d’équations sous-déterminé ou surdéterminé.</li>
+</ul>
+<p>
+Pour mieux comprendre les difficultés que causerait une transposition trop directe des bibliothèques d’algèbre linéaire aux <abbr>SIG</abbr>,
+imaginons une conversion (<var>φ₁</var>, <var>λ₁</var>, <var>h</var>) → (<var>φ₂</var>, <var>λ₂</var>)
+qui projetterait les points d’un espace 3D vers une surface 2D.
+Les termes <var>φ</var> sont des latitudes, <var>λ</var> des longitudes et
+(<var>φ₂</var>, <var>λ₂</var>) n’égale pas forcement (<var>φ₁</var>, <var>λ₁</var>) si la hauteur <var>h</var> n’est pas perpendiculaire à la surface.
+</p><p>
+
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
+<mfenced close="]" open="[">
+<mtable>
+<mtr><mtd><msub><mi>φ</mi><mrow><mn>2</mn></mrow></msub></mtd></mtr>
+<mtr><mtd><msub><mi>λ</mi><mrow><mn>2</mn></mrow></msub></mtd></mtr>
+<mtr><mtd><mn>1</mn></mtd></mtr>
+</mtable>
+</mfenced>
+<mo>=</mo>
+<mfenced close="]" open="[">
+<mtable>
+<mtr>
+<mtd><mn>1</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>1</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>1</mn></mtd>
+</mtr>
+</mtable>
+</mfenced>
+<mo>×</mo>
+<mfenced close="]" open="[">
+<mtable>
+<mtr><mtd><msub><mi>φ</mi><mrow><mn>1</mn></mrow></msub></mtd></mtr>
+<mtr><mtd><msub><mi>λ</mi><mrow><mn>1</mn></mrow></msub></mtd></mtr>
+<mtr><mtd><mi>h</mi></mtd></mtr>
+<mtr><mtd><mn>1</mn></mtd></mtr>
+</mtable>
+</mfenced>
+</math>
+</p><p>
+Pour des bibliothèques d’algèbre linéaire, la matrice ci-dessus représente un système d’équations sous-déterminé, et donc insoluble.
+C’est-à-dire qu’on ne peut pas inverser cette conversion pour obtenir (<var>φ₂</var>, <var>λ₂</var>) → (<var>φ₁</var>, <var>λ₁</var>, <var>h</var>)
+puisqu’on ne sait pas quelle valeur donner à <var>h</var>,
+ce qui implique qu’on ne peut pas trouver (<var>φ₁</var>, <var>λ₁</var>) non-plus car ces valeurs dépendent peut-être de <var>h</var>.
+Toutefois dans le cas des <abbr>SIG</abbr>, l’axe des hauteurs ellipsoïdales <var>h</var> est perpendiculaire à la surface de l’ellipsoïde
+sur laquelle les latitudes et longitudes <em>géodésiques</em> (<var>φ</var>, <var>λ</var>) sont représentées
+(notez que cette affirmation ne s’applique pas aux latitudes et longitudes <em>géocentriques</em>).
+Cette perpendicularité rend <var>φ₁</var> et <var>λ₁</var> indépendants de <var>h</var>.
+Dans ce genre de cas, on peut encore sauver les meubles.
+</p><p>
+Apache <abbr>SIS</abbr> procède en vérifiant si les valeurs de <var>h</var> sont indépendantes des valeurs de <var>φ</var> et <var>λ</var>.
+Nous reconnaissons ce cas en vérifiant quels coefficients de la matrice ont la valeur zéro.
+Si <abbr>SIS</abbr> arrive à identifier des dimensions indépendantes,
+il peut les exclure temporairement de manière à inverser sans ambiguïté la conversion dans les dimensions restantes.
+S’il ne trouve pas de dimension indépendante, alors une exception est levée.
+Mais si une inversion a été possible, alors il reste à décider du sort des dimensions que <abbr>SIS</abbr> avait temporairement exclues.
+Par défaut, <abbr>SIS</abbr> assignera la valeur <code>NaN</code> (<cite>Not-a-Number</cite>) à ces dimensions.
+Toutefois dans le cas particulier des hauteurs ellipsoïdales <var>h</var> dans une opération (<var>φ₂</var>, <var>λ₂</var>) → (<var>φ₁</var>, <var>λ₁</var>, <var>h</var>),
+la valeur zéro peut aussi être appropriée dans l’hypothèse où les coordonnées sont habituellement proches de la surface de l’ellipsoïde.
+Mais dans tous les cas, le choix du coefficient à mettre à 0 ou <code>NaN</code> est basé sur la présomption que la matrice représente une transformation affine.
+Ce n’est pas une opération qui peut être effectuée sur des matrices arbitraires.
+</p><p>
+Le traitement particulier décrit ci-haut permet à Apache <abbr>SIS</abbr> de résoudre
+certains systèmes d’équations sous-déterminés que l’on rencontre couramment dans les <abbr>SIG</abbr>.
+Dans notre exemple utilisant <code>NaN</code> comme valeur par défaut, la coordonnée <var>h</var> reste inconnue
+– nous ne faisons pas surgir de l’information du néant – mais au moins les coordonnées (<var>φ</var>, <var>λ</var>) ont pu être récupérées.
+Le problème inverse, celui des systèmes surdéterminés, est plus subtil.
+Une approche classique des bibliothèques d’algèbre linéaire est de résoudre les systèmes surdéterminés par la méthode des moindres carrées.
+Transposée à notre exemple, cette approche proposerait une conversion (<var>φ₂</var>, <var>λ₂</var>, <var>h</var>) → (<var>φ₁</var>, <var>λ₁</var>)
+qui semble le meilleur compromis pour diverses valeurs de <var>φ₂</var>, <var>λ₂</var> et <var>h</var>,
+tout en n’étant (sauf cas particuliers) une solution exacte pour personne.
+De plus, les éventuelles combinaisons linéaires entre ces trois variables sont délicates compte tenu de l’hétérogénéité des unités de mesures,
+avec par exemple les <var>h</var> en mètres et (<var>φ</var>, <var>λ</var>) en degrés.
+Apache <abbr>SIS</abbr> procède plutôt comme pour les systèmes sous-déterminés: en exigeant que certaines dimensions soient indépendantes des autres,
+faute de quoi la matrice sera considérée non-inversible.
+En conséquence dans le cas des systèmes surdéterminés <abbr>SIS</abbr> refusera d’effectuer certaines opérations que les bibliothèques d’algèbre linéaire auraient faite,
+mais en cas de succès les conversions obtenues seront garanties exactes (aux erreurs d’arrondissement prêts).
+</p>
+
+<h4 id="MatrixLibrarySummary"><span class="section-number">7.3.1.2.</span> La bibliothèque matricielle de Apache <abbr title="Spatial Information System">SIS</abbr></h4>
+<p>
+En résumé, les besoins qui ont amené Apache <abbr>SIS</abbr> à fournir ses propres fonctions de calculs matriciels sont:
+</p>
+<ul>
+<li>Structure légère pour les petites matrices, particulièrement celles de taille 3×3.</li>
+<li>Précision accrue avec l’arithmétique « double-double », quitte à sacrifier un peu de performance dans des endroits où elle n’est pas critique.</li>
+<li>Traitement particulier de l’inversion des matrices non-carrées pour des conversions de coordonnées.</li>
+</ul>
+<p>
+Cette bibliothèque est fournie dans le paquet <code class="SIS">org.apache.sis.matrix</code> du module <code class="SIS">sis-referencing</code>.
+</p>
 </section>
 </main>
 </body>
