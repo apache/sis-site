@@ -187,7 +187,7 @@ Note that this command does *not* yet remove the `-SNAPSHOT` suffix in version n
 (this will be done later):
 
     :::bash
-    ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml branch -Dsis.version=$NEW_VERSION
+    ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml branch -Dbranch.version=$NEW_VERSION -Dsis.version=$NEW_VERSION
 
 Open the root `pom.xml` file in an editor and perform the following changes:
 
@@ -265,7 +265,7 @@ Update versions number in `pom.xml` files (like what `mvn release:prepare` would
 plus some additional files:
 
     :::bash
-    ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml tag -Dsis.version=$NEW_VERSION
+    ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml tag -Dbranch.version=$NEW_VERSION -Dsis.version=$NEW_VERSION
 
 Compare with the modifications done by `mvn release:prepare`. The following command should report no difference,
 ignoring the license or other information that may have been removed by the Maven plugin
@@ -544,6 +544,7 @@ Execute the following commands in any temporary directory for testing the binary
     gpg --verify apache-sis-$NEW_VERSION-bin.zip.asc
     unzip apache-sis-$NEW_VERSION-bin.zip
     cd apache-sis-$NEW_VERSION
+    unset SIS_DATA
     bin/sis about --verbose
     bin/sis metadata http://catalog.data.gov/harvest/object/df138a1b-e7cb-4ca4-b7c3-316135e81b16
     bin/sis metadata https://github.com/opengeospatial/geoapi/raw/master/geoapi-netcdf/src/test/resources/org/opengis/wrapper/netcdf/NCEP-SST.nc
