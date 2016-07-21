@@ -23,17 +23,136 @@ This page lists some Frequently Asked Questions (FAQ) when using Apache SIS.
 
 
 
+Referencing    {#referencing}
+=============================
+
+### How do I transform a coordinate?    {#transform-point}
+
+The following Java code projects a geographic coordinate from the _World Geodetic System 1984_ (WGS84) to _WGS 84 / UTM zone 33N_.
+In order to make the example a little bit simpler, this code uses predefined systems given by the `CommonCRS` convenience class.
+But more advanced applications will typically use EPSG codes instead.
+Note that all geographic coordinates below express latitude *before* longitude.
+
+    :::java
+    import org.opengis.geometry.DirectPosition;
+    import org.opengis.referencing.crs.CoordinateReferenceSystem;
+    import org.opengis.referencing.operation.CoordinateOperation;
+    import org.opengis.referencing.operation.TransformException;
+    import org.opengis.util.FactoryException;
+    import org.apache.sis.referencing.CRS;
+    import org.apache.sis.referencing.CommonCRS;
+    import org.apache.sis.geometry.DirectPosition2D;
+
+    public final class Test {
+        public static void main(String[] args) throws FactoryException, TransformException {
+            CoordinateReferenceSystem sourceCRS = CommonCRS.WGS84.geographic();
+            CoordinateReferenceSystem targetCRS = CommonCRS.WGS84.UTM(40, 14);  // Get whatever zone is valid for 14°E.
+            CoordinateOperation operation = CRS.findOperation(sourceCRS, targetCRS, null);
+
+            // The above lines are costly and should be performed only once before to project many points.
+            // In this example, the operation that we got is valid for coordinates in geographic area from
+            // 12°E to 18°E (UTM zone 33) and 0°N to 84°N.
+
+            DirectPosition ptSrc = new DirectPosition2D(40, 14);           // 40°N 14°E
+            DirectPosition ptDst = operation.getMathTransform().transform(ptSrc, null);
+
+            System.out.println("Source: " + ptSrc);
+            System.out.println("Target: " + ptDst);
+        }
+    }
+
+
+
+### Which map projections are supported?    {#operation-methods}
+
+The operation _methods_ (including, but not limited to, map projections) supported by Apache SIS
+are listed in the [Coordinate Operation Methods](tables/CoordinateOperationMethods.html) page.
+The amount of map projection _methods_ is relatively small,
+but the amount of _projected CRS_ that we can build from them can be very large.
+For example with only three methods (namely _Cylindrical Mercator_, _Transverse Mercator_ and _Lambert Conic Conformal_)
+used with different parameter values, we can cover thousands of projected CRS listed in the EPSG geodetic dataset.
+
+For convenience, some pre-defined combinations of operation methods with parameter values are assigned a code.
+A well-known source of codes is the EPSG geodetic dataset, but other authorities also exist.
+The predefined CRS known to Apache SIS is listed in the
+[Coordinate Reference Systems](tables/CoordinateReferenceSystems.html) page.
+
+
+
+### What is the axis order issue and how is it addressed?    {#axisOrder}
+
+The axis order is specified by the authority (typically a national agency) defining the _Coordinate Reference System_ (CRS).
+The order depends on the CRS type and the country defining the CRS.
+In the case of geographic CRS, the (_latitude_, _longitude_) axis order is widely used by geographers and pilotes for centuries.
+However software developers tend to consistently use the (_x_,_y_) order for every kind of CRS.
+Those different practices resulted in contradictory definitions of axis order for almost every CRS of kind `GeographicCRS`,
+for some `ProjectedCRS` in the South hemisphere (South Africa, Australia, _etc._) and for some polar projections among others.
+
+Recent OGC standards mandate the use of axis order as defined by the authority.
+Oldest OGC standards used the (_x_,_y_) axis order instead, ignoring any authority specification.
+Among the legacy OGC standards that used the non-conform axis order,
+an influent one is version 1 of the _Well Known Text_ (WKT) format specification.
+According that widely-used format, WKT definitions without explicit `AXIS[…]` elements
+shall default to (_longitude_, _latitude_) or (_x_,_y_) axis order.
+In version 2 of WKT format, `AXIS[…]` elements are no longer optional
+and should contain an explicit `ORDER[…]` sub-element for making the intended order yet more obvious.
+
+Many softwares still use the old (_x_,_y_) axis order, because it is easier to implement.
+Apache SIS defaults to axis order _as defined by the authority_ (except when parsing a WKT 1 definition),
+but allows to change axis order to (<var>x</var>,<var>y</var>) order after CRS creation.
+This change can be done with the following code:
+
+    :::java
+    CoordinateReferenceSystem crs = …;   // CRS obtained by any mean.
+    crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)
+
+For any CRS identified by an EPSG code, the official axis order can be checked on the
+official EPSG registry at [http://www.epsg-registry.org](http://www.epsg-registry.org)
+(not to be confused with other sites having "epsg" in their name,
+but actually unrelated to the organization in charge of EPSG definition and maintenance):
+Click on the _"Retrieve by code"_ link and enter the numerical code.
+Then click on the _"View"_ link on the right side,
+and click on the _"+"_ symbol of the left side of _"Axes"_.
+
+
+
+### How do I instantiate a Universal Transverse Mercator (UTM) projection?    {#UTM}
+
+If the UTM zone is unknown, an easy way is to use the `UTM` method in one of the `CommonCRS` pre-defined constants.
+That method receives in argument a geographic coordinate in (_latitude_, _longitude_) order and computes the UTM zone from it.
+See the [above Java code example](#transform-point).
+
+If the UTM zone is know, one way is to use the "EPSG" or "AUTO" authority factory.
+The EPSG code of some UTM projections can be determined as below, where _zone_ is a number from 1 to 60 inclusive (unless otherwise specified):
+
+    * WGS 84 (northern hemisphere): 32600 + _zone_
+    * WGS 84 (southern hemisphere): 32700 + _zone_
+    * WGS 72 (northern hemisphere): 32200 + _zone_
+    * WGS 72 (southern hemisphere): 32300 + _zone_
+    * NAD 83 (northern hemisphere): 26900 + _zone_ (zone 1 to 23 only)
+    * NAD 27 (northern hemisphere): 26700 + _zone_ (zone 1 to 22 only)
+
+Note that the above list is incomplete. See the EPSG database for additional UTM definitions
+(WGS 72BE, SIRGAS 2000, SIRGAS 1995, SAD 69, ETRS 89, _etc._, most of them defined only for a few zones).
+Once the EPSG code of the UTM projection has been determined, the CRS can be obtained as in the example below:
+
+    :::java
+    int code = 32600 + zone;
+    CoordinateReferenceSystem crs = CRS.forCode("EPSG:" + code);
+
+If no EPSG code is available for the desired projection, a more powerful (but also more difficult)
+way is to instantiate directly a `MathTransform` using the parameters documented in the
+[Coordinate Operation Methods](tables/CoordinateOperationMethods.html#9807) page,
+then build a `DefaultProjectedCRS` instance using it.
+
+
+
+
 Metadata    {#metadata}
 =======================
 
-Frequently asked questions about the `sis-metadata` module.
-
 Custom implementations    {#metadata-implementation}
 ----------------------------------------------------
-
-Frequently asked questions custom implementations of `org.opengis.metadata` interfaces.
-
-
 
 ### My metadata are stored in a database-like framework. Implementing every GeoAPI interfaces for them is impractical.    {#metadata-proxy}
 
@@ -56,7 +175,7 @@ of all GeoAPI metadata interfaces reading their values directly from a SQL datab
 
 
 
-### I can't marshall my custom implementation.    {#metadata-unknownClass}
+### I can not marshall my custom implementation.    {#metadata-unknownClass}
 
 The classes given to the JAXB marshaller shall contain JAXB annotations,
 otherwise the following exception is thrown:
@@ -69,17 +188,6 @@ provided in the `org.apache.metadata.iso` package.
 All those SIS implementation classes provide shallow copy constructor for making that easy.
 Note that you need to wrap only the root class, not the attributes.
 The attribute values will be wrapped automatically as needed by JAXB adapters.
-
-
-
-Referencing    {#referencing}
-=============================
-
-Frequently asked questions about the `sis-referencing` module.
-
-### Axis order    {#axisOrder}
-
-(... to be provided later ...)
 
 
 

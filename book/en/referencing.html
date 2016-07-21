@@ -231,6 +231,36 @@
     <h3 id="CoordinateSystem">Coordinate systems</h3>
     <p style="color: red">TODO</p>
 
+    <h4 id="AxisOrder">Axis order</h4>
+    <p>
+      The axis order is specified by the authority (typically a national agency) defining the <cite>Coordinate Reference System</cite> (<abbr>CRS</abbr>).
+      The order depends on the <abbr>CRS</abbr> type and the country defining the <abbr>CRS</abbr>.
+      In the case of geographic <abbr>CRS</abbr>, the (<var>latitude</var>, <var>longitude</var>) axis order is widely used by geographers and pilotes for centuries.
+      However software developers tend to consistently use the (<var>x</var>,<var>y</var>) order for every kind of <abbr>CRS</abbr>.
+      Those different practices resulted in contradictory definitions of axis order for almost every <abbr>CRS</abbr> of kind <code>GeographicCRS</code>,
+      for some <code>ProjectedCRS</code> in the South hemisphere (South Africa, Australia, <i>etc.</i>) and for some polar projections among others.
+    </p><p>
+      Recent <abbr>OGC</abbr> standards mandate the use of axis order as defined by the authority.
+      Oldest <abbr>OGC</abbr> standards used the (<var>x</var>,<var>y</var>) axis order instead, ignoring any authority specification.
+      Many softwares still use the old (<var>x</var>,<var>y</var>) axis order, because it is easier to implement.
+      Apache <abbr>SIS</abbr> supports both conventions with the following approach:
+      by default, <abbr>SIS</abbr> creates <abbr>CRS</abbr> with axis order <em>as defined by the authority</em>.
+      Those <abbr>CRS</abbr> are created by calls to the <code>CRS.forCode(String)</code> method
+      and the actual axis order can be verified after the <abbr>CRS</abbr> creation with <code>System.out.println(crs)</code>.
+      But if (<var>x</var>,<var>y</var>) axis order is wanted for compatibility with older <abbr>OGC</abbr> specifications or other softwares,
+      then <abbr>CRS</abbr> forced to <cite>longitude first</cite> axis order can be created by call to the following method:
+    </p>
+    <blockquote><pre>CoordinateReferenceSystem crs = …;               // CRS obtained by any means.
+crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)</pre></blockquote>
+    <p>
+      Among the legacy <abbr>OGC</abbr> standards that used the non-conform axis order,
+      an influent one is version 1 of the <cite>Well Known Text</cite> (<abbr>WKT</abbr>) format specification.
+      According that widely-used format, <abbr>WKT</abbr> definitions without explicit <code>AXIS[…]</code> elements
+      shall default to (<var>longitude</var>, <var>latitude</var>) or (<var>x</var>,<var>y</var>) axis order.
+      In version 2 of <abbr>WKT</abbr> format, <code>AXIS[…]</code> elements are no longer optional
+      and should contain an explicit <code>ORDER[…]</code> sub-element for making the intended order yet more obvious.
+    </p>
+
     <h3 id="GeographicCRS">Geographic reference systems</h3>
     <p style="color: red">TODO</p>
 
