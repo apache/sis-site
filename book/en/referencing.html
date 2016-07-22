@@ -235,30 +235,43 @@
     <p>
       The axis order is specified by the authority (typically a national agency) defining the <cite>Coordinate Reference System</cite> (<abbr>CRS</abbr>).
       The order depends on the <abbr>CRS</abbr> type and the country defining the <abbr>CRS</abbr>.
-      In the case of geographic <abbr>CRS</abbr>, the (<var>latitude</var>, <var>longitude</var>) axis order is widely used by geographers and pilotes for centuries.
-      However software developers tend to consistently use the (<var>x</var>,<var>y</var>) order for every kind of <abbr>CRS</abbr>.
+      In the case of geographic <abbr>CRS</abbr>, the (<var>latitude</var>, <var>longitude</var>) axis order is widely used by geographers and pilots for centuries.
+      However software developers tend to consistently use the (<var>x</var>, <var>y</var>) order for every kind of <abbr>CRS</abbr>.
       Those different practices resulted in contradictory definitions of axis order for almost every <abbr>CRS</abbr> of kind <code>GeographicCRS</code>,
       for some <code>ProjectedCRS</code> in the South hemisphere (South Africa, Australia, <i>etc.</i>) and for some polar projections among others.
     </p><p>
       Recent <abbr>OGC</abbr> standards mandate the use of axis order as defined by the authority.
-      Oldest <abbr>OGC</abbr> standards used the (<var>x</var>,<var>y</var>) axis order instead, ignoring any authority specification.
-      Many softwares still use the old (<var>x</var>,<var>y</var>) axis order, because it is easier to implement.
+      Oldest <abbr>OGC</abbr> standards used the (<var>x</var>, <var>y</var>) axis order instead, ignoring any authority specification.
+      Many softwares still use the old (<var>x</var>, <var>y</var>) axis order,
+      maybe because such uniformization makes <abbr>CRS</abbr> implementation and usage <em>apparently</em> easier.
       Apache <abbr>SIS</abbr> supports both conventions with the following approach:
       by default, <abbr>SIS</abbr> creates <abbr>CRS</abbr> with axis order <em>as defined by the authority</em>.
       Those <abbr>CRS</abbr> are created by calls to the <code>CRS.forCode(String)</code> method
       and the actual axis order can be verified after the <abbr>CRS</abbr> creation with <code>System.out.println(crs)</code>.
-      But if (<var>x</var>,<var>y</var>) axis order is wanted for compatibility with older <abbr>OGC</abbr> specifications or other softwares,
-      then <abbr>CRS</abbr> forced to <cite>longitude first</cite> axis order can be created by call to the following method:
+      But if (<var>x</var>, <var>y</var>) axis order is wanted for compatibility with older <abbr>OGC</abbr> specifications or other softwares,
+      then <abbr>CRS</abbr> forced to <cite>longitude first</cite> axis order can be created by a call to the following method:
     </p>
-    <blockquote><pre>CoordinateReferenceSystem crs = …;               // CRS obtained by any means.
-crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)</pre></blockquote>
+    <pre>CoordinateReferenceSystem crs = …;               // CRS obtained by any means.
+crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)</pre>
     <p>
       Among the legacy <abbr>OGC</abbr> standards that used the non-conform axis order,
       an influent one is version 1 of the <cite>Well Known Text</cite> (<abbr>WKT</abbr>) format specification.
-      According that widely-used format, <abbr>WKT</abbr> definitions without explicit <code>AXIS[…]</code> elements
-      shall default to (<var>longitude</var>, <var>latitude</var>) or (<var>x</var>,<var>y</var>) axis order.
+      According that widely-used format, <abbr>WKT</abbr> 1 definitions without explicit <code>AXIS[…]</code> elements
+      shall default to (<var>longitude</var>, <var>latitude</var>) or (<var>x</var>, <var>y</var>) axis order.
       In version 2 of <abbr>WKT</abbr> format, <code>AXIS[…]</code> elements are no longer optional
       and should contain an explicit <code>ORDER[…]</code> sub-element for making the intended order yet more obvious.
+      But if <code>AXIS[…]</code> elements are nevertheless missing in a <abbr>WKT</abbr> 2 definition,
+      Apache <abbr>SIS</abbr> defaults to (<var>latitude</var>, <var>longitude</var>) order.
+      So in summary:
+    </p>
+    <ul>
+      <li>Default <abbr>WKT</abbr> 1 axis order of geographic <abbr>CRS</abbr> is (<var>longitude</var>, <var>latitude</var>) as mandated by <abbr>OGC</abbr> 01-009 specification.</li>
+      <li>Default <abbr>WKT</abbr> 2 axis order of geographic <abbr>CRS</abbr> is (<var>latitude</var>, <var>longitude</var>),
+          but this is <abbr>SIS</abbr>-specific as <abbr>ISO</abbr> 19162 does not mention default axis order.</li>
+    </ul>
+    <p>
+      To avoid ambiguities, users are encouraged to always provide explicit <code>AXIS[…]</code> elements in their <abbr>WKT</abbr>.
+      The <abbr>WKT</abbr> format will be presented in more details in the next sections.
     </p>
 
     <h3 id="GeographicCRS">Geographic reference systems</h3>
@@ -306,10 +319,92 @@ crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)</pr
 
 
     <h2 id="CoordinateOperation">Coordinate operations</h2>
-    <p style="color: red">TODO</p>
+    <p>
+      Given a <em>source</em> coordinate reference system (<abbr>CRS</abbr>) in which existing coordinate values are expressed,
+      and a <em>target</em> coordinate reference system in which coordinate values are desired,
+      Apache <abbr>SIS</abbr> can provide a <em>coordinate operation</em> performing the conversion or transformation work.
+      The search for coordinate operations may use a third argument, optional but recommended,
+      which is the geographic area of the data to transform.
+      That later argument is recommended because coordinate operations are often valid only in a some geographic area
+      (typically a particular country or state), and many transformations may exist
+      for the same pair of source and target <abbr>CRS</abbr> but different domain of validity.
+      Different coordinate operations may also be different compromises between accuracy and their domain of validity,
+      and specifying a smaller area of interest may allow Apache <abbr>SIS</abbr> to select a more accurate operation.
+    </p>
+    <div class="example"><p><b>Example:</b>
+      the <abbr>EPSG</abbr> geodetic dataset (as of version 7.9) defines 77 coordinate operations from the
+      <cite>North American Datum 1927</cite> (EPSG:4267) coordinate reference system to the
+      <cite>World Geodetic System 1984</cite> (EPSG:4326) <abbr>CRS</abbr>.
+      There is one operation valid only for coordinate transformations in Québec,
+      another operation valid for coordinate transformations in Texas west of 100°W,
+      another operation for the same state but east of 100°W, <i>etc</i>.
+      If the user did not specified any geographic area of interest,
+      then Apache <abbr>SIS</abbr> defaults on the coordinate operation which is valid in the largest area.
+      In this example, the “largest area” criterion results in the selection of a coordinate operation valid for Canada,
+      not <abbr>USA</abbr>.</p>
+    </div>
+    <p>
+      The easiest way to obtain a coordinate operation from above-cited information
+      is to use the <code>org.apache.sis.referencing.CRS</code> convenience class:
+    </p>
+    <pre>CoordinateOperation cop = CRS.findOperation(sourceCRS, targetCRS, areaOfInterest);</pre>
+    <p>
+      Among the information provided by <code>CoordinateOperation</code> object, the following are of special interest:
+    </p>
+    <ul>
+      <li>The <cite>domain of validity</cite>, either as a textual description (e.g. “Canada – onshore and offshore”)
+          or with the coordinates of a geographic bounding box.</li>
+      <li>The <cite>positional accuracy</cite>, which may be anything from 1 centimetre to a few kilometres.</li>
+      <li>The coordinate operation subtype. If the coordinate operation is an instance of <code>Transformation</code>,
+          then it may be one among many possibilities depending on the area of interest, and its accuracy is limited by
+          “real world” constraints (not only rounding errors).
+          If the coordinate operation is rather an instance of <code>Conversion</code>, then it does not have those limitations.</li>
+    </ul>
+    <p>
+      The actual mathematical work is performed by an object obtained by a call to <code>cop.getMathTransform()</code>.
+      The <code>CoordinateOperation</code> and <code>MathTransform</code> types are separated because the later is a kind of “black box”,
+      which may be implemented in a very different way than what the coordinate operation said.
+      In particular many conceptually different coordinate operations (e.g. longitude rotations,
+      change of units of measurement, conversions between two Mercator projections on the same datum, <i>etc.</i>)
+      are implemented by <code>MathTransform</code> as <a href="#AffineTransform">affine transforms</a> and concatenated for efficiency.
+    </p>
 
     <h3 id="MathTransform">Executing an operation on coordinate values</h3>
-    <p style="color: red">TODO</p>
+    <p>
+      The following Java code performs a map projection from geographic coordinates on the <cite>World Geodetic System 1984</cite> (<abbr>WGS84</abbr>) datum
+      coordinates in the <cite>WGS 84 / UTM zone 33N</cite> coordinate reference system.
+      In order to make the example a little bit simpler, this code uses predefined constants given by the <code>CommonCRS</code> convenience class.
+      But more advanced applications will typically use <abbr>EPSG</abbr> codes instead.
+      Note that all geographic coordinates below express latitude before longitude.
+    </p>
+
+<pre>import org.opengis.geometry.DirectPosition;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.CoordinateOperation;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.geometry.DirectPosition2D;
+
+public class MyApp {
+    public static void main(String[] args) throws FactoryException, TransformException {
+        CoordinateReferenceSystem sourceCRS = CommonCRS.WGS84.geographic();
+        CoordinateReferenceSystem targetCRS = CommonCRS.WGS84.UTM(40, 14);  // Get whatever zone is valid for 14°E.
+        CoordinateOperation operation = CRS.findOperation(sourceCRS, targetCRS, null);
+
+        // The above lines are costly and should be performed only once before to project many points.
+        // In this example, the operation that we got is valid for coordinates in geographic area from
+        // 12°E to 18°E (UTM zone 33) and 0°N to 84°N.
+
+        DirectPosition ptSrc = new DirectPosition2D(40, 14);           // 40°N 14°E
+        DirectPosition ptDst = operation.getMathTransform().transform(ptSrc, null);
+
+        System.out.println("Source: " + ptSrc);
+        System.out.println("Target: " + ptDst);
+    }
+}</pre>
+
 
     <h4 id="AffineTransform">Affine transform</h4>
     <p>
@@ -430,7 +525,7 @@ if (mt instanceof AffineTransform) {
     // Use Java2D API from here.
 }</pre>
     <p>
-      However <abbr>SIS</abbr> uses Java2D on a <em>best effort</em> basis only.
+      Apache <abbr>SIS</abbr> uses Java2D on a <em>best effort</em> basis only.
       The above cast is not guaranteed to succeed,
       even when the <code>MathTransform</code> meets the requirements allowing Java2D usage.
     </p>

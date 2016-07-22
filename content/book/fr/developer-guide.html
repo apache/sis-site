@@ -46,7 +46,8 @@
 <li><a href="#CRS_Components">Composantes d’un système de références par coordonnées</a><ul>
 <li><a href="#Ellipsoid">Géoïde et ellipsoïde</a></li>
 <li><a href="#GeodeticDatum">Référentiel géodésique</a></li>
-<li><a href="#CoordinateSystem">Systèmes de coordonnées</a></li>
+<li><a href="#CoordinateSystem">Systèmes de coordonnées</a><ul>
+<li><a href="#AxisOrder">Ordre des axes</a></li></ul></li>
 <li><a href="#GeographicCRS">Systèmes géographiques</a><ul>
 <li><a href="#GeographicWKT">Format Well-Known Text</a></li></ul></li>
 <li><a href="#ProjectedCRS">Projections cartographiques</a><ul>
@@ -1420,7 +1421,8 @@ de la bibliothèque <abbr>SIS</abbr>.
 <li><a href="#CRS_Components">Composantes d’un système de références par coordonnées</a><ul>
 <li><a href="#Ellipsoid">Géoïde et ellipsoïde</a></li>
 <li><a href="#GeodeticDatum">Référentiel géodésique</a></li>
-<li><a href="#CoordinateSystem">Systèmes de coordonnées</a></li>
+<li><a href="#CoordinateSystem">Systèmes de coordonnées</a><ul>
+<li><a href="#AxisOrder">Ordre des axes</a></li></ul></li>
 <li><a href="#GeographicCRS">Systèmes géographiques</a><ul>
 <li><a href="#GeographicWKT">Format Well-Known Text</a></li></ul></li>
 <li><a href="#ProjectedCRS">Projections cartographiques</a><ul>
@@ -1641,6 +1643,53 @@ s’il ne peut pas appliquer l’approche « late binding » avec les système
 <h3 id="CoordinateSystem"><span class="section-number">3.1.3.</span> Systèmes de coordonnées</h3>
 <p style="color: red">TODO</p>
 
+<h4 id="AxisOrder"><span class="section-number">3.1.3.1.</span> Ordre des axes</h4>
+<p>
+L’ordre des axes est spécifié par l’autorité (typiquement une agence nationale) qui définit le
+<cite>système de référence des coordonnées</cite> (<abbr title="Coordinate Reference System">CRS</abbr>).
+L’ordre dépend du type de <abbr>CRS</abbr> ainsi que du pays qui l’a définit.
+Dans le cas des <abbr>CRS</abbr> de type géographique,
+l’ordre (<var>latitude</var>, <var>longitude</var>) est utilisé par les géographes et les pilotes depuis des siècles.
+Toutefois des développeurs de logiciels tendent à préférer l’ordre (<var>x</var>, <var>y</var>) pour tous systèmes de coordonnées.
+Ces différentes pratiques entraînent des définitions contradictoires de l’ordre des axes pour pratiquement tous les <abbr>CRS</abbr>
+de type <code class="GeoAPI">GeographicCRS</code>, pour certains <code class="GeoAPI">ProjectedCRS</code> dans l’hémisphère sud (Afrique du Sud, Australie, <i>etc.</i>)
+et pour certaines projections polaires entre autres.
+</p><p>
+Les standards <abbr title="Open Geospatial Consortium">OGC</abbr> récents demandent d’ordonner les axes tel que spécifié par l’autorité qui a définit le <abbr>CRS</abbr>.
+Mais des standards <abbr>OGC</abbr> plus anciens utilisaient l’ordre (<var>x</var>, <var>y</var>) inconditionnellement,
+en ignorant les spécifications des autorités sur ce point.
+Beaucoup de logiciels continue d’utiliser cet ordre (<var>x</var>, <var>y</var>),
+peut-être parce qu’une telle uniformisation rend l’implémentation et l’utilisation des <abbr>CRS</abbr> <em>en apparence</em> plus simple.
+Apache <abbr title="Spatial Information System">SIS</abbr> supporte les deux conventions avec l’approche suivante:
+par défaut, <abbr>SIS</abbr> construit les <abbr>CRS</abbr> avec les axes <em>dans l’ordre définit par l’autorité</em>.
+Ces <abbr>CRS</abbr> sont construits par des appels à la méthode <code>CRS.forCode(String)</code>,
+et l’ordre des axes effectif peut être vérifié après la création du <abbr>CRS</abbr> par un appel à <code>System.out​.println(crs)</code>.
+Mais si l’ordre (<var>x</var>, <var>y</var>) est désiré pour des raisons de compatibilité avec d’anciens standards <abbr>OGC</abbr> ou avec d’autres logiciels,
+alors les <abbr>CRS</abbr> peuvent être modifiés de manière à avoir la longitude en premier avec un appel à la méthode suivante:
+</p>
+<pre><code class="GeoAPI">CoordinateReferenceSystem</code> crs = …;    <code class="comment">// CRS obtenu de n’importe quel façon.
+</code>crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)</pre>
+<p>
+Parmi les anciens standards de l’<abbr>OGC</abbr> qui utilisaient un ordre des axes non-conforme,
+un standard influent était la version 1 du format <cite>Well Known Text</cite> (<abbr>WKT</abbr>).
+D’après ce format largement utilisé, les définitions <abbr>WKT</abbr> 1 sans éléments <code>AXIS[…]</code> explicites
+doivent être interprétés comme ayant ses axes dans l’ordre (<var>longitude</var>, <var>latitude</var>) ou (<var>x</var>, <var>y</var>).
+Dans la version 2 du format <abbr>WKT</abbr>, les éléments <code>AXIS[…]</code> ne sont plus optionnel
+et devrait contenir explicitement un sous-élément <code>ORDER[…]</code> pour rendre l’ordre voulu encore plus évident.
+Mais si les éléments <code>AXIS[…]</code> sont malgré tout omis dans une définition <abbr>WKT</abbr> 2,
+alors Apache <abbr>SIS</abbr> utilise l’ordre (<var>latitude</var>, <var>longitude</var>) par défaut.
+Pour résumer:
+</p>
+<ul>
+<li>L’ordre par défaut d’un <abbr>CRS</abbr> géographique en <abbr>WKT</abbr> 1 est (<var>longitude</var>, <var>latitude</var>) tel que spécifié par le standard <abbr>OGC</abbr> 01-009.</li>
+<li>L’ordre par défaut d’un <abbr>CRS</abbr> géographique en <abbr>WKT</abbr> 2 est (<var>latitude</var>, <var>longitude</var>), mais c’est une interprétation spécifique de <abbr>SIS</abbr>
+vu que la norme <abbr title="International Organization for Standardization">ISO</abbr> 19162 ne mentionne pas de comportement par défaut.</li>
+</ul>
+<p>
+Pour éviter des ambiguïtés, les utilisateurs sont encouragés à toujours fournir explicitement les éléments <code>AXIS[…]</code> dans leurs <abbr>WKT</abbr>.
+Le format <abbr>WKT</abbr> sera présenté plus en détails dans les sections suivantes.
+</p>
+
 <h3 id="GeographicCRS"><span class="section-number">3.1.4.</span> Systèmes géographiques</h3>
 <p style="color: red">TODO</p>
 
@@ -1686,10 +1735,92 @@ alors que les pays plutôt allongés dans le sens Nord-Sud préfèrent une proje
 
 
 <h2 id="CoordinateOperation"><span class="section-number">3.3.</span> Opérations sur les coordonnées</h2>
-<p style="color: red">TODO</p>
+<p>
+Étant donné un système de référence des coordonnées (<abbr title="Coordinate Reference System">CRS</abbr>) <em>source</em> selon lequel sont exprimés des coordonnées existantes
+et un système de référence des coordonnées <em>destination</em> selon lequel les coordonnées sont désirées,
+Apache <abbr title="Spatial Information System">SIS</abbr> peut fournir une <em>opération sur les coordonnées</em> qui effectuera le travail de conversion ou de transformation.
+La recherche d’une opération peut utiliser un troisième argument, optionnel mais recommandé: la région géographique des données à transformer.
+Ce dernier argument est recommandé parce que les opérations sur les coordonnées sont souvent valides seulement dans une région géographique
+(typiquement un pays ou une province particulière), et plusieurs transformations peuvent exister pour la même paire de <abbr>CRS</abbr>
+source et destination mais avec des domaines de validité différents.
+Il peut aussi y avoir des différentes transformations qui sont différents compromis entre la précision et le domaine de validité,
+de sorte que spécifier à Apache <abbr>SIS</abbr> qu’on s’intéresse à une région plus petite
+peut lui permettre de sélectionner une opération plus précise.
+</p>
+<div class="example"><p><b>Exemple:</b>
+la base de données géodésiques <abbr>EPSG</abbr> (dans sa version 7.9) définit 77 opérations sur les coordonnées
+allant du système géographique <cite>North American Datum 1927</cite> (EPSG:4267)
+vers le système <cite>World Geodetic System 1984</cite> (EPSG:4326).
+Il y a une opération valide seulement pour la transformation de coordonnées au Québec,
+une autre opération valide pour la transformation de coordonnées au Texas mais à l’ouest de 100°W,
+une autre opération pour le même état mais à l’est de 100°W, <i>etc</i>.
+Si l’utilisateur ne spécifie pas la région géographique qui l’intéresse,
+alors le comportement par défaut de Apache <abbr>SIS</abbr> est de sélectionner l’opération valide dans la plus grande région géographique.
+Dans cet exemple, ce critère entraîne la sélection d’une opération valide pour le Canada, mais qui n’est pas valide pour les États-Unis.</p>
+</div>
+<p>
+La façon la plus facile d’obtenir une opération sur les coordonnées à partir des informations présentées ci-dessus
+est d’utiliser la classe de commodité <code class="SIS">org.apache.sis.referencing.CRS</code>:
+</p>
+<pre><code class="GeoAPI">CoordinateOperation</code> cop = CRS.findOperation(sourceCRS, targetCRS, areaOfInterest);</pre>
+<p>
+Parmi les information fournies par l’objet <code class="GeoAPI">CoordinateOperation</code> obtenu, on note en particulier:
+</p>
+<ul>
+<li>Le <cite>domaine de validité</cite>, soit comme une description textuelle telle que « Canada – onshore and offshore »
+ou comme les coordonnées géographiques d’une boîte englobante.</li>
+<li>La <cite>précision</cite>, qui peut être n’importe quoi entre 1 centimètre et quelques kilomètres.</li>
+<li>Le sous-type de l’opération sur les coordonées. Si l’opération est une instance de <code class="GeoAPI">Transformation</code>,
+alors l’opération sélectionnée peut n’être qu’une possibilité parmi plusieurs, selon la région d’intérêt,
+et sa précision peut être limitée à cause de contrainte du « monde réel » (pas seulement les erreurs d’arrondissements).
+Si l’opération est plutôt une instance de <code class="GeoAPI">Conversion</code>, alors elle n’a pas ses limitations.</li>
+</ul>
+<p>
+Le travail mathématique réel est effectué par un objet obtenu par un appel à <code>cop.getMathTransform()</code>.
+Les types <code class="GeoAPI">CoordinateOperation</code> et <code class="GeoAPI">MathTransform</code> sont séparés parce que ce dernier est une sorte de boîte noire,
+qui peut être implémentée d’une manière très différente à ce que l’objet <code class="GeoAPI">CoordinateOperation</code> dit.
+En particulier plusieurs opérations conceptuellement différentes (par exemple rotations de la longitude,
+changements d’unités de mesure, conversions entre deux projections de Mercator qui utilisent le même référentiel, <i>etc.</i>)
+sont implémentées par <code class="GeoAPI">MathTransform</code> comme des <a href="#AffineTransform">transformations affines</a>
+et concaténées pour des raisons d’efficacité.
+</p>
 
 <h3 id="MathTransform"><span class="section-number">3.3.1.</span> Exécution de opérations</h3>
-<p style="color: red">TODO</p>
+<p>
+Le code Java suivant effectue une projection cartographique à partir de coordonnées géographiques selon le référentiel
+<cite>World Geodetic System 1984</cite> (<abbr title="World Geodetic System 1984">WGS84</abbr>) vers des coordonnées selon le système <cite>WGS 84 / UTM zone 33N</cite>.
+Afin de rendre l’exemple un peu plus simple, ce code utilise des constantes pré-définies dans la classe de commodité <code>CommonCRS</code>.
+Mais des applications plus avancées voudront souvent utiliser des codes <abbr>EPSG</abbr> plutôt.
+Notes que toutes les coordonnées géographiques dans ce code ont la latitude avant la longitude.
+</p>
+
+<pre><b>import</b> org.opengis.geometry.<code class="GeoAPI">DirectPosition</code>;
+<b>import</b> org.opengis.referencing.crs.<code class="GeoAPI">CoordinateReferenceSystem</code>;
+<b>import</b> org.opengis.referencing.operation.<code class="GeoAPI">CoordinateOperation</code>;
+<b>import</b> org.opengis.referencing.operation.<code class="GeoAPI">TransformException</code>;
+<b>import</b> org.opengis.util.<code class="GeoAPI">FactoryException</code>;
+<b>import</b> org.apache.sis.referencing.CRS;
+<b>import</b> org.apache.sis.referencing.CommonCRS;
+<b>import</b> org.apache.sis.geometry.DirectPosition2D;
+
+<b>public</b> <b>class</b> MyApp {
+    <b>public</b> <b>static</b> <b>void</b> main(String[] args) <b>throws</b> <code class="GeoAPI">FactoryException</code>, <code class="GeoAPI">TransformException</code> {
+        <code class="GeoAPI">CoordinateReferenceSystem</code> sourceCRS = CommonCRS.WGS84.geographic();
+        <code class="GeoAPI">CoordinateReferenceSystem</code> targetCRS = CommonCRS.WGS84.UTM(40, 14);  <code class="comment">// Obtient la zone valide pour 14°E.
+</code>        <code class="GeoAPI">CoordinateOperation</code> operation = CRS.findOperation(sourceCRS, targetCRS, <b>null</b>);
+
+        <code class="comment">// Les lignes précédentes sont coûteuses et ne devraient être exécutées qu’une seule fois avant
+</code>        <code class="comment">// de transformer plusieurs points.  Dans cet exemple, l’opération que nous obtenons est valide
+</code>        <code class="comment">// pour des coordonnées dans la région géographique allant de 12°E à 18°E (zone 33) et 0°N à 84°N.
+</code>
+        <code class="GeoAPI">DirectPosition</code> ptSrc = <b>new</b> DirectPosition2D(40, 14);           <code class="comment">// 40°N 14°E
+</code>        <code class="GeoAPI">DirectPosition</code> ptDst = operation.getMathTransform().transform(ptSrc, <b>null</b>);
+
+        System.out.println(<i>"Source: "</i> + ptSrc);
+        System.out.println(<i>"Target: "</i> + ptDst);
+    }
+}</pre>
+
 
 <h4 id="AffineTransform"><span class="section-number">3.3.1.1.</span> Les transformations affines</h4>
 <p>
