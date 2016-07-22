@@ -60,9 +60,7 @@
 <li><a href="#CRSFactory">Construction programmatique explicite</a></li>
 <li><a href="#CRS_UserCode">Ajout de définitions</a></li></ul></li>
 <li><a href="#CoordinateOperation">Opérations sur les coordonnées</a><ul>
-<li><a href="#MathTransform">Exécution de opérations</a><ul>
-<li><a href="#AffineTransform">Les transformations affines</a></li>
-<li><a href="#AffineTransformAPI">Intégration avec les bibliothèques graphiques</a></li></ul></li>
+<li><a href="#MathTransform">Exécution de opérations</a></li>
 <li><a href="#TransformDerivative">Dérivées partielles des opérations</a><ul>
 <li><a href="#DerivativeAndEnvelope">Utilité des dérivées pour la reprojection d’enveloppes</a></li>
 <li><a href="#DerivativeAndRaster">Utilité des dérivées pour la reprojection d’images</a></li>
@@ -86,6 +84,8 @@
 <li><a href="#GeoAPI-validators">Validations des instances</a></li>
 <li><a href="#GeoAPI-tests">Exécution des tests pré-définis</a></li></ul></li>
 <li><a href="#DesignNote">Notes de design</a><ul>
+<li><a href="#AffineTransform">Utilisation des transformations affines</a><ul>
+<li><a href="#AffineTransformAPI">Intégration avec les bibliothèques graphiques</a></li></ul></li>
 <li><a href="#MatrixLibrary">Particularités d’une bibliothèque de calculs matriciels pour un SIG</a><ul>
 <li><a href="#NonSquareMatrix">Que faire des matrices qui ne sont pas carrées (et pourquoi)</a></li>
 <li><a href="#MatrixLibrarySummary">La bibliothèque matricielle de Apache SIS</a></li></ul></li></ul></li></ul></li>
@@ -1435,9 +1435,7 @@ de la bibliothèque <abbr>SIS</abbr>.
 <li><a href="#CRSFactory">Construction programmatique explicite</a></li>
 <li><a href="#CRS_UserCode">Ajout de définitions</a></li></ul></li>
 <li><a href="#CoordinateOperation">Opérations sur les coordonnées</a><ul>
-<li><a href="#MathTransform">Exécution de opérations</a><ul>
-<li><a href="#AffineTransform">Les transformations affines</a></li>
-<li><a href="#AffineTransformAPI">Intégration avec les bibliothèques graphiques</a></li></ul></li>
+<li><a href="#MathTransform">Exécution de opérations</a></li>
 <li><a href="#TransformDerivative">Dérivées partielles des opérations</a><ul>
 <li><a href="#DerivativeAndEnvelope">Utilité des dérivées pour la reprojection d’enveloppes</a></li>
 <li><a href="#DerivativeAndRaster">Utilité des dérivées pour la reprojection d’images</a></li>
@@ -1821,342 +1819,6 @@ Notes que toutes les coordonnées géographiques dans ce code ont la latitude av
     }
 }</pre>
 
-
-<h4 id="AffineTransform"><span class="section-number">3.3.1.1.</span> Les transformations affines</h4>
-<p>
-Parmi les sortes d’opérations qu’un <abbr>SIG</abbr> doit effectuer sur les coordonnées spatiales,
-les <cite>transformations affines</cite> sont à la fois relativement simples et très fréquentes.
-Les transformations affines peuvent représenter n’importe quelle combinaison d’échelles, de cisaillements,
-de retournements, de rotations ou de translations, qui sont toutes des <cite>opérations linéaires</cite>.
-Les transformations affines ne peuvent pas effectuer des opérations <cite>non-linéaires</cite>
-telles que les projections cartographiques, mais couvrent néanmoins de nombreux autres cas:
-</p>
-<ul>
-<li>Changer l’ordre des axes,        par exemple de (<var>latitude</var>, <var>longitude</var>) vers (<var>longitude</var>, <var>latitude</var>).</li>
-<li>Changer la direction des axes,   par exemple l’axe des <var>y</var> qui pointe habituellement vers le bas dans les images.</li>
-<li>Changer le méridien d’origine,   par exemple du méridien de <cite>Paris</cite> vers celui de <cite>Greenwich</cite>.</li>
-<li>Changer le nombre de dimensions, par exemple passer des coordonnées 3D vers 2D en supprimant la hauteur.</li>
-<li>Convertir des unités de mesures, par exemple convertir des pieds en mètres.</li>
-<li>Convertir des coordonnées pixels en coordonnées géographiques,
-par exemple la conversion exprimée dans les fichiers <code>.tfw</code> qui accompagnent certaines images <abbr>TIFF</abbr>.</li>
-<li>Prendre en charge une petite partie des projections cartographiques,
-par exemple les paramètres <cite>False Easting</cite>, <cite>False Northing</cite> et <cite>Scale factor</cite>.</li>
-</ul>
-<p>
-Les transformations affines peuvent se combiner efficacement.
-Peu importe le nombre de transformations affines que l’on enchaîne, le résultat sera exprimable par une seule transformation affine.
-Cette propriété est plus facilement visible lorsque les transformations affines sont exprimées sous forme de matrices:
-pour combiner les opérations, il suffit de multiplier les matrices.
-Le cas des conversions des coordonnées pixels en coordonnées géographiques ci-dessous donne un exemple.
-</p>
-
-<div class="example">
-<p><b>Exemple:</b>
-supposons que nous disposons d’une image dont les coordonnées des pixels sont représentées par (<var>x</var>,<var>y</var>).
-Supposons aussi que les contraintes suivantes sont respectées:
-</p>
-<ul>
-<li>Il n’y a ni cisaillement, ni rotation, ni retournement de l’image.</li>
-<li>Tous les pixels ont la même largeur en degrés de longitude.</li>
-<li>Tous les pixels ont la même hauteur en degrés de latitude.</li>
-<li>Les coordonnées des pixels commencent à (0,0) inclusivement.</li>
-</ul>
-<p>Alors la conversion des coordonnées pixels (<var>x</var>,<var>y</var>)
-vers les coordonnées géographiques (<var>λ</var>,<var>φ</var>)
-peut être représentée par les équations suivantes,
-où <var>N</var><sub><var>x</var></sub> est la largeur
-et <var>N</var><sub><var>y</var></sub> la hauteur de l’image en nombre de pixels.
-</p><p>
-
-
-<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
-<mtable>
-<mtr>
-<mtd><mo>λ</mo></mtd>
-<mtd><mo>=</mo></mtd>
-<mtd><msub><mi>S</mi><mrow>λ</mrow></msub><mi>x</mi><mo>+</mo><msub><mi>T</mi><mrow>λ</mrow></msub></mtd>
-<mtd><mtext>        where        </mtext></mtd>
-<mtd><msub><mi>S</mi><mrow>λ</mrow></msub></mtd>
-<mtd><mo>=</mo></mtd>
-<mtd>
-<mfrac>
-<mrow>
-<msub><mi>λ</mi><mrow>max</mrow></msub><mo>-</mo>
-<msub><mi>λ</mi><mrow>min</mrow></msub>
-</mrow><mrow>
-<msub><mi>N</mi><mrow><mi>x</mi></mrow></msub>
-</mrow>
-</mfrac>
-</mtd>
-<mtd><mtext>    and    </mtext></mtd>
-<mtd><msub><mi>T</mi><mrow>λ</mrow></msub></mtd>
-<mtd><mo>=</mo></mtd>
-<mtd><msub><mi>λ</mi><mrow>min</mrow></msub></mtd>
-</mtr>
-<mtr>
-<mtd><mo>φ</mo></mtd>
-<mtd><mo>=</mo></mtd>
-<mtd><msub><mi>S</mi><mrow>φ</mrow></msub><mi>y</mi><mo>+</mo><msub><mi>T</mi><mrow>φ</mrow></msub></mtd>
-<mtd><mtext>        where        </mtext></mtd>
-<mtd><msub><mi>S</mi><mrow>φ</mrow></msub></mtd>
-<mtd><mo>=</mo></mtd>
-<mtd>
-<mfrac>
-<mrow>
-<msub><mi>φ</mi><mrow>max</mrow></msub><mo>-</mo>
-<msub><mi>φ</mi><mrow>min</mrow></msub>
-</mrow><mrow>
-<msub><mi>N</mi><mrow><mi>y</mi></mrow></msub>
-</mrow>
-</mfrac>
-</mtd>
-<mtd><mtext>    and    </mtext></mtd>
-<mtd><msub><mi>T</mi><mrow>φ</mrow></msub></mtd>
-<mtd><mo>=</mo></mtd>
-<mtd><msub><mi>φ</mi><mrow>min</mrow></msub></mtd>
-</mtr>
-</mtable>
-</math>
-</p><p>
-Les équations ci-dessus peuvent être représentées sous forme de matrices comme ci-dessous:
-</p><p>
-
-
-<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
-<mfenced close="]" open="[">
-<mtable>
-<mtr><mtd><mi>λ</mi></mtd></mtr>
-<mtr><mtd><mi>φ</mi></mtd></mtr>
-<mtr><mtd><mn>1</mn></mtd></mtr>
-</mtable>
-</mfenced>
-<mo>=</mo>
-<mfenced close="]" open="[">
-<mtable>
-<mtr>
-<mtd><msub><mi>S</mi><mrow>λ</mrow></msub></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><msub><mi>T</mi><mrow>λ</mrow></msub></mtd>
-</mtr>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><msub><mi>S</mi><mrow>φ</mrow></msub></mtd>
-<mtd><msub><mi>T</mi><mrow>φ</mrow></msub></mtd>
-</mtr>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>1</mn></mtd>
-</mtr>
-</mtable>
-</mfenced>
-<mo>×</mo>
-<mfenced close="]" open="[">
-<mtable>
-<mtr><mtd><mi>x</mi></mtd></mtr>
-<mtr><mtd><mi>y</mi></mtd></mtr>
-<mtr><mtd><mn>1</mn></mtd></mtr>
-</mtable>
-</mfenced>
-</math>
-</p><p>
-Dans ce cas particulier, les facteurs d’échelles <var>S</var> correspondent à la taille des pixels en degrés
-et les termes de translations <var>T</var> correspondent aux coordonnées géographiques d’un coin de l’image
-(pas nécessairement le coin inférieur gauche si certains axes ont été retournés).
-Cette interprétation directe n’est possible que lorsque les contraintes énumérées plus haut sont respectées.
-Les coefficients des matrices deviennent plus complexes si l’image a un cisaillement ou une rotation,
-ou si les coordonnées des pixels ne commencent pas à (0,0).
-Toutefois il n’est pas nécessaire d’utiliser des équations plus complexes pour gérer des cas plus génériques.
-L’exemple ci-dessous prend comme point de départ la matrice d’une « conversion initiale »
-dans laquelle les coefficients <var>S</var> et <var>T</var> sont les valeurs relativement simples données ci-dessus.
-Ensuite la direction de l’axe des <var>y</var> est inversée de manière à correspondre
-à la convention habituelle des systèmes de coordonnées des images (changement 1),
-et les axes sont intervertis de manière à avoir la latitude avant la longitude (changement 2).
-Notez que les concaténations de transformations affines écrites sous forme de multiplications matricielles
-se lisent de droite à gauche:
-<var>A</var>×<var>B</var>×<var>C</var> est équivalent à d’abord appliquer l’opération <var>C</var>,
-suivit de l’opération <var>B</var> et finalement l’opération <var>A</var>.
-</p>
-<table class="hidden"><tr>
-<th>Changement 2</th><th/>
-<th>Changement 1</th><th/>
-<th>Conversion initiale</th><th/>
-<th>Opérations combinées</th>
-</tr><tr>
-<td style="vertical-align: middle">
-<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
-<mfenced close="]" open="[">
-<mtable>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>1</mn></mtd>
-<mtd><mn>0</mn></mtd>
-</mtr>
-<mtr>
-<mtd><mn>1</mn></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>0</mn></mtd>
-</mtr>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>1</mn></mtd>
-</mtr>
-</mtable>
-</mfenced>
-</math>
-</td>
-<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
-<td style="vertical-align: middle">
-<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mfenced close="]" open="[">
-<mtable>
-<mtr>
-<mtd><mn>1</mn></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>0</mn></mtd>
-</mtr>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>-1</mn></mtd>
-<msub><mi>N</mi><mrow><mi>y</mi></mrow></msub>
-</mtr>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>1</mn></mtd>
-</mtr>
-</mtable>
-</mfenced>
-</math>
-</td>
-<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
-<td style="vertical-align: middle">
-<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mfenced close="]" open="[">
-<mtable>
-<mtr>
-<mtd><mfrac>
-<mrow>
-<msub><mi>λ</mi><mrow>max</mrow></msub><mo>-</mo>
-<msub><mi>λ</mi><mrow>min</mrow></msub>
-</mrow><mrow>
-<msub><mi>N</mi><mrow><mi>x</mi></mrow></msub>
-</mrow>
-</mfrac></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><msub><mi>λ</mi><mrow>min</mrow></msub></mtd>
-</mtr>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mfrac>
-<mrow>
-<msub><mi>φ</mi><mrow>max</mrow></msub><mo>-</mo>
-<msub><mi>φ</mi><mrow>min</mrow></msub>
-</mrow><mrow>
-<msub><mi>N</mi><mrow><mi>y</mi></mrow></msub>
-</mrow>
-</mfrac></mtd>
-<mtd><msub><mi>φ</mi><mrow>min</mrow></msub></mtd>
-</mtr>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>1</mn></mtd>
-</mtr>
-</mtable>
-</mfenced>
-</math>
-</td>
-<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">=</td>
-<td style="vertical-align: middle">
-<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mfenced close="]" open="[">
-<mtable>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mo>-</mo><mfrac>
-<mrow>
-<msub><mi>φ</mi><mrow>max</mrow></msub><mo>-</mo>
-<msub><mi>φ</mi><mrow>min</mrow></msub>
-</mrow><mrow>
-<msub><mi>N</mi><mrow><mi>y</mi></mrow></msub>
-</mrow>
-</mfrac></mtd>
-<mtd><msub><mi>φ</mi><mrow>max</mrow></msub></mtd>
-</mtr>
-<mtr>
-<mtd><mfrac>
-<mrow>
-<msub><mi>λ</mi><mrow>max</mrow></msub><mo>-</mo>
-<msub><mi>λ</mi><mrow>min</mrow></msub>
-</mrow><mrow>
-<msub><mi>N</mi><mrow><mi>x</mi></mrow></msub>
-</mrow>
-</mfrac></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><msub><mi>λ</mi><mrow>min</mrow></msub></mtd>
-</mtr>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>1</mn></mtd>
-</mtr>
-</mtable>
-</mfenced>
-</math>
-</td>
-</tr></table>
-<p>
-Un principe clé est qu’il n’y a pas besoin d’écrire un code dédié à ce type d’opérations sur les axes.
-Ces opérations, et bien d’autres, sont prises en compte naturellement par l’algèbre matricielle.
-On y gagne en généricité du code et en performance.
-Apache <abbr title="Spatial Information System">SIS</abbr> suit ce principe en utilisant les tranformations affine pour toutes les opérations
-où elles peuvent s’appliquer.
-Il n’y a par exemple aucun code dédié au changement de l’ordre des ordonnées dans une coordonnée.
-</p>
-</div>
-
-<h4 id="AffineTransformAPI"><span class="section-number">3.3.1.2.</span> Intégration avec les bibliothèques graphiques</h4>
-<p>
-A peu près toutes les bibliothèques graphiques supportent une forme de transformation de coordonnées,
-souvent les <cite>transformations affines</cite> ou une légère généralisation.
-Chaque bibliothèque défini son propre <abbr title="Application Programming Interface">API</abbr>.
-Quelques exemples sont:
-</p>
-<table>
-<caption>Implémentations des transformations affines dans des bibliothèques graphiques</caption>
-<tr><th>Bibliothèque</th>                             <th>Implementation de la transformation</th>               <th>Dimensions</th></tr>
-<tr><td>Java2D</td>                                   <td><code>java.awt.geom.AffineTransform</code></td>        <td>2</td></tr>
-<tr><td>Java3D</td>                                   <td><code>javax.media.j3d.Transform3D</code></td>          <td>3</td></tr>
-<tr><td>JavaFX</td>                                   <td><code>javafx.scene.transform.Affine</code></td>        <td>2 ou 3</td></tr>
-<tr><td>Java Advanced Imaging (<abbr>JAI</abbr>)</td> <td><code>javax.media.jai.PerspectiveTransform</code></td> <td>2</td></tr>
-<tr><td>Android</td>                                  <td><code>android.graphics.Matrix</code></td>              <td>2</td></tr>
-</table>
-<p>
-Toutefois dans plusieurs cas, les transformations affines sont les seuls types d’opérations supportées par la bibliothèque graphique.
-Apache <abbr title="Spatial Information System">SIS</abbr> a besoin de gérer un plus grand nombre de type d’opérations,
-parmi lesquelles les transformations affines ne sont que des cas particuliers.
-Les projections cartographiques et les changements de référentiels notamment,
-ne peuvent pas être représentés par des transformations affines.
-<abbr>SIS</abbr> a aussi besoin de transformer des points ayant un nombre arbitraire de dimensions,
-alors que les <abbr>API</abbr> cités ci-haut restreignent leur usage à un nombre fixe de dimensions.
-Pour ces raisons, <abbr>SIS</abbr> ne peut pas utiliser directement ces <abbr>API</abbr>.
-<abbr>SIS</abbr> utilise plutôt une interface plus abstraite, <code class="GeoAPI">org.opengis.referencing.transform.MathTransform</code>.
-Mais dans le cas particulier où la transformation est réellement affine, <abbr>SIS</abbr> peut essayer d’utiliser
-une implémentation existante, surtout Java2D.
-Par exemple le code suivant peut être utilisé dans les situations où un objet Java2D est désiré:
-</p>
-<pre><code class="GeoAPI">MathTransform</code> mt = ...;    <code class="comment">// N’importe quelle instance créée par Apache SIS.
-</code><b>if</b> (mt <b>instanceof</b> AffineTransform) {
-    AffineTransform at = (AffineTransform) mt;
-    <code class="comment">// Utiliser l’API de Java2D API à partir d’ici.
-</code>}</pre>
-<p>
-Toutefois <abbr>SIS</abbr> n’utilisera Java2D que sur une base opportuniste.
-Le forçage de type ci-haut n’est pas garantit de réussir, même si l’instance de
-<code class="GeoAPI">MathTransform</code> répond aux conditions qui devrait permettre un usage de Java2D.
-</p>
 
 <h3 id="TransformDerivative"><span class="section-number">3.3.2.</span> Dérivées partielles des opérations</h3>
 <p>
@@ -3087,6 +2749,8 @@ et dont la méthode <code class="SIS">getNilReason()</code> retournera la consta
 <li><a href="#GeoAPI-validators">Validations des instances</a></li>
 <li><a href="#GeoAPI-tests">Exécution des tests pré-définis</a></li></ul></li>
 <li><a href="#DesignNote">Notes de design</a><ul>
+<li><a href="#AffineTransform">Utilisation des transformations affines</a><ul>
+<li><a href="#AffineTransformAPI">Intégration avec les bibliothèques graphiques</a></li></ul></li>
 <li><a href="#MatrixLibrary">Particularités d’une bibliothèque de calculs matriciels pour un SIG</a><ul>
 <li><a href="#NonSquareMatrix">Que faire des matrices qui ne sont pas carrées (et pourquoi)</a></li>
 <li><a href="#MatrixLibrarySummary">La bibliothèque matricielle de Apache SIS</a></li></ul></li></ul></li></ul></nav>
@@ -3439,7 +3103,345 @@ qui sera exécutée après chacun des tests.
 <h2 id="DesignNote"><span class="section-number">7.3.</span> Notes de design</h2>
 <p>Les chapitres suivants expliquent les raisons derrières certains choix d'implémentation de Apache <abbr title="Spatial Information System">SIS</abbr>.</p>
 
-<h3 id="MatrixLibrary"><span class="section-number">7.3.1.</span> Particularités d’une bibliothèque de calculs matriciels pour un <abbr>SIG</abbr></h3>
+
+<h3 id="AffineTransform"><span class="section-number">7.3.1.</span> Utilisation des transformations affines</h3>
+<p>
+Parmi les sortes d’opérations qu’un <abbr>SIG</abbr> doit effectuer sur les coordonnées spatiales,
+les <cite>transformations affines</cite> sont à la fois relativement simples et très fréquentes.
+Les transformations affines peuvent représenter n’importe quelle combinaison d’échelles, de cisaillements,
+de retournements, de rotations ou de translations, qui sont toutes des <cite>opérations linéaires</cite>.
+Les transformations affines ne peuvent pas effectuer des opérations <cite>non-linéaires</cite>
+telles que les projections cartographiques, mais couvrent néanmoins de nombreux autres cas:
+</p>
+<ul>
+<li>Changer l’ordre des axes,        par exemple de (<var>latitude</var>, <var>longitude</var>) vers (<var>longitude</var>, <var>latitude</var>).</li>
+<li>Changer la direction des axes,   par exemple l’axe des <var>y</var> qui pointe habituellement vers le bas dans les images.</li>
+<li>Changer le méridien d’origine,   par exemple du méridien de <cite>Paris</cite> vers celui de <cite>Greenwich</cite>.</li>
+<li>Changer le nombre de dimensions, par exemple passer des coordonnées 3D vers 2D en supprimant la hauteur.</li>
+<li>Convertir des unités de mesures, par exemple convertir des pieds en mètres.</li>
+<li>Convertir des coordonnées pixels en coordonnées géographiques,
+par exemple la conversion exprimée dans les fichiers <code>.tfw</code> qui accompagnent certaines images <abbr>TIFF</abbr>.</li>
+<li>Prendre en charge une petite partie des projections cartographiques,
+par exemple les paramètres <cite>False Easting</cite>, <cite>False Northing</cite> et <cite>Scale factor</cite>.</li>
+</ul>
+<p>
+Les transformations affines peuvent se combiner efficacement.
+Peu importe le nombre de transformations affines que l’on enchaîne, le résultat sera exprimable par une seule transformation affine.
+Cette propriété est plus facilement visible lorsque les transformations affines sont exprimées sous forme de matrices:
+pour combiner les opérations, il suffit de multiplier les matrices.
+Le cas des conversions des coordonnées pixels en coordonnées géographiques ci-dessous donne un exemple.
+</p>
+
+<div class="example">
+<p><b>Exemple:</b>
+supposons que nous disposons d’une image dont les coordonnées des pixels sont représentées par (<var>x</var>,<var>y</var>).
+Supposons aussi que les contraintes suivantes sont respectées:
+</p>
+<ul>
+<li>Il n’y a ni cisaillement, ni rotation, ni retournement de l’image.</li>
+<li>Tous les pixels ont la même largeur en degrés de longitude.</li>
+<li>Tous les pixels ont la même hauteur en degrés de latitude.</li>
+<li>Les coordonnées des pixels commencent à (0,0) inclusivement.</li>
+</ul>
+<p>Alors la conversion des coordonnées pixels (<var>x</var>,<var>y</var>)
+vers les coordonnées géographiques (<var>λ</var>,<var>φ</var>)
+peut être représentée par les équations suivantes,
+où <var>N</var><sub><var>x</var></sub> est la largeur
+et <var>N</var><sub><var>y</var></sub> la hauteur de l’image en nombre de pixels.
+</p><p>
+
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
+<mtable>
+<mtr>
+<mtd><mo>λ</mo></mtd>
+<mtd><mo>=</mo></mtd>
+<mtd><msub><mi>S</mi><mrow>λ</mrow></msub><mi>x</mi><mo>+</mo><msub><mi>T</mi><mrow>λ</mrow></msub></mtd>
+<mtd><mtext>        where        </mtext></mtd>
+<mtd><msub><mi>S</mi><mrow>λ</mrow></msub></mtd>
+<mtd><mo>=</mo></mtd>
+<mtd>
+<mfrac>
+<mrow>
+<msub><mi>λ</mi><mrow>max</mrow></msub><mo>-</mo>
+<msub><mi>λ</mi><mrow>min</mrow></msub>
+</mrow><mrow>
+<msub><mi>N</mi><mrow><mi>x</mi></mrow></msub>
+</mrow>
+</mfrac>
+</mtd>
+<mtd><mtext>    and    </mtext></mtd>
+<mtd><msub><mi>T</mi><mrow>λ</mrow></msub></mtd>
+<mtd><mo>=</mo></mtd>
+<mtd><msub><mi>λ</mi><mrow>min</mrow></msub></mtd>
+</mtr>
+<mtr>
+<mtd><mo>φ</mo></mtd>
+<mtd><mo>=</mo></mtd>
+<mtd><msub><mi>S</mi><mrow>φ</mrow></msub><mi>y</mi><mo>+</mo><msub><mi>T</mi><mrow>φ</mrow></msub></mtd>
+<mtd><mtext>        where        </mtext></mtd>
+<mtd><msub><mi>S</mi><mrow>φ</mrow></msub></mtd>
+<mtd><mo>=</mo></mtd>
+<mtd>
+<mfrac>
+<mrow>
+<msub><mi>φ</mi><mrow>max</mrow></msub><mo>-</mo>
+<msub><mi>φ</mi><mrow>min</mrow></msub>
+</mrow><mrow>
+<msub><mi>N</mi><mrow><mi>y</mi></mrow></msub>
+</mrow>
+</mfrac>
+</mtd>
+<mtd><mtext>    and    </mtext></mtd>
+<mtd><msub><mi>T</mi><mrow>φ</mrow></msub></mtd>
+<mtd><mo>=</mo></mtd>
+<mtd><msub><mi>φ</mi><mrow>min</mrow></msub></mtd>
+</mtr>
+</mtable>
+</math>
+</p><p>
+Les équations ci-dessus peuvent être représentées sous forme de matrices comme ci-dessous:
+</p><p>
+
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
+<mfenced close="]" open="[">
+<mtable>
+<mtr><mtd><mi>λ</mi></mtd></mtr>
+<mtr><mtd><mi>φ</mi></mtd></mtr>
+<mtr><mtd><mn>1</mn></mtd></mtr>
+</mtable>
+</mfenced>
+<mo>=</mo>
+<mfenced close="]" open="[">
+<mtable>
+<mtr>
+<mtd><msub><mi>S</mi><mrow>λ</mrow></msub></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><msub><mi>T</mi><mrow>λ</mrow></msub></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><msub><mi>S</mi><mrow>φ</mrow></msub></mtd>
+<mtd><msub><mi>T</mi><mrow>φ</mrow></msub></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>1</mn></mtd>
+</mtr>
+</mtable>
+</mfenced>
+<mo>×</mo>
+<mfenced close="]" open="[">
+<mtable>
+<mtr><mtd><mi>x</mi></mtd></mtr>
+<mtr><mtd><mi>y</mi></mtd></mtr>
+<mtr><mtd><mn>1</mn></mtd></mtr>
+</mtable>
+</mfenced>
+</math>
+</p><p>
+Dans ce cas particulier, les facteurs d’échelles <var>S</var> correspondent à la taille des pixels en degrés
+et les termes de translations <var>T</var> correspondent aux coordonnées géographiques d’un coin de l’image
+(pas nécessairement le coin inférieur gauche si certains axes ont été retournés).
+Cette interprétation directe n’est possible que lorsque les contraintes énumérées plus haut sont respectées.
+Les coefficients des matrices deviennent plus complexes si l’image a un cisaillement ou une rotation,
+ou si les coordonnées des pixels ne commencent pas à (0,0).
+Toutefois il n’est pas nécessaire d’utiliser des équations plus complexes pour gérer des cas plus génériques.
+L’exemple ci-dessous prend comme point de départ la matrice d’une « conversion initiale »
+dans laquelle les coefficients <var>S</var> et <var>T</var> sont les valeurs relativement simples données ci-dessus.
+Ensuite la direction de l’axe des <var>y</var> est inversée de manière à correspondre
+à la convention habituelle des systèmes de coordonnées des images (changement 1),
+et les axes sont intervertis de manière à avoir la latitude avant la longitude (changement 2).
+Notez que les concaténations de transformations affines écrites sous forme de multiplications matricielles
+se lisent de droite à gauche:
+<var>A</var>×<var>B</var>×<var>C</var> est équivalent à d’abord appliquer l’opération <var>C</var>,
+suivit de l’opération <var>B</var> et finalement l’opération <var>A</var>.
+</p>
+<table class="hidden"><tr>
+<th>Changement 2</th><th/>
+<th>Changement 1</th><th/>
+<th>Conversion initiale</th><th/>
+<th>Opérations combinées</th>
+</tr><tr>
+<td style="vertical-align: middle">
+<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
+<mfenced close="]" open="[">
+<mtable>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>1</mn></mtd>
+<mtd><mn>0</mn></mtd>
+</mtr>
+<mtr>
+<mtd><mn>1</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>1</mn></mtd>
+</mtr>
+</mtable>
+</mfenced>
+</math>
+</td>
+<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
+<td style="vertical-align: middle">
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mfenced close="]" open="[">
+<mtable>
+<mtr>
+<mtd><mn>1</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>-1</mn></mtd>
+<msub><mi>N</mi><mrow><mi>y</mi></mrow></msub>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>1</mn></mtd>
+</mtr>
+</mtable>
+</mfenced>
+</math>
+</td>
+<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
+<td style="vertical-align: middle">
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mfenced close="]" open="[">
+<mtable>
+<mtr>
+<mtd><mfrac>
+<mrow>
+<msub><mi>λ</mi><mrow>max</mrow></msub><mo>-</mo>
+<msub><mi>λ</mi><mrow>min</mrow></msub>
+</mrow><mrow>
+<msub><mi>N</mi><mrow><mi>x</mi></mrow></msub>
+</mrow>
+</mfrac></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><msub><mi>λ</mi><mrow>min</mrow></msub></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mfrac>
+<mrow>
+<msub><mi>φ</mi><mrow>max</mrow></msub><mo>-</mo>
+<msub><mi>φ</mi><mrow>min</mrow></msub>
+</mrow><mrow>
+<msub><mi>N</mi><mrow><mi>y</mi></mrow></msub>
+</mrow>
+</mfrac></mtd>
+<mtd><msub><mi>φ</mi><mrow>min</mrow></msub></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>1</mn></mtd>
+</mtr>
+</mtable>
+</mfenced>
+</math>
+</td>
+<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">=</td>
+<td style="vertical-align: middle">
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mfenced close="]" open="[">
+<mtable>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mo>-</mo><mfrac>
+<mrow>
+<msub><mi>φ</mi><mrow>max</mrow></msub><mo>-</mo>
+<msub><mi>φ</mi><mrow>min</mrow></msub>
+</mrow><mrow>
+<msub><mi>N</mi><mrow><mi>y</mi></mrow></msub>
+</mrow>
+</mfrac></mtd>
+<mtd><msub><mi>φ</mi><mrow>max</mrow></msub></mtd>
+</mtr>
+<mtr>
+<mtd><mfrac>
+<mrow>
+<msub><mi>λ</mi><mrow>max</mrow></msub><mo>-</mo>
+<msub><mi>λ</mi><mrow>min</mrow></msub>
+</mrow><mrow>
+<msub><mi>N</mi><mrow><mi>x</mi></mrow></msub>
+</mrow>
+</mfrac></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><msub><mi>λ</mi><mrow>min</mrow></msub></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>1</mn></mtd>
+</mtr>
+</mtable>
+</mfenced>
+</math>
+</td>
+</tr></table>
+<p>
+Un principe clé est qu’il n’y a pas besoin d’écrire un code dédié à ce type d’opérations sur les axes.
+Ces opérations, et bien d’autres, sont prises en compte naturellement par l’algèbre matricielle.
+On y gagne en généricité du code et en performance.
+Apache <abbr title="Spatial Information System">SIS</abbr> suit ce principe en utilisant les tranformations affine pour toutes les opérations
+où elles peuvent s’appliquer.
+Il n’y a par exemple aucun code dédié au changement de l’ordre des ordonnées dans une coordonnée.
+</p>
+</div>
+
+<h4 id="AffineTransformAPI"><span class="section-number">7.3.1.1.</span> Intégration avec les bibliothèques graphiques</h4>
+<p>
+A peu près toutes les bibliothèques graphiques supportent une forme de transformation de coordonnées,
+souvent les <cite>transformations affines</cite> ou une légère généralisation.
+Chaque bibliothèque défini son propre <abbr title="Application Programming Interface">API</abbr>.
+Quelques exemples sont:
+</p>
+<table>
+<caption>Implémentations des transformations affines dans des bibliothèques graphiques</caption>
+<tr><th>Bibliothèque</th>                             <th>Implementation de la transformation</th>               <th>Dimensions</th></tr>
+<tr><td>Java2D</td>                                   <td><code>java.awt.geom.AffineTransform</code></td>        <td>2</td></tr>
+<tr><td>Java3D</td>                                   <td><code>javax.media.j3d.Transform3D</code></td>          <td>3</td></tr>
+<tr><td>JavaFX</td>                                   <td><code>javafx.scene.transform.Affine</code></td>        <td>2 ou 3</td></tr>
+<tr><td>Java Advanced Imaging (<abbr>JAI</abbr>)</td> <td><code>javax.media.jai.PerspectiveTransform</code></td> <td>2</td></tr>
+<tr><td>Android</td>                                  <td><code>android.graphics.Matrix</code></td>              <td>2</td></tr>
+</table>
+<p>
+Toutefois dans plusieurs cas, les transformations affines sont les seuls types d’opérations supportées par la bibliothèque graphique.
+Apache <abbr title="Spatial Information System">SIS</abbr> a besoin de gérer un plus grand nombre de type d’opérations,
+parmi lesquelles les transformations affines ne sont que des cas particuliers.
+Les projections cartographiques et les changements de référentiels notamment,
+ne peuvent pas être représentés par des transformations affines.
+<abbr>SIS</abbr> a aussi besoin de transformer des points ayant un nombre arbitraire de dimensions,
+alors que les <abbr>API</abbr> cités ci-haut restreignent leur usage à un nombre fixe de dimensions.
+Pour ces raisons, <abbr>SIS</abbr> ne peut pas utiliser directement ces <abbr>API</abbr>.
+<abbr>SIS</abbr> utilise plutôt une interface plus abstraite, <code class="GeoAPI">org.opengis.referencing.transform.MathTransform</code>.
+Mais dans le cas particulier où la transformation est réellement affine, <abbr>SIS</abbr> peut essayer d’utiliser
+une implémentation existante, surtout Java2D.
+Par exemple le code suivant peut être utilisé dans les situations où un objet Java2D est désiré:
+</p>
+<pre><code class="GeoAPI">MathTransform</code> mt = ...;    <code class="comment">// N’importe quelle instance créée par Apache SIS.
+</code><b>if</b> (mt <b>instanceof</b> AffineTransform) {
+    AffineTransform at = (AffineTransform) mt;
+    <code class="comment">// Utiliser l’API de Java2D API à partir d’ici.
+</code>}</pre>
+<p>
+Toutefois <abbr>SIS</abbr> n’utilisera Java2D que sur une base opportuniste.
+Le forçage de type ci-haut n’est pas garantit de réussir, même si l’instance de
+<code class="GeoAPI">MathTransform</code> répond aux conditions qui devrait permettre un usage de Java2D.
+</p>
+
+
+<h3 id="MatrixLibrary"><span class="section-number">7.3.2.</span> Particularités d’une bibliothèque de calculs matriciels pour un <abbr>SIG</abbr></h3>
 <p>
 Les <abbr>SIG</abbr> font un usage intensif de matrices afin d’afficher leurs cartes ou transformer des coordonnées.
 On pourrait croire que le marché est suffisamment bien pourvu en excellentes bibliothèques de calculs matriciels, libres ou commerciales.
@@ -3486,7 +3488,7 @@ Ces fonctions tentent de résoudre le problème de précision en utilisant l’a
 au prix de la performance pendant une étape (la <em>préparation</em> de la transformation) où elle n’est pas jugée critique.
 </p>
 
-<h4 id="NonSquareMatrix"><span class="section-number">7.3.1.1.</span> Que faire des matrices qui ne sont pas carrées (et pourquoi)</h4>
+<h4 id="NonSquareMatrix"><span class="section-number">7.3.2.1.</span> Que faire des matrices qui ne sont pas carrées (et pourquoi)</h4>
 <p>
 Apache <abbr title="Spatial Information System">SIS</abbr> a très souvent besoin d’inverser des matrices,
 afin d’obtenir une conversion de coordonnées dans la direction inverse de la conversion originale.
@@ -3588,7 +3590,7 @@ En conséquence dans le cas des systèmes surdéterminés <abbr>SIS</abbr> refus
 mais en cas de succès les conversions obtenues seront garanties exactes (aux erreurs d’arrondissement prêts).
 </p>
 
-<h4 id="MatrixLibrarySummary"><span class="section-number">7.3.1.2.</span> La bibliothèque matricielle de Apache <abbr title="Spatial Information System">SIS</abbr></h4>
+<h4 id="MatrixLibrarySummary"><span class="section-number">7.3.2.2.</span> La bibliothèque matricielle de Apache <abbr title="Spatial Information System">SIS</abbr></h4>
 <p>
 En résumé, les besoins qui ont amené Apache <abbr>SIS</abbr> à fournir ses propres fonctions de calculs matriciels sont:
 </p>
