@@ -223,7 +223,7 @@ Add a new <code>&lt;release&gt;</code> block for the new release with the estima
 <li><code>content/index.mdtext</code></li>
 <li><code>content/downloads.mdtext</code> (need also to update <code>$NEW_VERSION-SNAPSHOT</code> to the next snapshot version)</li>
 <li><code>content/command-line.mdtext</code></li>
-<li><code>content/epsg.mdtext</code></li>
+<li><code>content/epsg.mdtext</code> (be aware that the version number may sometime be behind the SIS version number)</li>
 </ul>
 <p>Commit:</p>
 <div class="codehilite"><pre>svn add content/release-notes/<span class="nv">$NEW_VERSION</span>.html
@@ -268,7 +268,7 @@ svn checkout https://svn.apache.org/repos/asf/sis/branches/<span class="nv">$NEW
 but also in a few Java files. The following command performs the replacement using Ant.
 Note that this command does <em>not</em> yet remove the <code>-SNAPSHOT</code> suffix in version numbers
 (this will be done later):</p>
-<div class="codehilite"><pre>ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml branch -Dsis.version<span class="o">=</span><span class="nv">$NEW_VERSION</span>
+<div class="codehilite"><pre>ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml branch -Dbranch.version<span class="o">=</span><span class="nv">$NEW_VERSION</span> -Dsis.version<span class="o">=</span><span class="nv">$NEW_VERSION</span>
 </pre></div>
 
 
@@ -337,7 +337,7 @@ svn checkout https://svn.apache.org/repos/asf/sis/tags/<span class="nv">$NEW_VER
 
 <p>Update versions number in <code>pom.xml</code> files (like what <code>mvn release:prepare</code> would have done),
 plus some additional files:</p>
-<div class="codehilite"><pre>ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml tag -Dsis.version<span class="o">=</span><span class="nv">$NEW_VERSION</span>
+<div class="codehilite"><pre>ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml tag -Dbranch.version<span class="o">=</span><span class="nv">$NEW_VERSION</span> -Dsis.version<span class="o">=</span><span class="nv">$NEW_VERSION</span>
 </pre></div>
 
 
@@ -575,6 +575,7 @@ mvn install
 gpg --verify apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip.asc
 unzip apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip
 <span class="nb">cd </span>apache-sis-<span class="nv">$NEW_VERSION</span>
+<span class="nb">unset </span>SIS_DATA
 bin/sis about --verbose
 bin/sis metadata http://catalog.data.gov/harvest/object/df138a1b-e7cb-4ca4-b7c3-316135e81b16
 bin/sis metadata https://github.com/opengeospatial/geoapi/raw/master/geoapi-netcdf/src/test/resources/org/opengis/wrapper/netcdf/NCEP-SST.nc

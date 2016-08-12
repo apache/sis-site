@@ -46,7 +46,8 @@ Partially translated by <i>Christina Hough</i></p>
 <li><a href="#CRS_Components">Components of a reference system by coordinates</a><ul>
 <li><a href="#Ellipsoid">Geoid et ellipsoid</a></li>
 <li><a href="#GeodeticDatum">Geodetic datum</a></li>
-<li><a href="#CoordinateSystem">Coordinate systems</a></li>
+<li><a href="#CoordinateSystem">Coordinate systems</a><ul>
+<li><a href="#AxisOrder">Axis order</a></li></ul></li>
 <li><a href="#GeographicCRS">Geographic reference systems</a><ul>
 <li><a href="#GeographicWKT">Well-Known Text format</a></li></ul></li>
 <li><a href="#ProjectedCRS">Map projections</a><ul>
@@ -59,9 +60,7 @@ Partially translated by <i>Christina Hough</i></p>
 <li><a href="#CRSFactory">Constructing programmatically</a></li>
 <li><a href="#CRS_UserCode">Adding new CRS definitions</a></li></ul></li>
 <li><a href="#CoordinateOperation">Coordinate operations</a><ul>
-<li><a href="#MathTransform">Executing an operation on coordinate values</a><ul>
-<li><a href="#AffineTransform">Affine transform</a></li>
-<li><a href="#AffineTransformAPI">Integration with graphical libraries</a></li></ul></li>
+<li><a href="#MathTransform">Executing an operation on coordinate values</a></li>
 <li><a href="#TransformDerivative">Partial derivatives of coordinate operations</a><ul>
 <li><a href="#DerivativeAndEnvelope">Transform derivatives applied to envelopes</a></li>
 <li><a href="#DerivativeAndRaster">Transform derivatives applied to rasters</a></li>
@@ -83,7 +82,13 @@ Partially translated by <i>Christina Hough</i></p>
 <li><a href="#GeoAPI-simple">Defining custom implementations</a></li></ul></li></ul></li>
 <li><a href="#Tests">Test suites</a><ul>
 <li><a href="#GeoAPI-validators">Instance validations</a></li>
-<li><a href="#GeoAPI-tests">Executing pre-defined tests</a></li></ul></li></ul></li>
+<li><a href="#GeoAPI-tests">Executing pre-defined tests</a></li></ul></li>
+<li><a href="#DesignNote">Design notes</a><ul>
+<li><a href="#AffineTransform">Affine transform</a><ul>
+<li><a href="#AffineTransformAPI">Integration with graphical libraries</a></li></ul></li>
+<li><a href="#MatrixLibrary">Specificities of a matrix library for GIS</a><ul>
+<li><a href="#NonSquareMatrix">What to do with non-square matrices (and why)</a></li>
+<li><a href="#MatrixLibrarySummary">Apache SIS matrix library</a></li></ul></li></ul></li></ul></li>
 </ul>
 </nav>
 
@@ -1362,7 +1367,8 @@ or the use of <code>isWhitespace(…)</code> in nearly all the rest of the <abbr
 <li><a href="#CRS_Components">Components of a reference system by coordinates</a><ul>
 <li><a href="#Ellipsoid">Geoid et ellipsoid</a></li>
 <li><a href="#GeodeticDatum">Geodetic datum</a></li>
-<li><a href="#CoordinateSystem">Coordinate systems</a></li>
+<li><a href="#CoordinateSystem">Coordinate systems</a><ul>
+<li><a href="#AxisOrder">Axis order</a></li></ul></li>
 <li><a href="#GeographicCRS">Geographic reference systems</a><ul>
 <li><a href="#GeographicWKT">Well-Known Text format</a></li></ul></li>
 <li><a href="#ProjectedCRS">Map projections</a><ul>
@@ -1375,9 +1381,7 @@ or the use of <code>isWhitespace(…)</code> in nearly all the rest of the <abbr
 <li><a href="#CRSFactory">Constructing programmatically</a></li>
 <li><a href="#CRS_UserCode">Adding new CRS definitions</a></li></ul></li>
 <li><a href="#CoordinateOperation">Coordinate operations</a><ul>
-<li><a href="#MathTransform">Executing an operation on coordinate values</a><ul>
-<li><a href="#AffineTransform">Affine transform</a></li>
-<li><a href="#AffineTransformAPI">Integration with graphical libraries</a></li></ul></li>
+<li><a href="#MathTransform">Executing an operation on coordinate values</a></li>
 <li><a href="#TransformDerivative">Partial derivatives of coordinate operations</a><ul>
 <li><a href="#DerivativeAndEnvelope">Transform derivatives applied to envelopes</a></li>
 <li><a href="#DerivativeAndRaster">Transform derivatives applied to rasters</a></li>
@@ -1583,6 +1587,49 @@ The later is used only if <abbr>SIS</abbr> fails to apply the late binding appro
 <h3 id="CoordinateSystem"><span class="section-number">3.1.3.</span> Coordinate systems</h3>
 <p style="color: red">TODO</p>
 
+<h4 id="AxisOrder"><span class="section-number">3.1.3.1.</span> Axis order</h4>
+<p>
+The axis order is specified by the authority (typically a national agency) defining the <cite>Coordinate Reference System</cite> (<abbr title="Coordinate Reference System">CRS</abbr>).
+The order depends on the <abbr>CRS</abbr> type and the country defining the <abbr>CRS</abbr>.
+In the case of geographic <abbr>CRS</abbr>, the (<var>latitude</var>, <var>longitude</var>) axis order is widely used by geographers and pilots for centuries.
+However software developers tend to consistently use the (<var>x</var>, <var>y</var>) order for every kind of <abbr>CRS</abbr>.
+Those different practices resulted in contradictory definitions of axis order for almost every <abbr>CRS</abbr> of kind <code class="GeoAPI">GeographicCRS</code>,
+for some <code class="GeoAPI">ProjectedCRS</code> in the South hemisphere (South Africa, Australia, <i>etc.</i>) and for some polar projections among others.
+</p><p>
+Recent <abbr title="Open Geospatial Consortium">OGC</abbr> standards mandate the use of axis order as defined by the authority.
+Oldest <abbr>OGC</abbr> standards used the (<var>x</var>, <var>y</var>) axis order instead, ignoring any authority specification.
+Many softwares still use the old (<var>x</var>, <var>y</var>) axis order,
+maybe because such uniformization makes <abbr>CRS</abbr> implementation and usage <em>apparently</em> easier.
+Apache <abbr title="Spatial Information System">SIS</abbr> supports both conventions with the following approach:
+by default, <abbr>SIS</abbr> creates <abbr>CRS</abbr> with axis order <em>as defined by the authority</em>.
+Those <abbr>CRS</abbr> are created by calls to the <code>CRS.forCode(String)</code> method
+and the actual axis order can be verified after the <abbr>CRS</abbr> creation with <code>System.out​.println(crs)</code>.
+But if (<var>x</var>, <var>y</var>) axis order is wanted for compatibility with older <abbr>OGC</abbr> specifications or other softwares,
+then <abbr>CRS</abbr> forced to <cite>longitude first</cite> axis order can be created by a call to the following method:
+</p>
+<pre><code class="GeoAPI">CoordinateReferenceSystem</code> crs = …;               <code class="comment">// CRS obtained by any means.
+</code>crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)</pre>
+<p>
+Among the legacy <abbr>OGC</abbr> standards that used the non-conform axis order,
+an influent one is version 1 of the <cite>Well Known Text</cite> (<abbr>WKT</abbr>) format specification.
+According that widely-used format, <abbr>WKT</abbr> 1 definitions without explicit <code>AXIS[…]</code> elements
+shall default to (<var>longitude</var>, <var>latitude</var>) or (<var>x</var>, <var>y</var>) axis order.
+In version 2 of <abbr>WKT</abbr> format, <code>AXIS[…]</code> elements are no longer optional
+and should contain an explicit <code>ORDER[…]</code> sub-element for making the intended order yet more obvious.
+But if <code>AXIS[…]</code> elements are nevertheless missing in a <abbr>WKT</abbr> 2 definition,
+Apache <abbr>SIS</abbr> defaults to (<var>latitude</var>, <var>longitude</var>) order.
+So in summary:
+</p>
+<ul>
+<li>Default <abbr>WKT</abbr> 1 axis order of geographic <abbr>CRS</abbr> is (<var>longitude</var>, <var>latitude</var>) as mandated by <abbr>OGC</abbr> 01-009 specification.</li>
+<li>Default <abbr>WKT</abbr> 2 axis order of geographic <abbr>CRS</abbr> is (<var>latitude</var>, <var>longitude</var>),
+but this is <abbr>SIS</abbr>-specific as <abbr title="International Organization for Standardization">ISO</abbr> 19162 does not mention default axis order.</li>
+</ul>
+<p>
+To avoid ambiguities, users are encouraged to always provide explicit <code>AXIS[…]</code> elements in their <abbr>WKT</abbr>.
+The <abbr>WKT</abbr> format will be presented in more details in the next sections.
+</p>
+
 <h3 id="GeographicCRS"><span class="section-number">3.1.4.</span> Geographic reference systems</h3>
 <p style="color: red">TODO</p>
 
@@ -1628,337 +1675,92 @@ while countries elongated along the North-South axis prefer a Transverse Mercato
 
 
 <h2 id="CoordinateOperation"><span class="section-number">3.3.</span> Coordinate operations</h2>
-<p style="color: red">TODO</p>
+<p>
+Given a <em>source</em> coordinate reference system (<abbr title="Coordinate Reference System">CRS</abbr>) in which existing coordinate values are expressed,
+and a <em>target</em> coordinate reference system in which coordinate values are desired,
+Apache <abbr title="Spatial Information System">SIS</abbr> can provide a <em>coordinate operation</em> performing the conversion or transformation work.
+The search for coordinate operations may use a third argument, optional but recommended,
+which is the geographic area of the data to transform.
+That later argument is recommended because coordinate operations are often valid only in a some geographic area
+(typically a particular country or state), and many transformations may exist
+for the same pair of source and target <abbr>CRS</abbr> but different domain of validity.
+Different coordinate operations may also be different compromises between accuracy and their domain of validity,
+and specifying a smaller area of interest may allow Apache <abbr>SIS</abbr> to select a more accurate operation.
+</p>
+<div class="example"><p><b>Example:</b>
+the <abbr>EPSG</abbr> geodetic dataset (as of version 7.9) defines 77 coordinate operations from the
+<cite>North American Datum 1927</cite> (EPSG:4267) coordinate reference system to the
+<cite>World Geodetic System 1984</cite> (EPSG:4326) <abbr>CRS</abbr>.
+There is one operation valid only for coordinate transformations in Québec,
+another operation valid for coordinate transformations in Texas west of 100°W,
+another operation for the same state but east of 100°W, <i>etc</i>.
+If the user did not specified any geographic area of interest,
+then Apache <abbr>SIS</abbr> defaults on the coordinate operation which is valid in the largest area.
+In this example, the “largest area” criterion results in the selection of a coordinate operation valid for Canada,
+not <abbr>USA</abbr>.</p>
+</div>
+<p>
+The easiest way to obtain a coordinate operation from above-cited information
+is to use the <code class="SIS">org.apache.sis.referencing.CRS</code> convenience class:
+</p>
+<pre><code class="GeoAPI">CoordinateOperation</code> cop = CRS.findOperation(sourceCRS, targetCRS, areaOfInterest);</pre>
+<p>
+Among the information provided by <code class="GeoAPI">CoordinateOperation</code> object, the following are of special interest:
+</p>
+<ul>
+<li>The <cite>domain of validity</cite>, either as a textual description (e.g. “Canada – onshore and offshore”)
+or with the coordinates of a geographic bounding box.</li>
+<li>The <cite>positional accuracy</cite>, which may be anything from 1 centimetre to a few kilometres.</li>
+<li>The coordinate operation subtype. If the coordinate operation is an instance of <code class="GeoAPI">Transformation</code>,
+then it may be one among many possibilities depending on the area of interest, and its accuracy is limited by
+“real world” constraints (not only rounding errors).
+If the coordinate operation is rather an instance of <code class="GeoAPI">Conversion</code>, then it does not have those limitations.</li>
+</ul>
+<p>
+The actual mathematical work is performed by an object obtained by a call to <code>cop.getMathTransform()</code>.
+The <code class="GeoAPI">CoordinateOperation</code> and <code class="GeoAPI">MathTransform</code> types are separated because the later is a kind of “black box”,
+which may be implemented in a very different way than what the coordinate operation said.
+In particular many conceptually different coordinate operations (e.g. longitude rotations,
+change of units of measurement, conversions between two Mercator projections on the same datum, <i>etc.</i>)
+are implemented by <code class="GeoAPI">MathTransform</code> as <a href="#AffineTransform">affine transforms</a> and concatenated for efficiency.
+</p>
 
 <h3 id="MathTransform"><span class="section-number">3.3.1.</span> Executing an operation on coordinate values</h3>
-<p style="color: red">TODO</p>
-
-<h4 id="AffineTransform"><span class="section-number">3.3.1.1.</span> Affine transform</h4>
 <p>
-Among the many kinds of operations performed by <abbr>GIS</abbr> softwares on spatial coordinates,
-<cite>affine transforms</cite>  are both relatively simple and very common.
-Affine transforms can represent any combination of scales, shears, flips, rotations and translations,
-which are <em>linear</em> operations.
-Affine transforms can not handle <em>non-linear</em> operations like map projections,
-but the affine transform capabilities nevertheless cover many other cases:
-</p>
-<ul>
-<li>Axis order changes,           for example from (<var>latitude</var>, <var>longitude</var>) to (<var>longitude</var>, <var>latitude</var>).</li>
-<li>Axis direction changes,       for example the <var>y</var> axis oriented toward down in images.</li>
-<li>Prime meridian rotations,     for example from <cite>Paris</cite> to <cite>Greenwich</cite> prime meridian.</li>
-<li>Dimensionality changes,       for example from 3-dimensional coordinates to 2-dimensional coordinates by dropping the height.</li>
-<li>Unit conversion,              for example from feet to metres.</li>
-<li>Pixel to geodetic coordinate, for example the conversion represented in the <code>.tfw</code> files associated to some <abbr>TIFF</abbr> images.</li>
-<li>Part of map projections,      for example the <cite>False Easting</cite>, <cite>False Northing</cite> and <cite>Scale factor</cite> parameters.</li>
-</ul>
-<p>
-Affine transforms can be concatenated efficiently.
-No matter how many affine transforms are chained, the result can be represented by a single affine transform.
-This property is more easily seen when affine transforms are represented by matrices:
-in order to concatenate those operations, we only need to multiply those matrices.
-The “pixel to geographic coordinate conversions” case below gives an example.
+The following Java code performs a map projection from geographic coordinates on the <cite>World Geodetic System 1984</cite> (<abbr title="World Geodetic System 1984">WGS84</abbr>) datum
+coordinates in the <cite>WGS 84 / UTM zone 33N</cite> coordinate reference system.
+In order to make the example a little bit simpler, this code uses predefined constants given by the <code>CommonCRS</code> convenience class.
+But more advanced applications will typically use <abbr>EPSG</abbr> codes instead.
+Note that all geographic coordinates below express latitude before longitude.
 </p>
 
-<div class="example">
-<p><b>Example:</b>
-given an image with pixel coordinates represented by (<var>x</var>,<var>y</var>) tuples
-and given the following assumptions:
-</p>
-<ul>
-<li>There is no shear, no rotation and no flip.</li>
-<li>All pixels have the same width in degrees of longitude.</li>
-<li>All pixels have the same height in degrees of latitude.</li>
-<li>Pixel indices are positive integers starting at (0,0) inclusive.</li>
-</ul>
-<p>Then conversions from pixel coordinates (<var>x</var>,<var>y</var>)
-to geographic coordinates (<var>λ</var>,<var>φ</var>) can be represented by the following equations,
-where <var>N</var><sub><var>x</var></sub> is the image width and
-<var>N</var><sub><var>y</var></sub> the image height in number of pixels:
-</p><p>
+<pre><b>import</b> org.opengis.geometry.<code class="GeoAPI">DirectPosition</code>;
+<b>import</b> org.opengis.referencing.crs.<code class="GeoAPI">CoordinateReferenceSystem</code>;
+<b>import</b> org.opengis.referencing.operation.<code class="GeoAPI">CoordinateOperation</code>;
+<b>import</b> org.opengis.referencing.operation.<code class="GeoAPI">TransformException</code>;
+<b>import</b> org.opengis.util.<code class="GeoAPI">FactoryException</code>;
+<b>import</b> org.apache.sis.referencing.CRS;
+<b>import</b> org.apache.sis.referencing.CommonCRS;
+<b>import</b> org.apache.sis.geometry.DirectPosition2D;
 
+<b>public</b> <b>class</b> MyApp {
+    <b>public</b> <b>static</b> <b>void</b> main(String[] args) <b>throws</b> <code class="GeoAPI">FactoryException</code>, <code class="GeoAPI">TransformException</code> {
+        <code class="GeoAPI">CoordinateReferenceSystem</code> sourceCRS = CommonCRS.WGS84.geographic();
+        <code class="GeoAPI">CoordinateReferenceSystem</code> targetCRS = CommonCRS.WGS84.UTM(40, 14);  <code class="comment">// Get whatever zone is valid for 14°E.
+</code>        <code class="GeoAPI">CoordinateOperation</code> operation = CRS.findOperation(sourceCRS, targetCRS, <b>null</b>);
 
-<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
-<mtable>
-<mtr>
-<mtd><mo>λ</mo></mtd>
-<mtd><mo>=</mo></mtd>
-<mtd><msub><mi>S</mi><mrow>λ</mrow></msub><mi>x</mi><mo>+</mo><msub><mi>T</mi><mrow>λ</mrow></msub></mtd>
-<mtd><mtext>        where        </mtext></mtd>
-<mtd><msub><mi>S</mi><mrow>λ</mrow></msub></mtd>
-<mtd><mo>=</mo></mtd>
-<mtd>
-<mfrac>
-<mrow>
-<msub><mi>λ</mi><mrow>max</mrow></msub><mo>-</mo>
-<msub><mi>λ</mi><mrow>min</mrow></msub>
-</mrow><mrow>
-<msub><mi>N</mi><mrow><mi>x</mi></mrow></msub>
-</mrow>
-</mfrac>
-</mtd>
-<mtd><mtext>    and    </mtext></mtd>
-<mtd><msub><mi>T</mi><mrow>λ</mrow></msub></mtd>
-<mtd><mo>=</mo></mtd>
-<mtd><msub><mi>λ</mi><mrow>min</mrow></msub></mtd>
-</mtr>
-<mtr>
-<mtd><mo>φ</mo></mtd>
-<mtd><mo>=</mo></mtd>
-<mtd><msub><mi>S</mi><mrow>φ</mrow></msub><mi>y</mi><mo>+</mo><msub><mi>T</mi><mrow>φ</mrow></msub></mtd>
-<mtd><mtext>        where        </mtext></mtd>
-<mtd><msub><mi>S</mi><mrow>φ</mrow></msub></mtd>
-<mtd><mo>=</mo></mtd>
-<mtd>
-<mfrac>
-<mrow>
-<msub><mi>φ</mi><mrow>max</mrow></msub><mo>-</mo>
-<msub><mi>φ</mi><mrow>min</mrow></msub>
-</mrow><mrow>
-<msub><mi>N</mi><mrow><mi>y</mi></mrow></msub>
-</mrow>
-</mfrac>
-</mtd>
-<mtd><mtext>    and    </mtext></mtd>
-<mtd><msub><mi>T</mi><mrow>φ</mrow></msub></mtd>
-<mtd><mo>=</mo></mtd>
-<mtd><msub><mi>φ</mi><mrow>min</mrow></msub></mtd>
-</mtr>
-</mtable>
-</math>
-</p><p>
-Above equations can be represented in matrix form as below:
-</p><p>
+        <code class="comment">// The above lines are costly and should be performed only once before to project many points.
+</code>        <code class="comment">// In this example, the operation that we got is valid for coordinates in geographic area from
+</code>        <code class="comment">// 12°E to 18°E (UTM zone 33) and 0°N to 84°N.
+</code>
+        <code class="GeoAPI">DirectPosition</code> ptSrc = <b>new</b> DirectPosition2D(40, 14);           <code class="comment">// 40°N 14°E
+</code>        <code class="GeoAPI">DirectPosition</code> ptDst = operation.getMathTransform().transform(ptSrc, <b>null</b>);
 
+        System.out.println(<i>"Source: "</i> + ptSrc);
+        System.out.println(<i>"Target: "</i> + ptDst);
+    }
+}</pre>
 
-<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
-<mfenced close="]" open="[">
-<mtable>
-<mtr><mtd><mi>λ</mi></mtd></mtr>
-<mtr><mtd><mi>φ</mi></mtd></mtr>
-<mtr><mtd><mn>1</mn></mtd></mtr>
-</mtable>
-</mfenced>
-<mo>=</mo>
-<mfenced close="]" open="[">
-<mtable>
-<mtr>
-<mtd><msub><mi>S</mi><mrow>λ</mrow></msub></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><msub><mi>T</mi><mrow>λ</mrow></msub></mtd>
-</mtr>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><msub><mi>S</mi><mrow>φ</mrow></msub></mtd>
-<mtd><msub><mi>T</mi><mrow>φ</mrow></msub></mtd>
-</mtr>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>1</mn></mtd>
-</mtr>
-</mtable>
-</mfenced>
-<mo>×</mo>
-<mfenced close="]" open="[">
-<mtable>
-<mtr><mtd><mi>x</mi></mtd></mtr>
-<mtr><mtd><mi>y</mi></mtd></mtr>
-<mtr><mtd><mn>1</mn></mtd></mtr>
-</mtable>
-</mfenced>
-</math>
-</p><p>
-In this particular case, scale factors <var>S</var> are the pixel size in degrees
-and translation terms <var>T</var> are the geographic coordinate of an image corner
-(not necessarily the lower-left corner if some axes have been flipped).
-This straightforward interpretation holds because of above-cited assumptions, but
-matrix coefficients become more complex if the image has shear or rotation
-or if pixel coordinates do not start at (0,0).
-However it is not necessary to use more complex equations for supporting more generic cases.
-The following example starts with an “initial conversion” matrix
-where the <var>S</var> and <var>T</var> terms are set to the most straightforward values.
-Then the <var>y</var> axis direction is reversed for matching the most common convention in image coordinate systems (change 1),
-and axis are swapped resulting in latitude before longitude (change 2).
-Note that when affine transform concatenations are written as matrix multiplications, operations are ordered from right to left:
-<var>A</var>×<var>B</var>×<var>C</var> is equivalent to first applying operation <var>C</var>,
-then operation <var>B</var> and finally operation <var>A</var>.
-</p>
-<table class="hidden"><tr>
-<th>Change 2</th><th/>
-<th>Change 1</th><th/>
-<th>Initial conversion</th><th/>
-<th>Concatenated operation</th>
-</tr><tr>
-<td style="vertical-align: middle">
-<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
-<mfenced close="]" open="[">
-<mtable>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>1</mn></mtd>
-<mtd><mn>0</mn></mtd>
-</mtr>
-<mtr>
-<mtd><mn>1</mn></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>0</mn></mtd>
-</mtr>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>1</mn></mtd>
-</mtr>
-</mtable>
-</mfenced>
-</math>
-</td>
-<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
-<td style="vertical-align: middle">
-<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mfenced close="]" open="[">
-<mtable>
-<mtr>
-<mtd><mn>1</mn></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>0</mn></mtd>
-</mtr>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>-1</mn></mtd>
-<msub><mi>N</mi><mrow><mi>y</mi></mrow></msub>
-</mtr>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>1</mn></mtd>
-</mtr>
-</mtable>
-</mfenced>
-</math>
-</td>
-<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
-<td style="vertical-align: middle">
-<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mfenced close="]" open="[">
-<mtable>
-<mtr>
-<mtd><mfrac>
-<mrow>
-<msub><mi>λ</mi><mrow>max</mrow></msub><mo>-</mo>
-<msub><mi>λ</mi><mrow>min</mrow></msub>
-</mrow><mrow>
-<msub><mi>N</mi><mrow><mi>x</mi></mrow></msub>
-</mrow>
-</mfrac></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><msub><mi>λ</mi><mrow>min</mrow></msub></mtd>
-</mtr>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mfrac>
-<mrow>
-<msub><mi>φ</mi><mrow>max</mrow></msub><mo>-</mo>
-<msub><mi>φ</mi><mrow>min</mrow></msub>
-</mrow><mrow>
-<msub><mi>N</mi><mrow><mi>y</mi></mrow></msub>
-</mrow>
-</mfrac></mtd>
-<mtd><msub><mi>φ</mi><mrow>min</mrow></msub></mtd>
-</mtr>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>1</mn></mtd>
-</mtr>
-</mtable>
-</mfenced>
-</math>
-</td>
-<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">=</td>
-<td style="vertical-align: middle">
-<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-<mfenced close="]" open="[">
-<mtable>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mo>-</mo><mfrac>
-<mrow>
-<msub><mi>φ</mi><mrow>max</mrow></msub><mo>-</mo>
-<msub><mi>φ</mi><mrow>min</mrow></msub>
-</mrow><mrow>
-<msub><mi>N</mi><mrow><mi>y</mi></mrow></msub>
-</mrow>
-</mfrac></mtd>
-<mtd><msub><mi>φ</mi><mrow>max</mrow></msub></mtd>
-</mtr>
-<mtr>
-<mtd><mfrac>
-<mrow>
-<msub><mi>λ</mi><mrow>max</mrow></msub><mo>-</mo>
-<msub><mi>λ</mi><mrow>min</mrow></msub>
-</mrow><mrow>
-<msub><mi>N</mi><mrow><mi>x</mi></mrow></msub>
-</mrow>
-</mfrac></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><msub><mi>λ</mi><mrow>min</mrow></msub></mtd>
-</mtr>
-<mtr>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>0</mn></mtd>
-<mtd><mn>1</mn></mtd>
-</mtr>
-</mtable>
-</mfenced>
-</math>
-</td>
-</tr></table>
-<p>
-A key principle is that there is no need to write Java code dedicated to above kinds of axis changes.
-Those operations, and many other, can be handled by matrix algebra.
-This approach makes easier to write generic code and improves performance.
-Apache <abbr title="Spatial Information System">SIS</abbr> follows this principle by using affine transforms for every operations
-that can be performed by such transform.
-For instance there is no code dedicated to changing order of ordinate values in a coordinate.
-</p>
-</div>
-
-<h4 id="AffineTransformAPI"><span class="section-number">3.3.1.2.</span> Integration with graphical libraries</h4>
-<p>
-About all graphical libraries support some kind of coordinate operations, usually as <cite>affine transforms</cite>
-or a slight generalization like <cite>perspective transforms</cite>.
-Each library defines its own <abbr title="Application Programming Interface">API</abbr>. Some examples are listed below:
-</p>
-<table>
-<caption>Affine transform implementations in graphical libraries</caption>
-<tr><th>Library</th>                                  <th>Transform implementation</th>                          <th>Dimensions</th></tr>
-<tr><td>Java2D</td>                                   <td><code>java.awt.geom.AffineTransform</code></td>        <td>2</td></tr>
-<tr><td>Java3D</td>                                   <td><code>javax.media.j3d.Transform3D</code></td>          <td>3</td></tr>
-<tr><td>JavaFX</td>                                   <td><code>javafx.scene.transform.Affine</code></td>        <td>2 or 3</td></tr>
-<tr><td>Java Advanced Imaging (<abbr>JAI</abbr>)</td> <td><code>javax.media.jai.PerspectiveTransform</code></td> <td>2</td></tr>
-<tr><td>Android</td>                                  <td><code>android.graphics.Matrix</code></td>              <td>2</td></tr>
-</table>
-<p>
-However in many cases, affine or perspective transforms are the only kind of coordinate operations supported by the graphical library.
-Apache <abbr title="Spatial Information System">SIS</abbr> needs to handle a wider range of operations, in which affine transforms are only special cases.
-In particular most map projections and datum shifts can not be represented by affine transforms.
-<abbr>SIS</abbr> also needs to support arbitrary number of dimensions,
-while above-cited <abbr>API</abbr> restrict the use to a fixed number of dimensions.
-For those reasons <abbr>SIS</abbr> can not use directly the above-cited <abbr>API</abbr>.
-Instead, <abbr>SIS</abbr> uses the more abstract <code class="GeoAPI">org.opengis.referencing.transform.MathTransform</code> interface.
-But in the special case where the transform is actually affine, <abbr>SIS</abbr> may try to use an existing implementation,
-in particular Java2D. The following Java code can be used in situations where the Java2D object is desired:
-</p>
-<pre><code class="GeoAPI">MathTransform</code> mt = ...;    <code class="comment">// Any math transform created by Apache SIS.
-</code><b>if</b> (mt <b>instanceof</b> AffineTransform) {
-    AffineTransform at = (AffineTransform) mt;
-    <code class="comment">// Use Java2D API from here.
-</code>}</pre>
-<p>
-However <abbr>SIS</abbr> uses Java2D on a <em>best effort</em> basis only.
-The above cast is not guaranteed to succeed,
-even when the <code class="GeoAPI">MathTransform</code> meets the requirements allowing Java2D usage.
-</p>
 
 <h3 id="TransformDerivative"><span class="section-number">3.3.2.</span> Partial derivatives of coordinate operations</h3>
 <p>
@@ -2741,7 +2543,13 @@ But when a <code class="OGC">nilReason</code> is present, the <abbr>SIS</abbr> i
 <li><a href="#GeoAPI-simple">Defining custom implementations</a></li></ul></li></ul></li>
 <li><a href="#Tests">Test suites</a><ul>
 <li><a href="#GeoAPI-validators">Instance validations</a></li>
-<li><a href="#GeoAPI-tests">Executing pre-defined tests</a></li></ul></li></ul></nav>
+<li><a href="#GeoAPI-tests">Executing pre-defined tests</a></li></ul></li>
+<li><a href="#DesignNote">Design notes</a><ul>
+<li><a href="#AffineTransform">Affine transform</a><ul>
+<li><a href="#AffineTransformAPI">Integration with graphical libraries</a></li></ul></li>
+<li><a href="#MatrixLibrary">Specificities of a matrix library for GIS</a><ul>
+<li><a href="#NonSquareMatrix">What to do with non-square matrices (and why)</a></li>
+<li><a href="#MatrixLibrarySummary">Apache SIS matrix library</a></li></ul></li></ul></li></ul></nav>
 <h2 id="ReduceDependency"><span class="section-number">7.1.</span> Reduce direct dependency to Apache SIS</h2>
 <p>
 Previous chapters used Apache SIS static methods for convenience.
@@ -3078,6 +2886,497 @@ However, this example adds a supplemental verification, annotated with <code>@Af
         assertTrue(<code class="GeoAPI">transform</code> <b>instanceof</b> <code class="GeoAPI">MathTransform2D</code>);
     }
 }</pre>
+
+
+
+<h2 id="DesignNote"><span class="section-number">7.3.</span> Design notes</h2>
+<p>Following chapters explain the rational behind some implementation choices done in Apache <abbr title="Spatial Information System">SIS</abbr>.</p>
+
+
+<h3 id="AffineTransform"><span class="section-number">7.3.1.</span> Affine transform</h3>
+<p>
+Among the many kinds of operations performed by <abbr>GIS</abbr> softwares on spatial coordinates,
+<cite>affine transforms</cite>  are both relatively simple and very common.
+Affine transforms can represent any combination of scales, shears, flips, rotations and translations,
+which are <em>linear</em> operations.
+Affine transforms can not handle <em>non-linear</em> operations like map projections,
+but the affine transform capabilities nevertheless cover many other cases:
+</p>
+<ul>
+<li>Axis order changes,           for example from (<var>latitude</var>, <var>longitude</var>) to (<var>longitude</var>, <var>latitude</var>).</li>
+<li>Axis direction changes,       for example the <var>y</var> axis oriented toward down in images.</li>
+<li>Prime meridian rotations,     for example from <cite>Paris</cite> to <cite>Greenwich</cite> prime meridian.</li>
+<li>Dimensionality changes,       for example from 3-dimensional coordinates to 2-dimensional coordinates by dropping the height.</li>
+<li>Unit conversion,              for example from feet to metres.</li>
+<li>Pixel to geodetic coordinate, for example the conversion represented in the <code>.tfw</code> files associated to some <abbr>TIFF</abbr> images.</li>
+<li>Part of map projections,      for example the <cite>False Easting</cite>, <cite>False Northing</cite> and <cite>Scale factor</cite> parameters.</li>
+</ul>
+<p>
+Affine transforms can be concatenated efficiently.
+No matter how many affine transforms are chained, the result can be represented by a single affine transform.
+This property is more easily seen when affine transforms are represented by matrices:
+in order to concatenate those operations, we only need to multiply those matrices.
+The “pixel to geographic coordinate conversions” case below gives an example.
+</p>
+
+<div class="example">
+<p><b>Example:</b>
+given an image with pixel coordinates represented by (<var>x</var>,<var>y</var>) tuples
+and given the following assumptions:
+</p>
+<ul>
+<li>There is no shear, no rotation and no flip.</li>
+<li>All pixels have the same width in degrees of longitude.</li>
+<li>All pixels have the same height in degrees of latitude.</li>
+<li>Pixel indices are positive integers starting at (0,0) inclusive.</li>
+</ul>
+<p>Then conversions from pixel coordinates (<var>x</var>,<var>y</var>)
+to geographic coordinates (<var>λ</var>,<var>φ</var>) can be represented by the following equations,
+where <var>N</var><sub><var>x</var></sub> is the image width and
+<var>N</var><sub><var>y</var></sub> the image height in number of pixels:
+</p><p>
+
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
+<mtable>
+<mtr>
+<mtd><mo>λ</mo></mtd>
+<mtd><mo>=</mo></mtd>
+<mtd><msub><mi>S</mi><mrow>λ</mrow></msub><mi>x</mi><mo>+</mo><msub><mi>T</mi><mrow>λ</mrow></msub></mtd>
+<mtd><mtext>        where        </mtext></mtd>
+<mtd><msub><mi>S</mi><mrow>λ</mrow></msub></mtd>
+<mtd><mo>=</mo></mtd>
+<mtd>
+<mfrac>
+<mrow>
+<msub><mi>λ</mi><mrow>max</mrow></msub><mo>-</mo>
+<msub><mi>λ</mi><mrow>min</mrow></msub>
+</mrow><mrow>
+<msub><mi>N</mi><mrow><mi>x</mi></mrow></msub>
+</mrow>
+</mfrac>
+</mtd>
+<mtd><mtext>    and    </mtext></mtd>
+<mtd><msub><mi>T</mi><mrow>λ</mrow></msub></mtd>
+<mtd><mo>=</mo></mtd>
+<mtd><msub><mi>λ</mi><mrow>min</mrow></msub></mtd>
+</mtr>
+<mtr>
+<mtd><mo>φ</mo></mtd>
+<mtd><mo>=</mo></mtd>
+<mtd><msub><mi>S</mi><mrow>φ</mrow></msub><mi>y</mi><mo>+</mo><msub><mi>T</mi><mrow>φ</mrow></msub></mtd>
+<mtd><mtext>        where        </mtext></mtd>
+<mtd><msub><mi>S</mi><mrow>φ</mrow></msub></mtd>
+<mtd><mo>=</mo></mtd>
+<mtd>
+<mfrac>
+<mrow>
+<msub><mi>φ</mi><mrow>max</mrow></msub><mo>-</mo>
+<msub><mi>φ</mi><mrow>min</mrow></msub>
+</mrow><mrow>
+<msub><mi>N</mi><mrow><mi>y</mi></mrow></msub>
+</mrow>
+</mfrac>
+</mtd>
+<mtd><mtext>    and    </mtext></mtd>
+<mtd><msub><mi>T</mi><mrow>φ</mrow></msub></mtd>
+<mtd><mo>=</mo></mtd>
+<mtd><msub><mi>φ</mi><mrow>min</mrow></msub></mtd>
+</mtr>
+</mtable>
+</math>
+</p><p>
+Above equations can be represented in matrix form as below:
+</p><p>
+
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
+<mfenced close="]" open="[">
+<mtable>
+<mtr><mtd><mi>λ</mi></mtd></mtr>
+<mtr><mtd><mi>φ</mi></mtd></mtr>
+<mtr><mtd><mn>1</mn></mtd></mtr>
+</mtable>
+</mfenced>
+<mo>=</mo>
+<mfenced close="]" open="[">
+<mtable>
+<mtr>
+<mtd><msub><mi>S</mi><mrow>λ</mrow></msub></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><msub><mi>T</mi><mrow>λ</mrow></msub></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><msub><mi>S</mi><mrow>φ</mrow></msub></mtd>
+<mtd><msub><mi>T</mi><mrow>φ</mrow></msub></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>1</mn></mtd>
+</mtr>
+</mtable>
+</mfenced>
+<mo>×</mo>
+<mfenced close="]" open="[">
+<mtable>
+<mtr><mtd><mi>x</mi></mtd></mtr>
+<mtr><mtd><mi>y</mi></mtd></mtr>
+<mtr><mtd><mn>1</mn></mtd></mtr>
+</mtable>
+</mfenced>
+</math>
+</p><p>
+In this particular case, scale factors <var>S</var> are the pixel size in degrees
+and translation terms <var>T</var> are the geographic coordinate of an image corner
+(not necessarily the lower-left corner if some axes have been flipped).
+This straightforward interpretation holds because of above-cited assumptions, but
+matrix coefficients become more complex if the image has shear or rotation
+or if pixel coordinates do not start at (0,0).
+However it is not necessary to use more complex equations for supporting more generic cases.
+The following example starts with an “initial conversion” matrix
+where the <var>S</var> and <var>T</var> terms are set to the most straightforward values.
+Then the <var>y</var> axis direction is reversed for matching the most common convention in image coordinate systems (change 1),
+and axis are swapped resulting in latitude before longitude (change 2).
+Note that when affine transform concatenations are written as matrix multiplications, operations are ordered from right to left:
+<var>A</var>×<var>B</var>×<var>C</var> is equivalent to first applying operation <var>C</var>,
+then operation <var>B</var> and finally operation <var>A</var>.
+</p>
+<table class="hidden"><tr>
+<th>Change 2</th><th/>
+<th>Change 1</th><th/>
+<th>Initial conversion</th><th/>
+<th>Concatenated operation</th>
+</tr><tr>
+<td style="vertical-align: middle">
+<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
+<mfenced close="]" open="[">
+<mtable>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>1</mn></mtd>
+<mtd><mn>0</mn></mtd>
+</mtr>
+<mtr>
+<mtd><mn>1</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>1</mn></mtd>
+</mtr>
+</mtable>
+</mfenced>
+</math>
+</td>
+<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
+<td style="vertical-align: middle">
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mfenced close="]" open="[">
+<mtable>
+<mtr>
+<mtd><mn>1</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>-1</mn></mtd>
+<msub><mi>N</mi><mrow><mi>y</mi></mrow></msub>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>1</mn></mtd>
+</mtr>
+</mtable>
+</mfenced>
+</math>
+</td>
+<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
+<td style="vertical-align: middle">
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mfenced close="]" open="[">
+<mtable>
+<mtr>
+<mtd><mfrac>
+<mrow>
+<msub><mi>λ</mi><mrow>max</mrow></msub><mo>-</mo>
+<msub><mi>λ</mi><mrow>min</mrow></msub>
+</mrow><mrow>
+<msub><mi>N</mi><mrow><mi>x</mi></mrow></msub>
+</mrow>
+</mfrac></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><msub><mi>λ</mi><mrow>min</mrow></msub></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mfrac>
+<mrow>
+<msub><mi>φ</mi><mrow>max</mrow></msub><mo>-</mo>
+<msub><mi>φ</mi><mrow>min</mrow></msub>
+</mrow><mrow>
+<msub><mi>N</mi><mrow><mi>y</mi></mrow></msub>
+</mrow>
+</mfrac></mtd>
+<mtd><msub><mi>φ</mi><mrow>min</mrow></msub></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>1</mn></mtd>
+</mtr>
+</mtable>
+</mfenced>
+</math>
+</td>
+<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">=</td>
+<td style="vertical-align: middle">
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+<mfenced close="]" open="[">
+<mtable>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mo>-</mo><mfrac>
+<mrow>
+<msub><mi>φ</mi><mrow>max</mrow></msub><mo>-</mo>
+<msub><mi>φ</mi><mrow>min</mrow></msub>
+</mrow><mrow>
+<msub><mi>N</mi><mrow><mi>y</mi></mrow></msub>
+</mrow>
+</mfrac></mtd>
+<mtd><msub><mi>φ</mi><mrow>max</mrow></msub></mtd>
+</mtr>
+<mtr>
+<mtd><mfrac>
+<mrow>
+<msub><mi>λ</mi><mrow>max</mrow></msub><mo>-</mo>
+<msub><mi>λ</mi><mrow>min</mrow></msub>
+</mrow><mrow>
+<msub><mi>N</mi><mrow><mi>x</mi></mrow></msub>
+</mrow>
+</mfrac></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><msub><mi>λ</mi><mrow>min</mrow></msub></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>1</mn></mtd>
+</mtr>
+</mtable>
+</mfenced>
+</math>
+</td>
+</tr></table>
+<p>
+A key principle is that there is no need to write Java code dedicated to above kinds of axis changes.
+Those operations, and many other, can be handled by matrix algebra.
+This approach makes easier to write generic code and improves performance.
+Apache <abbr title="Spatial Information System">SIS</abbr> follows this principle by using affine transforms for every operations
+that can be performed by such transform.
+For instance there is no code dedicated to changing order of ordinate values in a coordinate.
+</p>
+</div>
+
+<h4 id="AffineTransformAPI"><span class="section-number">7.3.1.1.</span> Integration with graphical libraries</h4>
+<p>
+About all graphical libraries support some kind of coordinate operations, usually as <cite>affine transforms</cite>
+or a slight generalization like <cite>perspective transforms</cite>.
+Each library defines its own <abbr title="Application Programming Interface">API</abbr>. Some examples are listed below:
+</p>
+<table>
+<caption>Affine transform implementations in graphical libraries</caption>
+<tr><th>Library</th>                                  <th>Transform implementation</th>                          <th>Dimensions</th></tr>
+<tr><td>Java2D</td>                                   <td><code>java.awt.geom.AffineTransform</code></td>        <td>2</td></tr>
+<tr><td>Java3D</td>                                   <td><code>javax.media.j3d.Transform3D</code></td>          <td>3</td></tr>
+<tr><td>JavaFX</td>                                   <td><code>javafx.scene.transform.Affine</code></td>        <td>2 or 3</td></tr>
+<tr><td>Java Advanced Imaging (<abbr>JAI</abbr>)</td> <td><code>javax.media.jai.PerspectiveTransform</code></td> <td>2</td></tr>
+<tr><td>Android</td>                                  <td><code>android.graphics.Matrix</code></td>              <td>2</td></tr>
+</table>
+<p>
+However in many cases, affine or perspective transforms are the only kind of coordinate operations supported by the graphical library.
+Apache <abbr title="Spatial Information System">SIS</abbr> needs to handle a wider range of operations, in which affine transforms are only special cases.
+In particular most map projections and datum shifts can not be represented by affine transforms.
+<abbr>SIS</abbr> also needs to support arbitrary number of dimensions,
+while above-cited <abbr>API</abbr> restrict the use to a fixed number of dimensions.
+For those reasons <abbr>SIS</abbr> can not use directly the above-cited <abbr>API</abbr>.
+Instead, <abbr>SIS</abbr> uses the more abstract <code class="GeoAPI">org.opengis.referencing.transform.MathTransform</code> interface.
+But in the special case where the transform is actually affine, <abbr>SIS</abbr> may try to use an existing implementation,
+in particular Java2D. The following Java code can be used in situations where the Java2D object is desired:
+</p>
+<pre><code class="GeoAPI">MathTransform</code> mt = ...;    <code class="comment">// Any math transform created by Apache SIS.
+</code><b>if</b> (mt <b>instanceof</b> AffineTransform) {
+    AffineTransform at = (AffineTransform) mt;
+    <code class="comment">// Use Java2D API from here.
+</code>}</pre>
+<p>
+Apache <abbr>SIS</abbr> uses Java2D on a <em>best effort</em> basis only.
+The above cast is not guaranteed to succeed,
+even when the <code class="GeoAPI">MathTransform</code> meets the requirements allowing Java2D usage.
+</p>
+
+
+<h3 id="MatrixLibrary"><span class="section-number">7.3.2.</span> Specificities of a matrix library for <abbr>GIS</abbr></h3>
+<p>
+<abbr>GIS</abbr> make an extensive usage of matrices for displaying maps or for transforming coordinates.
+There is many excellent open source or commercial matrix libraries available.
+However, <abbr>GIS</abbr> have some specific needs that differ a little bit from the goals of many existent libraries.
+Matrix operations like those described in the <a href="#AffineTransform">affine transform chapter</a>
+appear in almost all coordinate operations applied by Apache <abbr title="Spatial Information System">SIS</abbr>.
+But the analysis of those operations reveal some patterns:
+</p>
+<ul>
+<li><p>Those matrices are almost always of small size, rarely more than 5 rows and 5 columns.</p></li>
+<li><p>“Heavy” matrix operations (matrix inversions or multiplications) do not happen in performance-critical code.
+In almost every cases, those heavy operations are executed only once, for example when a data file is read
+or in preparation steps before to transform coordinates.
+Those heavy operations rarely happen in the loop that apply the coordinate operation
+after we finished to prepare it.</p></li>
+<li><p>In a sequence of matrix multiplications or inversions, rounding errors accumulate and grow fast.
+If the sequence of matrix operations is long enough,
+rounding errors can become indistinguishable from real operations like datum shifts.
+This ambiguity can happen because the matrix representation of some datum shifts has small values,
+with scale factors of a few parts per million and rotation terms of a few arc-seconds.</p></li>
+<li><p>It is quite common that two affine transforms cancel each other when they are concatenated, i.e.
+that matrix multiplications result in some or all scale factors equal to 1 and some or all translation terms equal to 0.
+However because of rounding errors the results are rarely exact, but are rather some values like 0,9999…97 instead of 1.
+The usual workaround is to compare floating point numbers with some tolerance threshold.
+Unfortunately it is difficult to choose a threshold that catch a wide range of rounding errors
+without wrongly considering legitimate datum shifts as rounding errors (see previous point).</p></li>
+</ul>
+<p>
+As a consequence of above points, accuracy of a matrix library is more important than performance for a <abbr>GIS</abbr> like Apache <abbr>SIS</abbr>.
+Paradoxically, a good way to improve performance is to invest more CPU time for more accurate matrix operations
+when <em>preparing</em> (not <em>executing</em>) the coordinate operation,
+because it increases the chances to correctly detect which operations cancel each other.
+This investment can save execution time at the place where it matters most:
+in the code looping over millions of coordinates to transform.
+</p><p>
+However matrix libraries are often designed for high performances with large matrices, sometime containing thousands of rows and columns.
+Those libraries can efficiently resolve systems of linear equations with hundreds of unknown variables.
+Those libraries resolve difficult problems, but not of the same kind than the problems that Apache <abbr>SIS</abbr> needs to solve.
+For that reason, and also for another reason described in next paragraphs, Apache <abbr>SIS</abbr> uses its own matrix implementation.
+This implementation addresses the accuracy issue by using “double-double” arithmetic
+(a technic for simulating the accuracy of approximatively 120 bits wide floating point numbers)
+at the cost of performance in a phase (transform <em>preparation</em>) where performance is not considered critical.
+</p>
+
+<h4 id="NonSquareMatrix"><span class="section-number">7.3.2.1.</span> What to do with non-square matrices (and why)</h4>
+<p>
+Apache <abbr title="Spatial Information System">SIS</abbr> often needs to inverse matrices, in order to perform a coordinate operation in reverse direction.
+Matrix inversions are typically performed on square matrices, but <abbr>SIS</abbr> also needs to inverse non-square matrices.
+Depending on whether we have more lines than columns:
+</p>
+<ul>
+<li>From Apache <abbr>SIS</abbr> library perspective, a non-square matrix is a coordinate operation that adds or removes a dimension.</li>
+<li>From linear algebra libraries perspective, a non-square matrix is an under-determined or over-determined system of equations.</li>
+</ul>
+<p>
+To illustrate the issues caused by direct use of libraries designed for linear algebra,
+consider a (<var>φ₁</var>, <var>λ₁</var>, <var>h</var>) → (<var>φ₂</var>, <var>λ₂</var>) conversion
+from three-dimensional points to two-dimensional points on a surface.
+The <var>φ</var> terms are latitudes, the <var>λ</var> terms are longitudes and
+(<var>φ₂</var>, <var>λ₂</var>) may be different than (<var>φ₁</var>, <var>λ₁</var>) if <var>h</var> axis is not perpendicular to the surface.
+</p><p>
+
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
+<mfenced close="]" open="[">
+<mtable>
+<mtr><mtd><msub><mi>φ</mi><mrow><mn>2</mn></mrow></msub></mtd></mtr>
+<mtr><mtd><msub><mi>λ</mi><mrow><mn>2</mn></mrow></msub></mtd></mtr>
+<mtr><mtd><mn>1</mn></mtd></mtr>
+</mtable>
+</mfenced>
+<mo>=</mo>
+<mfenced close="]" open="[">
+<mtable>
+<mtr>
+<mtd><mn>1</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>1</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+</mtr>
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>0</mn></mtd>
+<mtd><mn>1</mn></mtd>
+</mtr>
+</mtable>
+</mfenced>
+<mo>×</mo>
+<mfenced close="]" open="[">
+<mtable>
+<mtr><mtd><msub><mi>φ</mi><mrow><mn>1</mn></mrow></msub></mtd></mtr>
+<mtr><mtd><msub><mi>λ</mi><mrow><mn>1</mn></mrow></msub></mtd></mtr>
+<mtr><mtd><mi>h</mi></mtd></mtr>
+<mtr><mtd><mn>1</mn></mtd></mtr>
+</mtable>
+</mfenced>
+</math>
+</p><p>
+For linear algebra libraries, the above non-square matrix represents an under-determined system of equations and may be considered unresolvable.
+Indeed the above coordinate operation can not be inverted as a (<var>φ₂</var>, <var>λ₂</var>) → (<var>φ₁</var>, <var>λ₁</var>, <var>h</var>)
+operation because we do not know which value to assign to <var>h</var>.
+Ignoring <var>h</var> implies that we can not assign values to (<var>φ₁</var>, <var>λ₁</var>) neither since those values may depend on <var>h</var>.
+However in <abbr>GIS</abbr> case, the ellipsoidal <var>h</var> axis is perpendicular to the ellipsoid surface
+on which the <em>geodetic</em> latitudes and longitudes (<var>φ</var>, <var>λ</var>) are represented
+(note that this statement is not true for <em>geocentric</em> latitudes and longitudes).
+This perpendicularity makes <var>φ₁</var> and <var>λ₁</var> independent of <var>h</var>.
+In such cases, we can can still do some processing.
+</p><p>
+Apache <abbr>SIS</abbr> proceeds by checking if <var>h</var> values are independent of <var>φ</var> and <var>λ</var> values.
+We identify such cases by checking which matrix coefficients are zero.
+If <abbr>SIS</abbr> can identify independent dimensions, it can temporarily exclude those dimensions
+and invert the matrix using only the remaining dimensions.
+If <abbr>SIS</abbr> does not found a sufficient amount of independent dimensions, an exception is thrown.
+But if a matrix inversion has been possible, then we need to decide which value to assign to the dimensions that <abbr>SIS</abbr> temporarily excluded.
+By default, <abbr>SIS</abbr> assigns the <code>NaN</code> (<cite>Not-a-Number</cite>) value to those dimensions.
+However in the particular case of ellipsoidal height <var>h</var> in a (<var>φ₂</var>, <var>λ₂</var>) → (<var>φ₁</var>, <var>λ₁</var>, <var>h</var>) operation,
+the zero value may also be appropriate on the assumption that the coordinates are usually close to the ellipsoid surface.
+In any case, the coefficients that Apache <abbr>SIS</abbr> sets to zero or <code>NaN</code> is based on the assumption
+that the matrix represents a coordinate operation; this is not something that can be done with arbitrary matrices.
+</p><p>
+The above-described approach allows Apache <abbr>SIS</abbr> to resolve some under-determined equation systems commonly found in <abbr>GIS</abbr>.
+In our example using <code>NaN</code> as the default value, the <var>h</var> ordinate stay unknown – we do not create information from nothing –
+but at least the (<var>φ</var>, <var>λ</var>) coordinates are preserved.
+The opposite problem, those of over-determined equation systems, is more subtile.
+An approach commonly applied by linear algebra libraries is to resolve over-determined systems by the least squares method.
+Such method applied to our example would compute a (<var>φ₂</var>, <var>λ₂</var>, <var>h</var>) → (<var>φ₁</var>, <var>λ₁</var>) operation
+that seems the best compromise for various <var>φ₂</var>, <var>λ₂</var> and <var>h</var> values,
+while being (except special cases) an exact solution for no-one.
+Furthermore linear combinations between those three variables may be an issue because of heterogenous units of measurement,
+for instance with <var>h</var> in metres and (<var>φ</var>, <var>λ</var>) in degrees.
+Apache <abbr>SIS</abbr> rather proceeds in the same way than for under-determined systems:
+by requiring that some dimensions are independent from other dimensions, otherwise the matrix is considered non-invertible.
+Consequently in over-determined systems case, <abbr>SIS</abbr> may refuse to perform some matrix inversions that linear algebra libraries can do,
+but in case of success the resulting coordinate operation is guaranteed to be exact (ignoring rounding errors).
+</p>
+
+<h4 id="MatrixLibrarySummary"><span class="section-number">7.3.2.2.</span> Apache <abbr title="Spatial Information System">SIS</abbr> matrix library</h4>
+<p>
+In summary, Apache <abbr>SIS</abbr> provides its own matrix library for the following reasons:
+</p>
+<ul>
+<li>Lightweight objects for small matrices, especially the 3×3 ones.</li>
+<li>Improved accuracy with “double-double” arithmetic, accepting performance cost in codes where performance is not critical.</li>
+<li>Special handling of non-square matrices on the assumption that those matrices represent coordinate operations.</li>
+</ul>
+<p>
+This library is provided in the <code class="SIS">org.apache.sis.matrix</code> package of the <code class="SIS">sis-referencing</code> module.
+</p>
 </section>
 </main>
 </body>
