@@ -36,9 +36,9 @@
 
     <h2 id="ComparisonMode">Comparison modes of objects</h2>
     <p>
-      There are various opinions on how to implement Java standard's <code>Object.equals(Object)</code> method.
+      There are various opinions on how to implement Java standard’s <code>Object.equals(Object)</code> method.
       According to some, it should be possible to compare different implementations of the same interface or base class.
-      But to follow this policy, each interface or base class's javadoc must define the algorithms that all implementations
+      But to follow this policy, each interface or base class’s javadoc must define the algorithms that all implementations
       shall use for their <code>equals(Object)</code> and <code>hashCode()</code> methods.
       This approach is common in <code>java.util.Collection</code> and its child interfaces.
       Transferring this approach to certain GeoAPI interfaces, however, would be a difficult task,
@@ -107,13 +107,93 @@
 
 
 
+    <h2 id="ObjectConverters">Object converters</h2>
+    <p>
+      There is sometime a need to convert instances from a <var>source</var> Java type to a <var>target</var> Java type
+      while those types are unknown at compile time.
+      Various projects (Apache Common Convert, Spring, <i>etc.</i>)
+      have created their own interface for performing object conversions between types known only at runtime.
+      Details vary, but such interfaces typically look like below:
+    </p>
+    <pre>interface ObjectConverter&lt;S,T&gt; {   // Some projects use only "Converter" as interface name.
+    T apply(S object);             // Another method name commonly found in other projects is "convert".
+}</pre>
+    <p>
+      Like other projects, Apache <abbr>SIS</abbr> also defines its own <code>ObjectConverter</code> interface.
+      The main difference between <abbr>SIS</abbr> converter interface and the interfaces found in other projects
+      is that <abbr>SIS</abbr> converters provide some information about their mathematical properties.
+      An Apache <abbr>SIS</abbr> converter can have zero, one or many of the following properties:
+    </p>
+    <dl>
+      <dt><dfn>Injective</dfn></dt>
+      <dd>A function is injective if no pair of <var>S</var> values can produce the same <var>T</var> value.
+        <div class="example"><p><b>Example:</b>
+            the <code>Integer</code> → <code>String</code> conversion performed by <code>Integer.toString()</code>
+            is an <cite>injective</cite> function because if two <code>Integer</code> values are not equal,
+            then it is guaranteed that their conversions will result in different <code>String</code> values.
+            However the <code>String</code> → <code>Integer</code> conversion performed by <code>Integer.valueOf(String)</code>
+            is <strong>not</strong> an injective function
+            because many distinct <code>String</code> values can be converted to the same <code>Integer</code> value.
+            For example converting the "42", "+42" and "0042" character strings all result in the same 42 integer value.
+        </p></div>
+      </dd>
+
+      <dt><dfn>Surjective</dfn></dt>
+      <dd>A function is surjective if each values of <var>T</var> can be created from at least one value of <var>S</var>.
+        <div class="example"><p><b>Example:</b>
+            the <code>String</code> → <code>Integer</code> conversion performed by <code>Integer.valueOf(String)</code>
+            is a <cite>surjective</cite> function because every <code>Integer</code> value can be created from at least one <code>String</code> value.
+            However the <code>Integer</code> → <code>String</code> conversion performed by <code>Integer.toString()</code>
+            is <strong>not</strong> a surjective function because it can not produce all possible <code>String</code> values.
+            For example there is no way to produce the "ABC" value with the <code>Integer.toString()</code> method.
+        </p></div>
+      </dd>
+
+      <dt><dfn>Bijective</dfn></dt>
+      <dd>A function is bijective if there is a one-to-one relationship between <var>S</var> and <var>T</var> values.
+        <div class="example"><p><b>Note:</b>
+          the <cite>bijective</cite> property is defined here for clarity, but actually does not have an explicit item
+          in Apache <abbr>SIS</abbr> <code>FunctionProperty</code> enumeration.
+          It is not necessary since a function that is both <cite>injective</cite> and <cite>surjective</cite> is necessarily bijective.
+        </p></div>
+      </dd>
+
+      <dt><dfn>Order preserving</dfn></dt>
+      <dd>A function is order preserving if any sequence of increasing <var>S</var> values is mapped to a sequence of increasing <var>T</var> values.
+        <div class="example"><p><b>Example:</b>
+          conversion from <code>Integer</code> to <code>Long</code> preserve the natural ordering of elements.
+          However conversions from <code>Integer</code> to <code>String</code> do <strong>not</strong> preserve natural ordering,
+          because some sequences of increasing integer values are ordered differently when their string representations are sorted by lexicographic order.
+          For example 1, 2, 10 become "1", "10", "2".
+        </p></div>
+      </dd>
+
+      <dt><dfn>Order reversing</dfn></dt>
+      <dd>A function is order reversing if any sequence of increasing <var>S</var> values is mapped to a sequence of decreasing <var>T</var> values.
+        <div class="example"><p><b>Example:</b>
+          a conversion that reverses the sign of numbers.
+        </p></div>
+      </dd>
+    </dl>
+    <p>
+      Above information may seem unnecessary when values are converted without taking in account the context in which the values appear.
+      But when the value to convert is part of a bigger object, then above information can affect the way the converted value will be used.
+      For example conversion of a [<var>min</var> … <var>max</var>] range is straightforward when the converter is <cite>order preserving</cite>.
+      But if the converter is <cite>order reversing</cite>, then the minimum and maximum values need to be interchanged.
+      For example if the converter reverses the sign of values, then the converted range is [-<var>max</var> … -<var>min</var>].
+      If the converter is neither order preserving or order reversing, then range conversion is not allowed at all
+      (because it does not contain the same set of values) even if the minimum and maximum values could be converted individually.
+    </p>
+
+
+
     <h2 id="Internationalization">Internationalization</h2>
     <p>
       In an architecture where a program executed on a server provides its data to multiple clients,
-      the server's locale conventions are not necessarily the same as those of the clients.
+      the server’s locale conventions are not necessarily the same as those of the clients.
       Conventions may differ in language, but also in the way they write numeric values
       (even between two countries that speak the same language) as well in time zone.
-      To produce messages that conform to the client's conventions, <abbr>SIS</abbr> uses
+      To produce messages that conform to the client’s conventions, <abbr>SIS</abbr> uses
       two approaches, distinguished by their level of granularity: at the level of the messages themselves,
       or at the level of the objects that create the messages.
       The approach used also determines whether it is possible to share the same instance of an object for all languages.
@@ -170,7 +250,7 @@
     </p>
     <div class="example"><p><b>Example:</b>
       <abbr>SIS</abbr> includes only one instance of the <code>OperationMethod</code>
-      type representing the Mercator projection, regardless of the client's language.
+      type representing the Mercator projection, regardless of the client’s language.
       But its <code class="GeoAPI">getName()</code> method (indirectly) provides an instance of
       <code>InternationalString</code>, so that <code>toString(Locale.ENGLISH)</code> returns <cite>Mercator projection</cite>
       while <code>toString(Locale.FRENCH)</code> returns <cite>Projection de Mercator</cite>.

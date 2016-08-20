@@ -104,6 +104,89 @@
 
 
 
+    <h2 id="ObjectConverters">Object converters</h2>
+    <p>
+      Il est parfois nécessaire de convertir une instance d’un type source <code>&lt;S&gt;</code> vers un type destination <code>&lt;T&gt;</code>
+      alors que ces types ne sont pas connus au moment de la compilation.
+      Divers projets (Apache Common Convert, Spring, <i>etc.</i>)
+      ont créé leur propres interfaces pour effectuer des conversions d’objets entre des types connus seulement au moment de l’exécution.
+      Les détails varient, mais ces interfaces ressemblent typiquement à l’interface suivante:
+    </p>
+    <pre>interface ObjectConverter&lt;S,T&gt; {   // Certains projets utilisent seulement "Converter" comme nom d’interface.
+    T apply(S object);             // Un autre nom de méthode souvent utilisé par les autres projets est "convert".
+}</pre>
+    <p>
+      Comme d’autres projets, Apache <abbr>SIS</abbr> définit sa propre interface <code>ObjectConverter</code>.
+      La principale différence entre l’interface de <abbr>SIS</abbr> est celle que l’on retrouve dans d’autres projets
+      est que <abbr>SIS</abbr> fournit des informations à propos de certaines propriétés mathématiques des convertisseurs.
+      Un convertisseur de Apache <abbr>SIS</abbr> peut avoir aucune, une ou plusieurs des propriétés suivantes:
+    </p>
+    <dl>
+      <dt><dfn>Injective</dfn></dt>
+      <dd>Une fonction est injective si aucune paire de valeurs de <var>S</var> ne peut produire la même valeur de <var>T</var>.
+        <div class="example"><p><b>Exemple:</b>
+          la conversion <code>Integer</code> → <code>String</code> effectuée par <code>Integer.toString()</code>
+          est une fonction <cite>injective</cite> car si deux valeurs de type <code>Integer</code> ne sont pas égales,
+          alors il est garanti que leurs conversions produiront différentes valeurs de <code>String</code>.
+          En revanche la conversion <code>String</code> → <code>Integer</code> effectuée par <code>Integer.valueOf(String)</code>
+          n’est <strong>pas</strong> une fonction injective
+          parce que plusieurs valeurs distinctes de type <code>String</code> peuvent être converties vers la même valeur de type <code>Integer</code>.
+          Par exemple les conversions des chaînes de caractères "42", "+42" et "0042" donnent toutes la même valeur entière 42.
+        </p></div>
+      </dd>
+
+      <dt><dfn>Surjective</dfn></dt>
+      <dd>Une fonction est surjective si chaque valeur de <var>T</var> peut être produite à partir d’au moins une valeur de <var>S</var>.
+        <div class="example"><p><b>Exemple:</b>
+          la conversion <code>String</code> → <code>Integer</code> effectuée par <code>Integer.valueOf(String)</code>
+          est une fonction <cite>surjective</cite> car chaque valeur de type <code>Integer</code> peut être produite
+          à partir d’un moins une valeur de <code>String</code>.
+          En revanche la conversion <code>Integer</code> → <code>String</code> effectuée par <code>Integer.toString()</code>
+          n’est <strong>pas</strong> une fonction surjective parce qu’elle ne peut pas produire toutes les valeurs possibles de type <code>String</code>.
+          Par exemple il n’y a aucun moyen de produire la valeur "ABC" avec la méthode <code>Integer.toString()</code>.
+        </p></div>
+      </dd>
+
+      <dt><dfn>Bijective</dfn></dt>
+      <dd>Une fonction est bijective s’il y a une relation de un-à-un entre les valeurs de <var>S</var> et de <var>T</var>.
+        <div class="example"><p><b>Note:</b>
+          la propriété <cite>bijective</cite> est définie ici pour des raisons de clarté,
+          mais en fait n’a pas d’item explicite dans l’énumération <code>FunctionProperty</code> de Apache <abbr>SIS</abbr>.
+          Ce n’est pas nécessaire puisqu’une fonction qui est à la fois <cite>injective</cite> et <cite>surjective</cite>
+          est nécessairement bijective.
+        </p></div>
+      </dd>
+
+      <dt><dfn>Préservant l’ordre</dfn></dt>
+      <dd>Une fonction préserve l’ordre si toute séquence de valeurs <var>S</var> croissantes correspond à une séquence de valeurs <var>T</var> croissantes.
+        <div class="example"><p><b>Exemple:</b>
+          la conversion du type <code>Integer</code> vers <code>Long</code> préserve l’ordre naturel des éléments.
+          Toutefois la conversion du type <code>Integer</code> vers <code>String</code> ne préserve <strong>pas</strong> l’ordre naturel,
+          parce que des séquences des nombres entiers croissants ont un ordre différents
+          lorsque les chaînes de caractères sont classées par ordre lexicographique.
+          Par exemple 1, 2, 10 devient "1", "10", "2".
+        </p></div>
+      </dd>
+
+      <dt><dfn>Renversant l’ordre</dfn></dt>
+      <dd>Une fonction renverse l’ordre si toute séquence de valeurs <var>S</var> croissantes correspond à une séquence de valeurs <var>T</var> décroissantes.
+        <div class="example"><p><b>Exemple:</b>
+          une conversion qui inverse le signe des nombres.
+        </p></div>
+      </dd>
+    </dl>
+    <p>
+      Ces informations peuvent sembler inutiles lorsque l’on convertit des valeurs sans tenir compte du contexte où elles apparaissent.
+      Mais lorsque la valeur à convertir fait parti d’un objet plus gros, alors ces informations peuvent impacter la façon dont la valeur convertie sera utilisée.
+      Par exemple la conversion d’une plage de valeurs représentée par [<var>min</var> … <var>max</var>] est directe lorsque la fonction de conversion préserve l’ordre.
+      Mais si la fonction de conversion renverse l’ordre, alors les valeurs minimale et maximale doivent être interchangées.
+      Par exemple si la fonction de conversion inverse le signe des valeurs, alors la plage convertie sera [-<var>max</var> … -<var>min</var>].
+      Si la fonction de conversion ne préserve ni ne renverse l’ordre, alors la plage de valeurs ne peut pas être convertie du tout
+      (parce qu’elle ne contiendrait plus le même ensemble de valeurs) même si les valeurs individuelles auraient pu être converties.
+    </p>
+
+
+
     <h2 id="Internationalization">Internationalisation</h2>
     <p>
       Dans une architecture où un programme exécuté sur un serveur fournit ses données à plusieurs clients,
