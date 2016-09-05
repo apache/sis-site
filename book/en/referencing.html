@@ -585,5 +585,229 @@ public Matrix derivative(DirectPosition p) throws TransformException {
     return Matrices.inverse(jac);
 }
 </pre>
+
+
+    <h3 id="CoordinateOperationSteps">Conceptual versus real chain of coordinate operations</h3>
+    <p>
+      Coordinate operations may include many steps, each with their own set of parameters.
+      For example transformations from one datum (e.g. <abbr>NAD27</abbr>) to another datum (e.g. <abbr>WGS84</abbr>)
+      can be approximated by an affine transform (translation, rotation and scale) applied on the <em>geocentric</em> coordinates.
+      This implies that the coordinates must be converted from <em>geographic</em> to geocentric domain before the affine transform,
+      then back to geographic domain after the affine transform.
+      The result is a three-steps process illustrated in the “Conceptual chain of operations” column of the example below.
+      However because that operation chain is very common, the <abbr>EPSG</abbr> geodetic dataset provides a shortcut
+      named “Geocentric translation <em>in geographic domain</em>”.
+      Using this operation, the conversion steps between geographic and geocentric <abbr>CRS</abbr> are implicit.
+      Consequently the datum shifts as specified by <abbr>EPSG</abbr> appears as if it was a single operation,
+      but this is not the real operation executed by Apache <abbr>SIS</abbr>.
+    </p>
+
+    <div class="example"><p><b>Example:</b>
+      transformation of geographic coordinates from <abbr>NAD27</abbr> to <abbr>WGS84</abbr> in Canada
+      can be approximated by the <abbr>EPSG</abbr>:1172 coordinate operation.
+      This single <abbr>EPSG</abbr> operation is actually a chain of three operations in which two steps are implicit.
+      The operation as specified by <abbr>EPSG</abbr> is shown in the first column below.
+      The same operation with the two hidden steps made explicit is shown in the second column.
+      The last column shows the same operation as implemented by Apache <abbr>SIS</abbr> under the hood,
+      which contains additional operations discussed below.
+      For all columns, input coordinates of the first step and output coordinates of the last step
+      are (<var>latitude</var>, <var>longitude</var>) coordinates in degrees.
+      </p>
+      <div style="display:flex; padding-left:24px">
+        <div style="width:30%; padding-right:15px; border-right:1px solid">
+          <b>Operation specified by <abbr>EPSG</abbr>:</b>
+          <ol>
+            <li><b>Geocentric translation</b> in <em>geographic</em> domain
+              <ul>
+                <li>X-axis translation = -10 m</li>
+                <li>Y-axis translation = 158 m</li>
+                <li>Z-axis translation = 187 m</li>
+              </ul>
+            </li>
+          </ol>
+          Conversions between geographic and geocentric domains are implicit.
+          The semi-major and semi-minor axis lengths required for those conversions
+          are inferred from the source and target datum.
+        </div>
+        <div style="width:30%; padding-left:30px; padding-right:15px; border-right:1px solid">
+          <b>Conceptual chain of operations:</b>
+          <ol>
+            <li><b>Geographic to geocentric</b> conversion
+              <ul>
+                <li>Source semi-major = 6378206.4 m</li>
+                <li>Source semi-minor = 6356583.8 m</li>
+              </ul>
+            </li><li><b>Geocentric translation</b>
+              <ul>
+                <li>X-axis translation = -10 m</li>
+                <li>Y-axis translation = 158 m</li>
+                <li>Z-axis translation = 187 m</li>
+              </ul>
+            </li><li><b>Geocentric to geographic</b> conversion
+              <ul>
+                <li>Target semi-major = 6378137.0 m</li>
+                <li>Target semi-minor ≈ 6356752.3 m</li>
+              </ul>
+            </li>
+          </ol>
+          Axis order and units are implicitly defined by the source and target <abbr>CRS</abbr>.
+          It is implementation responsibility to perform any needed unit conversions and/or axis swapping.
+        </div>
+        <div style="width:30%; padding-left:30px">
+          <b>Operations actually performed by Apache <abbr>SIS</abbr>:</b>
+          <ol>
+            <li><b>Affine parametric</b> conversion
+              <ul>
+                <li>Scale factors (λ and φ) = 0</li>
+                <li>Shear factors (λ and φ) = π/180</li>
+              </ul>
+            </li><li>Ellipsoid (radians domain) to centric conversion
+              <ul>
+                <li>Eccentricity ≈ 0.08227</li>
+              </ul>
+            </li><li><b>Affine parametric transformation</b>
+              <ul>
+                <li>Scale factors (X, Y and Z) ≈ 1.00001088</li>
+                <li>X-axis translation ≈ -1.568 E-6</li>
+                <li>Y-axis translation ≈ 24.772 E-6</li>
+                <li>Z-axis translation ≈ 29.319 E-6</li>
+              </ul>
+            </li><li>Centric to ellipsoid (radians domain) conversion
+              <ul>
+                <li>Eccentricity ≈ 0.08182</li>
+              </ul>
+            </li><li><b>Affine parametric</b> conversion
+              <ul>
+                <li>Scale factors (λ and φ) = 0</li>
+                <li>Shear factors (λ and φ) = 180/π</li>
+              </ul>
+            </li>
+          </ol>
+        </div>
+      </div>
+      <p>
+        The operation chain actually performed by Apache <abbr>SIS</abbr> is very different than the conceptual operation chain
+        because the coordinate systems are not the same.
+        Except for the first and last ones, all Apache <abbr>SIS</abbr> steps work on right-handed coordinate systems
+        (as opposed to the left-handed coordinate system when <var>latitude</var> is before <var>longitude</var>),
+        with angular units in radians (instead than degrees) and
+        linear units relative to an ellipsoid of semi-major axis length of 1 (instead than Earth's size).
+        Working in those coordinate systems requires additional steps for unit conversions and axes swapping
+        at the beginning and at the end of the chain.
+        Apache <abbr>SIS</abbr> uses <cite>affine parametric conversions</cite> for this purpose,
+        which allow to combine axes swapping and unit conversions in a single step
+        (see <a href="#AffineTransform">affine transform</a> for more information).
+        The reason why Apache <abbr>SIS</abbr> splits conceptual operations in such fine-grained operations
+        is to allow more efficient concatenations of operation steps.
+        This approach often allows cancellation of two consecutive affine transforms,
+        for example a conversion from radians to degrees (e.g. after a <cite>geocentric to ellipsoid</cite> conversion)
+        immediately followed by a conversion from degrees to radians (e.g. before a map projection).
+        Another example is the <cite>Affine parametric transformation</cite> step above,
+        which combines both the <cite>geocentric translation</cite> step
+        and a scale factor implied by the ellipsoid change.
+      </p>
+    </div>
+    <p>
+      All those operation chains can be viewed in <cite>Well Known Text</cite> (<abbr>WKT</abbr>) or pseudo-<abbr>WKT</abbr> format.
+      The simplest operation chain, as specified by the authority, is given directly by the
+      <code>String</code> representation of the <code>CoordinateOperation</code> instance.
+      This <abbr>WKT</abbr> 2 representation contains not only a description of operations with their parameter values,
+      but also additional information about the context in which the operation applies (the source and target <abbr>CRS</abbr>)
+      together with some metadata like the accuracy and domain of validity.
+      Some operation steps and parameters may be omitted if they can be inferred from the context.
+    </p>
+    <div class="example">
+      <div style="display:flex; padding-left:24px; padding-right:24px">
+        <div>
+          <p><b>Example:</b>
+            the <abbr>WKT</abbr> 2 representation on the right is for the same coordinate operation than the one used in previous example.
+            This representation can be obtained by a call to <code>System.out.println(cop)</code>
+            where <code>cop</code> is a <code>CoordinateOperation</code> instance.
+            Some characteristics of this representation are:
+          </p>
+          <ul>
+            <li><p>The <code>SourceCRS</code> and <code>TargetCRS</code> elements determine axis order and units.
+                For this reason, axis swapping and unit conversions do not need to be represented in this <abbr>WKT</abbr>.</p></li>
+            <li><p>The “Geocentric translation in geographic domain” operation implies conversions between geographic and geocentric coordinate reference systems.
+                Ellipsoid semi-axis lengths are inferred from above <code>SourceCRS</code> and <code>TargetCRS</code> elements,
+                so they do not need to be specified in this <abbr>WKT</abbr>.</p></li>
+            <li><p>The operation accuracy (20 metres) is much greater than the numerical floating-point precision.
+                This kind of metadata could hardly be guessed from the mathematical function alone.</p></li>
+          </ul>
+        </div>
+        <div>
+<pre>CoordinateOperation["NAD27 to WGS 84 (3)",
+  SourceCRS[<span style="font-family:serif"><i>full CRS definition required here but omitted for brevity</i></span>],
+  TargetCRS[<span style="font-family:serif"><i>full CRS definition required here but omitted for brevity</i></span>],
+  Method["Geocentric translations (geog2D domain)"],
+    Parameter["X-axis translation", -10.0, Unit["metre", 1]],
+    Parameter["Y-axis translation", 158.0, Unit["metre", 1]],
+    Parameter["Z-axis translation", 187.0, Unit["metre", 1]],
+  OperationAccuracy[20.0],
+  Area["Canada - onshore and offshore"],
+  BBox[40.04, -141.01, 86.46, -47.74],
+  Id["EPSG", 1172, "8.9"]]</pre>
+        </div>
+      </div>
+    </div>
+    <p>
+      An operation chain closer to what Apache <abbr>SIS</abbr> really performs is given by the
+      <code>String</code> representation of the <code>MathTransform</code> instance.
+      In this <abbr>WKT</abbr> 1 representation, contextual information and metadata are lost;
+      a <code>MathTransform</code> is like a mathematical function with no knowledge about the meaning of the coordinates on which it operates.
+      Since contextual information are lost, implicit operations and parameters become explicit.
+      This representation is useful for debugging since any axis swapping operation (for example) become visible.
+      Apache <abbr>SIS</abbr> constructs this representation from the data structure in memory,
+      but convert them in a more convenient form for human, for example by converting radians to degrees.
+    </p>
+    <div class="example">
+      <div style="display:flex; padding-left:24px; padding-right:24px">
+        <div>
+          <p><b>Example:</b>
+            the <abbr>WKT</abbr> 1 representation on the right is for the same coordinate operation than the one used in previous example.
+            This representation can be obtained by a call to <code>System.out.println(cop.getMathTransform())</code>
+            where <code>cop</code> is a <code>CoordinateOperation</code> instance.
+            Some characteristics of this representation are:
+          </p>
+          <ul>
+            <li><p>Since there is not anymore (on intend) any information about source and target <abbr>CRS</abbr>,
+                axis swapping (if needed) and unit conversions must be performed explicitly.
+                This is the task of the first and last affine operations in this <abbr>WKT</abbr>.</p></li>
+            <li><p>The “Geocentric translation” operation is not anymore applied in the geographic domain, but in the geocentric domain.
+                Consequently conversions between geographic and geocentric coordinate reference systems must be made explicit.
+                Those explicit steps are also necessary for specifying the ellipsoid semi-axis lengths,
+                since they can not anymore by inferred for source and target <abbr>CRS</abbr>.</p></li>
+            <li><p>Conversions between geographic and geocentric coordinates are three-dimensional.
+                Consequently operations for increasing and reducing the number of dimensions are inserted.
+                By default the ellipsoidal height before conversion is set to zero.</p></li>
+          </ul>
+        </div>
+        <div>
+<pre>Concat_MT[
+  Param_MT["Affine parametric transformation",
+    Parameter[<span style="font-family:serif"><i>parameters performing axis swapping omitted for brevity</i></span>]],
+  Inverse_MT[Param_MT["Geographic3D to 2D conversion"]],
+  Param_MT["Geographic/geocentric conversions",
+    Parameter["semi_major", 6378206.4],
+    Parameter["semi_minor", 6356583.8]],
+  Param_MT["Geocentric translations (geocentric domain)",
+    Parameter["X-axis translation", -10.0],
+    Parameter["Y-axis translation", 158.0],
+    Parameter["Z-axis translation", 187.0]],
+  Param_MT["Geocentric_To_Ellipsoid",
+    Parameter["semi_major", 6378137.0],
+    Parameter["semi_minor", 6356752.314245179]],
+  Param_MT["Geographic3D to 2D conversion"],
+  Param_MT["Affine parametric transformation",
+    Parameter[<span style="font-family:serif"><i>parameters performing axis swapping omitted for brevity</i></span>]]]</pre>
+        </div>
+      </div>
+    </div>
+    <p>
+      Finally, the raw operation chain can be view by a call to <code>AbstractMathTransform.toString(Convention.INTERNAL)</code>.
+      This pseudo-<abbr>WKT</abbr> representation shows exactly what Apache <abbr>SIS</abbr> does,
+      but is rarely used because difficult to read.
+      It may occasionally be useful for advanced debugging.
+    </p>
   </body>
 </html>
