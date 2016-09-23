@@ -35,14 +35,6 @@ Partially translated by <i>Christina Hough</i></p>
 <li><a href="#GeoAPI-implementation">Implementations provided by Apache SIS</a></li></ul></li>
 <li><a href="#About">Conventions used in this guide</a><ul>
 <li><a href="#CodeColors">Code colors</a></li></ul></li></ul></li>
-<li><a href="#Utilities">Utility classes and methods</a><ul>
-<li><a href="#ComparisonMode">Comparison modes of objects</a></li>
-<li><a href="#Internationalization">Internationalization</a><ul>
-<li><a href="#LocalizedString">Distinct character sequences for each locale</a></li>
-<li><a href="#InternationalString">Single instance for all supported locales</a></li>
-<li><a href="#Locale.ROOT">Locale.ROOT convention</a></li>
-<li><a href="#UnicodePoint">Treatment of characters</a><ul>
-<li><a href="#Whitespaces">Blank spaces interpretation</a></li></ul></li></ul></li></ul></li>
 <li><a href="#Referencing">Spatial reference systems</a><ul>
 <li><a href="#CRS_Components">Components of a reference system by coordinates</a><ul>
 <li><a href="#Ellipsoid">Geoid et ellipsoid</a></li>
@@ -65,13 +57,23 @@ Partially translated by <i>Christina Hough</i></p>
 <li><a href="#TransformDerivative">Partial derivatives of coordinate operations</a><ul>
 <li><a href="#DerivativeAndEnvelope">Transform derivatives applied to envelopes</a></li>
 <li><a href="#DerivativeAndRaster">Transform derivatives applied to rasters</a></li>
-<li><a href="#GetDerivative">Getting the derivative at a point</a></li></ul></li></ul></li></ul></li>
+<li><a href="#GetDerivative">Getting the derivative at a point</a></li></ul></li>
+<li><a href="#CoordinateOperationSteps">Conceptual versus real chain of coordinate operations</a></li></ul></li></ul></li>
 <li><a href="#Geometry">Geometries</a><ul>
 <li><a href="#Geometry-root">Base classes</a><ul>
 <li><a href="#DirectPosition">Direct points and positions</a></li>
 <li><a href="#Envelope">Envelopes</a><ul>
 <li><a href="#AntiMeridian">Envelopes that cross the antimeridian</a></li></ul></li></ul></li></ul></li>
 <li><a href="#Coverage">Data coverages</a></li>
+<li><a href="#Utilities">Utility classes and methods</a><ul>
+<li><a href="#ComparisonMode">Comparison modes of objects</a></li>
+<li><a href="#ObjectConverters">Object converters</a></li>
+<li><a href="#Internationalization">Internationalization</a><ul>
+<li><a href="#LocalizedString">Distinct character sequences for each locale</a></li>
+<li><a href="#InternationalString">Single instance for all supported locales</a></li>
+<li><a href="#Locale.ROOT">Locale.ROOT convention</a></li>
+<li><a href="#UnicodePoint">Treatment of characters</a><ul>
+<li><a href="#Whitespaces">Blank spaces interpretation</a></li></ul></li></ul></li></ul></li>
 <li><a href="#XML-ISO">Representing objects in XML</a><ul>
 <li><a href="#XML-ISO-19115">Representing metadata according to ISO 19115-3</a><ul>
 <li><a href="#gco-id">Identification of already-defined instances</a></li>
@@ -97,7 +99,7 @@ Partially translated by <i>Christina Hough</i></p>
 <section>
 <header>
 <h1 id="Standards"><span class="section-number">1.</span> Standards and norms</h1>
-<nav><div class="chapter-links"><div class="next-chapter"><a href="#Utilities">Next chapter</a> ➡</div></div></nav>
+<nav><div class="chapter-links"><div class="next-chapter"><a href="#Referencing">Next chapter</a> ➡</div></div></nav>
 </header>
 <nav>In this chapter:<ul class="toc">
 <li><a href="#ConceptualModels">Sources of conceptual models used by Apache SIS</a></li>
@@ -1087,282 +1089,8 @@ Text in gray boxes are for information purpose only and can be ignored.
 </section>
 <section>
 <header>
-<h1 id="Utilities"><span class="section-number">2.</span> Utility classes and methods</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Standards">Previous chapter</a></div><div class="next-chapter"><a href="#Referencing">Next chapter</a> ➡</div></div></nav>
-</header>
-<nav>In this chapter:<ul class="toc">
-<li><a href="#ComparisonMode">Comparison modes of objects</a></li>
-<li><a href="#Internationalization">Internationalization</a><ul>
-<li><a href="#LocalizedString">Distinct character sequences for each locale</a></li>
-<li><a href="#InternationalString">Single instance for all supported locales</a></li>
-<li><a href="#Locale.ROOT">Locale.ROOT convention</a></li>
-<li><a href="#UnicodePoint">Treatment of characters</a><ul>
-<li><a href="#Whitespaces">Blank spaces interpretation</a></li></ul></li></ul></li></ul></nav>
-<p>
-This chapter describes aspects of Apache <abbr title="Spatial Information System">SIS</abbr> that apply to the entire library.
-Most of these utilities are not specific to spatial information systems.
-</p>
-
-<h2 id="ComparisonMode"><span class="section-number">2.1.</span> Comparison modes of objects</h2>
-<p>
-There are various opinions on how to implement Java standard's <code>Object​.equals(Object)</code> method.
-According to some, it should be possible to compare different implementations of the same interface or base class.
-But to follow this policy, each interface or base class's javadoc must define the algorithms that all implementations
-shall use for their <code>equals(Object)</code> and <code>hashCode()</code> methods.
-This approach is common in <code>java.util.Collection</code> and its child interfaces.
-Transferring this approach to certain GeoAPI interfaces, however, would be a difficult task,
-and would probably not be followed in many implementations.
-Moreover, it comes at the expense of being able to take into account supplementary attributes in the child interfaces,
-unless this possibility has been specified in the parent interface.
-This constraint arises from the following points of the <code>equals(Object)</code> and <code>hashCode()</code> method contracts:
-</p>
-<ul>
-<li><code>A.equals(B)</code> implies <code>B.equals(A)</code> (symmetry);</li>
-<li><code>A.equals(B)</code> and <code>B.equals(C)</code> implies <code>A.equals(C)</code> (transitivity);</li>
-<li><code>A.equals(B)</code> implies <code>A.hashCode() == B.hashCode()</code>.</li>
-</ul>
-<p>
-For example, these three constraints are violated if <var>A</var> (and eventually <var>C</var>) can contain attributes
-which <var>B</var> ignores.
-To bypass this problem, an alternative approach is to require that the objects compared by the
-<code>Object​.equals(Object)</code> method be of the same class; in other words, <code>A.getClass() == B.getClass()</code>.
-This approach is sometimes regarded as contrary to the principles of object oriented programming.
-In practice, for relatively complex applications, the important accorded to these principles depends on the context
-in which the objects are compared:
-if the objects are added to a <code>HashSet</code> or used as keys in a <code>HashMap</code>,
-we would need a stricter adherence to the <code>equals(Object)</code> and <code>hashCode()</code> contract.
-But if the developer is comparing the objects his- or herself, for example to check that the relevant information has been changed,
-then the constraints of symmetry, transitivity or coherence with the hash values may be of little interest.
-More permissive comparisons may be desirable, sometimes going so far as to tolerate minor discrepancies in numerical values.
-</p>
-<p>
-In order to allow developers a certain amount of flexibility, many classes in the <abbr title="Spatial Information System">SIS</abbr>
-library implement the <code class="SIS">org.apache.sis.util.LenientComparable</code> interface,
-which defines a <code class="SIS">equals(Object, ComparisonMode)</code> method.
-The principle modes of comparison are:
-</p>
-<ul>
-<li><p>
-<b><code class="SIS">STRICT</code></b> — The objects compared must share the same class and have exactly equal attributes,
-including any possible public attributes specific to the implementation.
-</p></li>
-<li><p>
-<b><code class="SIS">BY_CONTRACT</code></b> — The objects compared must implement the same GeoAPI (or other standard)
-interface, but need not be of the same implementation class.
-Only the attributes defined in the interface are compared;
-all other attributes specific to the implementation — even if they are public — are ignored.
-</p></li>
-<li><p>
-<b><code class="SIS">IGNORE_METADATA</code></b> — Like <code class="SIS">BY_CONTRACT</code>,
-but only compares attributes that influence the operations (numeric calculations or otherwise) performed by the object.
-For example, in a geodesic datum, the longitude (in relation to Greenwich) of the original meridian
-would be taken into account, while the name of the meridian would be ignored.
-</p></li>
-<li><p>
-<b><code class="SIS">APPROXIMATIVE</code></b> — Like <code class="SIS">IGNORE_METADATA</code>,
-but tolerates minor discrepancies in numerical values.
-</p></li>
-</ul>
-<p>
-The default mode, used in all <code>equals(Object)</code> methods in <abbr>SIS</abbr>,
-is <code class="SIS">STRICT</code>. This mode is chosen for a safe operation — particularly with <code>HashMap</code> —
-without the need to rigorously define <code>equals(Object)</code> and <code>hashCode()</code> operations in every interface.
-With this mode, the order of objects (<code>A.equals(B)</code> or <code>B.equals(A)</code>) is unimportant.
-It is, however, the only mode that offers this guarantee.
-In the expression <code>A.equals(B)</code>, the <code class="SIS">BY_CONTRACT</code> mode
-(and so by extension all other modes that depend on it) only compares the properties known to <code>A</code>,
-regardless of whether <code>B</code> knows more.
-</p>
-
-
-
-<h2 id="Internationalization"><span class="section-number">2.2.</span> Internationalization</h2>
-<p>
-In an architecture where a program executed on a server provides its data to multiple clients,
-the server's locale conventions are not necessarily the same as those of the clients.
-Conventions may differ in language, but also in the way they write numeric values
-(even between two countries that speak the same language) as well in time zone.
-To produce messages that conform to the client's conventions, <abbr title="Spatial Information System">SIS</abbr> uses
-two approaches, distinguished by their level of granularity: at the level of the messages themselves,
-or at the level of the objects that create the messages.
-The approach used also determines whether it is possible to share the same instance of an object for all languages.
-</p>
-
-<h3 id="LocalizedString"><span class="section-number">2.2.1.</span> Distinct character sequences for each locale</h3>
-<p>
-Some classes are only designed to function according to one locale convention at a time.
-This is of course true for the standard implementations of <code>java.text.Format</code>,
-as they are entirely dedicated to the work of internationalization.
-But it is also the case for other less obvious classes like <code>javax.imageio.ImageReader</code>/<code>ImageWriter</code>
-and for <code>Exception</code> subclasses.
-When one of these classes is implemented by <abbr title="Spatial Information System">SIS</abbr>,
-we identify it by implementing the <code class="SIS">org.apache.sis.util.Localized</code> interface.
-The <code class="SIS">getLocale()</code> method of this interface can determine the locale conventions
-by which the instance produces its message.
-</p>
-<p>
-Some sub-classes of <code>Exception</code> defined by <abbr>SIS</abbr> also implement the <code class="SIS">Localized</code> interface.
-For these exceptions, the error message may be produced according to two locale conventions,
-for either the administrator or the client respectively:
-<code>getMessage()</code> returns the exception message according to the system default conventions,
-while <code>getLocalizedMessage()</code> returns the exception message according to the locale conventions specified
-by <code class="SIS">getLocale()</code>.
-This <code>Locale</code> will be determined by the <code class="SIS">Localized</code> object that threw the exception.
-</p>
-<div class="example"><p><b>Example:</b>
-Given an environment in which the default language is English and an <code class="SIS">AngleFormat</code> object is created to
-read angles according to French conventions.
-If a <code>ParseException</code> is thrown when using this formatter, <code>getMessage()</code> returns the error message in English,
-while <code>getLocalizedMessage()</code> returns the error message in French.
-</p></div>
-<p>
-The exceptions defined by <abbr>SIS</abbr> do not implement all of the <code class="SIS">Localized</code> interface.
-Only those most likely to be shown to the user are localized in this way.
-<code>ParseException</code> are good candidates because they often occur due to an incorrect entry by the client.
-By contrast, <code>NullPointerException</code> are generally caused by a programming error;
-they may be localized in the system default language, but that is usually all.
-</p>
-<p>
-The utility class <code class="SIS">org.apache.sis.util.Exceptions</code> provides convenience methods to get messages
-according to the conventions of a given locale, when this information is available.
-</p>
-
-
-
-<h3 id="InternationalString"><span class="section-number">2.2.2.</span> Single instance for all supported locales</h3>
-<p>
-The <abbr title="Application Programming Interface">API</abbr> conventions defined by <abbr title="Spatial Information System">SIS</abbr> or inherited by GeoAPI favour the use of the
-<code class="GeoAPI">InternationalString</code> type when the value of a <code>String</code> type would likely be localized.
-This approach allows us to defer the internationalization process to the time when a character sequence is requested,
-rather than the time when the object that contains them is created.
-This is particularly useful for immutable classes used for creating unique instances independently of locale conventions.
-</p>
-<div class="example"><p><b>Example:</b>
-<abbr>SIS</abbr> includes only one instance of the <code class="GeoAPI">OperationMethod</code>
-type representing the Mercator projection, regardless of the client's language.
-But its <code class="GeoAPI">getName()</code> method (indirectly) provides an instance of
-<code class="GeoAPI">InternationalString</code>, so that <code>toString(Locale.ENGLISH)</code> returns <cite>Mercator projection</cite>
-while <code>toString(Locale.FRENCH)</code> returns <cite>Projection de Mercator</cite>.
-</p></div>
-<p>
-When defining spatial objects independently of locale conventions, we reduce the risk of computational overload.
-For example, it is easier to detect that two maps use the same cartographic projection if this last is represented by the
-same instance of <code class="GeoAPI">CoordinateOperation</code>,
-even if the projection has a different name depending on the country.
-Moreover, certain types of <code class="GeoAPI">CoordinateOperation</code> may require coordinate transformation matrices,
-so sharing a single instance becomes even more preferable in order to reduce memory consumption.
-</p>
-
-
-
-<h3 id="Locale.ROOT"><span class="section-number">2.2.3.</span> <code>Locale.ROOT</code> convention</h3>
-<p>
-All <abbr title="Spatial Information System">SIS</abbr> methods receiving or returning the value of a <code>Locale</code> type accept the <code>Locale.ROOT</code> value.
-This value is interpreted as specifying not to localize the text.
-The notion of a <cite>non-localized text</cite> is a little false, as it is always necessary to chose a formatting convention.
-This convention however, though very close to English, is usually slightly different.
-For example:
-</p>
-<ul>
-<li>
-Identifiers are written as they appear in <abbr title="Unified Modeling Language">UML</abbr> diagrams,
-such as <cite>blurredImage</cite> instead of <cite>Blurred image</cite>.
-</li>
-<li>
-Dates are written according to the <abbr title="International Organization for Standardization">ISO</abbr> 8601 format,
-which does not correspond to English conventions.
-</li>
-<li>
-Numbers are written using their <code>toString()</code> methods, rather than using a <code>java.text.NumberFormat</code>.
-As a result, there are differences in the number of significant digits,
-use of exponential notation and the absence of thousands separators.
-</li>
-</ul>
-
-
-
-<h3 id="UnicodePoint"><span class="section-number">2.2.4.</span> Treatment of characters</h3>
-<p>
-In Java, sequences of characters use UTF-16 encoding.
-There is a direct correspondence between the values of the <code>char</code> type and the great majority of characters,
-which facilitates the use of sequences so long as these characters are sufficient.
-However, certain Unicode characters cannot be represented by a single <code>char</code>.
-These <i>supplementary characters</i> include certain ideograms,
-but also road and geographical symbols in the 1F680 to 1F700 range.
-Support for these supplementary characters requires slightly more complex interactions than the classic case,
-where we may assume a direct correspondence.
-Thus, instead of the loop on the left below, international applications must generally use the loop on the right:
-</p>
-
-<table class="hidden">
-<tr>
-<th>Loop to Avoid</th>
-<th>Recommended loop</th>
-</tr>
-<tr>
-<td>
-<pre style="margin-top: 6pt"><b>for</b> (<b>int</b> i=0; i&lt;string.length(); i++) {
-    <b>char</b> c = string.charAt(i);
-    <b>if</b> (Character.isWhitespace(c)) {
-        <code class="comment">// A blank space was found.
-</code>    }
-}</pre>
-</td>
-<td>
-<pre style="margin-top: 6pt"><b>for</b> (<b>int</b> i=0; i&lt;string.length();) {
-    <b>int</b> c = string.codePointAt(i);
-    <b>if</b> (Character.isWhitespace(c)) {
-        <code class="comment">// A blank space was found.
-</code>    }
-    i += Character.charCount(c);
-}</pre>
-</td>
-</tr>
-</table>
-
-<p>
-<abbr title="Spatial Information System">SIS</abbr> supports supplementary characters by using the loop on the right where necessary,
-but the loop on the left is occasionally used when it is known that the characters searched for are not supplementary characters,
-even if some may be present in the sequence in which we are searching.
-</p>
-
-
-
-<h4 id="Whitespaces"><span class="section-number">2.2.4.1.</span> Blank spaces interpretation</h4>
-<p>
-Standard Java provides two methods for determining whether a character is a blank space:
-<code>Character​.isWhitespace(…)</code> and <code>Character​.isSpaceChar(…)</code>.
-These two methods differ in their interpretations of non-breaking spaces, tabs and line breaks.
-The first method conforms to the interpretation currently used in languages such as Java, C/C++ and <abbr>XML</abbr>,
-which considers tabs and line breaks to be blank spaces, while non-breaking spaces are read as not blank.
-The second method — which conforms strictly to the Unicode definition — makes the opposite interpretation.
-</p>
-<p>
-<abbr title="Spatial Information System">SIS</abbr> uses each of these methods in different contexts.
-<code>isWhitespace(…)</code> is used to <em>separate</em> the elements of a list (numbers, dates, words, etc.),
-while <code>isSpaceChar(…)</code> is used to ignore blank spaces <em>inside</em> a single element.
-</p>
-<div class="example"><p><b>Example:</b>
-Take a list of numbers represented according to French conventions.
-Each number may contain <em>non-breaking spaces</em> as thousands separators,
-while the different numbers in the list may be separated by ordinary spaces, tabs or line breaks.
-When analyzing a number, we want to consider the non-breaking spaces as being part of the number,
-whereas a tab or a line break most likely indicates a separation between this number and the next.
-We would thus use <code>isSpaceChar(…)</code>.
-Conversely, when separating the numbers in the list, we want to consider tabs and line breaks as separators,
-but not non-breaking spaces.
-We would thus use <code>isWhitespace(…)</code>.
-The role of ordinary spaces, to which either case might apply, should be decided beforehand.
-</p></div>
-<p>
-In practice, this distinction is reflected in the use of <code>isSpaceChar(…)</code> in the implementations of <code>java.text.Format</code>,
-or the use of <code>isWhitespace(…)</code> in nearly all the rest of the <abbr>SIS</abbr> library.
-</p>
-</section>
-<section>
-<header>
-<h1 id="Referencing"><span class="section-number">3.</span> Spatial reference systems</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Utilities">Previous chapter</a></div><div class="next-chapter"><a href="#Geometry">Next chapter</a> ➡</div></div></nav>
+<h1 id="Referencing"><span class="section-number">2.</span> Spatial reference systems</h1>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Standards">Previous chapter</a></div><div class="next-chapter"><a href="#Geometry">Next chapter</a> ➡</div></div></nav>
 </header>
 <nav>In this chapter:<ul class="toc">
 <li><a href="#CRS_Components">Components of a reference system by coordinates</a><ul>
@@ -1386,148 +1114,35 @@ or the use of <code>isWhitespace(…)</code> in nearly all the rest of the <abbr
 <li><a href="#TransformDerivative">Partial derivatives of coordinate operations</a><ul>
 <li><a href="#DerivativeAndEnvelope">Transform derivatives applied to envelopes</a></li>
 <li><a href="#DerivativeAndRaster">Transform derivatives applied to rasters</a></li>
-<li><a href="#GetDerivative">Getting the derivative at a point</a></li></ul></li></ul></li></ul></nav>
+<li><a href="#GetDerivative">Getting the derivative at a point</a></li></ul></li>
+<li><a href="#CoordinateOperationSteps">Conceptual versus real chain of coordinate operations</a></li></ul></li></ul></nav>
 <p>
 For locating a point on Earth one can use identifiers like city name or postal address
 — an approach known as <cite>spatial reference systems by identifiers</cite> —
-or use numerical values valid in a given coordinate system
+or use numerical values valid in a given coordinate system like latitudes and longitudes
 — an approach known as <cite>spatial reference systems by coordinates</cite>.
-Each system implies approximations as:
-</p>
-<ul>
-<li>Choice of a figure of the Earth (geoid, ellipsoid, <i>etc.</i>) used as an approximation of Earth shape.</li>
-<li>Choice of geometric properties (angles, distances, <i>etc.</i>) to be preserved when a map is shown on plane surface.</li>
-<li>Lost of precision when a coordinates is transformed from one referencing system to another system.</li>
-</ul>
-<p>
-Unless otherwise specified, Apache SIS aims to represent coordinates on Earth with an accuracy of one centimetre or better.
+Each reference system implies approximations like
+the choice of a figure of the Earth (geoid, ellipsoid, <i>etc.</i>) used as an approximation of Earth shape,
+the choice of geometric properties (angles, distances, <i>etc.</i>) to be preserved when a map is shown on plane surface, and
+a lost of precision when coordinates are transformed to systems using a different <a href="#GeodeticDatum">datum</a>.
+</p><p>
+A very common misbelief is that one can avoid this complexity by using a single coordinate reference system
+(typically <abbr title="World Geodetic System 1984">WGS84</abbr>) as a universal system for all data.
+The next chapters will explain why the reality is not so simple.
+Whether a universal reference system can suit an application needs or not depends on the desired positional accuracy
+and the kind of calculations to be performed with the data.
+Unless otherwise specified, Apache <abbr title="Spatial Information System">SIS</abbr> aims to represent coordinates on Earth with an accuracy of one centimetre or better.
 But the accuracy can be altered by various situations:
 </p>
 <ul>
 <li>Points should be inside the domain of validity as given by <code class="GeoAPI">ReferenceSystem​.getDomainOfValidity()</code>.</li>
 <li>Distance measurements in a given map projection are true only is some special locations,
 named for instance “standards parallels”.</li>
-<li>Positional accuracy is reduced after coordinate transformations. The new accuracy is described by
-<code class="GeoAPI">CoordinateOperation​.getCoordinateOperationAccuracy()</code>.</li>
+<li>Positional accuracy is altered after coordinate transformations.
+The new accuracy is described by <code class="GeoAPI">CoordinateOperation​.getCoordinateOperationAccuracy()</code>.</li>
+<li>Finding the most appropriate coordinate transformation parameters require the use of a geodetic dataset like <abbr>EPSG</abbr>.
+Declaring those parameters within the <abbr title="Coordinate Reference System">CRS</abbr> (for example with a <code class="OGC">TOWGS84</code> element) is often not sufficient.</li>
 </ul>
-<p>
-The <code class="SIS">sis-referencing</code> module provides a set of classes implementing
-different specializations of the <code class="GeoAPI">ReferenceSystem</code> interface, together with required components.
-Those implementations store spatial reference system descriptions, together with metadata like their domain of validity.
-However those objects do not perform any operation on coordinate values.
-Those operations are performed by another family of types, with <code class="GeoAPI">CoordinateOperation</code> as the root interface.
-Those types will be discussed in <a href="#CoordinateOperation">another section</a>,
-but we mention here two sub-types related to the coordinate accuracy topic:
-</p>
-<ul>
-<li>
-<p>Coordinate <strong>conversions</strong> are fully determined by mathematic formulas.
-Those conversions would have an infinite precision if it was not for the unavoidable rounding errors
-inherent to floating-point calculations.</p>
-<div class="example"><p><b>Example:</b> map projections.</p></div>
-</li><li>
-<p>Coordinate <strong>transformations</strong> are defined empirically.
-They usually have a few meters error which is not caused by limitation in computer accuracy.
-Those errors exist because transformations are only approximations of a more complex reality.</p>
-
-<div class="example"><p><b>Example:</b> datum changes from
-<cite>North American Datum 1927</cite> (<abbr>NAD27</abbr>) to
-<cite>North American Datum 1983</cite> (<abbr>NAD83</abbr>),
-even if the map projection method (e.g. Lambert Conformal or Transverse Mercator) does not change.</p>
-</div>
-</li>
-</ul>
-
-
-
-<h2 id="CRS_Components"><span class="section-number">3.1.</span> Components of a reference system by coordinates</h2>
-<p>
-Spatial reference systems by coordinates provide necessary information for mapping numerical coordinate values
-to real-world locations. In Apache <abbr title="Spatial Information System">SIS</abbr>, most information is contained (directly or indirectly) in
-classes with a name ending in <abbr title="Coordinate Reference System">CRS</abbr>, the abbreviation of <i>Coordinate Reference System</i>.
-Those objects contain:
-</p>
-<ul>
-<li>A <i>datum</i>, which specifies among other things which ellipsoid to use as an Earth shape approximation.</li>
-<li>A description for each axis: name, direction, units of measurement, range of values.</li>
-<li>Sometime a list of parameters. A well-known example is when the <abbr>CRS</abbr> uses a map projection.</li>
-</ul>
-<p>
-Those systems are described by the <abbr title="International Organization for Standardization">ISO</abbr> 19111 standard (<i>Referencing by Coordinates</i>),
-which replaces for most parts the older <abbr>OGC 01-009</abbr> standard (<i>Coordinate Transformation Services</i>).
-Those standards are completed by two other standards defining exchange formats:
-<abbr>ISO</abbr> 19136 and 19162 respectively for the
-<cite>Geographic Markup Language</cite> (<abbr>GML</abbr>) — a <abbr>XML</abbr> format which is quite detailed but verbose —
-and the <cite>Well-Known Text</cite> (<abbr>WKT</abbr>) — a text format easier to read by humans.
-</p>
-
-<h3 id="Ellipsoid"><span class="section-number">3.1.1.</span> Geoid et ellipsoid</h3>
-<p>
-Since the real topographic surface is difficult to represent mathematically, it is not used directly.
-A slightly more convenient surface is the geoid,
-a surface where the gravitational field has the same value everywhere (an equipotential surface).
-This surface is perpendicular to the direction of a plumb line at all points.
-The geoid surface would be equivalent to the mean sea level if all oceans where at rest,
-without winds or permanent currents like the Gulf Stream.
-</p><p>
-While much smoother than topographic surface, the geoid surface still have hollows and bumps
-caused by the uneven distribution of mass inside Earth.
-For more convenient mathematical operations, the geoid surface is approximated by an ellipsoid.
-This “figure of Earth” is represented in GeoAPI by the <code class="GeoAPI">Ellipsoid</code> interface,
-a fundamental component in coordinate reference systems of kind <code class="GeoAPI">GeographicCRS</code> and <code class="GeoAPI">ProjectedCRS</code>.
-Tenth of ellipsoids are commonly used for datum definitions.
-Some of them provide a very good approximation for a particular geographic area
-at the expense of the rest of the world for which the datum was not designed.
-Other datums are compromises applicable to the whole world.
-</p>
-<div class="example"><p><b>Example:</b>
-At the beginning of XX<sup>th</sup> century in <abbr>USA</abbr>, the Michigan state used an ellipsoid based on the
-“Clarke 1866” ellipsoid but with axis lengths expanded by 800 feet.
-This modification aimed to take in account the average state height above mean sea level.</p>
-</div>
-
-<h3 id="GeodeticDatum"><span class="section-number">3.1.2.</span> Geodetic datum</h3>
-<p>
-For defining a geodetic system in a country, a national authority selects an ellipsoid matching closely the country surface.
-Differences between that ellipsoid and the geoid’s hollows and bumps are usually less than 100 metres.
-Parameters that relate an <code class="GeoAPI">Ellipsoid</code> to the Earth surface (for example the position of ellipsoid center)
-are represented by instances of <code class="GeoAPI">GeodeticDatum</code>.
-Many <code class="GeoAPI">GeodeticDatum</code> definitions can use the same <code class="GeoAPI">Ellipsoid</code>,
-but with different orientations or center positions.
-</p><p>
-Before the satellite era, geodetic measurements were performed exclusively from Earth surface.
-Consequently, two islands or continents not in range of sight from each other were not geodetically related.
-So the <cite>North American Datum 1983</cite> (<abbr>NAD83</abbr>) and the <cite>European Datum 1950</cite> (<abbr>ED50</abbr>)
-are independent: their ellipsoids have different sizes and are centered at a different positions.
-The same geographic coordinate will map different locations on Earth depending on whether the coordinate
-uses one reference system or the other.
-</p><p>
-The <abbr title="Global Positioning System">GPS</abbr> invention implied the creation of a
-world geodetic system named <abbr title="World Geodetic System 1984">WGS84</abbr>.
-The ellipsoid is then unique and centered at the Earth gravity center.
-<abbr>GPS</abbr> provide at any moment the receptor absolute position on that world geodetic system.
-But since <abbr>WGS84</abbr> is a world-wide system, it may be differ significantly from local systems.
-For example the difference between <abbr>WGS84</abbr> and the European system <abbr>ED50</abbr> is about 150 metres,
-and the average difference between <abbr>WGS84</abbr> and the <cite>Réunion 1947</cite> system is 1.5 kilometres.
-Consequently we shall not blindly use <abbr>GPS</abbr> coordinates on a map,
-as transformations to the local system may be required.
-Those transformations are represented in GeoAPI by instances of the <code class="GeoAPI">Transformation</code> interface
-(a kind of operation mentioned in <a href="#Referencing">this chapter introduction</a>).
-</p><p>
-The <abbr>WGS84</abbr> ubiquity tends to reduce the need for <code class="GeoAPI">Transformation</code> operations with recent data,
-but does not eliminate it.
-The Earth moves under the effect of plate tectonic and new systems are defined every years for taking that fact in account.
-For example while <abbr>NAD83</abbr> was originally defined as practically equivalent to <abbr>WGS84</abbr>,
-there is now (as of 2016) a 1.5 metres difference.
-The <cite>Japanese Geodetic Datum 2000</cite> was also defined as practically equivalent to <abbr>WGS84</abbr>,
-but the <cite>Japanese Geodetic Datum 2011</cite> now differs.
-Even the <abbr>WGS84</abbr> datum, which was a terrestrial model realization at a specific time,
-got revisions because of improvements in instruments accuracy.
-Today, at least six <abbr>WGS84</abbr> versions exist.
-Furthermore many borders were legally defined in legacy datums, for example <abbr>NAD27</abbr> in <abbr>USA</abbr>.
-Updating data to the new datum would imply transforming some straight lines or simple geometric shapes
-into more irregular shapes, if the shapes are large enough.
-</p>
 <article>
 <header>
 <h1>“Early binding” versus “late binding” implementations</h1>
@@ -1556,7 +1171,7 @@ and do not have the same accuracy than an operation using <abbr>WGS84</abbr> as 
 <li><abbr>WGS84</abbr> itself has been updated many times,
 which makes it a kind of moving target (admittedly slowly) for coordinate transformations libraries.</li>
 <li>Different systems could be used as the pivot system, for example the <cite>Galileo Reference Frame</cite>
-(<abbr>GTRF</abbr>) created for the European <abbr title="Global Positioning System">GPS</abbr> competitor.</li>
+(<abbr>GTRF</abbr>) created for the European <abbr>GPS</abbr> competitor.</li>
 </ul>
 <div class="example"><p><b>Example:</b>
 the <abbr>EPSG</abbr> geodetic dataset defines about 50 transformations from <abbr>NAD27</abbr> to <abbr>NAD83</abbr>.
@@ -1584,11 +1199,114 @@ while some reminiscences of “early binding” approach still exist in the form
 The later is used only if <abbr>SIS</abbr> fails to apply the late binding approach for given reference systems.
 </p>
 </article>
+<p>
+The <code class="SIS">sis-referencing</code> module provides a set of classes implementing
+different specializations of the <code class="GeoAPI">ReferenceSystem</code> interface, together with required components.
+Those implementations store spatial reference system descriptions, together with metadata like their domain of validity.
+However those objects do not perform any operation on coordinate values.
+Coordinates <cite>conversions</cite> or <cite>transformations</cite> are performed by another family of types,
+with <code class="GeoAPI">CoordinateOperation</code> as the root interface.
+Those types will be discussed in <a href="#CoordinateOperation">another section</a>.
+</p>
 
-<h3 id="CoordinateSystem"><span class="section-number">3.1.3.</span> Coordinate systems</h3>
+
+
+<h2 id="CRS_Components"><span class="section-number">2.1.</span> Components of a reference system by coordinates</h2>
+<p>
+Spatial reference systems by coordinates provide necessary information for mapping numerical coordinate values
+to real-world locations. In Apache <abbr title="Spatial Information System">SIS</abbr>, most information is contained (directly or indirectly) in
+classes with a name ending in <abbr title="Coordinate Reference System">CRS</abbr>, the abbreviation of <i>Coordinate Reference System</i>.
+Those objects contain:
+</p>
+<ul>
+<li>A <i>datum</i>, which specifies among other things which ellipsoid to use as an Earth shape approximation.</li>
+<li>A description for each axis: name, direction, units of measurement, range of values.</li>
+<li>Sometime a list of parameters, especially when using map projections.</li>
+</ul>
+<p>
+Those systems are described by the <abbr title="International Organization for Standardization">ISO</abbr> 19111 standard (<i>Referencing by Coordinates</i>),
+which replaces for most parts the older <abbr>OGC 01-009</abbr> standard (<i>Coordinate Transformation Services</i>).
+Those standards are completed by two other standards defining exchange formats:
+<abbr>ISO</abbr> 19136 and 19162 respectively for the
+<cite>Geographic Markup Language</cite> (<abbr>GML</abbr>) — a <abbr>XML</abbr> format which is quite detailed but verbose —
+and the <cite>Well-Known Text</cite> (<abbr>WKT</abbr>) — a text format easier to read by humans.
+</p>
+
+<h3 id="Ellipsoid"><span class="section-number">2.1.1.</span> Geoid et ellipsoid</h3>
+<p>
+Since the real topographic surface is difficult to represent mathematically, it is not used directly.
+A slightly more convenient surface is the geoid,
+a surface where the gravitational field has the same value everywhere (an equipotential surface).
+This surface is perpendicular to the direction of a plumb line at all points.
+The geoid surface would be equivalent to the mean sea level if all oceans where at rest,
+without winds or permanent currents like the Gulf Stream.
+</p><p>
+While much smoother than topographic surface, the geoid surface still have hollows and bumps
+caused by the uneven distribution of mass inside Earth.
+For more convenient mathematical operations, the geoid surface is approximated by an ellipsoid.
+This “figure of Earth” is represented in GeoAPI by the <code class="GeoAPI">Ellipsoid</code> interface,
+a fundamental component in coordinate reference systems of kind <code class="GeoAPI">GeographicCRS</code> and <code class="GeoAPI">ProjectedCRS</code>.
+Tenth of ellipsoids are commonly used for datum definitions.
+Some of them provide a very good approximation for a particular geographic area
+at the expense of the rest of the world for which the datum was not designed.
+Other datums are compromises applicable to the whole world.
+</p>
+<div class="example">
+<p><b>Example:</b>
+the <abbr>EPSG</abbr> geodetic dataset defines among others the “<abbr>WGS</abbr> 84”, “Clarke 1866”, “Clarke 1880”,
+“<abbr>GRS</abbr> 1980” and “<abbr>GRS</abbr> 1980 Authalic Sphere” (a sphere of same surface than the <abbr>GRS</abbr> 1980 ellipsoid).
+Ellipsoids may be used in various places of the world or may be defined for a very specific region.
+For example in <abbr>USA</abbr> at the beginning of XX<sup>th</sup> century,
+the Michigan state used an ellipsoid based on the “Clarke 1866” ellipsoid but with axis lengths expanded by 800 feet.
+This modification aimed to take in account the average state height above mean sea level.</p>
+</div>
+
+<h3 id="GeodeticDatum"><span class="section-number">2.1.2.</span> Geodetic datum</h3>
+<p>
+For defining a geodetic system in a country, a national authority selects an ellipsoid matching closely the country surface.
+Differences between that ellipsoid and the geoid’s hollows and bumps are usually less than 100 metres.
+Parameters that relate an <code class="GeoAPI">Ellipsoid</code> to the Earth surface (for example the position of ellipsoid center)
+are represented by instances of <code class="GeoAPI">GeodeticDatum</code>.
+Many <code class="GeoAPI">GeodeticDatum</code> definitions can use the same <code class="GeoAPI">Ellipsoid</code>,
+but with different orientations or center positions.
+</p><p>
+Before the satellite era, geodetic measurements were performed exclusively from Earth surface.
+Consequently, two islands or continents not in range of sight from each other were not geodetically related.
+So the <cite>North American Datum 1983</cite> (<abbr>NAD83</abbr>) and the <cite>European Datum 1950</cite> (<abbr>ED50</abbr>)
+are independent: their ellipsoids have different sizes and are centered at a different positions.
+The same geographic coordinate will map different locations on Earth depending on whether the coordinate
+uses one reference system or the other.
+</p><p>
+The <abbr title="Global Positioning System">GPS</abbr> invention implied the creation of a
+world geodetic system named <abbr title="World Geodetic System 1984">WGS84</abbr>.
+The ellipsoid is then unique and centered at the Earth gravity center.
+<abbr>GPS</abbr> provides at any moment the receptor absolute position on that world geodetic system.
+But since <abbr>WGS84</abbr> is a world-wide system, it may differs significantly from local systems.
+For example the difference between <abbr>WGS84</abbr> and the European system <abbr>ED50</abbr> is about 150 metres,
+and the average difference between <abbr>WGS84</abbr> and the <cite>Réunion 1947</cite> system is 1.5 kilometres.
+Consequently we shall not blindly use <abbr>GPS</abbr> coordinates on a map,
+as transformations to the local system may be required.
+Those transformations are represented in GeoAPI by instances of the <code class="GeoAPI">Transformation</code> interface.
+</p><p>
+The <abbr>WGS84</abbr> ubiquity tends to reduce the need for <code class="GeoAPI">Transformation</code> operations with recent data,
+but does not eliminate it.
+The Earth moves under the effect of plate tectonic and new systems are defined every years for taking that fact in account.
+For example while <abbr>NAD83</abbr> was originally defined as practically equivalent to <abbr>WGS84</abbr>,
+there is now (as of 2016) a 1.5 metres difference.
+The <cite>Japanese Geodetic Datum 2000</cite> was also defined as practically equivalent to <abbr>WGS84</abbr>,
+but the <cite>Japanese Geodetic Datum 2011</cite> now differs.
+Even the <abbr>WGS84</abbr> datum, which was a terrestrial model realization at a specific time,
+got revisions because of improvements in instruments accuracy.
+Today, at least six <abbr>WGS84</abbr> versions exist.
+Furthermore many borders were legally defined in legacy datums, for example <abbr>NAD27</abbr> in <abbr>USA</abbr>.
+Updating data to the new datum would imply transforming some straight lines or simple geometric shapes
+into more irregular shapes, if the shapes are large enough.
+</p>
+
+<h3 id="CoordinateSystem"><span class="section-number">2.1.3.</span> Coordinate systems</h3>
 <p style="color: red">TODO</p>
 
-<h4 id="AxisOrder"><span class="section-number">3.1.3.1.</span> Axis order</h4>
+<h4 id="AxisOrder"><span class="section-number">2.1.3.1.</span> Axis order</h4>
 <p>
 The axis order is specified by the authority (typically a national agency) defining the <cite>Coordinate Reference System</cite> (<abbr title="Coordinate Reference System">CRS</abbr>).
 The order depends on the <abbr>CRS</abbr> type and the country defining the <abbr>CRS</abbr>.
@@ -1631,13 +1349,13 @@ To avoid ambiguities, users are encouraged to always provide explicit <code>AXIS
 The <abbr>WKT</abbr> format will be presented in more details in the next sections.
 </p>
 
-<h3 id="GeographicCRS"><span class="section-number">3.1.4.</span> Geographic reference systems</h3>
+<h3 id="GeographicCRS"><span class="section-number">2.1.4.</span> Geographic reference systems</h3>
 <p style="color: red">TODO</p>
 
-<h4 id="GeographicWKT"><span class="section-number">3.1.4.1.</span> <i>Well-Known Text</i> format</h4>
+<h4 id="GeographicWKT"><span class="section-number">2.1.4.1.</span> <i>Well-Known Text</i> format</h4>
 <p style="color: red">TODO</p>
 
-<h3 id="ProjectedCRS"><span class="section-number">3.1.5.</span> Map projections</h3>
+<h3 id="ProjectedCRS"><span class="section-number">2.1.5.</span> Map projections</h3>
 <p>
 Map projections represent a curved surface (the Earth) on a plane surface (a map or a computer screen)
 with some control over deformations: one can preserve either the angles or the areas, but not both in same time.
@@ -1647,35 +1365,35 @@ while countries elongated along the North-South axis prefer a Transverse Mercato
 </p>
 <p style="color: red">TODO</p>
 
-<h4 id="ProjectedWKT"><span class="section-number">3.1.5.1.</span> <i>Well-Known Text</i> format</h4>
+<h4 id="ProjectedWKT"><span class="section-number">2.1.5.1.</span> <i>Well-Known Text</i> format</h4>
 <p style="color: red">TODO</p>
 
-<h3 id="CompoundCRS"><span class="section-number">3.1.6.</span> Vertical and temporal dimensions</h3>
+<h3 id="CompoundCRS"><span class="section-number">2.1.6.</span> Vertical and temporal dimensions</h3>
 <p style="color: red">TODO</p>
 
-<h4 id="CompoundWKT"><span class="section-number">3.1.6.1.</span> <i>Well-Known Text</i> format</h4>
-<p style="color: red">TODO</p>
-
-
-
-<h2 id="GetCRS"><span class="section-number">3.2.</span> Fetching a spatial reference system</h2>
-<p style="color: red">TODO</p>
-
-<h3 id="CRSAuthorityFactory"><span class="section-number">3.2.1.</span> Looking <abbr title="Coordinate Reference System">CRS</abbr> defined by authorities</h3>
-<p style="color: red">TODO</p>
-
-<h3 id="CRSParsing"><span class="section-number">3.2.2.</span> Reading definitions in GML or WKT format</h3>
-<p style="color: red">TODO</p>
-
-<h3 id="CRSFactory"><span class="section-number">3.2.3.</span> Constructing programmatically</h3>
-<p style="color: red">TODO</p>
-
-<h3 id="CRS_UserCode"><span class="section-number">3.2.4.</span> Adding new <abbr title="Coordinate Reference System">CRS</abbr> definitions</h3>
+<h4 id="CompoundWKT"><span class="section-number">2.1.6.1.</span> <i>Well-Known Text</i> format</h4>
 <p style="color: red">TODO</p>
 
 
 
-<h2 id="CoordinateOperation"><span class="section-number">3.3.</span> Coordinate operations</h2>
+<h2 id="GetCRS"><span class="section-number">2.2.</span> Fetching a spatial reference system</h2>
+<p style="color: red">TODO</p>
+
+<h3 id="CRSAuthorityFactory"><span class="section-number">2.2.1.</span> Looking <abbr title="Coordinate Reference System">CRS</abbr> defined by authorities</h3>
+<p style="color: red">TODO</p>
+
+<h3 id="CRSParsing"><span class="section-number">2.2.2.</span> Reading definitions in GML or WKT format</h3>
+<p style="color: red">TODO</p>
+
+<h3 id="CRSFactory"><span class="section-number">2.2.3.</span> Constructing programmatically</h3>
+<p style="color: red">TODO</p>
+
+<h3 id="CRS_UserCode"><span class="section-number">2.2.4.</span> Adding new <abbr title="Coordinate Reference System">CRS</abbr> definitions</h3>
+<p style="color: red">TODO</p>
+
+
+
+<h2 id="CoordinateOperation"><span class="section-number">2.3.</span> Coordinate operations</h2>
 <p>
 Given a <em>source</em> coordinate reference system (<abbr title="Coordinate Reference System">CRS</abbr>) in which existing coordinate values are expressed,
 and a <em>target</em> coordinate reference system in which coordinate values are desired,
@@ -1712,21 +1430,45 @@ Among the information provided by <code class="GeoAPI">CoordinateOperation</code
 <li>The <cite>domain of validity</cite>, either as a textual description (e.g. “Canada – onshore and offshore”)
 or with the coordinates of a geographic bounding box.</li>
 <li>The <cite>positional accuracy</cite>, which may be anything from 1 centimetre to a few kilometres.</li>
-<li>The coordinate operation subtype. If the coordinate operation is an instance of <code class="GeoAPI">Transformation</code>,
-then it may be one among many possibilities depending on the area of interest, and its accuracy is limited by
-“real world” constraints (not only rounding errors).
-If the coordinate operation is rather an instance of <code class="GeoAPI">Conversion</code>, then it does not have those limitations.</li>
+<li>The coordinate operation subtype. Among them, two sub-types provide the same functionalities but with a significant conceptual difference:
+<ul class="verbose">
+<li>
+Coordinate <strong>conversions</strong> are fully determined by mathematical formulas.
+Those conversions would have an infinite precision if it was not for the unavoidable rounding errors
+inherent to floating-point calculations.
+Map projections are in this category.
+</li><li>
+Coordinate <strong>transformations</strong> are defined empirically.
+They often have errors of a few metres which are not caused by limitation in computer accuracy.
+Those errors exist because transformations are only approximations of a more complex reality.
+Datum shifts from <abbr title="North American Datum 1927">NAD27</abbr> to <abbr title="North American Datum 1983">NAD83</abbr>
+are in this category.
+</li>
+</ul>
+</li>
 </ul>
 <p>
-The actual mathematical work is performed by an object obtained by a call to <code>cop.getMathTransform()</code>.
-The <code class="GeoAPI">CoordinateOperation</code> and <code class="GeoAPI">MathTransform</code> types are separated because the later is a kind of “black box”,
-which may be implemented in a very different way than what the coordinate operation said.
-In particular many conceptually different coordinate operations (e.g. longitude rotations,
-change of units of measurement, conversions between two Mercator projections on the same datum, <i>etc.</i>)
-are implemented by <code class="GeoAPI">MathTransform</code> as <a href="#AffineTransform">affine transforms</a> and concatenated for efficiency.
+If the coordinate operation is an instance of <code class="GeoAPI">Transformation</code>,
+then the instance selected by <abbr>SIS</abbr> may be one among many possibilities depending on the area of interest.
+Furthermore its accuracy is certainly less than the centimetric accuracy that we can expect from a <code class="GeoAPI">Conversion</code>.
+Consequently verifying the domain of validity and the positional accuracy declared in the transformation metadata is of particular importance.
 </p>
 
-<h3 id="MathTransform"><span class="section-number">3.3.1.</span> Executing an operation on coordinate values</h3>
+<h3 id="MathTransform"><span class="section-number">2.3.1.</span> Executing an operation on coordinate values</h3>
+<p>
+The <code class="GeoAPI">CoordinateOperation</code> object introduced in above section provides high-level informations
+(source and target <abbr title="Coordinate Reference System">CRS</abbr>, domain of validity, positional accuracy, operation parameters, <i>etc</i>).
+The actual mathematical work is performed by a separated object obtained by a call to <code class="GeoAPI">CoordinateOperation​.getMathTransform()</code>.
+At the difference of <code class="GeoAPI">CoordinateOperation</code> instances, <code class="GeoAPI">MathTransform</code> instances do not carry any metadata.
+They are kind of black box which know nothing about the source and target <abbr>CRS</abbr>
+(actually the same <code class="GeoAPI">MathTransform</code> can be used for different pairs of <abbr>CRS</abbr> if the mathematical work is the same), domain or accuracy.
+Furthermore <code class="GeoAPI">MathTransform</code> may be implemented in a very different way than what <code class="GeoAPI">CoordinateOperation</code> said.
+In particular many conceptually different coordinate operations (e.g. longitude rotations,
+change of units of measurement, conversions between two Mercator projections on the same datum, <i>etc.</i>)
+are implemented by <code class="GeoAPI">MathTransform</code> as <a href="#AffineTransform">affine transforms</a> and concatenated for efficiency,
+even if <code class="GeoAPI">CoordinateOperation</code> reports them as a chain of Mercator and other operations.
+The “<a href="#CoordinateOperationSteps">conceptual versus real chain of coordinate operations</a>” section explains the differences in more details.
+</p>
 <p>
 The following Java code performs a map projection from geographic coordinates on the <cite>World Geodetic System 1984</cite> (<abbr title="World Geodetic System 1984">WGS84</abbr>) datum
 coordinates in the <cite>WGS 84 / UTM zone 33N</cite> coordinate reference system.
@@ -1763,45 +1505,99 @@ Note that all geographic coordinates below express latitude before longitude.
 }</pre>
 
 
-<h3 id="TransformDerivative"><span class="section-number">3.3.2.</span> Partial derivatives of coordinate operations</h3>
+<h3 id="TransformDerivative"><span class="section-number">2.3.2.</span> Partial derivatives of coordinate operations</h3>
 <p>
-<span style="color: red">TODO</span>
+Previous section shows how to project a coordinate from one reference system to another one.
+There is another, less known, operation which does not compute the projected coordinates of a given point,
+but instead the derivative of the projection function at that point.
+This operation was defined in an older Open Geospatial specification,
+<a href="http://www.opengeospatial.org/standards/ct">OGC 01-009</a>, now considered obsolete but still useful.
+Let <var>P</var> be a map projection converting degrees of latitude and longitude (<var>φ</var>, <var>λ</var>)
+into projected coordinates (<var>x</var>, <var>y</var>) in metres.
+The formula below represents the map projection result as a column matrix
+(reason will become clearer soon):
 </p>
 
+<table class="hidden">
+<tr>
+<th>Equation</th>
+<th>Java code</th>
+</tr>
+<tr>
+<td style="vertical-align:middle; min-width:350px; padding-right:60px">
 <math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
-<mi>P</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo>
+<mi>P</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo>
 <mo>=</mo>
 <mfenced close="]" open="[">
 <mtable>
-<mtr><mtd><mi>x</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mtd></mtr>
-<mtr><mtd><mi>y</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mtd></mtr>
+<mtr><mtd><mi>x</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mtd></mtr>
+<mtr><mtd><mi>y</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mtd></mtr>
 </mtable>
 </mfenced>
 </math>
+</td>
+<td style="vertical-align:middle; min-width:500px; padding-left:60px">
+<pre style="margin:0"><code class="GeoAPI">DirectPosition</code> geographic = <b>new</b> DirectPosition2D(<var>φ</var>, <var>λ</var>);
+<code class="GeoAPI">DirectPosition</code> projected = <var><b>P</b></var>.transform(geographic, <b>null</b>);
+<b>double</b> <var>x</var> = projected.getOrdinate(0);
+<b>double</b> <var>y</var> = projected.getOrdinate(1);</pre>
+</td>
+</tr>
+</table>
 
-<p>The map projection partial derivate at this point can be represented by the Jacobian matrix:</p>
+<p>The map projection partial derivate at this point can be represented by a Jacobian matrix:</p>
 
+<table class="hidden">
+<tr>
+<th>Equation</th>
+<th>Java code</th>
+</tr>
+<tr>
+<td style="vertical-align:middle; min-width:350px; padding-right:60px">
 <math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
-<msup><mi>P</mi><mo>′</mo></msup><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo>
+<msup><mi>P</mi><mo>′</mo></msup><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo>
 <mo>=</mo>
-<msub><mi>JAC</mi><mrow><mi>P</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mrow></msub>
+<msub><mi>JAC</mi><mrow><mi>P</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow></msub>
 <mo>=</mo>
 <mfenced close="]" open="[">
 <mtable>
 <mtr>
-<mtd><mfrac><mrow><mo>∂</mo><mi>x</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
-<mtd><mfrac><mrow><mo>∂</mo><mi>x</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+<mtd><mfrac><mrow><mo>∂</mo><mi>x</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+<mtd><mfrac><mrow><mo>∂</mo><mi>x</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
 </mtr>
 <mtr>
-<mtd><mfrac><mrow><mo>∂</mo><mi>y</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
-<mtd><mfrac><mrow><mo>∂</mo><mi>y</mi><mo>(</mo><mi>λ</mi><mo>,</mo><mi>φ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+<mtd><mfrac><mrow><mo>∂</mo><mi>y</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+<mtd><mfrac><mrow><mo>∂</mo><mi>y</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
 </mtr>
 </mtable>
 </mfenced>
 </math>
+</td>
+<td style="vertical-align:middle; min-width:500px; padding-left:60px">
+<pre style="margin:0"><code class="GeoAPI">DirectPosition</code> geographic = <b>new</b> DirectPosition2D(<var>φ</var>, <var>λ</var>);
+<code class="GeoAPI">Matrix</code> jacobian = <var><b>P</b></var>.derivative(geographic);
+<b>double</b> dx_dλ = jacobian.getElement(0,1);
+<b>double</b> dy_dφ = jacobian.getElement(1,0);</pre>
+</td>
+</tr>
+</table>
 
 <p>
-<span style="color: red">TODO</span>
+Remaining equations in this section will abridge
+∂<var>x</var>(<var>λ</var>, <var>φ</var>) as ∂<var>x</var> and
+∂<var>y</var>(<var>λ</var>, <var>φ</var>) as ∂<var>y</var>,
+but reader should keep in mind that each of those derivative values depends on the (<var>λ</var>, <var>φ</var>) coordinate given at Jacobian matrix calculation time.
+The first matrix column tells us that if we apply a small displacement of ∂<var>φ</var> degrees of latitude from the (<var>φ</var>, <var>λ</var>) position,
+— in other words if we move at the (<var>φ</var> + ∂<var>φ</var>, <var>λ</var>) geographic position —
+then the projected coordinate will be displaced by (∂<var>x</var>, ∂<var>λ</var>) metres
+— in other words it will become (<var>x</var> + ∂<var>x</var>, <var>y</var> + ∂<var>λ</var>).
+Similarly the last matrix column gives us the displacement that happen on the projected coordinate
+if we apply a small displacement of ∂<var>λ</var> degrees of longitude on the source geographic coordinate.
+We can visualize such displacements in a figure like below.
+This figure shows the derivative at two points, <var>P</var><sub>1</sub> and <var>P</var><sub>2</sub>,
+for emphasing that the result change for every points.
+In that figure, vectors <var>U</var> et <var>V</var> stand for the first and second column respectively
+in the Jacobian matrices.
 </p>
 
 <table class="hidden"><tr>
@@ -1815,10 +1611,10 @@ Note that all geographic coordinates below express latitude before longitude.
 <mfenced close="]" open="[">
 <mtable>
 <mtr>
-<mtd><mfrac><mrow><mo>∂</mo><mi>x</mi></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
+<mtd><mfrac><mrow><mo>∂</mo><mi>x</mi></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
 </mtr>
 <mtr>
-<mtd><mfrac><mrow><mo>∂</mo><mi>y</mi></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
+<mtd><mfrac><mrow><mo>∂</mo><mi>y</mi></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
 </mtr>
 </mtable>
 </mfenced>
@@ -1829,10 +1625,10 @@ Note that all geographic coordinates below express latitude before longitude.
 <mfenced close="]" open="[">
 <mtable>
 <mtr>
-<mtd><mfrac><mrow><mo>∂</mo><mi>x</mi></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+<mtd><mfrac><mrow><mo>∂</mo><mi>x</mi></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
 </mtr>
 <mtr>
-<mtd><mfrac><mrow><mo>∂</mo><mi>y</mi></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+<mtd><mfrac><mrow><mo>∂</mo><mi>y</mi></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
 </mtr>
 </mtable>
 </mfenced>
@@ -1846,7 +1642,7 @@ Note that all geographic coordinates below express latitude before longitude.
 <span style="color: red">TODO</span>
 </p>
 
-<h4 id="DerivativeAndEnvelope"><span class="section-number">3.3.2.1.</span> Transform derivatives applied to envelopes</h4>
+<h4 id="DerivativeAndEnvelope"><span class="section-number">2.3.2.1.</span> Transform derivatives applied to envelopes</h4>
 <p>
 <span style="color: red">TODO</span>
 </p>
@@ -1882,7 +1678,7 @@ The same cubic line can have two minimums.</li>
 </p>
 
 
-<h4 id="DerivativeAndRaster"><span class="section-number">3.3.2.2.</span> Transform derivatives applied to rasters</h4>
+<h4 id="DerivativeAndRaster"><span class="section-number">2.3.2.2.</span> Transform derivatives applied to rasters</h4>
 <p>
 <span style="color: red">TODO</span>
 </p>
@@ -1923,7 +1719,7 @@ Continuing…
 <span style="color: red">TODO</span>
 </p>
 
-<h4 id="GetDerivative"><span class="section-number">3.3.2.3.</span> Getting the derivative at a point</h4>
+<h4 id="GetDerivative"><span class="section-number">2.3.2.3.</span> Getting the derivative at a point</h4>
 <p>
 <span style="color: red">TODO</span>
 Example:</p>
@@ -1942,10 +1738,234 @@ Example:</p>
     <b>return</b> Matrices.inverse(jac);
 }
 </pre>
+
+
+<h3 id="CoordinateOperationSteps"><span class="section-number">2.3.3.</span> Conceptual versus real chain of coordinate operations</h3>
+<p>
+Coordinate operations may include many steps, each with their own set of parameters.
+For example transformations from one datum (e.g. <abbr title="North American Datum 1927">NAD27</abbr>) to another datum (e.g. <abbr title="World Geodetic System 1984">WGS84</abbr>)
+can be approximated by an affine transform (translation, rotation and scale) applied on the <em>geocentric</em> coordinates.
+This implies that the coordinates must be converted from <em>geographic</em> to geocentric domain before the affine transform,
+then back to geographic domain after the affine transform.
+The result is a three-steps process illustrated in the “Conceptual chain of operations” column of the example below.
+However because that operation chain is very common, the <abbr>EPSG</abbr> geodetic dataset provides a shortcut
+named “Geocentric translation <em>in geographic domain</em>”.
+Using this operation, the conversion steps between geographic and geocentric <abbr title="Coordinate Reference System">CRS</abbr> are implicit.
+Consequently the datum shifts as specified by <abbr>EPSG</abbr> appears as if it was a single operation,
+but this is not the real operation executed by Apache <abbr title="Spatial Information System">SIS</abbr>.
+</p>
+
+<div class="example"><p><b>Example:</b>
+transformation of geographic coordinates from <abbr>NAD27</abbr> to <abbr>WGS84</abbr> in Canada
+can be approximated by the <abbr>EPSG</abbr>:1172 coordinate operation.
+This single <abbr>EPSG</abbr> operation is actually a chain of three operations in which two steps are implicit.
+The operation as specified by <abbr>EPSG</abbr> is shown in the first column below.
+The same operation with the two hidden steps made explicit is shown in the second column.
+The last column shows the same operation as implemented by Apache <abbr>SIS</abbr> under the hood,
+which contains additional operations discussed below.
+For all columns, input coordinates of the first step and output coordinates of the last step
+are (<var>latitude</var>, <var>longitude</var>) coordinates in degrees.
+</p>
+<div style="display:flex; padding-left:24px">
+<div style="width:30%; padding-right:15px; border-right:1px solid">
+<b>Operation specified by <abbr>EPSG</abbr>:</b>
+<ol>
+<li><b>Geocentric translation</b> in <em>geographic</em> domain
+<ul>
+<li>X-axis translation = -10 m</li>
+<li>Y-axis translation = 158 m</li>
+<li>Z-axis translation = 187 m</li>
+</ul>
+</li>
+</ol>
+Conversions between geographic and geocentric domains are implicit.
+The semi-major and semi-minor axis lengths required for those conversions
+are inferred from the source and target datum.
+</div>
+<div style="width:30%; padding-left:30px; padding-right:15px; border-right:1px solid">
+<b>Conceptual chain of operations:</b>
+<ol>
+<li><b>Geographic to geocentric</b> conversion
+<ul>
+<li>Source semi-major = 6378206.4 m</li>
+<li>Source semi-minor = 6356583.8 m</li>
+</ul>
+</li><li><b>Geocentric translation</b>
+<ul>
+<li>X-axis translation = -10 m</li>
+<li>Y-axis translation = 158 m</li>
+<li>Z-axis translation = 187 m</li>
+</ul>
+</li><li><b>Geocentric to geographic</b> conversion
+<ul>
+<li>Target semi-major = 6378137.0 m</li>
+<li>Target semi-minor ≈ 6356752.3 m</li>
+</ul>
+</li>
+</ol>
+Axis order and units are implicitly defined by the source and target <abbr>CRS</abbr>.
+It is implementation responsibility to perform any needed unit conversions and/or axis swapping.
+</div>
+<div style="width:30%; padding-left:30px">
+<b>Operations actually performed by Apache <abbr>SIS</abbr>:</b>
+<ol>
+<li><b>Affine parametric</b> conversion
+<ul>
+<li>Scale factors (λ and φ) = 0</li>
+<li>Shear factors (λ and φ) = π/180</li>
+</ul>
+</li><li>Ellipsoid (radians domain) to centric conversion
+<ul>
+<li>Eccentricity ≈ 0.08227</li>
+</ul>
+</li><li><b>Affine parametric transformation</b>
+<ul>
+<li>Scale factors (X, Y and Z) ≈ 1.00001088</li>
+<li>X-axis translation ≈ -1.568 E-6</li>
+<li>Y-axis translation ≈ 24.772 E-6</li>
+<li>Z-axis translation ≈ 29.319 E-6</li>
+</ul>
+</li><li>Centric to ellipsoid (radians domain) conversion
+<ul>
+<li>Eccentricity ≈ 0.08182</li>
+</ul>
+</li><li><b>Affine parametric</b> conversion
+<ul>
+<li>Scale factors (λ and φ) = 0</li>
+<li>Shear factors (λ and φ) = 180/π</li>
+</ul>
+</li>
+</ol>
+</div>
+</div>
+<p>
+The operation chain actually performed by Apache <abbr>SIS</abbr> is very different than the conceptual operation chain
+because the coordinate systems are not the same.
+Except for the first and last ones, all Apache <abbr>SIS</abbr> steps work on right-handed coordinate systems
+(as opposed to the left-handed coordinate system when <var>latitude</var> is before <var>longitude</var>),
+with angular units in radians (instead than degrees) and
+linear units relative to an ellipsoid of semi-major axis length of 1 (instead than Earth’s size).
+Working in those coordinate systems requires additional steps for unit conversions and axes swapping
+at the beginning and at the end of the chain.
+Apache <abbr>SIS</abbr> uses <cite>affine parametric conversions</cite> for this purpose,
+which allow to combine axes swapping and unit conversions in a single step
+(see <a href="#AffineTransform">affine transform</a> for more information).
+The reason why Apache <abbr>SIS</abbr> splits conceptual operations in such fine-grained operations
+is to allow more efficient concatenations of operation steps.
+This approach often allows cancellation of two consecutive affine transforms,
+for example a conversion from radians to degrees (e.g. after a <cite>geocentric to ellipsoid</cite> conversion)
+immediately followed by a conversion from degrees to radians (e.g. before a map projection).
+Another example is the <cite>Affine parametric transformation</cite> step above,
+which combines both the <cite>geocentric translation</cite> step
+and a scale factor implied by the ellipsoid change.
+</p>
+</div>
+<p>
+All those operation chains can be viewed in <cite>Well Known Text</cite> (<abbr>WKT</abbr>) or pseudo-<abbr>WKT</abbr> format.
+The simplest operation chain, as specified by the authority, is given directly by the
+<code>String</code> representation of the <code class="GeoAPI">CoordinateOperation</code> instance.
+This <abbr>WKT</abbr> 2 representation contains not only a description of operations with their parameter values,
+but also additional information about the context in which the operation applies (the source and target <abbr>CRS</abbr>)
+together with some metadata like the accuracy and domain of validity.
+Some operation steps and parameters may be omitted if they can be inferred from the context.
+</p>
+<div class="example">
+<div style="display:flex; padding-left:24px; padding-right:24px">
+<div>
+<p><b>Example:</b>
+the <abbr>WKT</abbr> 2 representation on the right is for the same coordinate operation than the one used in previous example.
+This representation can be obtained by a call to <code>System.out​.println(cop)</code>
+where <code>cop</code> is a <code class="GeoAPI">CoordinateOperation</code> instance.
+Some characteristics of this representation are:
+</p>
+<ul>
+<li><p>The <code>SourceCRS</code> and <code>TargetCRS</code> elements determine axis order and units.
+For this reason, axis swapping and unit conversions do not need to be represented in this <abbr>WKT</abbr>.</p></li>
+<li><p>The “Geocentric translation in geographic domain” operation implies conversions between geographic and geocentric coordinate reference systems.
+Ellipsoid semi-axis lengths are inferred from above <code>SourceCRS</code> and <code>TargetCRS</code> elements,
+so they do not need to be specified in this <abbr>WKT</abbr>.</p></li>
+<li><p>The operation accuracy (20 metres) is much greater than the numerical floating-point precision.
+This kind of metadata could hardly be guessed from the mathematical function alone.</p></li>
+</ul>
+</div>
+<div>
+<pre><code class="GeoAPI">CoordinateOperation</code>[<i>"NAD27 to WGS 84 (3)"</i>,
+  SourceCRS[<span style="font-family:serif"><i>full CRS definition required here but omitted <b>for</b> brevity</i></span>],
+  TargetCRS[<span style="font-family:serif"><i>full CRS definition required here but omitted <b>for</b> brevity</i></span>],
+  Method[<i>"Geocentric translations (geog2D domain)"</i>],
+    Parameter[<i>"X-axis translation"</i>, -10.0, Unit[<i>"metre"</i>, 1]],
+    Parameter[<i>"Y-axis translation"</i>, 158.0, Unit[<i>"metre"</i>, 1]],
+    Parameter[<i>"Z-axis translation"</i>, 187.0, Unit[<i>"metre"</i>, 1]],
+  OperationAccuracy[20.0],
+  Area[<i>"Canada - onshore and offshore"</i>],
+  BBox[40.04, -141.01, 86.46, -47.74],
+  Id[<i>"EPSG"</i>, 1172, <i>"8.9"</i>]]</pre>
+</div>
+</div>
+</div>
+<p>
+An operation chain closer to what Apache <abbr>SIS</abbr> really performs is given by the
+<code>String</code> representation of the <code class="GeoAPI">MathTransform</code> instance.
+In this <abbr>WKT</abbr> 1 representation, contextual information and metadata are lost;
+a <code class="GeoAPI">MathTransform</code> is like a mathematical function with no knowledge about the meaning of the coordinates on which it operates.
+Since contextual information are lost, implicit operations and parameters become explicit.
+This representation is useful for debugging since any axis swapping operation (for example) become visible.
+Apache <abbr>SIS</abbr> constructs this representation from the data structure in memory,
+but convert them in a more convenient form for human, for example by converting radians to degrees.
+</p>
+<div class="example">
+<div style="display:flex; padding-left:24px; padding-right:24px">
+<div>
+<p><b>Example:</b>
+the <abbr>WKT</abbr> 1 representation on the right is for the same coordinate operation than the one used in previous example.
+This representation can be obtained by a call to <code>System.out​.println(cop​.getMathTransform())</code>
+where <code>cop</code> is a <code class="GeoAPI">CoordinateOperation</code> instance.
+Some characteristics of this representation are:
+</p>
+<ul>
+<li><p>Since there is not anymore (on intend) any information about source and target <abbr>CRS</abbr>,
+axis swapping (if needed) and unit conversions must be performed explicitly.
+This is the task of the first and last affine operations in this <abbr>WKT</abbr>.</p></li>
+<li><p>The “Geocentric translation” operation is not anymore applied in the geographic domain, but in the geocentric domain.
+Consequently conversions between geographic and geocentric coordinate reference systems must be made explicit.
+Those explicit steps are also necessary for specifying the ellipsoid semi-axis lengths,
+since they can not anymore by inferred for source and target <abbr>CRS</abbr>.</p></li>
+<li><p>Conversions between geographic and geocentric coordinates are three-dimensional.
+Consequently operations for increasing and reducing the number of dimensions are inserted.
+By default the ellipsoidal height before conversion is set to zero.</p></li>
+</ul>
+</div>
+<div>
+<pre>Concat_MT[
+  Param_MT[<i>"Affine parametric transformation"</i>,
+    Parameter[<span style="font-family:serif"><i>parameters performing axis swapping omitted <b>for</b> brevity</i></span>]],
+  Inverse_MT[Param_MT[<i>"Geographic3D to 2D conversion"</i>]],
+  Param_MT[<i>"Geographic/geocentric conversions"</i>,
+    Parameter[<i>"semi_major"</i>, 6378206.4],
+    Parameter[<i>"semi_minor"</i>, 6356583.8]],
+  Param_MT[<i>"Geocentric translations (geocentric domain)"</i>,
+    Parameter[<i>"X-axis translation"</i>, -10.0],
+    Parameter[<i>"Y-axis translation"</i>, 158.0],
+    Parameter[<i>"Z-axis translation"</i>, 187.0]],
+  Param_MT[<i>"Geocentric_To_Ellipsoid"</i>,
+    Parameter[<i>"semi_major"</i>, 6378137.0],
+    Parameter[<i>"semi_minor"</i>, 6356752.314245179]],
+  Param_MT[<i>"Geographic3D to 2D conversion"</i>],
+  Param_MT[<i>"Affine parametric transformation"</i>,
+    Parameter[<span style="font-family:serif"><i>parameters performing axis swapping omitted <b>for</b> brevity</i></span>]]]</pre>
+</div>
+</div>
+</div>
+<p>
+Finally, the raw operation chain can be view by a call to <code class="SIS">AbstractMathTransform​.toString(Convention.INTERNAL)</code>.
+This pseudo-<abbr>WKT</abbr> representation shows exactly what Apache <abbr>SIS</abbr> does,
+but is rarely used because difficult to read.
+It may occasionally be useful for advanced debugging.
+</p>
 </section>
 <section>
 <header>
-<h1 id="Geometry"><span class="section-number">4.</span> Geometries</h1>
+<h1 id="Geometry"><span class="section-number">3.</span> Geometries</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Referencing">Previous chapter</a></div><div class="next-chapter"><a href="#Coverage">Next chapter</a> ➡</div></div></nav>
 </header>
 <nav>In this chapter:<ul class="toc">
@@ -1960,7 +1980,7 @@ and the Apache <abbr title="Spatial Information System">SIS</abbr> classes that 
 
 
 
-<h2 id="Geometry-root"><span class="section-number">4.1.</span> Base classes</h2>
+<h2 id="Geometry-root"><span class="section-number">3.1.</span> Base classes</h2>
 <p>
 Each geometric object is considered an infinite set of points.
 As a set, their most fundamental operations are of the same nature as the standard operations of Java collections.
@@ -1982,7 +2002,7 @@ prefix (as prescribed in GeoAPI convention) would leave a name too similar to Ja
 
 
 
-<h3 id="DirectPosition"><span class="section-number">4.1.1.</span> Direct points and positions</h3>
+<h3 id="DirectPosition"><span class="section-number">3.1.1.</span> Direct points and positions</h3>
 <p>
 <abbr title="International Organization for Standardization">ISO</abbr> 19107 defines two types of structures to represent a point:
 <code class="OGC">GM_Point</code> and <code class="OGC">DirectPosition</code>.
@@ -2004,7 +2024,7 @@ or occasionally on <code class="GeoAPI">Position</code>s when it seems useful to
 
 
 
-<h3 id="Envelope"><span class="section-number">4.1.2.</span> Envelopes</h3>
+<h3 id="Envelope"><span class="section-number">3.1.2.</span> Envelopes</h3>
 <p>
 Envelopes store minimal and maximal coordinate values of a geometry.
 Envelopes are <em>not</em> geometries themselves; they are not infinite sets of points (<code class="OGC">TransfiniteSet</code>).
@@ -2035,7 +2055,7 @@ The expressions <i>lower corner</i> and <i>upper corner</i> should thus be under
 
 
 
-<h4 id="AntiMeridian"><span class="section-number">4.1.2.1.</span> Envelopes that cross the antimeridian</h4>
+<h4 id="AntiMeridian"><span class="section-number">3.1.2.1.</span> Envelopes that cross the antimeridian</h4>
 <p>
 Minimums and maximums are the values most often assigned to <code class="OGC">lowerCorner</code>
 and <code class="OGC">upperCorner</code>.
@@ -2128,8 +2148,8 @@ then it is guaranteed that the envelope is empty.
 </section>
 <section>
 <header>
-<h1 id="Coverage"><span class="section-number">5.</span> Data coverages</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Geometry">Previous chapter</a></div><div class="next-chapter"><a href="#XML-ISO">Next chapter</a> ➡</div></div></nav>
+<h1 id="Coverage"><span class="section-number">4.</span> Data coverages</h1>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Geometry">Previous chapter</a></div><div class="next-chapter"><a href="#Utilities">Next chapter</a> ➡</div></div></nav>
 </header>
 <nav>In this chapter:<ul class="toc"/></nav>
 <p>
@@ -2199,8 +2219,369 @@ as well as other information such as <i>transfer function</i> (described later).
 </section>
 <section>
 <header>
+<h1 id="Utilities"><span class="section-number">5.</span> Utility classes and methods</h1>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Coverage">Previous chapter</a></div><div class="next-chapter"><a href="#XML-ISO">Next chapter</a> ➡</div></div></nav>
+</header>
+<nav>In this chapter:<ul class="toc">
+<li><a href="#ComparisonMode">Comparison modes of objects</a></li>
+<li><a href="#ObjectConverters">Object converters</a></li>
+<li><a href="#Internationalization">Internationalization</a><ul>
+<li><a href="#LocalizedString">Distinct character sequences for each locale</a></li>
+<li><a href="#InternationalString">Single instance for all supported locales</a></li>
+<li><a href="#Locale.ROOT">Locale.ROOT convention</a></li>
+<li><a href="#UnicodePoint">Treatment of characters</a><ul>
+<li><a href="#Whitespaces">Blank spaces interpretation</a></li></ul></li></ul></li></ul></nav>
+<p>
+This chapter describes aspects of Apache <abbr title="Spatial Information System">SIS</abbr> that apply to the entire library.
+Most of these utilities are not specific to spatial information systems.
+</p>
+
+<h2 id="ComparisonMode"><span class="section-number">5.1.</span> Comparison modes of objects</h2>
+<p>
+There are various opinions on how to implement Java standard’s <code>Object​.equals(Object)</code> method.
+According to some, it should be possible to compare different implementations of the same interface or base class.
+But to follow this policy, each interface or base class’s javadoc must define the algorithms that all implementations
+shall use for their <code>equals(Object)</code> and <code>hashCode()</code> methods.
+This approach is common in <code>java.util.Collection</code> and its child interfaces.
+Transferring this approach to certain GeoAPI interfaces, however, would be a difficult task,
+and would probably not be followed in many implementations.
+Moreover, it comes at the expense of being able to take into account supplementary attributes in the child interfaces,
+unless this possibility has been specified in the parent interface.
+This constraint arises from the following points of the <code>equals(Object)</code> and <code>hashCode()</code> method contracts:
+</p>
+<ul>
+<li><code>A.equals(B)</code> implies <code>B.equals(A)</code> (symmetry);</li>
+<li><code>A.equals(B)</code> and <code>B.equals(C)</code> implies <code>A.equals(C)</code> (transitivity);</li>
+<li><code>A.equals(B)</code> implies <code>A.hashCode() == B.hashCode()</code>.</li>
+</ul>
+<p>
+For example, these three constraints are violated if <var>A</var> (and eventually <var>C</var>) can contain attributes
+which <var>B</var> ignores.
+To bypass this problem, an alternative approach is to require that the objects compared by the
+<code>Object​.equals(Object)</code> method be of the same class; in other words, <code>A.getClass() == B.getClass()</code>.
+This approach is sometimes regarded as contrary to the principles of object oriented programming.
+In practice, for relatively complex applications, the important accorded to these principles depends on the context
+in which the objects are compared:
+if the objects are added to a <code>HashSet</code> or used as keys in a <code>HashMap</code>,
+we would need a stricter adherence to the <code>equals(Object)</code> and <code>hashCode()</code> contract.
+But if the developer is comparing the objects his- or herself, for example to check that the relevant information has been changed,
+then the constraints of symmetry, transitivity or coherence with the hash values may be of little interest.
+More permissive comparisons may be desirable, sometimes going so far as to tolerate minor discrepancies in numerical values.
+</p>
+<p>
+In order to allow developers a certain amount of flexibility, many classes in the <abbr title="Spatial Information System">SIS</abbr>
+library implement the <code class="SIS">org.apache.sis.util.LenientComparable</code> interface,
+which defines a <code class="SIS">equals(Object, ComparisonMode)</code> method.
+The principle modes of comparison are:
+</p>
+<ul>
+<li><p>
+<b><code class="SIS">STRICT</code></b> — The objects compared must share the same class and have exactly equal attributes,
+including any possible public attributes specific to the implementation.
+</p></li>
+<li><p>
+<b><code class="SIS">BY_CONTRACT</code></b> — The objects compared must implement the same GeoAPI (or other standard)
+interface, but need not be of the same implementation class.
+Only the attributes defined in the interface are compared;
+all other attributes specific to the implementation — even if they are public — are ignored.
+</p></li>
+<li><p>
+<b><code class="SIS">IGNORE_METADATA</code></b> — Like <code class="SIS">BY_CONTRACT</code>,
+but only compares attributes that influence the operations (numeric calculations or otherwise) performed by the object.
+For example, in a geodesic datum, the longitude (in relation to Greenwich) of the original meridian
+would be taken into account, while the name of the meridian would be ignored.
+</p></li>
+<li><p>
+<b><code class="SIS">APPROXIMATIVE</code></b> — Like <code class="SIS">IGNORE_METADATA</code>,
+but tolerates minor discrepancies in numerical values.
+</p></li>
+</ul>
+<p>
+The default mode, used in all <code>equals(Object)</code> methods in <abbr>SIS</abbr>,
+is <code class="SIS">STRICT</code>. This mode is chosen for a safe operation — particularly with <code>HashMap</code> —
+without the need to rigorously define <code>equals(Object)</code> and <code>hashCode()</code> operations in every interface.
+With this mode, the order of objects (<code>A.equals(B)</code> or <code>B.equals(A)</code>) is unimportant.
+It is, however, the only mode that offers this guarantee.
+In the expression <code>A.equals(B)</code>, the <code class="SIS">BY_CONTRACT</code> mode
+(and so by extension all other modes that depend on it) only compares the properties known to <code>A</code>,
+regardless of whether <code>B</code> knows more.
+</p>
+
+
+
+<h2 id="ObjectConverters"><span class="section-number">5.2.</span> Object converters</h2>
+<p>
+There is sometime a need to convert instances from a <var>source</var> Java type to a <var>target</var> Java type
+while those types are unknown at compile time.
+Various projects (Apache Common Convert, Spring, <i>etc.</i>)
+have created their own interface for performing object conversions between types known only at runtime.
+Details vary, but such interfaces typically look like below:
+</p>
+<pre><b>interface</b> ObjectConverter&lt;S,T&gt; {   <code class="comment">// Some projects use only "Converter" as interface name.
+</code>    T apply(S object);             <code class="comment">// Another method name commonly found in other projects is "convert".
+</code>}</pre>
+<p>
+Like other projects, Apache <abbr title="Spatial Information System">SIS</abbr> also defines its own <code>ObjectConverter</code> interface.
+The main difference between <abbr>SIS</abbr> converter interface and the interfaces found in other projects
+is that <abbr>SIS</abbr> converters provide some information about their mathematical properties.
+An Apache <abbr>SIS</abbr> converter can have zero, one or many of the following properties:
+</p>
+<dl>
+<dt><dfn>Injective</dfn></dt>
+<dd>A function is injective if no pair of <var>S</var> values can produce the same <var>T</var> value.
+<div class="example"><p><b>Example:</b>
+the <code>Integer</code> → <code>String</code> conversion performed by <code>Integer​.toString()</code>
+is an <cite>injective</cite> function because if two <code>Integer</code> values are not equal,
+then it is guaranteed that their conversions will result in different <code>String</code> values.
+However the <code>String</code> → <code>Integer</code> conversion performed by <code>Integer​.valueOf(String)</code>
+is <strong>not</strong> an injective function
+because many distinct <code>String</code> values can be converted to the same <code>Integer</code> value.
+For example converting the "42", "+42" and "0042" character strings all result in the same 42 integer value.
+</p></div>
+</dd>
+
+<dt><dfn>Surjective</dfn></dt>
+<dd>A function is surjective if each values of <var>T</var> can be created from at least one value of <var>S</var>.
+<div class="example"><p><b>Example:</b>
+the <code>String</code> → <code>Integer</code> conversion performed by <code>Integer​.valueOf(String)</code>
+is a <cite>surjective</cite> function because every <code>Integer</code> value can be created from at least one <code>String</code> value.
+However the <code>Integer</code> → <code>String</code> conversion performed by <code>Integer​.toString()</code>
+is <strong>not</strong> a surjective function because it can not produce all possible <code>String</code> values.
+For example there is no way to produce the "ABC" value with the <code>Integer​.toString()</code> method.
+</p></div>
+</dd>
+
+<dt><dfn>Bijective</dfn></dt>
+<dd>A function is bijective if there is a one-to-one relationship between <var>S</var> and <var>T</var> values.
+<div class="example"><p><b>Note:</b>
+the <cite>bijective</cite> property is defined here for clarity, but actually does not have an explicit item
+in Apache <abbr>SIS</abbr> <code>FunctionProperty</code> enumeration.
+It is not necessary since a function that is both <cite>injective</cite> and <cite>surjective</cite> is necessarily bijective.
+</p></div>
+</dd>
+
+<dt><dfn>Order preserving</dfn></dt>
+<dd>A function is order preserving if any sequence of increasing <var>S</var> values is mapped to a sequence of increasing <var>T</var> values.
+<div class="example"><p><b>Example:</b>
+conversion from <code>Integer</code> to <code>Long</code> preserve the natural ordering of elements.
+However conversions from <code>Integer</code> to <code>String</code> do <strong>not</strong> preserve natural ordering,
+because some sequences of increasing integer values are ordered differently when their string representations are sorted by lexicographic order.
+For example 1, 2, 10 become "1", "10", "2".
+</p></div>
+</dd>
+
+<dt><dfn>Order reversing</dfn></dt>
+<dd>A function is order reversing if any sequence of increasing <var>S</var> values is mapped to a sequence of decreasing <var>T</var> values.
+<div class="example"><p><b>Example:</b>
+a conversion that reverses the sign of numbers.
+</p></div>
+</dd>
+</dl>
+<p>
+Above information may seem unnecessary when values are converted without taking in account the context in which the values appear.
+But when the value to convert is part of a bigger object, then above information can affect the way the converted value will be used.
+For example conversion of a [<var>min</var> … <var>max</var>] range is straightforward when the converter is <cite>order preserving</cite>.
+But if the converter is <cite>order reversing</cite>, then the minimum and maximum values need to be interchanged.
+For example if the converter reverses the sign of values, then the converted range is [-<var>max</var> … -<var>min</var>].
+If the converter is neither order preserving or order reversing, then range conversion is not allowed at all
+(because it does not contain the same set of values) even if the minimum and maximum values could be converted individually.
+</p>
+
+
+
+<h2 id="Internationalization"><span class="section-number">5.3.</span> Internationalization</h2>
+<p>
+In an architecture where a program executed on a server provides its data to multiple clients,
+the server’s locale conventions are not necessarily the same as those of the clients.
+Conventions may differ in language, but also in the way they write numeric values
+(even between two countries that speak the same language) as well in time zone.
+To produce messages that conform to the client’s conventions, <abbr title="Spatial Information System">SIS</abbr> uses
+two approaches, distinguished by their level of granularity: at the level of the messages themselves,
+or at the level of the objects that create the messages.
+The approach used also determines whether it is possible to share the same instance of an object for all languages.
+</p>
+
+<h3 id="LocalizedString"><span class="section-number">5.3.1.</span> Distinct character sequences for each locale</h3>
+<p>
+Some classes are only designed to function according to one locale convention at a time.
+This is of course true for the standard implementations of <code>java.text.Format</code>,
+as they are entirely dedicated to the work of internationalization.
+But it is also the case for other less obvious classes like <code>javax.imageio.ImageReader</code>/<code>ImageWriter</code>
+and for <code>Exception</code> subclasses.
+When one of these classes is implemented by <abbr title="Spatial Information System">SIS</abbr>,
+we identify it by implementing the <code class="SIS">org.apache.sis.util.Localized</code> interface.
+The <code class="SIS">getLocale()</code> method of this interface can determine the locale conventions
+by which the instance produces its message.
+</p>
+<p>
+Some sub-classes of <code>Exception</code> defined by <abbr>SIS</abbr> also implement the <code class="SIS">Localized</code> interface.
+For these exceptions, the error message may be produced according to two locale conventions,
+for either the administrator or the client respectively:
+<code>getMessage()</code> returns the exception message according to the system default conventions,
+while <code>getLocalizedMessage()</code> returns the exception message according to the locale conventions specified
+by <code class="SIS">getLocale()</code>.
+This <code>Locale</code> will be determined by the <code class="SIS">Localized</code> object that threw the exception.
+</p>
+<div class="example"><p><b>Example:</b>
+Given an environment in which the default language is English and an <code class="SIS">AngleFormat</code> object is created to
+read angles according to French conventions.
+If a <code>ParseException</code> is thrown when using this formatter, <code>getMessage()</code> returns the error message in English,
+while <code>getLocalizedMessage()</code> returns the error message in French.
+</p></div>
+<p>
+The exceptions defined by <abbr>SIS</abbr> do not implement all of the <code class="SIS">Localized</code> interface.
+Only those most likely to be shown to the user are localized in this way.
+<code>ParseException</code> are good candidates because they often occur due to an incorrect entry by the client.
+By contrast, <code>NullPointerException</code> are generally caused by a programming error;
+they may be localized in the system default language, but that is usually all.
+</p>
+<p>
+The utility class <code class="SIS">org.apache.sis.util.Exceptions</code> provides convenience methods to get messages
+according to the conventions of a given locale, when this information is available.
+</p>
+
+
+
+<h3 id="InternationalString"><span class="section-number">5.3.2.</span> Single instance for all supported locales</h3>
+<p>
+The <abbr title="Application Programming Interface">API</abbr> conventions defined by <abbr title="Spatial Information System">SIS</abbr> or inherited by GeoAPI favour the use of the
+<code class="GeoAPI">InternationalString</code> type when the value of a <code>String</code> type would likely be localized.
+This approach allows us to defer the internationalization process to the time when a character sequence is requested,
+rather than the time when the object that contains them is created.
+This is particularly useful for immutable classes used for creating unique instances independently of locale conventions.
+</p>
+<div class="example"><p><b>Example:</b>
+<abbr>SIS</abbr> includes only one instance of the <code class="GeoAPI">OperationMethod</code>
+type representing the Mercator projection, regardless of the client’s language.
+But its <code class="GeoAPI">getName()</code> method (indirectly) provides an instance of
+<code class="GeoAPI">InternationalString</code>, so that <code>toString(Locale.ENGLISH)</code> returns <cite>Mercator projection</cite>
+while <code>toString(Locale.FRENCH)</code> returns <cite>Projection de Mercator</cite>.
+</p></div>
+<p>
+When defining spatial objects independently of locale conventions, we reduce the risk of computational overload.
+For example, it is easier to detect that two maps use the same cartographic projection if this last is represented by the
+same instance of <code class="GeoAPI">CoordinateOperation</code>,
+even if the projection has a different name depending on the country.
+Moreover, certain types of <code class="GeoAPI">CoordinateOperation</code> may require coordinate transformation matrices,
+so sharing a single instance becomes even more preferable in order to reduce memory consumption.
+</p>
+
+
+
+<h3 id="Locale.ROOT"><span class="section-number">5.3.3.</span> <code>Locale.ROOT</code> convention</h3>
+<p>
+All <abbr title="Spatial Information System">SIS</abbr> methods receiving or returning the value of a <code>Locale</code> type accept the <code>Locale.ROOT</code> value.
+This value is interpreted as specifying not to localize the text.
+The notion of a <cite>non-localized text</cite> is a little false, as it is always necessary to chose a formatting convention.
+This convention however, though very close to English, is usually slightly different.
+For example:
+</p>
+<ul>
+<li>
+Identifiers are written as they appear in <abbr title="Unified Modeling Language">UML</abbr> diagrams,
+such as <cite>blurredImage</cite> instead of <cite>Blurred image</cite>.
+</li>
+<li>
+Dates are written according to the <abbr title="International Organization for Standardization">ISO</abbr> 8601 format,
+which does not correspond to English conventions.
+</li>
+<li>
+Numbers are written using their <code>toString()</code> methods, rather than using a <code>java.text.NumberFormat</code>.
+As a result, there are differences in the number of significant digits,
+use of exponential notation and the absence of thousands separators.
+</li>
+</ul>
+
+
+
+<h3 id="UnicodePoint"><span class="section-number">5.3.4.</span> Treatment of characters</h3>
+<p>
+In Java, sequences of characters use UTF-16 encoding.
+There is a direct correspondence between the values of the <code>char</code> type and the great majority of characters,
+which facilitates the use of sequences so long as these characters are sufficient.
+However, certain Unicode characters cannot be represented by a single <code>char</code>.
+These <i>supplementary characters</i> include certain ideograms,
+but also road and geographical symbols in the 1F680 to 1F700 range.
+Support for these supplementary characters requires slightly more complex interactions than the classic case,
+where we may assume a direct correspondence.
+Thus, instead of the loop on the left below, international applications must generally use the loop on the right:
+</p>
+
+<table class="hidden">
+<tr>
+<th>Loop to Avoid</th>
+<th>Recommended loop</th>
+<th>Supplementary character examples</th>
+</tr>
+<tr>
+<td>
+<pre style="margin-top: 6pt"><b>for</b> (<b>int</b> i=0; i&lt;string.length(); i++) {
+    <b>char</b> c = string.charAt(i);
+    <b>if</b> (Character.isWhitespace(c)) {
+        <code class="comment">// A blank space was found.
+</code>    }
+}</pre>
+</td>
+<td>
+<pre style="margin-top: 6pt"><b>for</b> (<b>int</b> i=0; i&lt;string.length();) {
+    <b>int</b> c = string.codePointAt(i);
+    <b>if</b> (Character.isWhitespace(c)) {
+        <code class="comment">// A blank space was found.
+</code>    }
+    i += Character.charCount(c);
+}</pre>
+</td>
+<td>
+<center>(rendering depends on browser capabilities)</center>
+<p style="font-size: 40px">&#128649; &#128677; &#128679; &#128683;
+&#128687; &#128696; &#128698; &#128697; &#128708; &#128685;</p>
+</td>
+</tr>
+</table>
+
+<p>
+<abbr title="Spatial Information System">SIS</abbr> supports supplementary characters by using the loop on the right where necessary,
+but the loop on the left is occasionally used when it is known that the characters searched for are not supplementary characters,
+even if some may be present in the sequence in which we are searching.
+</p>
+
+
+
+<h4 id="Whitespaces"><span class="section-number">5.3.4.1.</span> Blank spaces interpretation</h4>
+<p>
+Standard Java provides two methods for determining whether a character is a blank space:
+<code>Character​.isWhitespace(…)</code> and <code>Character​.isSpaceChar(…)</code>.
+These two methods differ in their interpretations of non-breaking spaces, tabs and line breaks.
+The first method conforms to the interpretation currently used in languages such as Java, C/C++ and <abbr>XML</abbr>,
+which considers tabs and line breaks to be blank spaces, while non-breaking spaces are read as not blank.
+The second method — which conforms strictly to the Unicode definition — makes the opposite interpretation.
+</p>
+<p>
+<abbr title="Spatial Information System">SIS</abbr> uses each of these methods in different contexts.
+<code>isWhitespace(…)</code> is used to <em>separate</em> the elements of a list (numbers, dates, words, etc.),
+while <code>isSpaceChar(…)</code> is used to ignore blank spaces <em>inside</em> a single element.
+</p>
+<div class="example"><p><b>Example:</b>
+Take a list of numbers represented according to French conventions.
+Each number may contain <em>non-breaking spaces</em> as thousands separators,
+while the different numbers in the list may be separated by ordinary spaces, tabs or line breaks.
+When analyzing a number, we want to consider the non-breaking spaces as being part of the number,
+whereas a tab or a line break most likely indicates a separation between this number and the next.
+We would thus use <code>isSpaceChar(…)</code>.
+Conversely, when separating the numbers in the list, we want to consider tabs and line breaks as separators,
+but not non-breaking spaces.
+We would thus use <code>isWhitespace(…)</code>.
+The role of ordinary spaces, to which either case might apply, should be decided beforehand.
+</p></div>
+<p>
+In practice, this distinction is reflected in the use of <code>isSpaceChar(…)</code> in the implementations of <code>java.text.Format</code>,
+or the use of <code>isWhitespace(…)</code> in nearly all the rest of the <abbr>SIS</abbr> library.
+</p>
+</section>
+<section>
+<header>
 <h1 id="XML-ISO"><span class="section-number">6.</span> Representing objects in <abbr>XML</abbr></h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Coverage">Previous chapter</a></div><div class="next-chapter"><a href="#Annexes">Next chapter</a> ➡</div></div></nav>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Utilities">Previous chapter</a></div><div class="next-chapter"><a href="#Annexes">Next chapter</a> ➡</div></div></nav>
 </header>
 <nav>In this chapter:<ul class="toc">
 <li><a href="#XML-ISO-19115">Representing metadata according to ISO 19115-3</a><ul>
