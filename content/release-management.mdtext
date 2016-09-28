@@ -44,7 +44,7 @@ the current release attempt. Those versions shall be set on the command line lik
     export NEW_VERSION=0.8
     export RELEASE_CANDIDATE=1
     export SIGNING_KEY=<your key ID>
-    export BOOTCLASSPATH=<path to the rt.jar file of a JDK6 installation>
+    export BOOTCLASSPATH=<path to the rt.jar file of a JDK7 installation>
 
 The key ID value is an hexadecimal numbers with 8 digits.
 It can be found be executing `gpg --list-keys`.
@@ -83,9 +83,9 @@ in this page shall be adjusted accordingly.
 Java updates    {#java-update}
 ------------------------------
 
-While we need a JDK6 installation for the `bootclasspath` option, we do not recommend to use it for generating
-the binaries since JDK6 has reached its end of public updates (but not the end of commercial support).
-We recommend to create the release with JDK7 instead (JDK8 `javadoc` tool seems to have a bug that prevent its use with SIS).
+While we need a JDK7 installation for the `bootclasspath` option, we do not recommend to use it for generating
+the binaries since JDK7 has reached its end of public updates (but not the end of commercial support).
+We recommend to create the release with JDK8 instead (note however than JDK8 `javadoc` tool seems to have a bug that prevent its use with SIS).
 Make sure that the JDK installation to be used for the release has been updated recently, since compilers may receive critical bug fixes.
 For example the `javadoc` tool of older JDK versions was known to generate HTML pages with a vulnerability in them.
 
@@ -99,7 +99,7 @@ Before to start the release process:
 
   * Review and update the `README` file on the `trunk` source code repository.
   * Review the `javac` and `javadoc` warnings reported by Jenkins and fix at least the typos.
-  * Ensure that the `trunk` build is successful (including tests) with JDK6, JDK7 and JDK8.
+  * Ensure that the `trunk` build is successful (including tests) with JDK7 and JDK8.
 
 
 
@@ -663,7 +663,7 @@ update the version numbers in the `pom.xml` files on trunk with the following co
     mvn clean
     mvn release:update-versions --define autoVersionSubmodules=true
 
-This change will need to be merged manually on the JDK7, JDK6 branches and on the trunk.
+This change will need to be merged manually on the JDK7 branch and on the trunk.
 Then on the development branch:
 
   * Edit the version number in the `application/sis-console/src/main/artifact/README` file.

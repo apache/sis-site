@@ -17,7 +17,7 @@ Notice: Licensed to the Apache Software Foundation (ASF) under one
         under the License.
 
 
-The [source code repository](source.html) contains JDK6, JDK7 and JDK8 branches together with the trunk.
+The [source code repository](source.html) contains JDK7 and JDK8 branches together with the trunk.
 The Apache SIS releases are created from the code on the trunk only.
 However the actual development often occur on a branch before to be merged to the trunk.
 Those branches exist in order to experiment early the new technologies — since it may impact
@@ -75,49 +75,12 @@ with possible variations in the following aspects:
 
 
 
-branches/JDK6    {#jdk6}
-------------------------
-
-The JDK6 branch is a merge of the JDK7 branch ported to the JDK6 platform.
-The JDK6 branch implements the same GeoAPI interfaces than the JDK7 branch;
-the only differences (apart version number) are the modifications necessary
-for building and running on a JDK6 platform:
-
-  * _Try-with-resources_ statements replaced by _try-finally_ statements.
-  * _Multi-catches_ replaced by an explicit sequences of _catch_ statements.
-  * _Diamond operators_ replaced by explicit generic types.
-  * _Suppressed exceptions_ removed.
-  * Exception types introduced after JDK6 (e.g. `java.util.IllformedLocaleException`) replaced by their nearest parent (may be `RuntimeException`).
-  * Imports of `java.util.Objects` replaced by imports of `org.apache.sis.internal.util.Objects`.
-  * Other JDK7-specific features resolved on a case-by-case basis.
-
-
-### Behavioral differences    {#behavior-jdk6}
-
-Some JDK7-specific features are reproduced on the JDK6 branch in an approximative way,
-which may cause some differences in application behavior (ignoring differences in performance).
-Most differences are about the JDK7 branch being slightly stricter than the JDK6 branch is,
-or being able to handle information that are unsupported on the JDK6 branch.
-
-  * Invalid language strings accepted by the JDK6 branch may be rejected by the JDK7 branch, for example "`en_US_WIN`".
-    Conversely the JDK7 branch accepts IETF BCP 47 language tag strings (for example "`en-US-x-lvariant-POSIX`") while
-    the JDK6 branch does not. This is because the JDK7 branch creates `java.util.Locale` instances using `Locale.Builder`
-    while the JDK6 branch uses `Locale` constructor, and the former performs more rigorous syntax checks than the later.
-    In the above example, "`WIN`" is not a valid locale variant.
-
-  * Some exceptions that would be propagated on the JDK7 branch are caught on the JDK6 branch.
-    This is because some verbose _multi-catches_ are replaced by a single catch of a broad type like `Exception`.
-    Since uncaught exceptions on JDK7 branch were expected to be bugs, the broad exception handling on JDK6 branch
-    may make some potential SIS bugs slightly more difficult to identify.
-
-
-
 trunk    {#trunk}
 -----------------
 
-The trunk is a merge of the JDK6 branch ported to the interfaces defined by the [GeoAPI stable release][geoapi-stable].
+The trunk is a merge of the JDK7 branch ported to the interfaces defined by the [GeoAPI stable release][geoapi-stable].
 This is the code which is built by the continuous integration system and deployed on the Maven repository.
-The main differences (apart version number) compared to the JDK6 branch are the modifications
+The main differences (apart version number) compared to the JDK7 branch are the modifications
 necessary for implementing an older version of the GeoAPI interfaces:
 
   * Usages of non-existent GeoAPI interfaces are replaced by direct usages of the
@@ -162,36 +125,6 @@ Refrain from doing massive code reformatting unless:
   * or the modified lines are known to be identical on all active branches (merges work well in such cases);
   * or the committer is willing to resolve the merge conflicts.
 
-In particular, if a block merged from the JDK7 branch must be changed in the JDK6 branch
-because of language changes, try to replace it by a block construct using the same indentation.
-For example the following JDK7 construct:
-
-    :::java
-    switch (string) {
-        case "ABC": {
-            invokeABC();
-            break;
-        }
-        case "DEF": {
-            invokeDEF();
-            break;
-        }
-    }
-
-can be replaced by the code below. The outer `{…}` would normally not be needed
-and the `else` statement would normally follow the previous `}`, however in
-this example we aim to preserve the indentation of the `case` bodies.
-
-    :::java
-    { // This is a switch(String) on the JDK7 branch
-        if (string.equals("ABC")) {
-            invokeABC();
-        }
-        else if (string.equals("DEF")) {
-            invokeDEF();
-        }
-    }
-
 
 
 Import statements    {#imports}
@@ -206,18 +139,18 @@ conflicts with the platform-dependent import statements. Example:
     import java.util.List;
     import org.apache.sis.util.ArgumentChecks;
 
-    // Related to JDK7
-    import java.util.Objects;
+    // Branch-specific imports
+    import java.util.stream.Stream;
 
 
 
 Substitution for non-existent classes    {#substitutions}
 ---------------------------------------------------------
 
-When using a JDK7 class that does not exist on JDK6, define a class of the same name in a
+When using a JDK8 class that does not exist on JDK7, define a class of the same name in a
 `org.apache.sis.internal` sub-package with the minimal amount of needed functionalities,
-provided that it can be done with reasonable effort. Otherwise just delete the JDK7-dependent
-code from the JDK6 branch.
+provided that it can be done with reasonable effort. Otherwise just delete the JDK8-dependent
+code from the JDK7 branch.
 
 
 
@@ -236,23 +169,23 @@ Merging changes between two branches    {#merge-two-branches}
 The branches and trunk checkout directories can be located anywhere on the developer machine.
 The following example assumes that the current directory contains the following sub-directories:
 
-  * `JDK6` as a checkout of `http://svn.apache.org/repos/asf/sis/branches/JDK6`.
   * `JDK7` as a checkout of `http://svn.apache.org/repos/asf/sis/branches/JDK7`.
+  * `JDK8` as a checkout of `http://svn.apache.org/repos/asf/sis/branches/JDK8`.
 
 However the instructions below can be adapted to different directory locations by changing
 the paths given in argument to the `cd` and `svn merge` commands.
 
-Assuming that the developer wants to merge the changes _from_ the JDK7 directory _to_ the JDK6 directory,
+Assuming that the developer wants to merge the changes _from_ the JDK8 directory _to_ the JDK7 directory,
 then the following commands can be executed.
 Do **not** specify any revision number to the `svn merge` command.
 Instead, let Subversion infers the proper revisions range from the `svn:mergeinfo` property.
 
     :::bash
-    cd JDK7
+    cd JDK8
     svn update
-    cd ../JDK6
+    cd ../JDK7
     svn update
-    svn merge ../JDK7
+    svn merge ../JDK8
 
 If Subversion reports any conflicts (flagged by the `C` letter before the file names),
 then edit the conflicted files in any IDE and mark them as resolved:
@@ -274,31 +207,31 @@ If any of those commands fail, edit the files at cause and re-try from the comma
 After a successful build, commit:
 
     :::bash
-    svn commit --message "Merge from the JDK6 branch."
+    svn commit --message "Merge from the JDK8 branch."
 
 
 
 Declaring that some changes shall not be merged    {#merge-record-only}
 -----------------------------------------------------------------------
 
-If a developers wants to apply some changes specific to the JDK7 platform and tells
-Subversion to not propagate those changes to the JDK6 branch, then the following
+If a developers wants to apply some changes specific to the JDK8 platform and tells
+Subversion to not propagate those changes to the JDK7 branch, then the following
 procedure shall be applied:
 
-  * Before to apply JDK7-specific changes, merge any pending changes to the JDK6 branch.
-  * Apply the JDK7-specific changes and commit.
+  * Before to apply JDK8-specific changes, merge any pending changes to the JDK7 branch.
+  * Apply the JDK8-specific changes and commit.
   * Run the following commands (edit the path arguments if the directory layout is different
     than the example from the previous section):
 
 Commands:
 
     :::bash
-    cd JDK7
+    cd JDK8
     svn update
-    cd ../JDK6
+    cd ../JDK7
     svn update
-    svn merge --record-only ../JDK7
-    svn commit --message "Skip JDK7-specific changes."
+    svn merge --record-only ../JDK8
+    svn commit --message "Skip JDK8-specific changes."
 
 
 [geoapi-stable]:   http://www.geoapi.org/3.0/index.html
