@@ -157,7 +157,7 @@ the current release attempt. Those versions shall be set on the command line lik
 <span class="nb">export </span><span class="nv">NEW_VERSION</span><span class="o">=</span>0.8
 <span class="nb">export </span><span class="nv">RELEASE_CANDIDATE</span><span class="o">=</span>1
 <span class="nb">export </span><span class="nv">SIGNING_KEY</span><span class="o">=</span>&lt;your key ID&gt;
-<span class="nb">export </span><span class="nv">BOOTCLASSPATH</span><span class="o">=</span>&lt;path to the rt.jar file of a JDK6 installation&gt;
+<span class="nb">export </span><span class="nv">BOOTCLASSPATH</span><span class="o">=</span>&lt;path to the rt.jar file of a JDK7 installation&gt;
 </pre></div>
 
 
@@ -190,9 +190,9 @@ in this page shall be adjusted accordingly.</p>
 
 
 <h2 id="java-update">Java updates<a class="headerlink" href="#java-update" title="Permanent link">&para;</a></h2>
-<p>While we need a JDK6 installation for the <code>bootclasspath</code> option, we do not recommend to use it for generating
-the binaries since JDK6 has reached its end of public updates (but not the end of commercial support).
-We recommend to create the release with JDK7 instead (JDK8 <code>javadoc</code> tool seems to have a bug that prevent its use with SIS).
+<p>While we need a JDK7 installation for the <code>bootclasspath</code> option, we do not recommend to use it for generating
+the binaries since JDK7 has reached its end of public updates (but not the end of commercial support).
+We recommend to create the release with JDK8 instead (note however than JDK8 <code>javadoc</code> tool seems to have a bug that prevent its use with SIS).
 Make sure that the JDK installation to be used for the release has been updated recently, since compilers may receive critical bug fixes.
 For example the <code>javadoc</code> tool of older JDK versions was known to generate HTML pages with a vulnerability in them.</p>
 <h1 id="prepare-source">Prepare web site and source code<a class="headerlink" href="#prepare-source" title="Permanent link">&para;</a></h1>
@@ -200,7 +200,7 @@ For example the <code>javadoc</code> tool of older JDK versions was known to gen
 <ul>
 <li>Review and update the <code>README</code> file on the <code>trunk</code> source code repository.</li>
 <li>Review the <code>javac</code> and <code>javadoc</code> warnings reported by Jenkins and fix at least the typos.</li>
-<li>Ensure that the <code>trunk</code> build is successful (including tests) with JDK6, JDK7 and JDK8.</li>
+<li>Ensure that the <code>trunk</code> build is successful (including tests) with JDK7 and JDK8.</li>
 </ul>
 <h2 id="prepare-documentation">Documentation<a class="headerlink" href="#prepare-documentation" title="Permanent link">&para;</a></h2>
 <p>Update <a href="http://issues.apache.org/jira/browse/SIS">JIRA</a> tasks and prepare release notes as below:</p>
@@ -678,7 +678,7 @@ mvn release:update-versions --define <span class="nv">autoVersionSubmodules</spa
 </pre></div>
 
 
-<p>This change will need to be merged manually on the JDK7, JDK6 branches and on the trunk.
+<p>This change will need to be merged manually on the JDK7 branch and on the trunk.
 Then on the development branch:</p>
 <ul>
 <li>Edit the version number in the <code>application/sis-console/src/main/artifact/README</code> file.</li>
