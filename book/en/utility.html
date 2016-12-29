@@ -205,35 +205,36 @@
       Some classes are only designed to function according to one locale convention at a time.
       This is of course true for the standard implementations of <code>java.text.Format</code>,
       as they are entirely dedicated to the work of internationalization.
-      But it is also the case for other less obvious classes like <code>javax.imageio.ImageReader</code>/<code>ImageWriter</code>
-      and for <code>Exception</code> subclasses.
+      But it is also the case for other less obvious classes like <code>javax.imageio.ImageReader</code> and <code>ImageWriter</code>.
       When one of these classes is implemented by <abbr>SIS</abbr>,
       we identify it by implementing the <code>org.apache.sis.util.Localized</code> interface.
       The <code class="SIS">getLocale()</code> method of this interface can determine the locale conventions
       by which the instance produces its message.
     </p>
     <p>
-      Some sub-classes of <code>Exception</code> defined by <abbr>SIS</abbr> also implement the <code>Localized</code> interface.
-      For these exceptions, the error message may be produced according to two locale conventions,
-      for either the administrator or the client respectively:
-      <code>getMessage()</code> returns the exception message according to the system default conventions,
-      while <code>getLocalizedMessage()</code> returns the exception message according to the locale conventions specified
-      by <code class="SIS">getLocale()</code>.
-      This <code>Locale</code> will be determined by the <code>Localized</code> object that threw the exception.
+      Another class that provides different methods for different locales is <code>java.lang.Throwable</code>.
+      The standard Java <abbr>API</abbr> defines two methods for getting the error message:
+      <code>getMessage()</code> and <code>getLocalizedMessage()</code>.
+      Usually those two methods return the same character sequences,
+      but some exceptions thrown by Apache <abbr>SIS</abbr> may use different locales.
+      The policy that <abbr>SIS</abbr> tries to apply on a <em>best-effort</em> basis is:
     </p>
+    <ul>
+      <li><code>getMessage()</code> returns the message in the <abbr title="Java Virtual Machine">JVM</abbr> default locale.
+          In a client-server architecture, this is often the locale on the server side.
+          This is the recommended language for logging messages to be read by system administrators.</li>
+      <li><code>getLocalizedMessage()</code> returns the message in a locale that depends on the context
+          in which the exception has been thrown. This is often the locale used by a particular <code>Format</code>
+          or <code class="SIS">DataStore</code> instance, and can be presumed to be the locale on the client side.
+          This is the recommended language to show in the user application.</li>
+    </ul>
+
     <div class="example"><p><b>Example:</b>
-      Given an environment in which the default language is English and an <code>AngleFormat</code> object is created to
-      read angles according to French conventions.
-      If a <code>ParseException</code> is thrown when using this formatter, <code>getMessage()</code> returns the error message in English,
-      while <code>getLocalizedMessage()</code> returns the error message in French.
+      If an error occurred while a Japanese client connected to an European server, the localized message may be sent
+      to the client in Japanese language as given by <code>getLocalizedMessage()</code> while the same error may be
+      logged on the server side in the French (for example) language as given by <code>getMessage()</code>.
+      This allows system administrator to analyze the issue without the need to understand client’s language.
     </p></div>
-    <p>
-      The exceptions defined by <abbr>SIS</abbr> do not implement all of the <code>Localized</code> interface.
-      Only those most likely to be shown to the user are localized in this way.
-      <code>ParseException</code> are good candidates because they often occur due to an incorrect entry by the client.
-      By contrast, <code>NullPointerException</code> are generally caused by a programming error;
-      they may be localized in the system default language, but that is usually all.
-    </p>
     <p>
       The utility class <code>org.apache.sis.util.Exceptions</code> provides convenience methods to get messages
       according to the conventions of a given locale, when this information is available.
