@@ -31,120 +31,121 @@
       Content below this point is copied in "../../content/book/fr/developer-guide.html"
       by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
     -->
-    <header>
-      <h1 id="XML-ISO">Représentation des objets en <abbr>XML</abbr></h1>
-    </header>
-    <p>
-      Les objets définis par les standards <abbr>OGC</abbr>/<abbr>ISO</abbr> doivent pouvoir être échangés sur internet
-      entre des machines distantes, utilisant des logiciels différents écrits dans des langages différents.
-      Quelques uns des formats les plus connus sont
-      le <abbr>WKT</abbr> (<i>Well-Known Text</i>) et
-      le <abbr>WKB</abbr> (<i>Well-Known Binary</i>).
-      Mais le format le plus exhaustif et souvent considéré comme la référence est le <abbr>XML</abbr>,
-      au point où la façon de représenter les objets <abbr>ISO</abbr> dans ce format fait parfois l’objet d’un standard international à part entière.
-      Ainsi, les classes de méta-données sont décrites dans le standard <abbr>ISO</abbr> 19115-1 (une spécification dite <i>abstraite</i>),
-      alors que la représentation de ces classes en <abbr>XML</abbr> est décrite par les standards <abbr>ISO</abbr> 19115-3 et 19139.
-    </p>
-    <p>
-      Les différents standards <abbr>OGC</abbr>/<abbr>ISO</abbr> n’emploient pas tous la même stratégie pour exprimer les objets en <abbr>XML</abbr>.
-      Le standard <abbr>ISO</abbr> 19115-3 en particulier emploie une approche plus verbeuse que les autres normes,
-      et fera l’objet d’une <a href="#XML-ISO-19115">section particulière</a>.
-      Mais la plupart des formats <abbr>XML</abbr> ont en commun de définir des types et des attributs supplémentaires
-      qui ne font pas partie des spécifications abstraites d’origines.
-      Ces attributs supplémentaires sont habituellement propres au <abbr>XML</abbr> et peuvent ne pas apparaître directement dans l’<abbr>API</abbr> de Apache <abbr>SIS</abbr>.
-      Certains de ces attributs, notamment <code class="OGC">id</code>, <code class="OGC">uuid</code> et <code>xlink:href</code>,
-      restent toutefois accessibles sous forme de paires clé-valeurs.
-    </p>
-    <p>
-      Les documents <abbr>XML</abbr> peuvent employer les préfixes de leur choix,
-      mais les préfixes suivants sont couramment employés dans la pratique.
-      Ils apparaissent donc par défaut dans les documents produits par Apache <abbr>SIS</abbr>.
-      Ces préfixes sont définis dans la classe <code>org.apache.sis.xml.Namespaces</code>.
-    </p>
-    <table>
-      <caption>Préfixes d’espaces de noms <abbr>XML</abbr> courants</caption>
-      <tr>
-        <th>Préfixe</th>
-        <th>Espace de nom</th>
-      </tr>
-      <tr>
-        <td><code>gco</code></td>
-        <td><code>http://www.isotc211.org/2005/gco</code></td>
-      </tr>
-      <tr>
-        <td><code>gfc</code></td>
-        <td><code>http://www.isotc211.org/2005/gfc</code></td>
-      </tr>
-      <tr>
-        <td><code>gmd</code></td>
-        <td><code>http://www.isotc211.org/2005/gmd</code></td>
-      </tr>
-      <tr>
-        <td><code>gmi</code></td>
-        <td><code>http://www.isotc211.org/2005/gmi</code></td>
-      </tr>
-      <tr>
-        <td><code>gmx</code></td>
-        <td><code>http://www.isotc211.org/2005/gmx</code></td>
-      </tr>
-      <tr>
-        <td><code>gml</code></td>
-        <td><code>http://www.opengis.net/gml/3.2</code></td>
-      </tr>
-      <tr>
-        <td><code>xlink</code></td>
-        <td><code>http://www.w3.org/1999/xlink</code></td>
-      </tr>
-    </table>
-
-    <aside>
-      <h2>Outils de lecture et d’écriture de documents <abbr>XML</abbr></h2>
+    <section>
+      <header>
+        <h1 id="XML-ISO">Représentation des objets en <abbr>XML</abbr></h1>
+      </header>
       <p>
-        Apache <abbr>SIS</abbr> emploie différentes bibliothèques pour lire et écrire différents type d’objets.
-        La bibliothèque utilisée dépend de la complexité de l’objet et des contraintes de performances.
-        Par exemple les annotations de <abbr title="Java Architecture for XML Binding">JAXB</abbr> ont l’avantage d’être proches du code,
-        ce qui facilite la maintenance de la correspondance entre le Java et le <abbr>XML</abbr>.
-        En revanche <abbr title="Simple API for XML">SAX</abbr> a l’avantage d’être performant.
-        De manière générale, Apache <abbr>SIS</abbr> emploie:
+        Les objets définis par les standards <abbr>OGC</abbr>/<abbr>ISO</abbr> doivent pouvoir être échangés sur internet
+        entre des machines distantes, utilisant des logiciels différents écrits dans des langages différents.
+        Quelques uns des formats les plus connus sont
+        le <abbr>WKT</abbr> (<i>Well-Known Text</i>) et
+        le <abbr>WKB</abbr> (<i>Well-Known Binary</i>).
+        Mais le format le plus exhaustif et souvent considéré comme la référence est le <abbr>XML</abbr>,
+        au point où la façon de représenter les objets <abbr>ISO</abbr> dans ce format fait parfois l’objet d’un standard international à part entière.
+        Ainsi, les classes de méta-données sont décrites dans le standard <abbr>ISO</abbr> 19115-1 (une spécification dite <i>abstraite</i>),
+        alors que la représentation de ces classes en <abbr>XML</abbr> est décrite par les standards <abbr>ISO</abbr> 19115-3 et 19139.
       </p>
-      <ul>
-        <li>
-          <abbr>JAXB</abbr> pour les objets qui ne sont pas répétés très souvent dans le document
-          mais dont la structure est complexe, avec des arborescences profondes.
-          L’ensemble des méta-données <abbr>ISO</abbr> 19115-3 est un exemple typique.
-        </li>
-        <li>
-          <abbr>SAX</abbr> pour les objets relativement simples mais pouvant exister en très grand nombre.
-          L’ensemble des points dans une géométrie est un exemple typique.
-        </li>
-        <li>
-          <abbr title="Document Object Model">DOM</abbr> comme une alternative à <abbr>JAXB</abbr>
-          lorsque les éléments <abbr>XML</abbr> ne correspondent pas directement à des attributs Java.
-          Les <i>features</i> en sont un exemple, car leur structure est dynamique.
-        </li>
-      </ul>
-    </aside>
+      <p>
+        Les différents standards <abbr>OGC</abbr>/<abbr>ISO</abbr> n’emploient pas tous la même stratégie pour exprimer les objets en <abbr>XML</abbr>.
+        Le standard <abbr>ISO</abbr> 19115-3 en particulier emploie une approche plus verbeuse que les autres normes,
+        et fera l’objet d’une <a href="#XML-ISO-19115">section particulière</a>.
+        Mais la plupart des formats <abbr>XML</abbr> ont en commun de définir des types et des attributs supplémentaires
+        qui ne font pas partie des spécifications abstraites d’origines.
+        Ces attributs supplémentaires sont habituellement propres au <abbr>XML</abbr> et peuvent ne pas apparaître directement dans l’<abbr>API</abbr> de Apache <abbr>SIS</abbr>.
+        Certains de ces attributs, notamment <code class="OGC">id</code>, <code class="OGC">uuid</code> et <code>xlink:href</code>,
+        restent toutefois accessibles sous forme de paires clé-valeurs.
+      </p>
+      <p>
+        Les documents <abbr>XML</abbr> peuvent employer les préfixes de leur choix,
+        mais les préfixes suivants sont couramment employés dans la pratique.
+        Ils apparaissent donc par défaut dans les documents produits par Apache <abbr>SIS</abbr>.
+        Ces préfixes sont définis dans la classe <code>org.apache.sis.xml.Namespaces</code>.
+      </p>
+      <table>
+        <caption>Préfixes d’espaces de noms <abbr>XML</abbr> courants</caption>
+        <tr>
+          <th>Préfixe</th>
+          <th>Espace de nom</th>
+        </tr>
+        <tr>
+          <td><code>gco</code></td>
+          <td><code>http://www.isotc211.org/2005/gco</code></td>
+        </tr>
+        <tr>
+          <td><code>gfc</code></td>
+          <td><code>http://www.isotc211.org/2005/gfc</code></td>
+        </tr>
+        <tr>
+          <td><code>gmd</code></td>
+          <td><code>http://www.isotc211.org/2005/gmd</code></td>
+        </tr>
+        <tr>
+          <td><code>gmi</code></td>
+          <td><code>http://www.isotc211.org/2005/gmi</code></td>
+        </tr>
+        <tr>
+          <td><code>gmx</code></td>
+          <td><code>http://www.isotc211.org/2005/gmx</code></td>
+        </tr>
+        <tr>
+          <td><code>gml</code></td>
+          <td><code>http://www.opengis.net/gml/3.2</code></td>
+        </tr>
+        <tr>
+          <td><code>xlink</code></td>
+          <td><code>http://www.w3.org/1999/xlink</code></td>
+        </tr>
+      </table>
+
+      <aside>
+        <h2>Outils de lecture et d’écriture de documents <abbr>XML</abbr></h2>
+        <p>
+          Apache <abbr>SIS</abbr> emploie différentes bibliothèques pour lire et écrire différents type d’objets.
+          La bibliothèque utilisée dépend de la complexité de l’objet et des contraintes de performances.
+          Par exemple les annotations de <abbr title="Java Architecture for XML Binding">JAXB</abbr> ont l’avantage d’être proches du code,
+          ce qui facilite la maintenance de la correspondance entre le Java et le <abbr>XML</abbr>.
+          En revanche <abbr title="Simple API for XML">SAX</abbr> a l’avantage d’être performant.
+          De manière générale, Apache <abbr>SIS</abbr> emploie:
+        </p>
+        <ul>
+          <li>
+            <abbr>JAXB</abbr> pour les objets qui ne sont pas répétés très souvent dans le document
+            mais dont la structure est complexe, avec des arborescences profondes.
+            L’ensemble des méta-données <abbr>ISO</abbr> 19115-3 est un exemple typique.
+          </li>
+          <li>
+            <abbr>SAX</abbr> pour les objets relativement simples mais pouvant exister en très grand nombre.
+            L’ensemble des points dans une géométrie est un exemple typique.
+          </li>
+          <li>
+            <abbr title="Document Object Model">DOM</abbr> comme une alternative à <abbr>JAXB</abbr>
+            lorsque les éléments <abbr>XML</abbr> ne correspondent pas directement à des attributs Java.
+            Les <i>features</i> en sont un exemple, car leur structure est dynamique.
+          </li>
+        </ul>
+      </aside>
 
 
 
-    <h2 id="XML-ISO-19115">Représentation des méta-données selon <abbr>ISO</abbr> 19115-3</h2>
-    <p>
-      Pour chaque classe de méta-donnée, il existe un type <abbr>XML</abbr> portant le même nom que dans la spécification abstraite
-      (par exemple <code>gmd:MD_Metadata</code> et <code>gmd:CI_Citation</code>).
-      Tous ces types peuvent être employés comme racine d’un document <abbr>XML</abbr>.
-      Ainsi, il est possible d’écrire un document représentant un objet <code>MD_Metadata</code> complet,
-      ou d’écrire un document représentant seulement un objet <code>CI_Citation</code>.
-    </p>
-    <p>
-      Le standard <abbr>ISO</abbr> 19139 dispose le contenu de ces objets d’une manière inhabituelle:
-      pour chaque propriété dont le type de la valeur est lui-même une autre classe du standard <abbr>ISO</abbr> 19139,
-      la valeur est enveloppée dans un élément qui représente son type plutôt que d’être écrite directement.
-      Par exemple dans un objet de type <code>CI_Citation</code>,
-      la valeur de la propriété <code class="OGC">citedResponsibleParty</code>
-      est enveloppée dans un élément <code>CI_Responsibility</code>.
-      Cette pratique double la profondeur de l’arborescence, en introduisant une duplication
-      à tous les niveaux pour chaque valeur, comme dans l’exemple suivant:
-    </p>
+      <h2 id="XML-ISO-19115">Représentation des méta-données selon <abbr>ISO</abbr> 19115-3</h2>
+      <p>
+        Pour chaque classe de méta-donnée, il existe un type <abbr>XML</abbr> portant le même nom que dans la spécification abstraite
+        (par exemple <code>gmd:MD_Metadata</code> et <code>gmd:CI_Citation</code>).
+        Tous ces types peuvent être employés comme racine d’un document <abbr>XML</abbr>.
+        Ainsi, il est possible d’écrire un document représentant un objet <code>MD_Metadata</code> complet,
+        ou d’écrire un document représentant seulement un objet <code>CI_Citation</code>.
+      </p>
+      <p>
+        Le standard <abbr>ISO</abbr> 19139 dispose le contenu de ces objets d’une manière inhabituelle:
+        pour chaque propriété dont le type de la valeur est lui-même une autre classe du standard <abbr>ISO</abbr> 19139,
+        la valeur est enveloppée dans un élément qui représente son type plutôt que d’être écrite directement.
+        Par exemple dans un objet de type <code>CI_Citation</code>,
+        la valeur de la propriété <code class="OGC">citedResponsibleParty</code>
+        est enveloppée dans un élément <code>CI_Responsibility</code>.
+        Cette pratique double la profondeur de l’arborescence, en introduisant une duplication
+        à tous les niveaux pour chaque valeur, comme dans l’exemple suivant:
+      </p>
 
 <pre class="xml"><b>&lt;MD_Metadata&gt;</b>
   &lt;identificationInfo&gt;
@@ -176,78 +177,79 @@
   &lt;/identificationInfo&gt;
 <b>&lt;/MD_Metadata&gt;</b></pre>
 
-    <p>
-      L’exemple précédent, comme tous les documents conformes à <abbr>ISO</abbr> 19139,
-      est donc constitué d’une alternance systématique de deux types d’éléments <abbr>XML</abbr> imbriqués:
-    </p>
-    <ol>
-      <li><p>
-        Il y a d’abord le nom de la propriété, qui commence toujours par une lettre minuscule (en ignorant les préfixes).
-        Dans les <abbr>API</abbr> Java, chaque propriété correspond à une méthode de la classe englobante.
-        Dans l’exemple ci-haut, <code>gmd:identificationInfo</code> (une propriété de la classe <code>MD_Metadata</code>)
-        correspond à la méthode <code>Metadata.getIdentificationInfo()</code>.
-      </p></li>
-      <li><p>
-          Sous chaque propriété se trouve le type de la valeur, sauf si elle a été remplacée par une référence
-          (la <a href="#gco-id">sous-section suivante</a> suivante approfondira ce sujet).
-          Le type de la valeur est un élément <abbr>XML</abbr> dont le nom commence toujours par une lettre majuscule, en ignorant les préfixes.
-          Dans l’exemple ci-haut nous avions <code>MD_DataIdentification</code>, qui correspond à l’interface Java <code>DataIdentification</code>.
-          C’est cet élément <abbr>XML</abbr> qui contient les valeurs de la propriété.
-      </p></li>
-    </ol>
-
-    <p>
-      Afin de réduire la complexité des bibliothèques, GeoAPI et Apache <abbr>SIS</abbr>
-      n’exposent publiquement qu’une vision unifiée de ces deux types d’éléments.
-      L’<abbr>API</abbr> public correspond essentiellement au deuxième groupe.
-      Toutefois, lors de l’écriture d’un document <abbr>XML</abbr>, des éléments du premier groupe doivent être temporairement recréés.
-      Les classes qui y correspondent sont définies dans des paquets internes de <abbr>SIS</abbr>.
-      Ces classes peuvent être ignorées, sauf si le développeur souhaite implémenter ses propres classes
-      dont les instances devront être lues et écrites par <abbr>JAXB</abbr>.
-    </p>
-
-    <aside>
-      <h3>Stratégie d’implémentation dans Apache <abbr>SIS</abbr></h3>
       <p>
-        Les paquets <code>org.apache.sis.internal.jaxb.*</code> (non-publiques)
-        définissent des adaptateurs <abbr>JAXB</abbr> pour tous les types d’objet <abbr>ISO</abbr>.
-        Ces adaptateurs sont de toute façon nécessaires pour permettre à <abbr>JAXB</abbr>
-        d’obtenir les classes <abbr>SIS</abbr> implémentant les interfaces de GeoAPI.
-        De manière opportuniste, <abbr>SIS</abbr> en fait à la fois des adaptateurs <abbr>JAXB</abbr>
-        et des objets enveloppants le “vrai” objet à lire ou écrire.
-        Cette utilisation double permet d’éviter d’avoir à doubler le nombre de classes
-        (déjà très élevé) présents dans les paquets internes.
+        L’exemple précédent, comme tous les documents conformes à <abbr>ISO</abbr> 19139,
+        est donc constitué d’une alternance systématique de deux types d’éléments <abbr>XML</abbr> imbriqués:
       </p>
-      <h4>Convention de nommage dans les schémas <abbr>XSD</abbr></h4>
+      <ol>
+        <li><p>
+          Il y a d’abord le nom de la propriété, qui commence toujours par une lettre minuscule (en ignorant les préfixes).
+          Dans les <abbr>API</abbr> Java, chaque propriété correspond à une méthode de la classe englobante.
+          Dans l’exemple ci-haut, <code>gmd:identificationInfo</code> (une propriété de la classe <code>MD_Metadata</code>)
+          correspond à la méthode <code>Metadata.getIdentificationInfo()</code>.
+        </p></li>
+        <li><p>
+            Sous chaque propriété se trouve le type de la valeur, sauf si elle a été remplacée par une référence
+            (la <a href="#gco-id">sous-section suivante</a> suivante approfondira ce sujet).
+            Le type de la valeur est un élément <abbr>XML</abbr> dont le nom commence toujours par une lettre majuscule, en ignorant les préfixes.
+            Dans l’exemple ci-haut nous avions <code>MD_DataIdentification</code>, qui correspond à l’interface Java <code>DataIdentification</code>.
+            C’est cet élément <abbr>XML</abbr> qui contient les valeurs de la propriété.
+        </p></li>
+      </ol>
+
       <p>
-        Les schémas <abbr>XSD</abbr> de l’<abbr>OGC</abbr> définissent pour chaque élément du premier groupe
-        un type dont le nom se termine par “<code class="OGC">_PropertyType</code>”.
-        Pour le second groupe, chaque élément a un type dont le nom se termine par “<code class="OGC">_Type</code>”.
-        Les “<code class="OGC">_PropertyType</code>” peuvent avoir un groupe d’attributs
-        (notamment <code>gco:uuidref</code> et <code>xlink:href</code>)
-        que les schémas <abbr>XSD</abbr> nomment collectivement <code>gco:ObjectReference</code>.
-        Ces attributs n’ont pas de méthodes Java dédiées, mais sont accessibles indirectement via l’interface
-        <code class="SIS">IdentifiedObject</code> décrite dans la sous-section suivante.
+        Afin de réduire la complexité des bibliothèques, GeoAPI et Apache <abbr>SIS</abbr>
+        n’exposent publiquement qu’une vision unifiée de ces deux types d’éléments.
+        L’<abbr>API</abbr> public correspond essentiellement au deuxième groupe.
+        Toutefois, lors de l’écriture d’un document <abbr>XML</abbr>, des éléments du premier groupe doivent être temporairement recréés.
+        Les classes qui y correspondent sont définies dans des paquets internes de <abbr>SIS</abbr>.
+        Ces classes peuvent être ignorées, sauf si le développeur souhaite implémenter ses propres classes
+        dont les instances devront être lues et écrites par <abbr>JAXB</abbr>.
       </p>
-    </aside>
+
+      <aside>
+        <h3>Stratégie d’implémentation dans Apache <abbr>SIS</abbr></h3>
+        <p>
+          Les paquets <code>org.apache.sis.internal.jaxb.*</code> (non-publiques)
+          définissent des adaptateurs <abbr>JAXB</abbr> pour tous les types d’objet <abbr>ISO</abbr>.
+          Ces adaptateurs sont de toute façon nécessaires pour permettre à <abbr>JAXB</abbr>
+          d’obtenir les classes <abbr>SIS</abbr> implémentant les interfaces de GeoAPI.
+          De manière opportuniste, <abbr>SIS</abbr> en fait à la fois des adaptateurs <abbr>JAXB</abbr>
+          et des objets enveloppants le “vrai” objet à lire ou écrire.
+          Cette utilisation double permet d’éviter d’avoir à doubler le nombre de classes
+          (déjà très élevé) présents dans les paquets internes.
+        </p>
+        <h4>Convention de nommage dans les schémas <abbr>XSD</abbr></h4>
+        <p>
+          Les schémas <abbr>XSD</abbr> de l’<abbr>OGC</abbr> définissent pour chaque élément du premier groupe
+          un type dont le nom se termine par “<code class="OGC">_PropertyType</code>”.
+          Pour le second groupe, chaque élément a un type dont le nom se termine par “<code class="OGC">_Type</code>”.
+          Les “<code class="OGC">_PropertyType</code>” peuvent avoir un groupe d’attributs
+          (notamment <code>gco:uuidref</code> et <code>xlink:href</code>)
+          que les schémas <abbr>XSD</abbr> nomment collectivement <code>gco:ObjectReference</code>.
+          Ces attributs n’ont pas de méthodes Java dédiées, mais sont accessibles indirectement via l’interface
+          <code class="SIS">IdentifiedObject</code> décrite dans la sous-section suivante.
+        </p>
+      </aside>
 
 
-    <h3 id="gco-id">Identification d’instances déjà définies</h3>
-    <p>
-      L’élément englobant peut contenir un attribut <code class="OGC">id</code> ou <code class="OGC">uuid</code>.
-      Si un de ces attributs est présent, l’élément englobé peut être complètement omis;
-      il sera remplacé au moment de la lecture par l’élément référencé par l’attribut.
-      Dans l’exemple suivant, la partie gauche définie un élément associé à l’identifiant “<code>mon_id</code>”,
-      alors que la partie droite référence cet élément:
-    </p>
+      <h3 id="gco-id">Identification d’instances déjà définies</h3>
+      <p>
+        L’élément englobant peut contenir un attribut <code class="OGC">id</code> ou <code class="OGC">uuid</code>.
+        Si un de ces attributs est présent, l’élément englobé peut être complètement omis;
+        il sera remplacé au moment de la lecture par l’élément référencé par l’attribut.
+        Dans l’exemple suivant, la partie gauche définie un élément associé à l’identifiant “<code>mon_id</code>”,
+        alors que la partie droite référence cet élément:
+      </p>
 
-    <table class="hidden">
-      <tr>
-        <th>Définir un identifiant</th>
-        <th>Utiliser l’identifiant défini</th>
-      </tr>
-      <tr>
-        <td>
+      <table class="hidden">
+        <tr>
+          <th>Définir un identifiant</th>
+          <th>Utiliser l’identifiant défini</th>
+        </tr>
+        <tr>
+          <td>
+
 <pre class="xml" style="margin-top: 6pt">&lt;MD_MetaData&gt;
   &lt;identificationInfo&gt;
     &lt;MD_DataIdentification id="<b>mon_id</b>"&gt;
@@ -255,42 +257,44 @@
     &lt;/MD_DataIdentification&gt;
   &lt;/identificationInfo&gt;
 &lt;/MD_MetaData&gt;</pre>
-        </td>
-        <td>
+
+          </td><td>
+
 <pre class="xml" style="margin-top: 6pt">&lt;MD_MetaData&gt;
   &lt;identificationInfo xlink:href="<b>#mon_id</b>"/&gt;
 &lt;/MD_MetaData&gt;</pre>
-        </td>
-      </tr>
-    </table>
 
-    <p>
-      Le choix de l’attribut à utiliser dépend de la portée de l’élément référencé:
-    </p>
-    <ul>
-      <li>
-        <code class="OGC">id</code> n’est valide qu’à l’intérieur du document <abbr>XML</abbr>
-        qui définit l’objet ainsi référencé.
-      </li>
-      <li>
-        <code class="OGC">uuid</code> peut être valide à l’extérieur du document <abbr>XML</abbr>,
-        mais quelqu’un doit maintenir une base de données fournissant les objets pour chaque UUID donnés.
-      </li>
-      <li>
-        <code>xlink:href</code> peut faire référence à un autre document <abbr>XML</abbr> accessible sur internet.
-      </li>
-    </ul>
-    <p>
-      Dans la bibliothèque <abbr>SIS</abbr>, tous les objets susceptibles d’être identifiés dans un document <abbr>XML</abbr>
-      implémentent l’interface <code>org.apache.sis.xml.IdentifiedObject</code>.
-      Chaque instance de cette interface fournit une vue de ses identifiants sous forme de <code>Map&lt;Citation,String&gt;</code>,
-      dans lequel la clé <code>Citation</code> identifie le type d’identifiant et la valeur est l’identifiant lui-même.
-      Quelques constantes représentant différents types d’identifiants sont énumérées dans <code>IdentifierSpace</code>,
-      notamment <code class="SIS">ID</code>, <code class="SIS">UUID</code> et <code class="SIS">HREF</code>.
-      Chacune de ces clés peut être associée à une valeur d’un type différent (habituellement <code>String</code>,
-      <code>UUID</code> ou <code>URI</code>) selon la clé.
-      Par exemple le code suivant définit une valeur pour l’attribut <code class="OGC">uuid</code>:
-    </p>
+          </td>
+        </tr>
+      </table>
+
+      <p>
+        Le choix de l’attribut à utiliser dépend de la portée de l’élément référencé:
+      </p>
+      <ul>
+        <li>
+          <code class="OGC">id</code> n’est valide qu’à l’intérieur du document <abbr>XML</abbr>
+          qui définit l’objet ainsi référencé.
+        </li>
+        <li>
+          <code class="OGC">uuid</code> peut être valide à l’extérieur du document <abbr>XML</abbr>,
+          mais quelqu’un doit maintenir une base de données fournissant les objets pour chaque UUID donnés.
+        </li>
+        <li>
+          <code>xlink:href</code> peut faire référence à un autre document <abbr>XML</abbr> accessible sur internet.
+        </li>
+      </ul>
+      <p>
+        Dans la bibliothèque <abbr>SIS</abbr>, tous les objets susceptibles d’être identifiés dans un document <abbr>XML</abbr>
+        implémentent l’interface <code>org.apache.sis.xml.IdentifiedObject</code>.
+        Chaque instance de cette interface fournit une vue de ses identifiants sous forme de <code>Map&lt;Citation,String&gt;</code>,
+        dans lequel la clé <code>Citation</code> identifie le type d’identifiant et la valeur est l’identifiant lui-même.
+        Quelques constantes représentant différents types d’identifiants sont énumérées dans <code>IdentifierSpace</code>,
+        notamment <code class="SIS">ID</code>, <code class="SIS">UUID</code> et <code class="SIS">HREF</code>.
+        Chacune de ces clés peut être associée à une valeur d’un type différent (habituellement <code>String</code>,
+        <code>UUID</code> ou <code>URI</code>) selon la clé.
+        Par exemple le code suivant définit une valeur pour l’attribut <code class="OGC">uuid</code>:
+      </p>
 
 <pre>import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.xml.IdentifierSpace;
@@ -304,54 +308,54 @@ public class MyClass {
     }
 }</pre>
 
-    <p>
-      Bien que ce mécanisme aie été définit dans le but de mieux supporter les représentations des
-      attributs <abbr>XML</abbr> du groupe <code>gco:ObjectIdentification</code>,
-      il permet aussi de manière opportuniste de manipuler d’autres types d’identifiants.
-      Par exemple les attributs <code class="GeoAPI">ISBN</code> et <code class="GeoAPI">ISSN</code>
-      de <code>Citation</code> peuvent être manipulés de cette manière.
-      Les méthodes de l’interface <code class="SIS">IdentifiedObject</code> fournissent donc un endroit unique
-      où peuvent être manipulés tous types d’identifiants (pas seulement <abbr>XML</abbr>) associés à un objet.
-    </p>
+      <p>
+        Bien que ce mécanisme aie été définit dans le but de mieux supporter les représentations des
+        attributs <abbr>XML</abbr> du groupe <code>gco:ObjectIdentification</code>,
+        il permet aussi de manière opportuniste de manipuler d’autres types d’identifiants.
+        Par exemple les attributs <code class="GeoAPI">ISBN</code> et <code class="GeoAPI">ISSN</code>
+        de <code>Citation</code> peuvent être manipulés de cette manière.
+        Les méthodes de l’interface <code class="SIS">IdentifiedObject</code> fournissent donc un endroit unique
+        où peuvent être manipulés tous types d’identifiants (pas seulement <abbr>XML</abbr>) associés à un objet.
+      </p>
 
 
 
-    <h3 id="nilReason">Représentation de valeurs manquantes</h3>
-    <p>
-      Lorsqu’une propriété n’est pas définie, la méthode correspondante de GeoAPI retourne généralement <code>null</code>.
-      Toutefois les choses se compliquent lorsque la propriété manquante est une valeur considérée comme obligatoire par le standard <abbr>ISO</abbr> 19115.
-      Le standard <abbr>ISO</abbr> 19139 autorise l’omission de propriétés obligatoires à la condition d’indiquer pourquoi la valeur est manquante.
-      Les raisons peuvent être que la propriété ne s’applique pas (<code class="OGC">inapplicable</code>),
-      que la valeur existe probablement mais n’est pas connue (<code class="OGC">unknown</code>),
-      que la valeur pourrait ne pas exister (<code class="OGC">missing</code>),
-      qu’elle ne peut pas être divulguée (<code class="OGC">withheld</code>), <i>etc.</i>
-      La transmission de cette information nécessite l’utilisation d’un objet non-nul même lorsque la valeur est manquante.
-      <abbr>SIS</abbr> procède en retournant un objet qui, en plus d’implémenter l’interface GeoAPI attendue,
-      implémente aussi l’interface <code>org.apache.sis.xml.NilObject</code>.
-      Cette interface marque les instances dont toutes les méthodes retournent une collection vide,
-      un tableau vide, <code>null</code>, <code>NaN</code>, <code>0</code> ou <code>false</code>,
-      dans cet ordre de préférence selon ce que les types de retours des méthodes permettent.
-      Chaque instance implémentant <code>NilObject</code> fournit une méthode
-      <code class="SIS">getNilReason()</code> indiquant pourquoi l’objet est nul.
-    </p>
-    <p>
-      Dans l’exemple suivant, la partie gauche montre un élément <code>CI_Citation</code>
-      contenant un élément <code>CI_Series</code>, alors que dans la partie droite la série est inconnue.
-      Si l’élément <code>CI_Series</code> avait été complètement omis,
-      alors la méthode <code>Citation.getSeries()</code> retournerait <code>null</code> en Java.
-      Mais en présence d’un attribut <code class="OGC">nilReason</code>, l’implémentation <abbr>SIS</abbr>
-      de <code class="SIS">getSeries()</code> retournera plutôt un objet implémentant à la fois les interfaces
-      <code>Series</code> et <code class="SIS">NilReason</code>,
-      et dont la méthode <code class="SIS">getNilReason()</code> retournera la constante <code class="SIS">UNKNOWN</code>.
-    </p>
+      <h3 id="nilReason">Représentation de valeurs manquantes</h3>
+      <p>
+        Lorsqu’une propriété n’est pas définie, la méthode correspondante de GeoAPI retourne généralement <code>null</code>.
+        Toutefois les choses se compliquent lorsque la propriété manquante est une valeur considérée comme obligatoire par le standard <abbr>ISO</abbr> 19115.
+        Le standard <abbr>ISO</abbr> 19139 autorise l’omission de propriétés obligatoires à la condition d’indiquer pourquoi la valeur est manquante.
+        Les raisons peuvent être que la propriété ne s’applique pas (<code class="OGC">inapplicable</code>),
+        que la valeur existe probablement mais n’est pas connue (<code class="OGC">unknown</code>),
+        que la valeur pourrait ne pas exister (<code class="OGC">missing</code>),
+        qu’elle ne peut pas être divulguée (<code class="OGC">withheld</code>), <i>etc.</i>
+        La transmission de cette information nécessite l’utilisation d’un objet non-nul même lorsque la valeur est manquante.
+        <abbr>SIS</abbr> procède en retournant un objet qui, en plus d’implémenter l’interface GeoAPI attendue,
+        implémente aussi l’interface <code>org.apache.sis.xml.NilObject</code>.
+        Cette interface marque les instances dont toutes les méthodes retournent une collection vide,
+        un tableau vide, <code>null</code>, <code>NaN</code>, <code>0</code> ou <code>false</code>,
+        dans cet ordre de préférence selon ce que les types de retours des méthodes permettent.
+        Chaque instance implémentant <code>NilObject</code> fournit une méthode
+        <code class="SIS">getNilReason()</code> indiquant pourquoi l’objet est nul.
+      </p>
+      <p>
+        Dans l’exemple suivant, la partie gauche montre un élément <code>CI_Citation</code>
+        contenant un élément <code>CI_Series</code>, alors que dans la partie droite la série est inconnue.
+        Si l’élément <code>CI_Series</code> avait été complètement omis,
+        alors la méthode <code>Citation.getSeries()</code> retournerait <code>null</code> en Java.
+        Mais en présence d’un attribut <code class="OGC">nilReason</code>, l’implémentation <abbr>SIS</abbr>
+        de <code class="SIS">getSeries()</code> retournera plutôt un objet implémentant à la fois les interfaces
+        <code>Series</code> et <code class="SIS">NilReason</code>,
+        et dont la méthode <code class="SIS">getNilReason()</code> retournera la constante <code class="SIS">UNKNOWN</code>.
+      </p>
 
-    <table class="hidden">
-      <tr>
-        <th>Information présente</th>
-        <th>Information absente</th>
-      </tr>
-      <tr>
-        <td>
+      <table class="hidden">
+        <tr>
+          <th>Information présente</th>
+          <th>Information absente</th>
+        </tr>
+        <tr>
+          <td>
 <pre class="xml" style="margin-top: 6pt">&lt;CI_Citation&gt;
   &lt;series&gt;
     &lt;CI_Series&gt;
@@ -359,13 +363,16 @@ public class MyClass {
     &lt;/CI_Series&gt;
   &lt;/series&gt;
 &lt;/CI_Citation&gt;</pre>
-        </td>
-        <td>
+
+          </td><td>
+
 <pre class="xml" style="margin-top: 6pt">&lt;CI_Citation&gt;
   &lt;series nilReason="unknown"/&gt;
 &lt;/CI_Citation&gt;</pre>
-        </td>
-      </tr>
-    </table>
+
+          </td>
+        </tr>
+      </table>
+    </section>
   </body>
 </html>

@@ -32,374 +32,379 @@
       Content below this point is copied in "../../content/book/fr/developer-guide.html"
       by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
     -->
-    <header>
-      <h1 id="Referencing">Systèmes de références spatiales</h1>
-    </header>
-    <p>
-      Pour donner une position sur la Terre, on peut utiliser des noms tels que celui d’une ville ou une adresse postale
-      — on parle alors de références spatiales par <cite>identifiants</cite> —
-      ou on peut donner des valeurs numériques valides dans un système de coordonnées donné telles que les latitudes et longitudes
-      — on parle alors de références spatiales par <cite>coordonnées</cite>.
-      Chaque système de référence implique des approximations telles que
-      le choix de la forme géométrique (géoïde, ellipsoïde, <i>etc.</i>) utilisée comme approximation de la forme de la Terre,
-      le choix des propriétés géométriques (angles, distances, <i>etc.</i>) à préserver lors de la représentation d’une carte sur une surface plane, et
-      les pertes de précision lorsque l’on doit transformer des coordonnées vers des systèmes utilisant un <a href="#GeodeticDatum">référentiel</a> différent.
-    </p><p>
-      Une fausse croyance très répandue est que l’on peut éviter cette complexité en choisissant un seul système de référence des coordonnées
-      (typiquement <abbr title="World Geodetic System 1984">WGS84</abbr>) comme système universel pour toutes les données.
-      Les chapitres suivants expliqueront pourquoi la réalité n’est pas si simple.
-      Qu’un système universel réponde ou non aux besoins d’une application dépend de la précision désirée,
-      ainsi que du type de calculs que l’on souhaite effectuer avec les coordonnées.
-      Sauf indication contraire, Apache <abbr>SIS</abbr> tente d’assurer une précision de 1 centimètre pour les coordonnées sur la Terre.
-      Mais la maîtrise de cette précision nécessite le respect de certaines conditions:
-    </p>
-    <ul>
-      <li>Rester dans la zone de validité du système telle que donnée par <code>ReferenceSystem.getDomainOfValidity()</code>.</li>
-      <li>Savoir que les mesures de distances dans une projection cartographique donnée ne sont vraies qu’à certains endroits,
-          appelés par exemple « parallèles standards ».</li>
-      <li>Vérifier la précision des transformations de coordonnées, par exemple avec
-          <code>CoordinateOperation.getCoordinateOperationAccuracy()</code>.</li>
-      <li>Trouver les paramètres les plus appropriées pour une transformation de coordonnées requiert l’usage d’une base de données géodétiques telles que <abbr>EPSG</abbr>.
-          Déclarer ces paramètres directement dans le <abbr>CRS</abbr> (par exemple avec un élément <code>TOWGS84</code>) n’est souvent pas suffisant.</li>
-    </ul>
-    <article>
+    <section>
       <header>
-        <h2>Bibliothèques de type « early binding » versus « late binding »</h2>
+        <h1 id="Referencing">Systèmes de références spatiales</h1>
       </header>
       <p>
-        Le caractère universel du système <abbr>WGS84</abbr> rend tentante l’idée de l’utiliser comme système pivot,
-        afin de simplifier l’implémentation d’une bibliothèque de transformation de coordonnées.
-        La transformation d’une coordonnée d’un référentiel <var>A</var> vers un référentiel <var>B</var>
-        pourrait se faire en transformant d’abord de <var>A</var> vers <abbr>WGS84</abbr>, puis de <abbr>WGS84</abbr> vers <var>B</var>.
-        Il suffirait ainsi de stocker dans chaque objet <code>GeodeticDatum</code> les informations nécessaires à la transformation vers <abbr>WGS84</abbr>.
-        Cette approche était encouragée dans la version 1 du format <abbr>WKT</abbr>, qui définissait un élément <code>TOWGS84[…]</code> remplissant ce rôle.
-        Cette approche est désignée par <abbr>EPSG</abbr> sous le nom de « early binding »
-        car elle associe des informations sur la transformations de coordonnées très tôt dans la définition des objets géodésiques,
-        souvent directement au moment de la construction d’un object <code>GeographicCRS</code>.
-        Bien que <abbr>EPSG</abbr> reconnaisse que cette approche soit couramment employée, elle n’est pas recommandée pour plusieurs raisons:
+        Pour donner une position sur la Terre, on peut utiliser des noms tels que celui d’une ville ou une adresse postale
+        — on parle alors de références spatiales par <cite>identifiants</cite> —
+        ou on peut donner des valeurs numériques valides dans un système de coordonnées donné telles que les latitudes et longitudes
+        — on parle alors de références spatiales par <cite>coordonnées</cite>.
+        Chaque système de référence implique des approximations telles que
+        le choix de la forme géométrique (géoïde, ellipsoïde, <i>etc.</i>) utilisée comme approximation de la forme de la Terre,
+        le choix des propriétés géométriques (angles, distances, <i>etc.</i>) à préserver lors de la représentation d’une carte sur une surface plane, et
+        les pertes de précision lorsque l’on doit transformer des coordonnées vers des systèmes utilisant un <a href="#GeodeticDatum">référentiel</a> différent.
+      </p><p>
+        Une fausse croyance très répandue est que l’on peut éviter cette complexité en choisissant un seul système de référence des coordonnées
+        (typiquement <abbr title="World Geodetic System 1984">WGS84</abbr>) comme système universel pour toutes les données.
+        Les chapitres suivants expliqueront pourquoi la réalité n’est pas si simple.
+        Qu’un système universel réponde ou non aux besoins d’une application dépend de la précision désirée,
+        ainsi que du type de calculs que l’on souhaite effectuer avec les coordonnées.
+        Sauf indication contraire, Apache <abbr>SIS</abbr> tente d’assurer une précision de 1 centimètre pour les coordonnées sur la Terre.
+        Mais la maîtrise de cette précision nécessite le respect de certaines conditions:
       </p>
       <ul>
-        <li>Il existe parfois plusieurs transformations allant d’un référentiel <var>A</var> vers <var>B</var>,
-            chacune étant plus précise pour une région géographique donnée.</li>
-        <li>Certaines opérations sont conçues spécifiquement pour transformer de <var>A</var> vers <var>B</var>
-            et n’ont pas la même précision qu’aurait une autre transformation faisant un détour par <abbr>WGS84</abbr>.</li>
-        <li><abbr>WGS84</abbr> lui-même subit parfois des révisions, ce qui en fait une cible mouvante (bien que très lentement)
-            pour les bibliothèques de transformations de coordonnées.</li>
-        <li>Il existe d’autres systèmes globaux qui pourraient servir de pivot, par exemple le <cite>Galileo Reference Frame</cite> (<abbr>GTRF</abbr>)
-            mis en place par le concurrent européen du <abbr>GPS</abbr>.</li>
+        <li>Rester dans la zone de validité du système telle que donnée par <code>ReferenceSystem.getDomainOfValidity()</code>.</li>
+        <li>Savoir que les mesures de distances dans une projection cartographique donnée ne sont vraies qu’à certains endroits,
+            appelés par exemple « parallèles standards ».</li>
+        <li>Vérifier la précision des transformations de coordonnées, par exemple avec
+            <code>CoordinateOperation.getCoordinateOperationAccuracy()</code>.</li>
+        <li>Trouver les paramètres les plus appropriées pour une transformation de coordonnées requiert l’usage d’une base de données géodétiques telles que <abbr>EPSG</abbr>.
+            Déclarer ces paramètres directement dans le <abbr>CRS</abbr> (par exemple avec un élément <code>TOWGS84</code>) n’est souvent pas suffisant.</li>
       </ul>
-      <div class="example"><p><b>Exemple:</b>
-        la base de données géodésiques <abbr>EPSG</abbr> définie une cinquantaine de transformations de <abbr>NAD27</abbr> vers <abbr>NAD83</abbr>.
-        Dans une approche de type « early binding », le même système de référence « <abbr>NAD27</abbr> » représenté dans le format <abbr>WKT</abbr> 1
-        aurait besoin d’être défini avec un élément <code>TOWGS84[-8, 160, 176]</code> pour des coordonnées aux États-Unis,
-        ou avec un élément <code>TOWGS84[-10, 158, 187]</code> pour coordonnées aux Canada.
-        Différents paramètres existent aussi pour d’autres régions telles que Cuba.
-        Il n’est donc pas possible de représenter une telle diversité en associant un seul élément <code>TOWGS84[…]</code> à un système de référence des coordonnées.
-        Même en restreignant l’usage d’un référenciel au domaine de validité de son élément <code>TOWGS84[…]</code>,
-        ces transformations resteraient approximatives avec une précision de 10 mètres dans le cas des États-Unis.
-        Des transformations plus précises existent sous la forme des grilles de changements de référentiel <abbr>NADCON</abbr>,
-        mais ces grilles sont pour des transformations de <abbr>NAD27</abbr> vers <abbr>NAD83</abbr>
-        (qui se déplacent ensemble sur la même plaque continentale) et non vers <abbr>WGS84</abbr> (qui se déplace indépendamment).
-        Cette différence était souvent ignorée lorsque l’on considérait que <abbr>NAD83</abbr> et <abbr>WGS84</abbr>
-        étaient pratiquement équivalents, mais cette supposition est aujourd’hui à prendre avec plus de précautions.
-      </p></div>
-      <p>
-        <abbr>EPSG</abbr> recommande plutôt d’utiliser une approche dite « late binding »,
-        selon laquelle les méthodes et paramètres nécessaires aux transformations de coordonnées sont définis pour des paires
-        de référentiels « <var>A</var> vers <var>B</var> » (éventuellement complétées par leurs domaines de validité)
-        plutôt qu’associés à des référentiels pris isolément.
-        Apache <abbr>SIS</abbr> est une implémentation de type « late binding »,
-        bien qu’une réminiscence de l’approche « early binding » existe toujours
-        sous la forme de la propriété <code>DefaultGeodeticDatum.getBursaWolfParameters()</code>.
-        <abbr>SIS</abbr> n’utilise cette dernière que comme solution de dernier recours
-        s’il ne peut pas appliquer l’approche « late binding » avec les systèmes de références donnés.
-      </p>
-    </article>
-    <p>
-      Le module <code>sis-referencing</code> de Apache <abbr>SIS</abbr> fournit un ensemble de classes implémentant
-      les différentes spécialisations de l’interface <code>ReferenceSystem</code> ainsi que leurs composantes.
-      Ces implémentations permettent de stocker une description des systèmes de références spatiales
-      ainsi que leurs méta-données telles que la zone de validité.
-      Toutefois ces objets n’effectuent aucune opération sur les coordonnées.
-      Les <cite>conversions</cite> ainsi que les <cite>transformations</cite> de coordonnées sont le travail d’une autre famille de classes,
-      dont la racine est l’interface <code>CoordinateOperation</code>.
-      Ces classes seront discutées dans <a href="#CoordinateOperation">une autre section</a>.
-    </p>
-
-
-
-    <h2 id="CRS_Components">Composantes d’un système de références par coordonnées</h2>
-    <p>
-      Les systèmes de références spatiales par coordonnées fournissent les informations nécessaires pour faire
-      correspondre des coordonnées numériques à des positions dans le monde réel. Dans Apache <abbr>SIS</abbr>,
-      ils sont pratiquement tous représentés par des classes dont le nom se termine en <abbr>CRS</abbr>
-      (l’abréviation de <i>Coordinate Reference System</i> en anglais). Ces objets contiennent:
-    </p>
-    <ul>
-      <li>Un référentiel (<i>datum</i> en anglais),
-          qui indique entre autres quel ellipsoïde utiliser comme approximation de la forme de la terre.</li>
-      <li>Une description de chaque axe (nom, direction, unité de mesure, limites).</li>
-      <li>Parfois une liste de paramètres permettant de convertir les coordonnées d’un autre système.
-          C’est le cas notamment lorsqu’on utilise des projections cartographiques.</li>
-    </ul>
-    <p>
-      Ces systèmes sont décrits par la norme <abbr>ISO</abbr> 19111 (<i>Referencing by Coordinates</i>),
-      qui remplace en grande partie une norme plus ancienne mais encore utilisée pour certains aspects,
-      <abbr>OGC 01-009</abbr> (<i>Coordinate Transformation Services</i>).
-      Ces normes sont complétées par deux autres standards définissant des formats d’échanges:
-      <abbr>ISO</abbr> 19136 et 19162 pour respectivement
-      le <cite>Geographic Markup Language</cite> (<abbr>GML</abbr>) — un format <abbr>XML</abbr> précis mais verbeux —
-      et le <cite>Well-Known Text</cite> (<abbr>WKT</abbr>) — un format texte plus facile à lire par les humains.
-    </p>
-
-    <h3 id="Ellipsoid">Géoïde et ellipsoïde</h3>
-    <p>
-      La surface topographique réelle étant difficile à représenter mathématiquement, elle n’est pas utilisée directement en cartographie.
-      Une autre surface un peu plus facilement utilisable est le géoïde,
-      une surface sur laquelle la force gravitationnelle a partout la même valeur (surface équipotentielle du champ de gravité terrestre).
-      Cette surface est en tout point perpendiculaire à la direction indiquée par un fil à plomb (verticale du lieu).
-      Le géoïde coïnciderait avec le niveau moyen des mers s’il n’y avait ni vent ni courants marins permanents comme le Gulf Stream.
-    </p><p>
-      Tout en étant nettement plus lisse que la surface topographique,
-      le géoïde présente des creux et des bosses liés à l’inégale distribution des masses de la Terre.
-      Pour une utilisation mathématiquement plus aisée, le géoïde est donc approximé par un ellipsoïde.
-      Cette « figure de la Terre » est représentée dans GeoAPI par l’interface <code>Ellipsoid</code>,
-      qui constitue un élément fondamental des systèmes de références de type <code>GeographicCRS</code> et <code>ProjectedCRS</code>.
-      Plusieurs dizaines d’ellipsoïdes sont couramment employés pour la définition de référentiels.
-      Certains offrent une excellente approximation pour une région précise
-      au détriment des régions pour lesquelles le référentiel n’a pas été conçu,
-      et d’autres offrant un compromis pour l’ensemble de la planète.
-    </p>
-    <div class="example"><p><b>Exemple:</b>
-      la base de données géodétiques <abbr>EPSG</abbr> définit entre autres les ellipsoïdes « <abbr>WGS</abbr> 84 », « Clarke 1866 », « Clarke 1880 »,
-      « <abbr>GRS</abbr> 1980 » and « <abbr>GRS</abbr> 1980 Authalic Sphere » (une sphère de même surface que l’ellipsoïde <abbr>GRS</abbr> 1980).
-      Un ellipsoïde peut être utilisé en divers endroits de la planète ou peut être très spécifique à une région précise.
-      Par exemple au début du XX<sup>e</sup> siècle aux États-Unis, l’état du Michigan utilisait pour ses cartes un ellipsoïde basé
-      sur l’ellipsoïde « Clarke 1866 » mais auquel la longueur des axes a été allongée de 800 pieds.
-      Cette modification visait à tenir compte du niveau moyen de l’état au dessus du niveau de la mer.</p>
-    </div>
-
-    <h3 id="GeodeticDatum">Référentiel géodésique</h3>
-    <p>
-      Pour définir un système géodésique dans un pays, l’état met en place un ellipsoïde de référence
-      qui épouse au mieux sur l’ensemble du pays la forme locale du géoïde.
-      L’écart entre cet ellipsoïde de référence et les creux et les bosses du géoïde reste généralement inférieur à 100 mètres.
-      Les paramètres qui permettent de lier un <code>Ellipsoid</code> à la surface de la Terre (par exemple la position de son centre)
-      sont représentées par un objet de type <code>GeodeticDatum</code>, que l’on traduit en français par « référentiel géodésique ».
-      Plusieurs <code>GeodeticDatum</code> peuvent utiliser le même <code>Ellipsoid</code>, mais centré ou orienté différemment.
-    </p><p>
-      Avant l’avènement des satellites, les mesures géodésiques se déroulaient exclusivement à la surface de la terre.
-      En conséquence, deux îles ou continents qui ne sont pas à portée visuelle l’un de l’autre n’étaient pas rattachés géodésiquement entre eux.
-      Ainsi les référentiels <cite>North American Datum 1983</cite> (<abbr>NAD83</abbr>) et
-      <cite>European Datum 1950</cite> (<abbr>ED50</abbr>) sont indépendants l’un de l’autre:
-      leurs ellipsoïdes de référence ont des centres distincts et des dimensions différentes.
-      Une même coordonnée géographique correspondra à des positions différentes dans le monde réel
-      selon que la coordonnée se réfère à l’un ou l’autre de ces référentiels.
-    </p><p>
-      L’invention du <abbr title="Global Positioning System">GPS</abbr> a précipité la création d’un système géodésique mondial,
-      nommé <abbr title="World Geodetic System 1984">WGS84</abbr>.
-      L’ellipsoïde de référence est alors unique et centré au centre de gravité de la terre.
-      Les <abbr>GPS</abbr> donnent à tout moment la position absolue du récepteur rapportée à ce système géodésique.
-      Mais <abbr>WGS84</abbr> étant un système mondial, il peut diverger significativement des systèmes locaux.
-      Par exemple l’écart entre <abbr>WGS84</abbr> et le système européen <abbr>ED50</abbr> est de l’ordre de 150 mètres,
-      et l’écart moyen par rapport au système de l’île de la Réunion 1947 est de 1,5 kilomètres.
-      Il ne faut donc pas rapporter aveuglement des positions <abbr>GPS</abbr> sur une carte.
-      Des correspondances avec les systèmes régionaux peuvent être nécessaires
-      et sont représentées dans GeoAPI sous forme d’objets de type <code>Transformation</code>.
-    </p><p>
-      Les généralisation de l’usage du système <abbr>WGS84</abbr> tend à réduire le besoin d’utiliser
-      les objets <code>Transformation</code> pour les données récentes, mais ne l’élimine pas complètement.
-      La Terre bouge sous l’effet de la tectonique des plaques et de nouveaux systèmes sont définis chaque année pour en tenir compte.
-      Par exemple bien que le référentiel <abbr>NAD83</abbr> a été défini à l’origine comme pratiquement équivalent à <abbr>WGS84</abbr>,
-      il existe maintenant (en 2016) un écart d’environ 1.5 mètres entre ces deux systèmes.
-      Le référentiel <cite>Japanese Geodetic Datum 2000</cite> était aussi défini comme pratiquement équivalent à <abbr>WGS84</abbr>,
-      mais le nouveau référentiel <cite>Japanese Geodetic Datum 2011</cite> s’en écarte.
-      Le référentiel <abbr>WGS84</abbr> lui-même, sensé correspondre à une définition à un instant donné,
-      a subit des révisions dues notamment à l’amélioration de la précision des instruments.
-      Ainsi il existe aujourd’hui au moins six versions de <abbr>WGS84</abbr>.
-      En outre beaucoups de bordures ont été définies légalement dans des référentiels plus anciens, par exemple <abbr>NAD27</abbr> aux États-Unis.
-      Mettre à jour dans un nouveau référentiel peut obliger à transformer des lignes droites ou des formes géométriques simples en des formes plus irrégulières
-      si on ne veut pas que des parcelles de terrain changent de propriétaire.
-    </p>
-
-    <h3 id="CoordinateSystem">Systèmes de coordonnées</h3>
-    <p style="color: red">TODO</p>
-
-    <h4 id="AxisOrder">Ordre des axes</h4>
-    <p>
-      L’ordre des axes est spécifié par l’autorité (typiquement une agence nationale) qui définit le
-      <cite>système de référence des coordonnées</cite> (<abbr>CRS</abbr>).
-      L’ordre dépend du type de <abbr>CRS</abbr> ainsi que du pays qui l’a définit.
-      Dans le cas des <abbr>CRS</abbr> de type géographique,
-      l’ordre (<var>latitude</var>, <var>longitude</var>) est utilisé par les géographes et les pilotes depuis des siècles.
-      Toutefois des développeurs de logiciels tendent à préférer l’ordre (<var>x</var>, <var>y</var>) pour tous systèmes de coordonnées.
-      Ces différentes pratiques entraînent des définitions contradictoires de l’ordre des axes pour pratiquement tous les <abbr>CRS</abbr>
-      de type <code>GeographicCRS</code>, pour certains <code>ProjectedCRS</code> dans l’hémisphère sud (Afrique du Sud, Australie, <i>etc.</i>)
-      et pour certaines projections polaires entre autres.
-    </p><p>
-      Les standards <abbr>OGC</abbr> récents demandent d’ordonner les axes tel que spécifié par l’autorité qui a définit le <abbr>CRS</abbr>.
-      Mais des standards <abbr>OGC</abbr> plus anciens utilisaient l’ordre (<var>x</var>, <var>y</var>) inconditionnellement,
-      en ignorant les spécifications des autorités sur ce point.
-      Beaucoup de logiciels continuent d’utiliser cet ordre (<var>x</var>, <var>y</var>),
-      peut-être parce qu’une telle uniformisation rend l’implémentation et l’utilisation des <abbr>CRS</abbr> <em>en apparence</em> plus simple.
-      Apache <abbr>SIS</abbr> supporte les deux conventions avec l’approche suivante:
-      par défaut, <abbr>SIS</abbr> construit les <abbr>CRS</abbr> avec les axes <em>dans l’ordre définit par l’autorité</em>.
-      Ces <abbr>CRS</abbr> sont construits par des appels à la méthode <code>CRS.forCode(String)</code>,
-      et l’ordre des axes effectif peut être vérifié après la création du <abbr>CRS</abbr> par un appel à <code>System.out.println(crs)</code>.
-      Mais si l’ordre (<var>x</var>, <var>y</var>) est désiré pour des raisons de compatibilité avec d’anciens standards <abbr>OGC</abbr> ou avec d’autres logiciels,
-      alors les <abbr>CRS</abbr> peuvent être modifiés de manière à avoir la longitude en premier avec un appel à la méthode suivante:
-    </p>
-    <pre>CoordinateReferenceSystem crs = …;  // CRS obtenu de n’importe quelle façon.
-crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)</pre>
-    <p>
-      Parmi les anciens standards de l’<abbr>OGC</abbr> qui utilisaient un ordre des axes non-conforme,
-      un standard influent était la version 1 du format <cite>Well Known Text</cite> (<abbr>WKT</abbr>).
-      D’après ce format largement utilisé, les définitions <abbr>WKT</abbr> 1 sans éléments <code>AXIS[…]</code> explicites
-      doivent être interprétés comme ayant ses axes dans l’ordre (<var>longitude</var>, <var>latitude</var>) ou (<var>x</var>, <var>y</var>).
-      Dans la version 2 du format <abbr>WKT</abbr>, les éléments <code>AXIS[…]</code> ne sont plus optionnel
-      et devrait contenir explicitement un sous-élément <code>ORDER[…]</code> pour rendre l’ordre voulu encore plus évident.
-      Mais si les éléments <code>AXIS[…]</code> sont malgré tout omis dans une définition <abbr>WKT</abbr> 2,
-      alors Apache <abbr>SIS</abbr> utilise l’ordre (<var>latitude</var>, <var>longitude</var>) par défaut.
-      Pour résumer:
-    </p>
-    <ul>
-      <li>L’ordre par défaut d’un <abbr>CRS</abbr> géographique en <abbr>WKT</abbr> 1 est (<var>longitude</var>, <var>latitude</var>) tel que spécifié par le standard <abbr>OGC</abbr> 01-009.</li>
-      <li>L’ordre par défaut d’un <abbr>CRS</abbr> géographique en <abbr>WKT</abbr> 2 est (<var>latitude</var>, <var>longitude</var>), mais c’est une interprétation spécifique de <abbr>SIS</abbr>
-        vu que la norme <abbr>ISO</abbr> 19162 ne mentionne pas de comportement par défaut.</li>
-    </ul>
-    <p>
-      Pour éviter des ambiguïtés, les utilisateurs sont encouragés à toujours fournir explicitement les éléments <code>AXIS[…]</code> dans leurs <abbr>WKT</abbr>.
-      Le format <abbr>WKT</abbr> sera présenté plus en détails dans les sections suivantes.
-    </p>
-
-    <h3 id="GeographicCRS">Systèmes géographiques</h3>
-    <p style="color: red">TODO</p>
-
-    <h4 id="GeographicWKT">Format <i>Well-Known Text</i></h4>
-    <p style="color: red">TODO</p>
-
-    <h3 id="ProjectedCRS">Projections cartographiques</h3>
-    <p>
-      Les projections cartographiques représentent une surface courbe (la Terre) sur une surface plane (une carte ou un écran d’ordinateur)
-      en contrôlant les déformations: on peut préserver les angles ou les surfaces, mais pas les deux à la fois.
-      Les propriétés géométriques à conserver dépendent de l’objet d’étude et du travail à effectuer.
-      Par exemple les pays plutôt allongés dans le sens Est-Ouest utilisent souvent une projection de Lambert,
-      alors que les pays plutôt allongés dans le sens Nord-Sud préfèrent une projection de Mercator Transverse.
-    </p>
-    <p style="color: red">TODO</p>
-
-    <h4 id="ProjectedWKT">Format <i>Well-Known Text</i></h4>
-    <p style="color: red">TODO</p>
-
-    <h3 id="CompoundCRS">Dimensions verticales et temporelles</h3>
-    <p style="color: red">TODO</p>
-
-    <h4 id="CompoundWKT">Format <i>Well-Known Text</i></h4>
-    <p style="color: red">TODO</p>
-
-
-
-    <h2 id="GetCRS">Obtention d’un système de référence spatial</h2>
-    <p style="color: red">TODO</p>
-
-    <h3 id="CRSAuthorityFactory">Systèmes prédéfinis par des autorités</h3>
-    <p style="color: red">TODO</p>
-
-    <h3 id="CRSParsing">Lecture d’une définition au format GML ou WKT</h3>
-    <p style="color: red">TODO</p>
-
-    <h3 id="CRSFactory">Construction programmatique explicite</h3>
-    <p style="color: red">TODO</p>
-
-    <h3 id="CRS_UserCode">Ajout de définitions</h3>
-    <p style="color: red">TODO</p>
-
-
-
-    <h2 id="CoordinateOperation">Opérations sur les coordonnées</h2>
-    <p>
-      Étant donné un système de référence des coordonnées (<abbr>CRS</abbr>) <em>source</em> selon lequel sont exprimés des coordonnées existantes
-      et un système de référence des coordonnées <em>destination</em> selon lequel les coordonnées sont désirées,
-      Apache <abbr>SIS</abbr> peut fournir une <em>opération sur les coordonnées</em> qui effectuera le travail de conversion ou de transformation.
-      La recherche d’une opération peut utiliser un troisième argument, optionnel mais recommandé: la région géographique des données à transformer.
-      Ce dernier argument est recommandé parce que les opérations sur les coordonnées sont souvent valides seulement dans une région géographique
-      (typiquement un pays ou une province particulière), et plusieurs transformations peuvent exister pour la même paire de <abbr>CRS</abbr>
-      source et destination mais avec des domaines de validité différents.
-      Il peut aussi y avoir des différentes transformations qui sont différents compromis entre la précision et le domaine de validité,
-      de sorte que spécifier à Apache <abbr>SIS</abbr> qu’on s’intéresse à une région plus petite
-      peut lui permettre de sélectionner une opération plus précise.
-    </p>
-    <div class="example"><p><b>Exemple:</b>
-      la base de données géodésiques <abbr>EPSG</abbr> (dans sa version 7.9) définit 77 opérations sur les coordonnées
-      allant du système géographique <cite>North American Datum 1927</cite> (EPSG:4267)
-      vers le système <cite>World Geodetic System 1984</cite> (EPSG:4326).
-      Il y a une opération valide seulement pour la transformation de coordonnées au Québec,
-      une autre opération valide pour la transformation de coordonnées au Texas mais à l’ouest de 100°W,
-      une autre opération pour le même état mais à l’est de 100°W, <i>etc</i>.
-      Si l’utilisateur ne spécifie pas la région géographique qui l’intéresse,
-      alors le comportement par défaut de Apache <abbr>SIS</abbr> est de sélectionner l’opération valide dans la plus grande région géographique.
-      Dans cet exemple, ce critère entraîne la sélection d’une opération valide pour le Canada, mais qui n’est pas valide pour les États-Unis.</p>
-    </div>
-    <p>
-      La façon la plus facile d’obtenir une opération sur les coordonnées à partir des informations présentées ci-dessus
-      est d’utiliser la classe de commodité <code>org.apache.sis.referencing.CRS</code>:
-    </p>
-    <pre>CoordinateOperation cop = CRS.findOperation(sourceCRS, targetCRS, areaOfInterest);</pre>
-    <p>
-      Parmi les information fournies par l’objet <code>CoordinateOperation</code> obtenu, on note en particulier:
-    </p>
-    <ul>
-      <li>Le <cite>domaine de validité</cite>, soit comme une description textuelle telle que « Canada – onshore and offshore »
-        ou comme les coordonnées géographiques d’une boîte englobante.</li>
-      <li>La <cite>précision</cite>, qui peut être n’importe quoi entre 1 centimètre et quelques kilomètres.</li>
-      <li>Le sous-type de l’opération sur les coordonnées. Parmi les sous-types possibles,
-        deux offrent les mêmes fonctionnalités mais avec une différence conceptuelle notable:
-        <ul class="verbose">
-          <li>
-            Les <strong>conversions</strong> de coordonnées sont entièrement définies par une formule mathématique.
-            Les conversions s’effectueraient avec une précision infinie s’il n’y avait pas les inévitables
-            erreurs d’arrondissements inhérents aux calculs sur des nombres réels.
-            Les projections cartographiques entrent dans cette catégorie.
-          </li><li>
-            Les <strong>transformations</strong> de coordonnées sont définies de manière empirique.
-            Elles ont souvent des erreurs de quelques mètres qui ne sont pas dues à des limites de la précision des ordinateurs.
-            Ces erreurs découlent du fait que la transformation utilisée n’est qu’une approximation d’une réalité plus complexe.
-            Les changements de référentiels tel que le passage de la
-            <cite>Nouvelle Triangulation Française</cite> (<abbr>NTF</abbr>) vers le
-            <cite>Réseau Géodésique Français 1993</cite> (<abbr>RGF93</abbr>) entrent dans cette catégorie.
-          </li>
+      <article>
+        <header>
+          <h2>Bibliothèques de type « early binding » versus « late binding »</h2>
+        </header>
+        <p>
+          Le caractère universel du système <abbr>WGS84</abbr> rend tentante l’idée de l’utiliser comme système pivot,
+          afin de simplifier l’implémentation d’une bibliothèque de transformation de coordonnées.
+          La transformation d’une coordonnée d’un référentiel <var>A</var> vers un référentiel <var>B</var>
+          pourrait se faire en transformant d’abord de <var>A</var> vers <abbr>WGS84</abbr>, puis de <abbr>WGS84</abbr> vers <var>B</var>.
+          Il suffirait ainsi de stocker dans chaque objet <code>GeodeticDatum</code> les informations nécessaires à la transformation vers <abbr>WGS84</abbr>.
+          Cette approche était encouragée dans la version 1 du format <abbr>WKT</abbr>, qui définissait un élément <code>TOWGS84[…]</code> remplissant ce rôle.
+          Cette approche est désignée par <abbr>EPSG</abbr> sous le nom de « early binding »
+          car elle associe des informations sur la transformations de coordonnées très tôt dans la définition des objets géodésiques,
+          souvent directement au moment de la construction d’un object <code>GeographicCRS</code>.
+          Bien que <abbr>EPSG</abbr> reconnaisse que cette approche soit couramment employée, elle n’est pas recommandée pour plusieurs raisons:
+        </p>
+        <ul>
+          <li>Il existe parfois plusieurs transformations allant d’un référentiel <var>A</var> vers <var>B</var>,
+              chacune étant plus précise pour une région géographique donnée.</li>
+          <li>Certaines opérations sont conçues spécifiquement pour transformer de <var>A</var> vers <var>B</var>
+              et n’ont pas la même précision qu’aurait une autre transformation faisant un détour par <abbr>WGS84</abbr>.</li>
+          <li><abbr>WGS84</abbr> lui-même subit parfois des révisions, ce qui en fait une cible mouvante (bien que très lentement)
+              pour les bibliothèques de transformations de coordonnées.</li>
+          <li>Il existe d’autres systèmes globaux qui pourraient servir de pivot, par exemple le <cite>Galileo Reference Frame</cite> (<abbr>GTRF</abbr>)
+              mis en place par le concurrent européen du <abbr>GPS</abbr>.</li>
         </ul>
-      </li>
-    </ul>
-    <p>
-      Lorsque l’opération sur les coordonnées est une instance de <code>Transformation</code>,
-      il est possible que l’instance choisie par <abbr>SIS</abbr> ne soit qu’une parmi plusieurs possibilités en fonction de la région d’intérêt.
-      En outre, sa précision sera certainement moindre que la précision centimétrique que l’on peut attendre d’une <code>Conversion</code>.
-      Vérifier la zone de validité ainsi que la précision déclarées dans les méta-données de la transformation prend alors une importance particulière.
-    </p>
+        <div class="example"><p><b>Exemple:</b>
+          la base de données géodésiques <abbr>EPSG</abbr> définie une cinquantaine de transformations de <abbr>NAD27</abbr> vers <abbr>NAD83</abbr>.
+          Dans une approche de type « early binding », le même système de référence « <abbr>NAD27</abbr> » représenté dans le format <abbr>WKT</abbr> 1
+          aurait besoin d’être défini avec un élément <code>TOWGS84[-8, 160, 176]</code> pour des coordonnées aux États-Unis,
+          ou avec un élément <code>TOWGS84[-10, 158, 187]</code> pour coordonnées aux Canada.
+          Différents paramètres existent aussi pour d’autres régions telles que Cuba.
+          Il n’est donc pas possible de représenter une telle diversité en associant un seul élément <code>TOWGS84[…]</code> à un système de référence des coordonnées.
+          Même en restreignant l’usage d’un référenciel au domaine de validité de son élément <code>TOWGS84[…]</code>,
+          ces transformations resteraient approximatives avec une précision de 10 mètres dans le cas des États-Unis.
+          Des transformations plus précises existent sous la forme des grilles de changements de référentiel <abbr>NADCON</abbr>,
+          mais ces grilles sont pour des transformations de <abbr>NAD27</abbr> vers <abbr>NAD83</abbr>
+          (qui se déplacent ensemble sur la même plaque continentale) et non vers <abbr>WGS84</abbr> (qui se déplace indépendamment).
+          Cette différence était souvent ignorée lorsque l’on considérait que <abbr>NAD83</abbr> et <abbr>WGS84</abbr>
+          étaient pratiquement équivalents, mais cette supposition est aujourd’hui à prendre avec plus de précautions.
+        </p></div>
+        <p>
+          <abbr>EPSG</abbr> recommande plutôt d’utiliser une approche dite « late binding »,
+          selon laquelle les méthodes et paramètres nécessaires aux transformations de coordonnées sont définis pour des paires
+          de référentiels « <var>A</var> vers <var>B</var> » (éventuellement complétées par leurs domaines de validité)
+          plutôt qu’associés à des référentiels pris isolément.
+          Apache <abbr>SIS</abbr> est une implémentation de type « late binding »,
+          bien qu’une réminiscence de l’approche « early binding » existe toujours
+          sous la forme de la propriété <code>DefaultGeodeticDatum.getBursaWolfParameters()</code>.
+          <abbr>SIS</abbr> n’utilise cette dernière que comme solution de dernier recours
+          s’il ne peut pas appliquer l’approche « late binding » avec les systèmes de références donnés.
+        </p>
+      </article>
+      <p>
+        Le module <code>sis-referencing</code> de Apache <abbr>SIS</abbr> fournit un ensemble de classes implémentant
+        les différentes spécialisations de l’interface <code>ReferenceSystem</code> ainsi que leurs composantes.
+        Ces implémentations permettent de stocker une description des systèmes de références spatiales
+        ainsi que leurs méta-données telles que la zone de validité.
+        Toutefois ces objets n’effectuent aucune opération sur les coordonnées.
+        Les <cite>conversions</cite> ainsi que les <cite>transformations</cite> de coordonnées sont le travail d’une autre famille de classes,
+        dont la racine est l’interface <code>CoordinateOperation</code>.
+        Ces classes seront discutées dans <a href="#CoordinateOperation">une autre section</a>.
+      </p>
 
-    <h3 id="MathTransform">Exécution de opérations</h3>
-    <p>
-      L’objet <code>CoordinateOperation</code> introduit dans la section précédente fournit des informations de haut-niveau
-      (<abbr>CRS</abbr> source et destination, zone de validité, précision, paramètres de l’opération, <i>etc</i>).
-      Le travail mathématique réel est effectué par un objet séparé, obtenu par un appel à <code>CoordinateOperation.getMathTransform()</code>.
-      Contrairement aux instances de <code>CoordinateOperation</code>, les instances de <code>MathTransform</code> ne contiennent aucune méta-données.
-      Elles sont une sorte de boîte noire qui ignore tout des <abbr>CRS</abbr> source et destination
-      (en fait la même instance de <code>MathTransform</code> peut être utilisée pour différentes paires de <abbr>CRS</abbr> si le travail mathématique est le même).
-      En outre une instance de <code>MathTransform</code> peut être implémentée d’une manière très différente à ce que <code>CoordinateOperation</code> dit.
-      En particulier, plusieurs opérations conceptuellement différentes (par exemple rotations de la longitude,
-      changements d’unités de mesure, conversions entre deux projections de Mercator qui utilisent le même référentiel, <i>etc.</i>)
-      sont implémentées par <code>MathTransform</code> comme des <a href="#AffineTransform">transformations affines</a>
-      et concaténées pour des raisons d’efficacité, même si <code>CoordinateOperation</code> les affiche comme une chaîne d’opérations telles que la projection de Mercator.
-      La section « <a href="#CoordinateOperationSteps">chaîne d’opération conceptuelle versus réelle</a> » explique plus en détails les différences.
-    </p>
-    <p>
-      Le code Java suivant effectue une projection cartographique à partir de coordonnées géographiques selon le référentiel
-      <cite>World Geodetic System 1984</cite> (<abbr>WGS84</abbr>) vers des coordonnées selon le système <cite>WGS 84 / UTM zone 33N</cite>.
-      Afin de rendre l’exemple un peu plus simple, ce code utilise des constantes pré-définies dans la classe de commodité <code>CommonCRS</code>.
-      Mais des applications plus avancées voudront souvent utiliser des codes <abbr>EPSG</abbr> plutôt.
-      Notons que toutes les coordonnées géographiques dans ce code ont la latitude avant la longitude.
-    </p>
+
+
+      <h2 id="CRS_Components">Composantes d’un système de références par coordonnées</h2>
+      <p>
+        Les systèmes de références spatiales par coordonnées fournissent les informations nécessaires pour faire
+        correspondre des coordonnées numériques à des positions dans le monde réel. Dans Apache <abbr>SIS</abbr>,
+        ils sont pratiquement tous représentés par des classes dont le nom se termine en <abbr>CRS</abbr>
+        (l’abréviation de <i>Coordinate Reference System</i> en anglais). Ces objets contiennent:
+      </p>
+      <ul>
+        <li>Un référentiel (<i>datum</i> en anglais),
+            qui indique entre autres quel ellipsoïde utiliser comme approximation de la forme de la terre.</li>
+        <li>Une description de chaque axe (nom, direction, unité de mesure, limites).</li>
+        <li>Parfois une liste de paramètres permettant de convertir les coordonnées d’un autre système.
+            C’est le cas notamment lorsqu’on utilise des projections cartographiques.</li>
+      </ul>
+      <p>
+        Ces systèmes sont décrits par la norme <abbr>ISO</abbr> 19111 (<i>Referencing by Coordinates</i>),
+        qui remplace en grande partie une norme plus ancienne mais encore utilisée pour certains aspects,
+        <abbr>OGC 01-009</abbr> (<i>Coordinate Transformation Services</i>).
+        Ces normes sont complétées par deux autres standards définissant des formats d’échanges:
+        <abbr>ISO</abbr> 19136 et 19162 pour respectivement
+        le <cite>Geographic Markup Language</cite> (<abbr>GML</abbr>) — un format <abbr>XML</abbr> précis mais verbeux —
+        et le <cite>Well-Known Text</cite> (<abbr>WKT</abbr>) — un format texte plus facile à lire par les humains.
+      </p>
+
+      <h3 id="Ellipsoid">Géoïde et ellipsoïde</h3>
+      <p>
+        La surface topographique réelle étant difficile à représenter mathématiquement, elle n’est pas utilisée directement en cartographie.
+        Une autre surface un peu plus facilement utilisable est le géoïde,
+        une surface sur laquelle la force gravitationnelle a partout la même valeur (surface équipotentielle du champ de gravité terrestre).
+        Cette surface est en tout point perpendiculaire à la direction indiquée par un fil à plomb (verticale du lieu).
+        Le géoïde coïnciderait avec le niveau moyen des mers s’il n’y avait ni vent ni courants marins permanents comme le Gulf Stream.
+      </p><p>
+        Tout en étant nettement plus lisse que la surface topographique,
+        le géoïde présente des creux et des bosses liés à l’inégale distribution des masses de la Terre.
+        Pour une utilisation mathématiquement plus aisée, le géoïde est donc approximé par un ellipsoïde.
+        Cette « figure de la Terre » est représentée dans GeoAPI par l’interface <code>Ellipsoid</code>,
+        qui constitue un élément fondamental des systèmes de références de type <code>GeographicCRS</code> et <code>ProjectedCRS</code>.
+        Plusieurs dizaines d’ellipsoïdes sont couramment employés pour la définition de référentiels.
+        Certains offrent une excellente approximation pour une région précise
+        au détriment des régions pour lesquelles le référentiel n’a pas été conçu,
+        et d’autres offrant un compromis pour l’ensemble de la planète.
+      </p>
+      <div class="example"><p><b>Exemple:</b>
+        la base de données géodétiques <abbr>EPSG</abbr> définit entre autres les ellipsoïdes « <abbr>WGS</abbr> 84 », « Clarke 1866 », « Clarke 1880 »,
+        « <abbr>GRS</abbr> 1980 » and « <abbr>GRS</abbr> 1980 Authalic Sphere » (une sphère de même surface que l’ellipsoïde <abbr>GRS</abbr> 1980).
+        Un ellipsoïde peut être utilisé en divers endroits de la planète ou peut être très spécifique à une région précise.
+        Par exemple au début du XX<sup>e</sup> siècle aux États-Unis, l’état du Michigan utilisait pour ses cartes un ellipsoïde basé
+        sur l’ellipsoïde « Clarke 1866 » mais auquel la longueur des axes a été allongée de 800 pieds.
+        Cette modification visait à tenir compte du niveau moyen de l’état au dessus du niveau de la mer.</p>
+      </div>
+
+      <h3 id="GeodeticDatum">Référentiel géodésique</h3>
+      <p>
+        Pour définir un système géodésique dans un pays, l’état met en place un ellipsoïde de référence
+        qui épouse au mieux sur l’ensemble du pays la forme locale du géoïde.
+        L’écart entre cet ellipsoïde de référence et les creux et les bosses du géoïde reste généralement inférieur à 100 mètres.
+        Les paramètres qui permettent de lier un <code>Ellipsoid</code> à la surface de la Terre (par exemple la position de son centre)
+        sont représentées par un objet de type <code>GeodeticDatum</code>, que l’on traduit en français par « référentiel géodésique ».
+        Plusieurs <code>GeodeticDatum</code> peuvent utiliser le même <code>Ellipsoid</code>, mais centré ou orienté différemment.
+      </p><p>
+        Avant l’avènement des satellites, les mesures géodésiques se déroulaient exclusivement à la surface de la terre.
+        En conséquence, deux îles ou continents qui ne sont pas à portée visuelle l’un de l’autre n’étaient pas rattachés géodésiquement entre eux.
+        Ainsi les référentiels <cite>North American Datum 1983</cite> (<abbr>NAD83</abbr>) et
+        <cite>European Datum 1950</cite> (<abbr>ED50</abbr>) sont indépendants l’un de l’autre:
+        leurs ellipsoïdes de référence ont des centres distincts et des dimensions différentes.
+        Une même coordonnée géographique correspondra à des positions différentes dans le monde réel
+        selon que la coordonnée se réfère à l’un ou l’autre de ces référentiels.
+      </p><p>
+        L’invention du <abbr title="Global Positioning System">GPS</abbr> a précipité la création d’un système géodésique mondial,
+        nommé <abbr title="World Geodetic System 1984">WGS84</abbr>.
+        L’ellipsoïde de référence est alors unique et centré au centre de gravité de la terre.
+        Les <abbr>GPS</abbr> donnent à tout moment la position absolue du récepteur rapportée à ce système géodésique.
+        Mais <abbr>WGS84</abbr> étant un système mondial, il peut diverger significativement des systèmes locaux.
+        Par exemple l’écart entre <abbr>WGS84</abbr> et le système européen <abbr>ED50</abbr> est de l’ordre de 150 mètres,
+        et l’écart moyen par rapport au système de l’île de la Réunion 1947 est de 1,5 kilomètres.
+        Il ne faut donc pas rapporter aveuglement des positions <abbr>GPS</abbr> sur une carte.
+        Des correspondances avec les systèmes régionaux peuvent être nécessaires
+        et sont représentées dans GeoAPI sous forme d’objets de type <code>Transformation</code>.
+      </p><p>
+        Les généralisation de l’usage du système <abbr>WGS84</abbr> tend à réduire le besoin d’utiliser
+        les objets <code>Transformation</code> pour les données récentes, mais ne l’élimine pas complètement.
+        La Terre bouge sous l’effet de la tectonique des plaques et de nouveaux systèmes sont définis chaque année pour en tenir compte.
+        Par exemple bien que le référentiel <abbr>NAD83</abbr> a été défini à l’origine comme pratiquement équivalent à <abbr>WGS84</abbr>,
+        il existe maintenant (en 2016) un écart d’environ 1.5 mètres entre ces deux systèmes.
+        Le référentiel <cite>Japanese Geodetic Datum 2000</cite> était aussi défini comme pratiquement équivalent à <abbr>WGS84</abbr>,
+        mais le nouveau référentiel <cite>Japanese Geodetic Datum 2011</cite> s’en écarte.
+        Le référentiel <abbr>WGS84</abbr> lui-même, sensé correspondre à une définition à un instant donné,
+        a subit des révisions dues notamment à l’amélioration de la précision des instruments.
+        Ainsi il existe aujourd’hui au moins six versions de <abbr>WGS84</abbr>.
+        En outre beaucoups de bordures ont été définies légalement dans des référentiels plus anciens, par exemple <abbr>NAD27</abbr> aux États-Unis.
+        Mettre à jour dans un nouveau référentiel peut obliger à transformer des lignes droites ou des formes géométriques simples en des formes plus irrégulières
+        si on ne veut pas que des parcelles de terrain changent de propriétaire.
+      </p>
+
+      <h3 id="CoordinateSystem">Systèmes de coordonnées</h3>
+      <p style="color: red">TODO</p>
+
+      <h4 id="AxisOrder">Ordre des axes</h4>
+      <p>
+        L’ordre des axes est spécifié par l’autorité (typiquement une agence nationale) qui définit le
+        <cite>système de référence des coordonnées</cite> (<abbr>CRS</abbr>).
+        L’ordre dépend du type de <abbr>CRS</abbr> ainsi que du pays qui l’a définit.
+        Dans le cas des <abbr>CRS</abbr> de type géographique,
+        l’ordre (<var>latitude</var>, <var>longitude</var>) est utilisé par les géographes et les pilotes depuis des siècles.
+        Toutefois des développeurs de logiciels tendent à préférer l’ordre (<var>x</var>, <var>y</var>) pour tous systèmes de coordonnées.
+        Ces différentes pratiques entraînent des définitions contradictoires de l’ordre des axes pour pratiquement tous les <abbr>CRS</abbr>
+        de type <code>GeographicCRS</code>, pour certains <code>ProjectedCRS</code> dans l’hémisphère sud (Afrique du Sud, Australie, <i>etc.</i>)
+        et pour certaines projections polaires entre autres.
+      </p><p>
+        Les standards <abbr>OGC</abbr> récents demandent d’ordonner les axes tel que spécifié par l’autorité qui a définit le <abbr>CRS</abbr>.
+        Mais des standards <abbr>OGC</abbr> plus anciens utilisaient l’ordre (<var>x</var>, <var>y</var>) inconditionnellement,
+        en ignorant les spécifications des autorités sur ce point.
+        Beaucoup de logiciels continuent d’utiliser cet ordre (<var>x</var>, <var>y</var>),
+        peut-être parce qu’une telle uniformisation rend l’implémentation et l’utilisation des <abbr>CRS</abbr> <em>en apparence</em> plus simple.
+        Apache <abbr>SIS</abbr> supporte les deux conventions avec l’approche suivante:
+        par défaut, <abbr>SIS</abbr> construit les <abbr>CRS</abbr> avec les axes <em>dans l’ordre définit par l’autorité</em>.
+        Ces <abbr>CRS</abbr> sont construits par des appels à la méthode <code>CRS.forCode(String)</code>,
+        et l’ordre des axes effectif peut être vérifié après la création du <abbr>CRS</abbr> par un appel à <code>System.out.println(crs)</code>.
+        Mais si l’ordre (<var>x</var>, <var>y</var>) est désiré pour des raisons de compatibilité avec d’anciens standards <abbr>OGC</abbr> ou avec d’autres logiciels,
+        alors les <abbr>CRS</abbr> peuvent être modifiés de manière à avoir la longitude en premier avec un appel à la méthode suivante:
+      </p>
+
+<pre>CoordinateReferenceSystem crs = …;  // CRS obtenu de n’importe quelle façon.
+crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)</pre>
+
+      <p>
+        Parmi les anciens standards de l’<abbr>OGC</abbr> qui utilisaient un ordre des axes non-conforme,
+        un standard influent était la version 1 du format <cite>Well Known Text</cite> (<abbr>WKT</abbr>).
+        D’après ce format largement utilisé, les définitions <abbr>WKT</abbr> 1 sans éléments <code>AXIS[…]</code> explicites
+        doivent être interprétés comme ayant ses axes dans l’ordre (<var>longitude</var>, <var>latitude</var>) ou (<var>x</var>, <var>y</var>).
+        Dans la version 2 du format <abbr>WKT</abbr>, les éléments <code>AXIS[…]</code> ne sont plus optionnel
+        et devrait contenir explicitement un sous-élément <code>ORDER[…]</code> pour rendre l’ordre voulu encore plus évident.
+        Mais si les éléments <code>AXIS[…]</code> sont malgré tout omis dans une définition <abbr>WKT</abbr> 2,
+        alors Apache <abbr>SIS</abbr> utilise l’ordre (<var>latitude</var>, <var>longitude</var>) par défaut.
+        Pour résumer:
+      </p>
+      <ul>
+        <li>L’ordre par défaut d’un <abbr>CRS</abbr> géographique en <abbr>WKT</abbr> 1 est (<var>longitude</var>, <var>latitude</var>) tel que spécifié par le standard <abbr>OGC</abbr> 01-009.</li>
+        <li>L’ordre par défaut d’un <abbr>CRS</abbr> géographique en <abbr>WKT</abbr> 2 est (<var>latitude</var>, <var>longitude</var>), mais c’est une interprétation spécifique de <abbr>SIS</abbr>
+          vu que la norme <abbr>ISO</abbr> 19162 ne mentionne pas de comportement par défaut.</li>
+      </ul>
+      <p>
+        Pour éviter des ambiguïtés, les utilisateurs sont encouragés à toujours fournir explicitement les éléments <code>AXIS[…]</code> dans leurs <abbr>WKT</abbr>.
+        Le format <abbr>WKT</abbr> sera présenté plus en détails dans les sections suivantes.
+      </p>
+
+      <h3 id="GeographicCRS">Systèmes géographiques</h3>
+      <p style="color: red">TODO</p>
+
+      <h4 id="GeographicWKT">Format <i>Well-Known Text</i></h4>
+      <p style="color: red">TODO</p>
+
+      <h3 id="ProjectedCRS">Projections cartographiques</h3>
+      <p>
+        Les projections cartographiques représentent une surface courbe (la Terre) sur une surface plane (une carte ou un écran d’ordinateur)
+        en contrôlant les déformations: on peut préserver les angles ou les surfaces, mais pas les deux à la fois.
+        Les propriétés géométriques à conserver dépendent de l’objet d’étude et du travail à effectuer.
+        Par exemple les pays plutôt allongés dans le sens Est-Ouest utilisent souvent une projection de Lambert,
+        alors que les pays plutôt allongés dans le sens Nord-Sud préfèrent une projection de Mercator Transverse.
+      </p>
+      <p style="color: red">TODO</p>
+
+      <h4 id="ProjectedWKT">Format <i>Well-Known Text</i></h4>
+      <p style="color: red">TODO</p>
+
+      <h3 id="CompoundCRS">Dimensions verticales et temporelles</h3>
+      <p style="color: red">TODO</p>
+
+      <h4 id="CompoundWKT">Format <i>Well-Known Text</i></h4>
+      <p style="color: red">TODO</p>
+
+
+
+      <h2 id="GetCRS">Obtention d’un système de référence spatial</h2>
+      <p style="color: red">TODO</p>
+
+      <h3 id="CRSAuthorityFactory">Systèmes prédéfinis par des autorités</h3>
+      <p style="color: red">TODO</p>
+
+      <h3 id="CRSParsing">Lecture d’une définition au format GML ou WKT</h3>
+      <p style="color: red">TODO</p>
+
+      <h3 id="CRSFactory">Construction programmatique explicite</h3>
+      <p style="color: red">TODO</p>
+
+      <h3 id="CRS_UserCode">Ajout de définitions</h3>
+      <p style="color: red">TODO</p>
+
+
+
+      <h2 id="CoordinateOperation">Opérations sur les coordonnées</h2>
+      <p>
+        Étant donné un système de référence des coordonnées (<abbr>CRS</abbr>) <em>source</em> selon lequel sont exprimés des coordonnées existantes
+        et un système de référence des coordonnées <em>destination</em> selon lequel les coordonnées sont désirées,
+        Apache <abbr>SIS</abbr> peut fournir une <em>opération sur les coordonnées</em> qui effectuera le travail de conversion ou de transformation.
+        La recherche d’une opération peut utiliser un troisième argument, optionnel mais recommandé: la région géographique des données à transformer.
+        Ce dernier argument est recommandé parce que les opérations sur les coordonnées sont souvent valides seulement dans une région géographique
+        (typiquement un pays ou une province particulière), et plusieurs transformations peuvent exister pour la même paire de <abbr>CRS</abbr>
+        source et destination mais avec des domaines de validité différents.
+        Il peut aussi y avoir des différentes transformations qui sont différents compromis entre la précision et le domaine de validité,
+        de sorte que spécifier à Apache <abbr>SIS</abbr> qu’on s’intéresse à une région plus petite
+        peut lui permettre de sélectionner une opération plus précise.
+      </p>
+      <div class="example"><p><b>Exemple:</b>
+        la base de données géodésiques <abbr>EPSG</abbr> (dans sa version 7.9) définit 77 opérations sur les coordonnées
+        allant du système géographique <cite>North American Datum 1927</cite> (EPSG:4267)
+        vers le système <cite>World Geodetic System 1984</cite> (EPSG:4326).
+        Il y a une opération valide seulement pour la transformation de coordonnées au Québec,
+        une autre opération valide pour la transformation de coordonnées au Texas mais à l’ouest de 100°W,
+        une autre opération pour le même état mais à l’est de 100°W, <i>etc</i>.
+        Si l’utilisateur ne spécifie pas la région géographique qui l’intéresse,
+        alors le comportement par défaut de Apache <abbr>SIS</abbr> est de sélectionner l’opération valide dans la plus grande région géographique.
+        Dans cet exemple, ce critère entraîne la sélection d’une opération valide pour le Canada, mais qui n’est pas valide pour les États-Unis.</p>
+      </div>
+      <p>
+        La façon la plus facile d’obtenir une opération sur les coordonnées à partir des informations présentées ci-dessus
+        est d’utiliser la classe de commodité <code>org.apache.sis.referencing.CRS</code>:
+      </p>
+
+<pre>CoordinateOperation cop = CRS.findOperation(sourceCRS, targetCRS, areaOfInterest);</pre>
+
+      <p>
+        Parmi les information fournies par l’objet <code>CoordinateOperation</code> obtenu, on note en particulier:
+      </p>
+      <ul>
+        <li>Le <cite>domaine de validité</cite>, soit comme une description textuelle telle que « Canada – onshore and offshore »
+          ou comme les coordonnées géographiques d’une boîte englobante.</li>
+        <li>La <cite>précision</cite>, qui peut être n’importe quoi entre 1 centimètre et quelques kilomètres.</li>
+        <li>Le sous-type de l’opération sur les coordonnées. Parmi les sous-types possibles,
+          deux offrent les mêmes fonctionnalités mais avec une différence conceptuelle notable:
+          <ul class="verbose">
+            <li>
+              Les <strong>conversions</strong> de coordonnées sont entièrement définies par une formule mathématique.
+              Les conversions s’effectueraient avec une précision infinie s’il n’y avait pas les inévitables
+              erreurs d’arrondissements inhérents aux calculs sur des nombres réels.
+              Les projections cartographiques entrent dans cette catégorie.
+            </li><li>
+              Les <strong>transformations</strong> de coordonnées sont définies de manière empirique.
+              Elles ont souvent des erreurs de quelques mètres qui ne sont pas dues à des limites de la précision des ordinateurs.
+              Ces erreurs découlent du fait que la transformation utilisée n’est qu’une approximation d’une réalité plus complexe.
+              Les changements de référentiels tel que le passage de la
+              <cite>Nouvelle Triangulation Française</cite> (<abbr>NTF</abbr>) vers le
+              <cite>Réseau Géodésique Français 1993</cite> (<abbr>RGF93</abbr>) entrent dans cette catégorie.
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <p>
+        Lorsque l’opération sur les coordonnées est une instance de <code>Transformation</code>,
+        il est possible que l’instance choisie par <abbr>SIS</abbr> ne soit qu’une parmi plusieurs possibilités en fonction de la région d’intérêt.
+        En outre, sa précision sera certainement moindre que la précision centimétrique que l’on peut attendre d’une <code>Conversion</code>.
+        Vérifier la zone de validité ainsi que la précision déclarées dans les méta-données de la transformation prend alors une importance particulière.
+      </p>
+
+      <h3 id="MathTransform">Exécution de opérations</h3>
+      <p>
+        L’objet <code>CoordinateOperation</code> introduit dans la section précédente fournit des informations de haut-niveau
+        (<abbr>CRS</abbr> source et destination, zone de validité, précision, paramètres de l’opération, <i>etc</i>).
+        Le travail mathématique réel est effectué par un objet séparé, obtenu par un appel à <code>CoordinateOperation.getMathTransform()</code>.
+        Contrairement aux instances de <code>CoordinateOperation</code>, les instances de <code>MathTransform</code> ne contiennent aucune méta-données.
+        Elles sont une sorte de boîte noire qui ignore tout des <abbr>CRS</abbr> source et destination
+        (en fait la même instance de <code>MathTransform</code> peut être utilisée pour différentes paires de <abbr>CRS</abbr> si le travail mathématique est le même).
+        En outre une instance de <code>MathTransform</code> peut être implémentée d’une manière très différente à ce que <code>CoordinateOperation</code> dit.
+        En particulier, plusieurs opérations conceptuellement différentes (par exemple rotations de la longitude,
+        changements d’unités de mesure, conversions entre deux projections de Mercator qui utilisent le même référentiel, <i>etc.</i>)
+        sont implémentées par <code>MathTransform</code> comme des <a href="#AffineTransform">transformations affines</a>
+        et concaténées pour des raisons d’efficacité, même si <code>CoordinateOperation</code> les affiche comme une chaîne d’opérations telles que la projection de Mercator.
+        La section « <a href="#CoordinateOperationSteps">chaîne d’opération conceptuelle versus réelle</a> » explique plus en détails les différences.
+      </p>
+      <p>
+        Le code Java suivant effectue une projection cartographique à partir de coordonnées géographiques selon le référentiel
+        <cite>World Geodetic System 1984</cite> (<abbr>WGS84</abbr>) vers des coordonnées selon le système <cite>WGS 84 / UTM zone 33N</cite>.
+        Afin de rendre l’exemple un peu plus simple, ce code utilise des constantes pré-définies dans la classe de commodité <code>CommonCRS</code>.
+        Mais des applications plus avancées voudront souvent utiliser des codes <abbr>EPSG</abbr> plutôt.
+        Notons que toutes les coordonnées géographiques dans ce code ont la latitude avant la longitude.
+      </p>
 
 <pre>import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -429,341 +434,347 @@ public class MyApp {
 }</pre>
 
 
-    <h3 id="TransformDerivative">Dérivées partielles des opérations</h3>
-    <p>
-      La section précédente indiquait comment projeter les coordonnées d’un système de référence vers un autre.
-      Mais il existe une autre opération moins connue, qui consiste à calculer non pas la coordonnée projetée d’un point,
-      mais plutôt la dérivée de la fonction de projection cartographique en ce point.
-      Cette opération était définie dans une ancienne spécification du consortium Open Geospatial,
-      <a href="http://www.opengeospatial.org/standards/ct">OGC 01-009</a>, aujourd’hui un peu oubliée mais pourtant encore utile.
-      Appelons <var>P</var> une projection cartographique qui convertit une latitude et longitude (<var>φ</var>, <var>λ</var>) en degrés
-      vers une coordonnée projetée (<var>x</var>, <var>y</var>) en mètres.
-      Dans l’expression ci-dessous, nous représentons le résultat de la projection cartographique
-      sous forme d’une matrice colonne (la raison sera plus claire bientôt):
-    </p>
+      <h3 id="TransformDerivative">Dérivées partielles des opérations</h3>
+      <p>
+        La section précédente indiquait comment projeter les coordonnées d’un système de référence vers un autre.
+        Mais il existe une autre opération moins connue, qui consiste à calculer non pas la coordonnée projetée d’un point,
+        mais plutôt la dérivée de la fonction de projection cartographique en ce point.
+        Cette opération était définie dans une ancienne spécification du consortium Open Geospatial,
+        <a href="http://www.opengeospatial.org/standards/ct">OGC 01-009</a>, aujourd’hui un peu oubliée mais pourtant encore utile.
+        Appelons <var>P</var> une projection cartographique qui convertit une latitude et longitude (<var>φ</var>, <var>λ</var>) en degrés
+        vers une coordonnée projetée (<var>x</var>, <var>y</var>) en mètres.
+        Dans l’expression ci-dessous, nous représentons le résultat de la projection cartographique
+        sous forme d’une matrice colonne (la raison sera plus claire bientôt):
+      </p>
 
-    <table class="hidden">
-      <tr>
-        <th>Équation</th>
-        <th>Code Java</th>
-      </tr>
-      <tr>
-        <td style="vertical-align:middle; min-width:350px; padding-right:60px">
-          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
-            <mi>P</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo>
-            <mo>=</mo>
-            <mfenced open="[" close="]">
-              <mtable>
-                <mtr><mtd><mi>x</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mtd></mtr>
-                <mtr><mtd><mi>y</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mtd></mtr>
-              </mtable>
-            </mfenced>
-          </math>
-        </td>
-        <td style="vertical-align:middle; min-width:500px; padding-left:60px">
-          <pre style="margin:0">DirectPosition geographic = new DirectPosition2D(<var>φ</var>, <var>λ</var>);
+      <table class="hidden">
+        <tr>
+          <th>Équation</th>
+          <th>Code Java</th>
+        </tr>
+        <tr>
+          <td style="vertical-align:middle; min-width:350px; padding-right:60px">
+            <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
+              <mi>P</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo>
+              <mo>=</mo>
+              <mfenced open="[" close="]">
+                <mtable>
+                  <mtr><mtd><mi>x</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mtd></mtr>
+                  <mtr><mtd><mi>y</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mtd></mtr>
+                </mtable>
+              </mfenced>
+            </math>
+          </td>
+          <td style="vertical-align:middle; min-width:500px; padding-left:60px">
+
+<pre style="margin:0">DirectPosition geographic = new DirectPosition2D(<var>φ</var>, <var>λ</var>);
 DirectPosition projected = <var><b>P</b></var>.transform(geographic, null);
 double <var>x</var> = projected.getOrdinate(0);
 double <var>y</var> = projected.getOrdinate(1);</pre>
-        </td>
-      </tr>
-    </table>
 
-    <p>La dérivée de la projection cartographique en ce même point peut se représenter par une matrice Jacobienne:</p>
+          </td>
+        </tr>
+      </table>
 
-    <table class="hidden">
-      <tr>
-        <th>Équation</th>
-        <th>Code Java</th>
-      </tr>
-      <tr>
-        <td style="vertical-align:middle; min-width:350px; padding-right:60px">
-          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
-            <msup><mi>P</mi><mo>′</mo></msup><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo>
-            <mo>=</mo>
-            <msub><mi>JAC</mi><mrow><mi>P</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow></msub>
-            <mo>=</mo>
-            <mfenced open="[" close="]">
-              <mtable>
-                <mtr>
-                  <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
-                  <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
-                </mtr>
-                <mtr>
-                  <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
-                  <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
-                </mtr>
-              </mtable>
-            </mfenced>
-          </math>
-        </td>
-        <td style="vertical-align:middle; min-width:500px; padding-left:60px">
-          <pre style="margin:0">DirectPosition geographic = new DirectPosition2D(<var>φ</var>, <var>λ</var>);
+      <p>La dérivée de la projection cartographique en ce même point peut se représenter par une matrice Jacobienne:</p>
+
+      <table class="hidden">
+        <tr>
+          <th>Équation</th>
+          <th>Code Java</th>
+        </tr>
+        <tr>
+          <td style="vertical-align:middle; min-width:350px; padding-right:60px">
+            <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
+              <msup><mi>P</mi><mo>′</mo></msup><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo>
+              <mo>=</mo>
+              <msub><mi>JAC</mi><mrow><mi>P</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow></msub>
+              <mo>=</mo>
+              <mfenced open="[" close="]">
+                <mtable>
+                  <mtr>
+                    <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+                    <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
+                  </mtr>
+                  <mtr>
+                    <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+                    <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
+                  </mtr>
+                </mtable>
+              </mfenced>
+            </math>
+          </td>
+          <td style="vertical-align:middle; min-width:500px; padding-left:60px">
+
+<pre style="margin:0">DirectPosition geographic = new DirectPosition2D(<var>φ</var>, <var>λ</var>);
 Matrix jacobian = <var><b>P</b></var>.derivative(geographic);
 double dx_dλ = jacobian.getElement(0,1);
 double dy_dφ = jacobian.getElement(1,0);</pre>
+
+          </td>
+        </tr>
+      </table>
+
+      <p>
+        Les équations suivantes dans cette section abrégeront
+        ∂<var>x</var>(<var>φ</var>, <var>λ</var>) par ∂<var>x</var> ainsi que
+        ∂<var>y</var>(<var>φ</var>, <var>λ</var>) par ∂<var>y</var>,
+        mais il faut garder à l’esprit que chacune de ces valeurs dépendent de la coordonnée (<var>φ</var>, <var>λ</var>) donnée au moment du calcul de la matrice Jacobienne.
+        La première colonne de la matrice nous dit que si l’on effectue un petit déplacement de ∂<var>φ</var> degrés de latitude
+        à partir de la position (<var>φ</var>, <var>λ</var>)
+        — c’est-à-dire si on se déplace à la position geographique (<var>φ</var> + ∂<var>φ</var>, <var>λ</var>) —
+        alors la coordonnée projetée subira un déplacement de (∂<var>x</var>, ∂<var>λ</var>) metres
+        — c’est-à-dire qu’elle deviendra (<var>x</var> + ∂<var>x</var>, <var>y</var> + ∂<var>λ</var>).
+        De même la dernière colonne de la matrice nous indique quel sera le déplacement que subira la coordonnée projetée
+        si on effectue un petit déplacement de ∂<var>λ</var> degrés de longitude de la coordonnée géographique source.
+        On peut se représenter visuellement ces déplacements comme ci-dessous.
+        Cette figure représente la dérivée en deux points, <var>P</var><sub>1</sub> et <var>P</var><sub>2</sub>,
+        pour mieux illustrer le fait que le résultat varie en chaque point.
+        Dans cette figure, les vecteurs <var>U</var> et <var>V</var> désignent respectivement
+        la première et deuxième colonne des matrices Jacobiennes.
+      </p>
+
+      <table class="hidden"><tr>
+        <td><img style="border: solid 1px" src="../../content/book/images/Derivatives.png" alt="Exemple de dérivées d’une projection cartographique"/></td>
+        <td style="padding-left: 30px; vertical-align: middle">
+          <p>où les vecteurs sont reliés à la matrice par:</p>
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
+            <mtable><mtr>
+              <mtd>
+                <mover><mi>U</mi><mo>→</mo></mover><mo>=</mo>
+                <mfenced open="[" close="]">
+                  <mtable>
+                    <mtr>
+                      <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+                    </mtr>
+                    <mtr>
+                      <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+                    </mtr>
+                  </mtable>
+                </mfenced>
+              </mtd>
+              <mtd><mtext>et</mtext></mtd>
+              <mtd>
+                <mover><mi>V</mi><mo>→</mo></mover><mo>=</mo>
+                <mfenced open="[" close="]">
+                  <mtable>
+                    <mtr>
+                      <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
+                    </mtr>
+                    <mtr>
+                      <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
+                    </mtr>
+                  </mtable>
+                </mfenced>
+              </mtd>
+            </mtr></mtable>
+          </math>
         </td>
-      </tr>
-    </table>
+      </tr></table>
 
-    <p>
-      Les équations suivantes dans cette section abrégeront
-      ∂<var>x</var>(<var>φ</var>, <var>λ</var>) par ∂<var>x</var> ainsi que
-      ∂<var>y</var>(<var>φ</var>, <var>λ</var>) par ∂<var>y</var>,
-      mais il faut garder à l’esprit que chacune de ces valeurs dépendent de la coordonnée (<var>φ</var>, <var>λ</var>) donnée au moment du calcul de la matrice Jacobienne.
-      La première colonne de la matrice nous dit que si l’on effectue un petit déplacement de ∂<var>φ</var> degrés de latitude
-      à partir de la position (<var>φ</var>, <var>λ</var>)
-      — c’est-à-dire si on se déplace à la position geographique (<var>φ</var> + ∂<var>φ</var>, <var>λ</var>) —
-      alors la coordonnée projetée subira un déplacement de (∂<var>x</var>, ∂<var>λ</var>) metres
-      — c’est-à-dire qu’elle deviendra (<var>x</var> + ∂<var>x</var>, <var>y</var> + ∂<var>λ</var>).
-      De même la dernière colonne de la matrice nous indique quel sera le déplacement que subira la coordonnée projetée
-      si on effectue un petit déplacement de ∂<var>λ</var> degrés de longitude de la coordonnée géographique source.
-      On peut se représenter visuellement ces déplacements comme ci-dessous.
-      Cette figure représente la dérivée en deux points, <var>P</var><sub>1</sub> et <var>P</var><sub>2</sub>,
-      pour mieux illustrer le fait que le résultat varie en chaque point.
-      Dans cette figure, les vecteurs <var>U</var> et <var>V</var> désignent respectivement
-      la première et deuxième colonne des matrices Jacobiennes.
-    </p>
+      <p>
+        Cette figure nous montre déjà une utilisation possible des dérivées:
+        elles donnent la direction des parallèles et des méridiens à une position donnée dans une projection cartographique.
+        Par extension, on peut aussi s’en servir pour déterminer si des axes sont interchangés,
+        ou si la direction d’un axe est renversée. Mais l’intérêt des dérivées ne s’arrête pas là.
+      </p>
 
-    <table class="hidden"><tr>
-      <td><img style="border: solid 1px" src="../../content/book/images/Derivatives.png" alt="Exemple de dérivées d’une projection cartographique"/></td>
-      <td style="padding-left: 30px; vertical-align: middle">
-        <p>où les vecteurs sont reliés à la matrice par:</p>
-        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
-          <mtable><mtr>
-            <mtd>
-              <mover><mi>U</mi><mo>→</mo></mover><mo>=</mo>
-              <mfenced open="[" close="]">
-                <mtable>
-                  <mtr>
-                    <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
-                  </mtr>
-                  <mtr>
-                    <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
-                  </mtr>
-                </mtable>
-              </mfenced>
-            </mtd>
-            <mtd><mtext>et</mtext></mtd>
-            <mtd>
-              <mover><mi>V</mi><mo>→</mo></mover><mo>=</mo>
-              <mfenced open="[" close="]">
-                <mtable>
-                  <mtr>
-                    <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
-                  </mtr>
-                  <mtr>
-                    <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
-                  </mtr>
-                </mtable>
-              </mfenced>
-            </mtd>
-          </mtr></mtable>
-        </math>
-      </td>
-    </tr></table>
-
-    <p>
-      Cette figure nous montre déjà une utilisation possible des dérivées:
-      elles donnent la direction des parallèles et des méridiens à une position donnée dans une projection cartographique.
-      Par extension, on peut aussi s’en servir pour déterminer si des axes sont interchangés,
-      ou si la direction d’un axe est renversée. Mais l’intérêt des dérivées ne s’arrête pas là.
-    </p>
-
-    <h4 id="DerivativeAndEnvelope">Utilité des dérivées pour la reprojection d’enveloppes</h4>
-    <p>
-      Les systèmes d’information géographiques ont très fréquemment besoin de projeter une enveloppe.
-      Mais l’approche naïve, qui consisterait à projeter chacun des 4 coins du rectangle, ne suffit pas.
-      La figure ci-dessous montre une enveloppe avant le projection, et la forme géométrique que l’on obtiendrait
-      si on projetait finement l’enveloppe (pas seulement les 4 coins). Cette forme géométrique est plus complexe
-      qu’un simple rectangle à cause des courbures induites par la projection cartographique.
-      Construire une enveloppe rectangulaire qui engloberait les 4 coins de cette forme géométrique ne suffit pas,
-      car la surface en bas de la forme est plus basse que les 2 coins du bas.
-      Cette surface serait donc en dehors du rectangle.
-    </p>
-    <table class="hidden">
-      <tr>
-        <th>Enveloppe avant la projection</th>
-        <th>Forme géométrique après la projection</th>
-      </tr>
-      <tr>
-        <td><img style="border: solid 1px; margin-right: 15px" src="../../content/book/images/GeographicArea.png" alt="Envelope in a geographic CRS"/></td>
-        <td><img style="border: solid 1px; margin-left:  15px" src="../../content/book/images/ConicArea.png" alt="Shape in a projected CRS"/></td>
-      </tr>
-    </table>
-    <p>
-      Une façon simple d’atténuer le problème est d’échantillonner un plus grand nombre de points sur chacun des
-      bords de la forme géométrique. On trouve ainsi des bibliothèques de <abbr>SIG</abbr> qui vont par exemple
-      échantillonner 40 points sur chaque bord, et construire un rectangle qui englobe tout ces points.
-      Mais même avec 40 points, les échantillons les plus proches peuvent encore être légèrement à côté du point le plus bas de la figure.
-      Une petite portion de la forme géométrique peut donc toujours se trouver en dehors du rectangle.
-      Il est tentant de considérer cette légère erreur comme négligeable, mais quelques pixels manquants
-      entraînent divers artefacts comme une apparence de quadrillage lors de l’affichage d’images tuilées,
-      ou une “pointe de tarte” manquante lors de la projection d’images sur un pôle.
-      Augmenter artificiellement d’un certain pourcentage la taille de l’enveloppe projetée peut éliminer ces artefacts dans certains cas.
-      Mais un pourcentage trop élevé fera traiter plus de données que nécessaire
-      (en particulier lorsque cela entraîne le chargement de nouvelles tuiles d’images),
-      alors qu’un pourcentage trop faible laissera quelques artefacts.
-    </p><p>
-      Les dérivées des projections cartographiques permettent de résoudre ce problème d’une manière plus efficace que la force brute.
-      La figure ci-dessous reprend la forme projetée en exagérant des déformations.
-      L’approche consiste à calculer la projection cartographiques des 4 coins comme dans l’approche naïve,
-      mais en récupérant aussi les dérivées de la projection de ces 4 coins.
-      Entre deux coins et avec leurs dérivées, on peut faire passer une et une seule courbe cubique
-      (de la forme <i>f(<var>x</var>)</i> = <var>C</var>₀ + <var>C</var>₁<var>x</var> + <var>C</var>₂<var>x</var>² + <var>C</var>₃<var>x</var>³),
-      dont on peut calculer les coefficients <var>C</var>.
-      Cette approximation (représentée en rouge ci-dessous) ne correspond pas tout-à-fait à la courbe désirée (en bleue) mais s’en rapproche.
-      Ce qui nous intéresse n’est pas vraiment les valeurs de l’approximation, mais plutôt la position de son minimum,
-      en particulier la longitude λ où se trouve ce minimum dans notre exemple (ligne pointillée verte).
-      L’avantage est que la position du minimum d’une courbe cubique est facile à calculer lorsque l’on connaît les valeurs de <var>C</var>.
-      En supposant que la longitude du minimum de la courbe cubique est proche de la longitude du minimum de la courbe réelle,
-      il suffit de calculer la projection cartographique d’un point à cette longitude plutôt que d’échantillonner 40 points sur le bord de l’enveloppe.
-    </p>
-    <table class="hidden"><tr><td>
-      <img src="../../content/book/images/Approximation.png" alt="Approximation cubique d’un bord d’une enveloppe"/>
-    </td><td style="padding-left: 60px">
-      Légende:
-      <ul>
-        <li><b>En bleue:</b> la forme géométrique correspondant à la projection de l’enveloppe.
-          C’est la forme dont on souhaite avoir le rectangle englobant.</li>
-        <li><b>En rouge</b> (sous les hachures): L’approximation
-          <var>y</var> = <var>C</var>₀ + <var>C</var>₁λ + <var>C</var>₂λ² + <var>C</var>₃λ³.</li>
-        <li><b>En vert</b> (pointillés): La position λ<sub>m</sub> du minimum de l’approximation, trouvée en résolvant
-          0 = <var>C</var>₁ + 2<var>C</var>₂λ<sub>m</sub> + 3<var>C</var>₃λ<sub>m</sub>².
-          Il peut y avoir jusqu’à deux minimums pour une même courbe cubique.</li>
-      </ul>
-    </td></tr></table>
-    <p>
-      Dans la pratique Apache <abbr>SIS</abbr> utilise 8 points, soit les 4 coins plus un point au centre de chaque bord du rectangle à projeter,
-      afin de réduire le risque d’erreur qu’induirait une courbe trop tordue entre deux points.
-      Selon nos tests, l’utilisation de ces seuls 8 points avec leurs dérivées comme décrit ci-haut
-      donne un résultat plus précis que l’approche « force brute » utilisant un échantillonnage de 160 points sur les 4 bords du rectangle.
-      La précision de <abbr>SIS</abbr> pourrait être encore améliorée en répétant le processus à partir du minimum trouvée
-      (une ou deux itérations suffiraient peut-être).
-    </p><p>
-      Une économie de 150 points n’est pas énorme vu les performances des ordinateurs d’aujourd’hui.
-      Mais toute la discussion précédente utilisait une forme géométrique à deux dimensions en guise d’exemple,
-      alors que l’algorithme est applicable dans un espace à <var>n</var> dimensions.
-      Et de fait, l’implémentation de Apache SIS fonctionne pour un nombre arbitraire de dimensions.
-      Les économies apportées par cet algorithme par rapport à la force brute augmentent de manière exponentielle avec le nombre de dimensions.
-    </p><p>
-      L’approche décrite dans cette section est implémentée dans Apache <abbr>SIS</abbr>
-      par la méthode statique <code>Envelopes.transform(CoordinateOperation, Envelope)</code>.
-      Une méthode <code>Envelopes.transform(MathTransform, Envelope)</code> existe aussi comme alternative,
-      mais cette dernière ne devrait être utilisée que si on ne connaît pas l’objet <code>CoordinateOperation</code> utilisé.
-      La raison est que les objets de type <code>MathTransform</code> ne contiennent pas d’information sur le système de coordonnées sous-jasent,
-      ce qui empêche la méthode <code>Envelopes.transform(…)</code> de savoir comment gérer les points aux pôles.
-    </p>
+      <h4 id="DerivativeAndEnvelope">Utilité des dérivées pour la reprojection d’enveloppes</h4>
+      <p>
+        Les systèmes d’information géographiques ont très fréquemment besoin de projeter une enveloppe.
+        Mais l’approche naïve, qui consisterait à projeter chacun des 4 coins du rectangle, ne suffit pas.
+        La figure ci-dessous montre une enveloppe avant le projection, et la forme géométrique que l’on obtiendrait
+        si on projetait finement l’enveloppe (pas seulement les 4 coins). Cette forme géométrique est plus complexe
+        qu’un simple rectangle à cause des courbures induites par la projection cartographique.
+        Construire une enveloppe rectangulaire qui engloberait les 4 coins de cette forme géométrique ne suffit pas,
+        car la surface en bas de la forme est plus basse que les 2 coins du bas.
+        Cette surface serait donc en dehors du rectangle.
+      </p>
+      <table class="hidden">
+        <tr>
+          <th>Enveloppe avant la projection</th>
+          <th>Forme géométrique après la projection</th>
+        </tr>
+        <tr>
+          <td><img style="border: solid 1px; margin-right: 15px" src="../../content/book/images/GeographicArea.png" alt="Envelope in a geographic CRS"/></td>
+          <td><img style="border: solid 1px; margin-left:  15px" src="../../content/book/images/ConicArea.png" alt="Shape in a projected CRS"/></td>
+        </tr>
+      </table>
+      <p>
+        Une façon simple d’atténuer le problème est d’échantillonner un plus grand nombre de points sur chacun des
+        bords de la forme géométrique. On trouve ainsi des bibliothèques de <abbr>SIG</abbr> qui vont par exemple
+        échantillonner 40 points sur chaque bord, et construire un rectangle qui englobe tout ces points.
+        Mais même avec 40 points, les échantillons les plus proches peuvent encore être légèrement à côté du point le plus bas de la figure.
+        Une petite portion de la forme géométrique peut donc toujours se trouver en dehors du rectangle.
+        Il est tentant de considérer cette légère erreur comme négligeable, mais quelques pixels manquants
+        entraînent divers artefacts comme une apparence de quadrillage lors de l’affichage d’images tuilées,
+        ou une “pointe de tarte” manquante lors de la projection d’images sur un pôle.
+        Augmenter artificiellement d’un certain pourcentage la taille de l’enveloppe projetée peut éliminer ces artefacts dans certains cas.
+        Mais un pourcentage trop élevé fera traiter plus de données que nécessaire
+        (en particulier lorsque cela entraîne le chargement de nouvelles tuiles d’images),
+        alors qu’un pourcentage trop faible laissera quelques artefacts.
+      </p><p>
+        Les dérivées des projections cartographiques permettent de résoudre ce problème d’une manière plus efficace que la force brute.
+        La figure ci-dessous reprend la forme projetée en exagérant des déformations.
+        L’approche consiste à calculer la projection cartographiques des 4 coins comme dans l’approche naïve,
+        mais en récupérant aussi les dérivées de la projection de ces 4 coins.
+        Entre deux coins et avec leurs dérivées, on peut faire passer une et une seule courbe cubique
+        (de la forme <i>f(<var>x</var>)</i> = <var>C</var>₀ + <var>C</var>₁<var>x</var> + <var>C</var>₂<var>x</var>² + <var>C</var>₃<var>x</var>³),
+        dont on peut calculer les coefficients <var>C</var>.
+        Cette approximation (représentée en rouge ci-dessous) ne correspond pas tout-à-fait à la courbe désirée (en bleue) mais s’en rapproche.
+        Ce qui nous intéresse n’est pas vraiment les valeurs de l’approximation, mais plutôt la position de son minimum,
+        en particulier la longitude λ où se trouve ce minimum dans notre exemple (ligne pointillée verte).
+        L’avantage est que la position du minimum d’une courbe cubique est facile à calculer lorsque l’on connaît les valeurs de <var>C</var>.
+        En supposant que la longitude du minimum de la courbe cubique est proche de la longitude du minimum de la courbe réelle,
+        il suffit de calculer la projection cartographique d’un point à cette longitude plutôt que d’échantillonner 40 points sur le bord de l’enveloppe.
+      </p>
+      <table class="hidden"><tr><td>
+        <img src="../../content/book/images/Approximation.png" alt="Approximation cubique d’un bord d’une enveloppe"/>
+      </td><td style="padding-left: 60px">
+        Légende:
+        <ul>
+          <li><b>En bleue:</b> la forme géométrique correspondant à la projection de l’enveloppe.
+            C’est la forme dont on souhaite avoir le rectangle englobant.</li>
+          <li><b>En rouge</b> (sous les hachures): L’approximation
+            <var>y</var> = <var>C</var>₀ + <var>C</var>₁λ + <var>C</var>₂λ² + <var>C</var>₃λ³.</li>
+          <li><b>En vert</b> (pointillés): La position λ<sub>m</sub> du minimum de l’approximation, trouvée en résolvant
+            0 = <var>C</var>₁ + 2<var>C</var>₂λ<sub>m</sub> + 3<var>C</var>₃λ<sub>m</sub>².
+            Il peut y avoir jusqu’à deux minimums pour une même courbe cubique.</li>
+        </ul>
+      </td></tr></table>
+      <p>
+        Dans la pratique Apache <abbr>SIS</abbr> utilise 8 points, soit les 4 coins plus un point au centre de chaque bord du rectangle à projeter,
+        afin de réduire le risque d’erreur qu’induirait une courbe trop tordue entre deux points.
+        Selon nos tests, l’utilisation de ces seuls 8 points avec leurs dérivées comme décrit ci-haut
+        donne un résultat plus précis que l’approche « force brute » utilisant un échantillonnage de 160 points sur les 4 bords du rectangle.
+        La précision de <abbr>SIS</abbr> pourrait être encore améliorée en répétant le processus à partir du minimum trouvée
+        (une ou deux itérations suffiraient peut-être).
+      </p><p>
+        Une économie de 150 points n’est pas énorme vu les performances des ordinateurs d’aujourd’hui.
+        Mais toute la discussion précédente utilisait une forme géométrique à deux dimensions en guise d’exemple,
+        alors que l’algorithme est applicable dans un espace à <var>n</var> dimensions.
+        Et de fait, l’implémentation de Apache SIS fonctionne pour un nombre arbitraire de dimensions.
+        Les économies apportées par cet algorithme par rapport à la force brute augmentent de manière exponentielle avec le nombre de dimensions.
+      </p><p>
+        L’approche décrite dans cette section est implémentée dans Apache <abbr>SIS</abbr>
+        par la méthode statique <code>Envelopes.transform(CoordinateOperation, Envelope)</code>.
+        Une méthode <code>Envelopes.transform(MathTransform, Envelope)</code> existe aussi comme alternative,
+        mais cette dernière ne devrait être utilisée que si on ne connaît pas l’objet <code>CoordinateOperation</code> utilisé.
+        La raison est que les objets de type <code>MathTransform</code> ne contiennent pas d’information sur le système de coordonnées sous-jasent,
+        ce qui empêche la méthode <code>Envelopes.transform(…)</code> de savoir comment gérer les points aux pôles.
+      </p>
 
 
-    <h4 id="DerivativeAndRaster">Utilité des dérivées pour la reprojection d’images</h4>
-    <p>
-      La projection cartographique d’une image s’effectue en préparant une image initialement vide qui contiendra le résultat de l’opération,
-      puis à remplir cette image en itérant sur tous les pixels. Pour chaque pixel de l’image <em>destination</em>, on obtient la coordonnées
-      du pixel correspondant dans l’image source en utilisant <em>l’inverse</em> de la projection cartographique que l’on souhaite appliquer.
-      La position obtenue ne sera pas nécessairement au centre du pixel de l’image source, ce qui implique qu’une interpolation de la valeur
-      (ou de la couleur dans l’image ci-dessous) peut être nécessaire.
-    </p>
-    <table class="hidden">
-      <tr>
-        <th style="text-align: left">Image source</th>
-        <th style="text-align: right">Image destination</th>
-      </tr>
-      <tr>
-        <td colspan="2"><img src="../../content/book/images/RasterProjection.png" alt="Intersection of derivatives"/></td>
-      </tr>
-    </table>
-    <p>
-      Toutefois, calculer la projection inverse pour chacun des pixels peut être relativement lent.
-      Afin d’accélérer les calculs, on utilise parfois une <cite>grille d’interpolation</cite>
-      dans laquelle on a pré-calculé les <em>coordonnées</em> de la projection inverse de seulement quelques points.
-      Les coordonnées des autres points se calculent alors par des interpolations bilinéaires entre les points pré-calculés,
-      calculs qui pourraient éventuellement tirer parti d’accélérations matérielles sous forme de <cite>transformations affines</cite>.
-      Cette approche est implémentée par exemple dans la bibliothèque <cite>Java Advanced Imaging</cite> avec l’objet <code>WarpGrid</code>.
-      Elle offre en outre l’avantage de permettre de réutiliser la grille autant de fois que l’on veut si on a plusieurs images de même
-      taille à projeter aux mêmes coordonnées géographiques.
-    </p><p>
-      Mais une difficulté de cette approche est de déterminer combien de points il faut pré-calculer pour que l’erreur
-      (la différence entre une position interpolée et la position réelle) ne dépasse pas un certain seuil (par exemple ¼ de pixel).
-      On peut procéder en commençant par une grille de taille 3×3, puis en augmentant le nombre de points de manière itérative:
-    </p>
-    <table class="hidden"><tr>
-      <td><img src="../../content/book/images/WarpGrid.png" alt="Intersection of derivatives"/></td>
-      <td style="padding-left: 60px">
-      Légende:
-      <ul>
-        <li><b>Points bleus:</b>  première itération (9 points).</li>
-        <li><b>Points verts:</b>   seconde itération (25 points, dont 16 nouveaux).</li>
-        <li><b>Points rouges:</b> troisième itération (81 points, dont 56 nouveaux).</li>
-      </ul>
-      Si l’on continue…
-      <ul>
-        <li>Quatrième itération: 289 points, dont 208 nouveaux.</li>
-        <li>Cinquième itération: 1089 points, dont 800 nouveaux.</li>
-        <li>Sixième itération: 4225 points, dont 3136 nouveaux.</li>
-        <li>…</li>
-      </ul>
-    </td></tr></table>
-    <p>
-      L’itération s’arrête lorsque, après avoir calculé de nouveaux points, on a vérifié que la différence entre les
-      coordonnées projetées et les coordonnées interpolées de ces nouveaux points est inférieure au seuil qu’on s’est fixé.
-      Malheureusement cette approche nous permet seulement de déterminer <strong>après</strong> avoir calculé de nouveaux points…
-      que ce n’était pas la peine de les calculer. C’est un peu dommage vu que le nombre de nouveaux points requis par chaque itération
-      est environ 3 fois la <em>somme</em> du nombre de nouveaux points de <em>toutes</em> les itérations précédentes.
-    </p><p>
-      Les dérivées des projections cartographiques nous permettent d’améliorer cette situation en estimant
-      si c’est la peine d’effectuer une nouvelle itération <strong>avant</strong> de la faire.
-      L’idée de base est de vérifier si les dérivées de deux points voisins sont presque pareilles,
-      auquel cas on présumera que la transformation entre ces deux points est pratiquement linéaire.
-      Pour quantifier « presque pareil », on procède en calculant l’intersection entre les tangentes aux deux points
-      (une information fournie par les dérivées), et en calculant la distance entre cette intersection et la droite
-      qui relie les deux points (la ligne pointillée dans la figure ci-dessous).
-    </p>
-    <p style="text-align:center"><img style="border: solid 1px" src="../../content/book/images/IntersectionOfDerivatives.png" alt="Intersection of derivatives"/></p>
-    <p>
-      Dans l’approche sans dérivées, l’itération s’arrête lorsque la distance entre la ligne pointillée (positions interpolées)
-      et la ligne rouge (positions projetées) est inférieure au seuil de tolérance, ce qui implique de calculer la position projetée.
-      Dans l’approche avec dérivées, on remplace la position projetée par l’intersection des deux tangentes (carré bleu foncé).
-      Si la courbe n’est pas trop tordue – ce qui ne devrait pas être le cas entre deux points suffisamment proches –
-      la courbe réelle passera à quelque part entre la droite pointillée et l’intersection.
-      On s’évite ainsi des projections cartographiques, en apparence une seule dans cette illustration,
-      mais en fait beaucoup plus dans une grille de transformation d’image (3× la somme des itérations précédentes).
-    </p>
+      <h4 id="DerivativeAndRaster">Utilité des dérivées pour la reprojection d’images</h4>
+      <p>
+        La projection cartographique d’une image s’effectue en préparant une image initialement vide qui contiendra le résultat de l’opération,
+        puis à remplir cette image en itérant sur tous les pixels. Pour chaque pixel de l’image <em>destination</em>, on obtient la coordonnées
+        du pixel correspondant dans l’image source en utilisant <em>l’inverse</em> de la projection cartographique que l’on souhaite appliquer.
+        La position obtenue ne sera pas nécessairement au centre du pixel de l’image source, ce qui implique qu’une interpolation de la valeur
+        (ou de la couleur dans l’image ci-dessous) peut être nécessaire.
+      </p>
+      <table class="hidden">
+        <tr>
+          <th style="text-align: left">Image source</th>
+          <th style="text-align: right">Image destination</th>
+        </tr>
+        <tr>
+          <td colspan="2"><img src="../../content/book/images/RasterProjection.png" alt="Intersection of derivatives"/></td>
+        </tr>
+      </table>
+      <p>
+        Toutefois, calculer la projection inverse pour chacun des pixels peut être relativement lent.
+        Afin d’accélérer les calculs, on utilise parfois une <cite>grille d’interpolation</cite>
+        dans laquelle on a pré-calculé les <em>coordonnées</em> de la projection inverse de seulement quelques points.
+        Les coordonnées des autres points se calculent alors par des interpolations bilinéaires entre les points pré-calculés,
+        calculs qui pourraient éventuellement tirer parti d’accélérations matérielles sous forme de <cite>transformations affines</cite>.
+        Cette approche est implémentée par exemple dans la bibliothèque <cite>Java Advanced Imaging</cite> avec l’objet <code>WarpGrid</code>.
+        Elle offre en outre l’avantage de permettre de réutiliser la grille autant de fois que l’on veut si on a plusieurs images de même
+        taille à projeter aux mêmes coordonnées géographiques.
+      </p><p>
+        Mais une difficulté de cette approche est de déterminer combien de points il faut pré-calculer pour que l’erreur
+        (la différence entre une position interpolée et la position réelle) ne dépasse pas un certain seuil (par exemple ¼ de pixel).
+        On peut procéder en commençant par une grille de taille 3×3, puis en augmentant le nombre de points de manière itérative:
+      </p>
+      <table class="hidden"><tr>
+        <td><img src="../../content/book/images/WarpGrid.png" alt="Intersection of derivatives"/></td>
+        <td style="padding-left: 60px">
+        Légende:
+        <ul>
+          <li><b>Points bleus:</b>  première itération (9 points).</li>
+          <li><b>Points verts:</b>   seconde itération (25 points, dont 16 nouveaux).</li>
+          <li><b>Points rouges:</b> troisième itération (81 points, dont 56 nouveaux).</li>
+        </ul>
+        Si l’on continue…
+        <ul>
+          <li>Quatrième itération: 289 points, dont 208 nouveaux.</li>
+          <li>Cinquième itération: 1089 points, dont 800 nouveaux.</li>
+          <li>Sixième itération: 4225 points, dont 3136 nouveaux.</li>
+          <li>…</li>
+        </ul>
+      </td></tr></table>
+      <p>
+        L’itération s’arrête lorsque, après avoir calculé de nouveaux points, on a vérifié que la différence entre les
+        coordonnées projetées et les coordonnées interpolées de ces nouveaux points est inférieure au seuil qu’on s’est fixé.
+        Malheureusement cette approche nous permet seulement de déterminer <strong>après</strong> avoir calculé de nouveaux points…
+        que ce n’était pas la peine de les calculer. C’est un peu dommage vu que le nombre de nouveaux points requis par chaque itération
+        est environ 3 fois la <em>somme</em> du nombre de nouveaux points de <em>toutes</em> les itérations précédentes.
+      </p><p>
+        Les dérivées des projections cartographiques nous permettent d’améliorer cette situation en estimant
+        si c’est la peine d’effectuer une nouvelle itération <strong>avant</strong> de la faire.
+        L’idée de base est de vérifier si les dérivées de deux points voisins sont presque pareilles,
+        auquel cas on présumera que la transformation entre ces deux points est pratiquement linéaire.
+        Pour quantifier « presque pareil », on procède en calculant l’intersection entre les tangentes aux deux points
+        (une information fournie par les dérivées), et en calculant la distance entre cette intersection et la droite
+        qui relie les deux points (la ligne pointillée dans la figure ci-dessous).
+      </p>
+      <p style="text-align:center"><img style="border: solid 1px" src="../../content/book/images/IntersectionOfDerivatives.png" alt="Intersection of derivatives"/></p>
+      <p>
+        Dans l’approche sans dérivées, l’itération s’arrête lorsque la distance entre la ligne pointillée (positions interpolées)
+        et la ligne rouge (positions projetées) est inférieure au seuil de tolérance, ce qui implique de calculer la position projetée.
+        Dans l’approche avec dérivées, on remplace la position projetée par l’intersection des deux tangentes (carré bleu foncé).
+        Si la courbe n’est pas trop tordue – ce qui ne devrait pas être le cas entre deux points suffisamment proches –
+        la courbe réelle passera à quelque part entre la droite pointillée et l’intersection.
+        On s’évite ainsi des projections cartographiques, en apparence une seule dans cette illustration,
+        mais en fait beaucoup plus dans une grille de transformation d’image (3× la somme des itérations précédentes).
+      </p>
 
-    <h4 id="GetDerivative">Obtention de la dérivée en un point</h4>
-    <p>
-      Cette discussion n’aurait pas un grand intérêt si le coût du calcul des dérivées des projections cartographiques
-      était élevé par rapport aux coût de la projection des points. Mais lorsque l’on dérive analytiquement les équations
-      des projections, on constate que les calculs des positions et de leurs dérivées ont souvent plusieurs termes en commun.
-      En outre le calcul des dérivées est simplifié lorsque le code Java effectuant les projections ne se concentre que sur le « noyau » non-linéaire,
-      après s’être déchargé des parties linéaires en les déléguant aux transformations affines comme le fait <abbr>SIS</abbr>.
-      Les implémentations des projections cartographiques dans Apache <abbr>SIS</abbr> tirent parti de ces propriétés
-      en ne calculant les dérivées que si elles sont demandées,
-      et en offrant une méthode qui permet de projeter un point et obtenir sa dérivée en une seule opération
-      afin de permettre à <abbr>SIS</abbr> de réutiliser un maximum de termes communs.
-      Exemple:</p>
+      <h4 id="GetDerivative">Obtention de la dérivée en un point</h4>
+      <p>
+        Cette discussion n’aurait pas un grand intérêt si le coût du calcul des dérivées des projections cartographiques
+        était élevé par rapport aux coût de la projection des points. Mais lorsque l’on dérive analytiquement les équations
+        des projections, on constate que les calculs des positions et de leurs dérivées ont souvent plusieurs termes en commun.
+        En outre le calcul des dérivées est simplifié lorsque le code Java effectuant les projections ne se concentre que sur le « noyau » non-linéaire,
+        après s’être déchargé des parties linéaires en les déléguant aux transformations affines comme le fait <abbr>SIS</abbr>.
+        Les implémentations des projections cartographiques dans Apache <abbr>SIS</abbr> tirent parti de ces propriétés
+        en ne calculant les dérivées que si elles sont demandées,
+        et en offrant une méthode qui permet de projeter un point et obtenir sa dérivée en une seule opération
+        afin de permettre à <abbr>SIS</abbr> de réutiliser un maximum de termes communs.
+        Exemple:</p>
 
 <pre>AbstractMathTransform projection = ...;         // Une projection cartographique de Apache SIS.
 double[] sourcePoint = {longitude, latitude};   // La coordonnée géographique que l’on veut projeter.
 double[] targetPoint = new double[2];           // Là où on mémorisera le résultat de la projection.
 Matrix   derivative  = projection.<code class="SIS">transform</code>(sourcePoint, 0, targetPoint, 0, true);</pre>
 
-    <p>
-      Si seule la matrice Jacobienne est désirée (sans la projection du point), alors la méthode
-      <code>MathTransform.derivative(DirectPosition)</code> offre une alternative plus lisible.
-    </p><p>
-      Apache <abbr>SIS</abbr> est capable combiner les dérivées des projections cartographiques de la même façon que pour les projections de coordonnées:
-      concaténation d’une chaîne de transformations, inversion, opérer sur un sous-ensemble des dimensions, <i>etc.</i>
-      Les opérations inverses (des systèmes projetés vers géographiques)
-      sont souvent beaucoup plus compliquées à implémenter que les opérations originales (des systèmes géographiques vers projetés),
-      mais par chance la matrice Jacobienne d’une fonction inverse est simplement l’inverse de la matrice Jacobienne de la fonction originale.
-      Une fonction inverse peut donc implémenter le calcul de sa dérivée comme suit:
-    </p>
+      <p>
+        Si seule la matrice Jacobienne est désirée (sans la projection du point), alors la méthode
+        <code>MathTransform.derivative(DirectPosition)</code> offre une alternative plus lisible.
+      </p><p>
+        Apache <abbr>SIS</abbr> est capable combiner les dérivées des projections cartographiques de la même façon que pour les projections de coordonnées:
+        concaténation d’une chaîne de transformations, inversion, opérer sur un sous-ensemble des dimensions, <i>etc.</i>
+        Les opérations inverses (des systèmes projetés vers géographiques)
+        sont souvent beaucoup plus compliquées à implémenter que les opérations originales (des systèmes géographiques vers projetés),
+        mais par chance la matrice Jacobienne d’une fonction inverse est simplement l’inverse de la matrice Jacobienne de la fonction originale.
+        Une fonction inverse peut donc implémenter le calcul de sa dérivée comme suit:
+      </p>
+
 <pre>@Override
 public Matrix derivative(DirectPosition p) throws TransformException {
     Matrix jac = inverse().derivative(transform(p));
     return Matrices.inverse(jac);
-}
-</pre>
+}</pre>
+
+    </section>
   </body>
 </html>

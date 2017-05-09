@@ -32,29 +32,30 @@
       Content below this point is copied in "../../content/book/fr/developer-guide.html"
       by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
     -->
-    <header>
-      <h1 id="Annexes">Annexes</h1>
-    </header>
-    <h2 id="ReduceDependency">Réduire la dépendance directe envers Apache SIS</h2>
-    <p>
-      Les chapitres précédents utilisaient des méthodes statiques de Apache SIS par commodité.
-      Dans certains cas, il est possible de remplacer ces méthodes statiques par du code ne faisant appel qu’à des méthodes de GeoAPI.
-      Ces remplacements peuvent être intéressants pour les applications qui souhaiteraient limiter les dépendances directes envers Apache SIS,
-      par exemple afin de faciliter d’éventuelles migrations entre SIS et d’autres implémentations de GeoAPI.
-      Mais cela peut amener ces applications à écrire leur propres méthodes de commodités.
-      Les sections suivantes donnent quelques pistes pour faciliter cette tâche.
-    </p>
+    <section>
+      <header>
+        <h1 id="Annexes">Annexes</h1>
+      </header>
+      <h2 id="ReduceDependency">Réduire la dépendance directe envers Apache SIS</h2>
+      <p>
+        Les chapitres précédents utilisaient des méthodes statiques de Apache SIS par commodité.
+        Dans certains cas, il est possible de remplacer ces méthodes statiques par du code ne faisant appel qu’à des méthodes de GeoAPI.
+        Ces remplacements peuvent être intéressants pour les applications qui souhaiteraient limiter les dépendances directes envers Apache SIS,
+        par exemple afin de faciliter d’éventuelles migrations entre SIS et d’autres implémentations de GeoAPI.
+        Mais cela peut amener ces applications à écrire leur propres méthodes de commodités.
+        Les sections suivantes donnent quelques pistes pour faciliter cette tâche.
+      </p>
 
-    <h3 id="UML-annotation-indep">Correspondances entre GeoAPI et les spécifications abstraites</h3>
-    <p>
-      Pour chaque classe, méthode et constante définie à partir d’un standard <abbr>OGC</abbr> ou <abbr>ISO</abbr>,
-      GeoAPI indique sa provenance à l’aide d’annotations définies dans le paquet <code>org.opengis.annotation</code>.
-      Cette correspondante est décrite dans le <a href="#UML-annotation">chapitre à propos de GeoAPI</a>.
-      Les méthodes d’introspections du Java permettent d’accéder à ces informations pendant l’exécution d’une application.
-      La classe <code>org.apache.sis.util.iso.Types</code> fournit des méthodes de commodités telles que
-      <code class="SIS">getStandardName(Class)</code> à cette fin, mais on peut éviter ces méthodes.
-      L’exemple suivant affiche le nom standard de la méthode <code class="GeoAPI">getTitle()</code> de l’interface <code>Citation</code>:
-    </p>
+      <h3 id="UML-annotation-indep">Correspondances entre GeoAPI et les spécifications abstraites</h3>
+      <p>
+        Pour chaque classe, méthode et constante définie à partir d’un standard <abbr>OGC</abbr> ou <abbr>ISO</abbr>,
+        GeoAPI indique sa provenance à l’aide d’annotations définies dans le paquet <code>org.opengis.annotation</code>.
+        Cette correspondante est décrite dans le <a href="#UML-annotation">chapitre à propos de GeoAPI</a>.
+        Les méthodes d’introspections du Java permettent d’accéder à ces informations pendant l’exécution d’une application.
+        La classe <code>org.apache.sis.util.iso.Types</code> fournit des méthodes de commodités telles que
+        <code class="SIS">getStandardName(Class)</code> à cette fin, mais on peut éviter ces méthodes.
+        L’exemple suivant affiche le nom standard de la méthode <code class="GeoAPI">getTitle()</code> de l’interface <code>Citation</code>:
+      </p>
 
 <pre>Class&lt;?&gt; type   = Citation.class;
 Method   method = type.getMethod("<code class="GeoAPI">getTitle</code>", (Class&lt;?&gt;[]) null);
@@ -62,14 +63,14 @@ UML      annot  = method.getAnnotation(UML.class);
 String   id     = annot.identifier();
 System.out.println("Le nom standard de la méthode " + method.getName() + " est " + id);</pre>
 
-    <p>
-      L’opération inverse — obtenir la classe et méthode Java d’un nom standard — est un peu plus lourde.
-      Elle nécessite la lecture du fichier <code class="GeoAPI">class-index.properties</code> fournit dans le
-      paquet <code>org.opengis.annotation</code>. L’exemple suivant lit ce fichier juste avant
-      de rechercher le nom de l’interface correspondant à <code>CI_Citation</code>.
-      Toutefois les utilisateurs sont encouragés à ne lire ce fichier qu’une fois et de conserver son contenu dans
-      une cache de leur application.
-    </p>
+      <p>
+        L’opération inverse — obtenir la classe et méthode Java d’un nom standard — est un peu plus lourde.
+        Elle nécessite la lecture du fichier <code class="GeoAPI">class-index.properties</code> fournit dans le
+        paquet <code>org.opengis.annotation</code>. L’exemple suivant lit ce fichier juste avant
+        de rechercher le nom de l’interface correspondant à <code>CI_Citation</code>.
+        Toutefois les utilisateurs sont encouragés à ne lire ce fichier qu’une fois et de conserver son contenu dans
+        une cache de leur application.
+      </p>
 
 <pre>Properties isoToGeoAPI = new Properties();
 try (InputStream in = UML.class.getResourceAsStream("<code class="GeoAPI">class-index.properties</code>")) {
@@ -80,33 +81,33 @@ String geoName = isoToGeoAPI.getProperty(isoName);
 Class&lt;?&gt;  type = Class.forName(geoName);
 System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + isoName + " est " + type);</pre>
 
-    <p>
-      La méthode de commodité de <code>org.apache.sis.util.iso.Types</code> correspondante à cette operation est
-      <code class="SIS">forStandardName(String)</code>.
-    </p>
+      <p>
+        La méthode de commodité de <code>org.apache.sis.util.iso.Types</code> correspondante à cette operation est
+        <code class="SIS">forStandardName(String)</code>.
+      </p>
 
 
 
-    <h3 id="ServiceLoader">Obtenir une implémentation des interfaces de GeoAPI</h3>
-    <p>
-      GeoAPI définit des fabriques (<code>Factory</code>) permettant de créer des implémentations de ses interfaces.
-      Par exemple <code>DatumFactory</code> fournit des méthodes permettant de créer des instances
-      implémentant les interfaces du paquet <code>org.opengis.referencing.datum</code>.
-      Ces <code>Factory</code> doivent être implémentées par les bibliothèques géospatiales
-      et déclarées comme <i>services</i> tel que défini par la classe standard <code>java.util.ServiceLoader</code>.
-      La javadoc de <code>ServiceLoader</code> explique la façon de procéder.
-      Mais pour résumer, les bibliothèques doivent créer dans le répertoire <code>META-INF/services/</code>
-      un fichier dont le nom correspond au nom complet de l’interface de la fabrique
-      (<code>org.opengis.referencing.datum.DatumFactory</code> dans l’exemple précédent).
-      Ce fichier texte doit contenir sur une ligne le nom complet de la classe implémentant cette interface.
-      Il peut s’agir d’une classe cachée aux yeux des utilisateurs, car ils n’ont pas besoin de connaître son existence.
-    </p>
-    <p>
-      Si la bibliothèque a bien déclaré ses fabriques comme des services, alors
-      les utilisateurs peuvent les obtenir en utilisant <code>ServiceLoader</code> comme dans l’exemple ci-dessous.
-      Cet exemple ne prend que la première fabrique trouvée; s’il existe plusieurs fabriques,
-      par exemple lorsque plusieurs bibliothèques cohabitent, alors le choix est laissé à l’utilisateur.
-    </p>
+      <h3 id="ServiceLoader">Obtenir une implémentation des interfaces de GeoAPI</h3>
+      <p>
+        GeoAPI définit des fabriques (<code>Factory</code>) permettant de créer des implémentations de ses interfaces.
+        Par exemple <code>DatumFactory</code> fournit des méthodes permettant de créer des instances
+        implémentant les interfaces du paquet <code>org.opengis.referencing.datum</code>.
+        Ces <code>Factory</code> doivent être implémentées par les bibliothèques géospatiales
+        et déclarées comme <i>services</i> tel que défini par la classe standard <code>java.util.ServiceLoader</code>.
+        La javadoc de <code>ServiceLoader</code> explique la façon de procéder.
+        Mais pour résumer, les bibliothèques doivent créer dans le répertoire <code>META-INF/services/</code>
+        un fichier dont le nom correspond au nom complet de l’interface de la fabrique
+        (<code>org.opengis.referencing.datum.DatumFactory</code> dans l’exemple précédent).
+        Ce fichier texte doit contenir sur une ligne le nom complet de la classe implémentant cette interface.
+        Il peut s’agir d’une classe cachée aux yeux des utilisateurs, car ils n’ont pas besoin de connaître son existence.
+      </p>
+      <p>
+        Si la bibliothèque a bien déclaré ses fabriques comme des services, alors
+        les utilisateurs peuvent les obtenir en utilisant <code>ServiceLoader</code> comme dans l’exemple ci-dessous.
+        Cet exemple ne prend que la première fabrique trouvée; s’il existe plusieurs fabriques,
+        par exemple lorsque plusieurs bibliothèques cohabitent, alors le choix est laissé à l’utilisateur.
+      </p>
 
 <pre>import org.opengis.referencing.GeodeticDatum;
 import org.opengis.referencing.DatumFactory;
@@ -122,156 +123,156 @@ public class MyApplication {
 
 
 
-    <h4 id="GeoAPI-simple">Fournir sa propre implémentation</h4>
-    <p>
-      Implémenter soi-même GeoAPI n’est pas si difficile si on se contente de besoins bien précis.
-      Un développeur peut se concentrer sur une poignée d’interfaces parmi les centaines de disponibles,
-      tout en disposant des autres interfaces comme autant de points d’extensions à éventuellement implémenter
-      au gré des besoins.
-    </p>
-    <p>
-      Le modèle conceptuel représenté par les interfaces est complexe. Mais cette complexité peut être réduite en combinant certaines interfaces.
-      Par exemple plusieurs bibliothèques, même réputées, ne font pas la distinction entre <cite>Système de coordonnées</cite> (<abbr>CS</abbr>)
-      et <cite>Système de <u>référence</u> des coordonnées</cite> (<abbr>CRS</abbr>).
-      Un développeur qui lui non-plus ne souhaite pas faire cette distinction peut implémenter ces deux interfaces par la même classe.
-      Il peut en résulter une implémentation dont la hiérarchie de classes est plus simple que la hiérarchie des interfaces de GeoAPI.
-      Le module <code>geoapi-examples</code>, discuté plus loin, fournit de telles combinaisons.
-      Le tableau suivant énumère quelques combinaisons possibles:
-    </p>
-    <table>
-      <tr>
-        <th>Interface principale</th>
-        <th>Interface auxiliaire</th>
-        <th>Usage</th>
-      </tr>
-      <tr>
-        <td><code>CoordinateReferenceSystem</code></td>
-        <td><code>CoordinateSystem</code></td>
-        <td>Description d’un système de référence spatial (<abbr>CRS</abbr>).</td>
-      </tr>
-      <tr>
-        <td><code>GeodeticDatum</code></td>
-        <td><code>Ellipsoid</code></td>
-        <td>Description d’un référentiel geodétique.</td>
-      </tr>
-      <tr>
-        <td><code>CoordinateOperation</code></td>
-        <td><code>MathTransform</code></td>
-        <td>Opération de transformation de coordonnées.</td>
-      </tr>
-      <tr>
-        <td><code>IdentifiedObject</code></td>
-        <td><code>ReferenceIdentifier</code></td>
-        <td>Objet (typiquement un <abbr>CRS</abbr>) que l’on peut identifier par un code.</td>
-      </tr>
-      <tr>
-        <td><code>Citation</code></td>
-        <td><code>InternationalString</code></td>
-        <td>Référence bibliographique composée d’un simple titre.</td>
-      </tr>
-      <tr>
-        <td><code>GeographicBoundingBox</code></td>
-        <td><code>Extent</code></td>
-        <td>Étendue spatiale en degrés de longitude et de latitude.</td>
-      </tr>
-      <tr>
-        <td><code>ParameterValue</code></td>
-        <td><code>ParameterDescriptor</code></td>
-        <td>Description d’un paramètre (nom, type) associée à sa valeur.</td>
-      </tr>
-      <tr>
-        <td><code>ParameterValueGroup</code></td>
-        <td><code>ParameterDescriptorGroup</code></td>
-        <td>Description d’un ensemble de paramètres associés à leurs valeurs.</td>
-      </tr>
-    </table>
-    <p id="GeoAPI-examples">
-      Le module <code>geoapi-examples</code> fournit des exemples d’implémentations simples.
-      Plusieurs de ces classes implémentent plus d’une interface à la fois afin de proposer un modèle conceptuel plus simple.
-      La <a href="http://www.geoapi.org/geoapi-examples/apidocs/overview-summary.html">Javadoc de ce module</a>
-      énumère les paquets et classes clés avec les combinaisons effectuées.
-      Ce module illustre non-seulement comment GeoAPI peut-être implémenté, mais aussi comment l’implémentation
-      peut être testée en utilisant <code>geoapi-conformance</code>.
-    </p>
-    <p>
-      Bien que sa mission première soit de servir d’inspiration aux implémenteurs,
-      <code>geoapi-examples</code> a tout-de-même été conçu de manière à être utilisable
-      par des applications ayant des besoins très simples. Tous les exemples étant dans le domaine publique,
-      les développeurs sont invités à adapter librement des copies de ces classes si nécessaires.
-      Toutefois si des modifications sont apportées hors du cadre du projet GeoAPI, le bon usage veut que les copies
-      modifiées soient placées dans un paquet portant un autre nom que <code>org.opengis</code>.
-    </p>
-    <p>
-      Pour des besoins un peu plus poussés, les développeurs sont invités à examiner les modules
-      <code>geoapi-proj4</code> et <code>geoapi-netcdf</code>.
-      Ces deux modules fournissent des exemples d’adaptateurs permettant d’utiliser, via les interfaces de GeoAPI,
-      une partie des fonctionnalités de bibliothèques externes (Proj.4 et <abbr>NetCDF</abbr>).
-      L’avantage de passer par ces interfaces est de disposer d’un modèle unifié pour exploiter deux <abbr>API</abbr> très différents,
-      tout en se gardant la possibilité de basculer plus facilement à une autre bibliothèque si désiré.
-    </p>
+      <h4 id="GeoAPI-simple">Fournir sa propre implémentation</h4>
+      <p>
+        Implémenter soi-même GeoAPI n’est pas si difficile si on se contente de besoins bien précis.
+        Un développeur peut se concentrer sur une poignée d’interfaces parmi les centaines de disponibles,
+        tout en disposant des autres interfaces comme autant de points d’extensions à éventuellement implémenter
+        au gré des besoins.
+      </p>
+      <p>
+        Le modèle conceptuel représenté par les interfaces est complexe. Mais cette complexité peut être réduite en combinant certaines interfaces.
+        Par exemple plusieurs bibliothèques, même réputées, ne font pas la distinction entre <cite>Système de coordonnées</cite> (<abbr>CS</abbr>)
+        et <cite>Système de <u>référence</u> des coordonnées</cite> (<abbr>CRS</abbr>).
+        Un développeur qui lui non-plus ne souhaite pas faire cette distinction peut implémenter ces deux interfaces par la même classe.
+        Il peut en résulter une implémentation dont la hiérarchie de classes est plus simple que la hiérarchie des interfaces de GeoAPI.
+        Le module <code>geoapi-examples</code>, discuté plus loin, fournit de telles combinaisons.
+        Le tableau suivant énumère quelques combinaisons possibles:
+      </p>
+      <table>
+        <tr>
+          <th>Interface principale</th>
+          <th>Interface auxiliaire</th>
+          <th>Usage</th>
+        </tr>
+        <tr>
+          <td><code>CoordinateReferenceSystem</code></td>
+          <td><code>CoordinateSystem</code></td>
+          <td>Description d’un système de référence spatial (<abbr>CRS</abbr>).</td>
+        </tr>
+        <tr>
+          <td><code>GeodeticDatum</code></td>
+          <td><code>Ellipsoid</code></td>
+          <td>Description d’un référentiel geodétique.</td>
+        </tr>
+        <tr>
+          <td><code>CoordinateOperation</code></td>
+          <td><code>MathTransform</code></td>
+          <td>Opération de transformation de coordonnées.</td>
+        </tr>
+        <tr>
+          <td><code>IdentifiedObject</code></td>
+          <td><code>ReferenceIdentifier</code></td>
+          <td>Objet (typiquement un <abbr>CRS</abbr>) que l’on peut identifier par un code.</td>
+        </tr>
+        <tr>
+          <td><code>Citation</code></td>
+          <td><code>InternationalString</code></td>
+          <td>Référence bibliographique composée d’un simple titre.</td>
+        </tr>
+        <tr>
+          <td><code>GeographicBoundingBox</code></td>
+          <td><code>Extent</code></td>
+          <td>Étendue spatiale en degrés de longitude et de latitude.</td>
+        </tr>
+        <tr>
+          <td><code>ParameterValue</code></td>
+          <td><code>ParameterDescriptor</code></td>
+          <td>Description d’un paramètre (nom, type) associée à sa valeur.</td>
+        </tr>
+        <tr>
+          <td><code>ParameterValueGroup</code></td>
+          <td><code>ParameterDescriptorGroup</code></td>
+          <td>Description d’un ensemble de paramètres associés à leurs valeurs.</td>
+        </tr>
+      </table>
+      <p id="GeoAPI-examples">
+        Le module <code>geoapi-examples</code> fournit des exemples d’implémentations simples.
+        Plusieurs de ces classes implémentent plus d’une interface à la fois afin de proposer un modèle conceptuel plus simple.
+        La <a href="http://www.geoapi.org/geoapi-examples/apidocs/overview-summary.html">Javadoc de ce module</a>
+        énumère les paquets et classes clés avec les combinaisons effectuées.
+        Ce module illustre non-seulement comment GeoAPI peut-être implémenté, mais aussi comment l’implémentation
+        peut être testée en utilisant <code>geoapi-conformance</code>.
+      </p>
+      <p>
+        Bien que sa mission première soit de servir d’inspiration aux implémenteurs,
+        <code>geoapi-examples</code> a tout-de-même été conçu de manière à être utilisable
+        par des applications ayant des besoins très simples. Tous les exemples étant dans le domaine publique,
+        les développeurs sont invités à adapter librement des copies de ces classes si nécessaires.
+        Toutefois si des modifications sont apportées hors du cadre du projet GeoAPI, le bon usage veut que les copies
+        modifiées soient placées dans un paquet portant un autre nom que <code>org.opengis</code>.
+      </p>
+      <p>
+        Pour des besoins un peu plus poussés, les développeurs sont invités à examiner les modules
+        <code>geoapi-proj4</code> et <code>geoapi-netcdf</code>.
+        Ces deux modules fournissent des exemples d’adaptateurs permettant d’utiliser, via les interfaces de GeoAPI,
+        une partie des fonctionnalités de bibliothèques externes (Proj.4 et <abbr>NetCDF</abbr>).
+        L’avantage de passer par ces interfaces est de disposer d’un modèle unifié pour exploiter deux <abbr>API</abbr> très différents,
+        tout en se gardant la possibilité de basculer plus facilement à une autre bibliothèque si désiré.
+      </p>
 
 
-    <h2 id="Tests">Les suites de tests</h2>
-    <p>
-      En plus des tests propres au projet, Apache SIS utilise aussi des tests définis par GeoAPI.
-      Ces tests ont l’avantage d’utiliser une source externe définissant ce que doivent être les résultats
-      (par exemple les valeurs des coordonnées obtenues par une projection cartographique).
-      On réduit ainsi le risque que des tests soient davantage des tests anti-régression que des tests de validité.
-      Ces tests peuvent aussi être utilisés par des projets autres que Apache SIS.
-    </p>
-    <p id="GeoAPI-conformance">
-      Le module <code>geoapi-conformance</code> fournit des <i>validateurs</i>, une <i>suite de tests</i> JUnit
-      et des <i>générateurs de rapports</i> sous forme de pages <abbr title="Hypertext Markup Language">HTML</abbr>.
-      Ce module peut être utilisé avec n’importe quelle implémentation de GeoAPI.
-      Pour les développeurs d’une bibliothèque géospatiale, il offre les avantages suivants:
-    </p>
-    <ul>
-      <li>Réduire la fastidieuse tâche d’écriture des tests, en réutilisant des tests existants.</li>
-      <li>Accroître la confiance en la validité des tests, du fait que <code>geoapi-conformance</code>
-          a lui-même sa propre suite de tests et est appliqué à d’autres implémentations.</li>
-      <li>Faciliter la comparaison avec les autres implémentations.</li>
-    </ul>
+      <h2 id="Tests">Les suites de tests</h2>
+      <p>
+        En plus des tests propres au projet, Apache SIS utilise aussi des tests définis par GeoAPI.
+        Ces tests ont l’avantage d’utiliser une source externe définissant ce que doivent être les résultats
+        (par exemple les valeurs des coordonnées obtenues par une projection cartographique).
+        On réduit ainsi le risque que des tests soient davantage des tests anti-régression que des tests de validité.
+        Ces tests peuvent aussi être utilisés par des projets autres que Apache SIS.
+      </p>
+      <p id="GeoAPI-conformance">
+        Le module <code>geoapi-conformance</code> fournit des <i>validateurs</i>, une <i>suite de tests</i> JUnit
+        et des <i>générateurs de rapports</i> sous forme de pages <abbr title="Hypertext Markup Language">HTML</abbr>.
+        Ce module peut être utilisé avec n’importe quelle implémentation de GeoAPI.
+        Pour les développeurs d’une bibliothèque géospatiale, il offre les avantages suivants:
+      </p>
+      <ul>
+        <li>Réduire la fastidieuse tâche d’écriture des tests, en réutilisant des tests existants.</li>
+        <li>Accroître la confiance en la validité des tests, du fait que <code>geoapi-conformance</code>
+            a lui-même sa propre suite de tests et est appliqué à d’autres implémentations.</li>
+        <li>Faciliter la comparaison avec les autres implémentations.</li>
+      </ul>
 
 
 
-    <h3 id="GeoAPI-validators">Validations des instances</h3>
-    <p>
-      GeoAPI peut valider une instance de ses interfaces en vérifiant que certaines contraintes sont respectées.
-      Certaines contraintes ne peuvent pas être exprimées dans la signature de la méthode. Ces contraintes sont
-      généralement décrites textuellement dans les spécifications abstraites ou dans la javadoc.
-    </p>
-    <div class="example"><p><b>Exemple:</b>
-      La conversion ou transformation d’une coordonnée (<code>CC_CoordinateOperation</code>) peut nécessiter l’enchaînement de plusieurs étapes.
-      Dans une telle chaîne d’opérations (<code>CC_ConcatenatedOperation</code>),
-      pour chaque étape (<code>CC_SingleOperation</code>) le nombre de dimensions
-      en sortie doit être égal au nombre de dimensions attendu en entré par l’opération suivante.
-      Exprimée en langage Java, cette contrainte stipule que pour tout index
-      0 &lt; <var>i</var> &lt; <var>n</var> où <var>n</var> est le nombre d’opérations, on a
-      <code>coordOperation[i].targetDimensions == coordOperation[i-1].sourceDimensions</code>.
-    </p></div>
+      <h3 id="GeoAPI-validators">Validations des instances</h3>
+      <p>
+        GeoAPI peut valider une instance de ses interfaces en vérifiant que certaines contraintes sont respectées.
+        Certaines contraintes ne peuvent pas être exprimées dans la signature de la méthode. Ces contraintes sont
+        généralement décrites textuellement dans les spécifications abstraites ou dans la javadoc.
+      </p>
+      <div class="example"><p><b>Exemple:</b>
+        La conversion ou transformation d’une coordonnée (<code>CC_CoordinateOperation</code>) peut nécessiter l’enchaînement de plusieurs étapes.
+        Dans une telle chaîne d’opérations (<code>CC_ConcatenatedOperation</code>),
+        pour chaque étape (<code>CC_SingleOperation</code>) le nombre de dimensions
+        en sortie doit être égal au nombre de dimensions attendu en entré par l’opération suivante.
+        Exprimée en langage Java, cette contrainte stipule que pour tout index
+        0 &lt; <var>i</var> &lt; <var>n</var> où <var>n</var> est le nombre d’opérations, on a
+        <code>coordOperation[i].targetDimensions == coordOperation[i-1].sourceDimensions</code>.
+      </p></div>
 
-    <p>
-      La façon la plus simple d’effectuer ces vérifications est d’appeler les méthodes statiques
-      <code class="GeoAPI">validate(…)</code> de la classe <code>org.opengis.test.Validators</code>.
-      Ces méthodes portant toutes le même nom, il suffit d’écrire “<code>validate(<var>valeur</var>)</code>”
-      et de laisser le compilateur choisir la méthode la plus appropriée en fonction du type d’objet donné en argument.
-      Si le type d’objet n’est pas connu au moment de la compilation, alors la méthode <code class="GeoAPI">dispatch(Object)</code>
-      peut se charger de rediriger le travail à la méthode <code class="GeoAPI">validate(…)</code> appropriée.
-    </p>
-    <p>
-      Toutes les fonctions <code class="GeoAPI">validate(…)</code> suivent le fil des dépendances,
-      c’est-à-dire qu’elles valideront aussi chaque composantes de l’objet à valider.
-      Par exemple la validation d’un objet <code>GeographicCRS</code> impliquera
-      la validation de sa composante <code>GeodeticDatum</code>, qui impliquera elle-même
-      la validation de sa composante <code>Ellipsoid</code>, et ainsi de suite.
-      Il est donc inutile de valider soi-même les composantes, à moins de vouloir isoler le test d’un élément souvent problématique.
-    </p>
-    <p>
-      Par défaut, les validations sont aussi strictes que possible. Il est possible toutefois d’assouplir certaines règles.
-      L’assouplissement le plus fréquent consiste à tolérer l’absence d’attributs qui étaient sensés être obligatoires.
-      Cette règle et quelques autres peuvent être modifiées globalement pour tous les tests exécutés dans la
-      <abbr title="Java Virtual Machine">JVM</abbr> courante comme dans l’exemple suivant:
-    </p>
+      <p>
+        La façon la plus simple d’effectuer ces vérifications est d’appeler les méthodes statiques
+        <code class="GeoAPI">validate(…)</code> de la classe <code>org.opengis.test.Validators</code>.
+        Ces méthodes portant toutes le même nom, il suffit d’écrire “<code>validate(<var>valeur</var>)</code>”
+        et de laisser le compilateur choisir la méthode la plus appropriée en fonction du type d’objet donné en argument.
+        Si le type d’objet n’est pas connu au moment de la compilation, alors la méthode <code class="GeoAPI">dispatch(Object)</code>
+        peut se charger de rediriger le travail à la méthode <code class="GeoAPI">validate(…)</code> appropriée.
+      </p>
+      <p>
+        Toutes les fonctions <code class="GeoAPI">validate(…)</code> suivent le fil des dépendances,
+        c’est-à-dire qu’elles valideront aussi chaque composantes de l’objet à valider.
+        Par exemple la validation d’un objet <code>GeographicCRS</code> impliquera
+        la validation de sa composante <code>GeodeticDatum</code>, qui impliquera elle-même
+        la validation de sa composante <code>Ellipsoid</code>, et ainsi de suite.
+        Il est donc inutile de valider soi-même les composantes, à moins de vouloir isoler le test d’un élément souvent problématique.
+      </p>
+      <p>
+        Par défaut, les validations sont aussi strictes que possible. Il est possible toutefois d’assouplir certaines règles.
+        L’assouplissement le plus fréquent consiste à tolérer l’absence d’attributs qui étaient sensés être obligatoires.
+        Cette règle et quelques autres peuvent être modifiées globalement pour tous les tests exécutés dans la
+        <abbr title="Java Virtual Machine">JVM</abbr> courante comme dans l’exemple suivant:
+      </p>
 
 <pre>import org.opengis.metadata.Metadata;
 import org.opengis.test.Validators;
@@ -296,11 +297,11 @@ public class MyTest {
     }
 }</pre>
 
-    <p>
-      Les règles peuvent aussi être modifiées pour une suite de tests particulière,
-      sans affecter la configuration par défaut de la <abbr>JVM</abbr> courante.
-      Cette approche nécessite de créer une nouvelle instance du validateur dont on souhaite modifier la configuration.
-    </p>
+      <p>
+        Les règles peuvent aussi être modifiées pour une suite de tests particulière,
+        sans affecter la configuration par défaut de la <abbr>JVM</abbr> courante.
+        Cette approche nécessite de créer une nouvelle instance du validateur dont on souhaite modifier la configuration.
+      </p>
 
 <pre>import org.opengis.metadata.Metadata;
 import org.opengis.test.ValidatorContainer;
@@ -324,21 +325,21 @@ public class MyTest {
 
 
 
-    <h3 id="GeoAPI-tests">Exécution des tests pré-définis</h3>
-    <p>
-      Des classes de tests JUnit sont définies dans des sous-paquets de <code>org.opengis.test</code>.
-      Toutes les classes de tests portent un nom se terminant en "<code>Test</code>".
-      GeoAPI définie aussi une classe <code>org.opengis.test.TestSuite</code> englobant l’ensemble
-      des tests définis dans le module <code>geoapi-conformance</code>, mais Apache <abbr>SIS</abbr> ne l’utilise pas.
-      Apache <abbr>SIS</abbr> hérite plutôt des classes <code class="GeoAPI">*Test</code> de GeoAPI au cas-par-cas, dans les modules appropriés.
-      L’exemple ci-dessous donne un exemple de test de GeoAPI personnalisé.
-      La <a href="http://www.geoapi.org/geoapi-conformance/apidocs/org/opengis/test/referencing/ParameterizedTransformTest.html">Javadoc
-      de la classe parente</a> documente en détails les tests effectués.
-      Dans cet exemple, un seul test est modifié et tous les autres tests sont hérités tels quels
-      (il n’est pas nécessaire de les répéter dans la sous-classe).
-      Toutefois, cet exemple ajoute une vérification supplémentaire, annotée <code>@After</code>,
-      qui sera exécutée après chacun des tests.
-    </p>
+      <h3 id="GeoAPI-tests">Exécution des tests pré-définis</h3>
+      <p>
+        Des classes de tests JUnit sont définies dans des sous-paquets de <code>org.opengis.test</code>.
+        Toutes les classes de tests portent un nom se terminant en "<code>Test</code>".
+        GeoAPI définie aussi une classe <code>org.opengis.test.TestSuite</code> englobant l’ensemble
+        des tests définis dans le module <code>geoapi-conformance</code>, mais Apache <abbr>SIS</abbr> ne l’utilise pas.
+        Apache <abbr>SIS</abbr> hérite plutôt des classes <code class="GeoAPI">*Test</code> de GeoAPI au cas-par-cas, dans les modules appropriés.
+        L’exemple ci-dessous donne un exemple de test de GeoAPI personnalisé.
+        La <a href="http://www.geoapi.org/geoapi-conformance/apidocs/org/opengis/test/referencing/ParameterizedTransformTest.html">Javadoc
+        de la classe parente</a> documente en détails les tests effectués.
+        Dans cet exemple, un seul test est modifié et tous les autres tests sont hérités tels quels
+        (il n’est pas nécessaire de les répéter dans la sous-classe).
+        Toutefois, cet exemple ajoute une vérification supplémentaire, annotée <code>@After</code>,
+        qui sera exécutée après chacun des tests.
+      </p>
 
 <pre>import org.junit.*;
 import org.junit.runner.RunWith;
@@ -381,262 +382,265 @@ public class MyTest extends ParameterizedTransformTest {
 
 
 
-    <h2 id="DesignNote">Notes de design</h2>
-    <p>Les chapitres suivants expliquent les raisons derrières certains choix d'implémentation de Apache <abbr>SIS</abbr>.</p>
+      <h2 id="DesignNote">Notes de design</h2>
+      <p>Les chapitres suivants expliquent les raisons derrières certains choix d'implémentation de Apache <abbr>SIS</abbr>.</p>
 
 
-    <h3 id="AffineTransform">Utilisation des transformations affines</h3>
-    <p>
-      Parmi les sortes d’opérations qu’un <abbr>SIG</abbr> doit effectuer sur les coordonnées spatiales,
-      les <cite>transformations affines</cite> sont à la fois relativement simples et très fréquentes.
-      Les transformations affines peuvent représenter n’importe quelle combinaison d’échelles, de cisaillements,
-      de retournements, de rotations ou de translations, qui sont toutes des <cite>opérations linéaires</cite>.
-      Les transformations affines ne peuvent pas effectuer des opérations <cite>non-linéaires</cite>
-      telles que les projections cartographiques, mais couvrent néanmoins de nombreux autres cas:
-    </p>
-    <ul>
-      <li>Changer l’ordre des axes,        par exemple de (<var>latitude</var>, <var>longitude</var>) vers (<var>longitude</var>, <var>latitude</var>).</li>
-      <li>Changer la direction des axes,   par exemple l’axe des <var>y</var> qui pointe habituellement vers le bas dans les images.</li>
-      <li>Changer le méridien d’origine,   par exemple du méridien de <cite>Paris</cite> vers celui de <cite>Greenwich</cite>.</li>
-      <li>Changer le nombre de dimensions, par exemple passer des coordonnées 3D vers 2D en supprimant la hauteur.</li>
-      <li>Convertir des unités de mesures, par exemple convertir des pieds en mètres.</li>
-      <li>Convertir des coordonnées pixels en coordonnées géographiques,
-          par exemple la conversion exprimée dans les fichiers <code>.tfw</code> qui accompagnent certaines images <abbr>TIFF</abbr>.</li>
-      <li>Prendre en charge une petite partie des projections cartographiques,
-          par exemple les paramètres <cite>False Easting</cite>, <cite>False Northing</cite> et <cite>Scale factor</cite>.</li>
-    </ul>
-    <p>
-      Les transformations affines peuvent se combiner efficacement.
-      Peu importe le nombre de transformations affines que l’on enchaîne, le résultat sera exprimable par une seule transformation affine.
-      Cette propriété est plus facilement visible lorsque les transformations affines sont exprimées sous forme de matrices:
-      pour combiner les opérations, il suffit de multiplier les matrices.
-      Le cas des conversions des coordonnées pixels en coordonnées géographiques ci-dessous donne un exemple.
-    </p>
-
-    <div class="example">
-      <p><b>Exemple:</b>
-        supposons que nous disposons d’une image dont les coordonnées des pixels sont représentées par (<var>x</var>,<var>y</var>).
-        Supposons aussi que les contraintes suivantes sont respectées:
+      <h3 id="AffineTransform">Utilisation des transformations affines</h3>
+      <p>
+        Parmi les sortes d’opérations qu’un <abbr>SIG</abbr> doit effectuer sur les coordonnées spatiales,
+        les <cite>transformations affines</cite> sont à la fois relativement simples et très fréquentes.
+        Les transformations affines peuvent représenter n’importe quelle combinaison d’échelles, de cisaillements,
+        de retournements, de rotations ou de translations, qui sont toutes des <cite>opérations linéaires</cite>.
+        Les transformations affines ne peuvent pas effectuer des opérations <cite>non-linéaires</cite>
+        telles que les projections cartographiques, mais couvrent néanmoins de nombreux autres cas:
       </p>
       <ul>
-        <li>Il n’y a ni cisaillement, ni rotation, ni retournement de l’image.</li>
-        <li>Tous les pixels ont la même largeur en degrés de longitude.</li>
-        <li>Tous les pixels ont la même hauteur en degrés de latitude.</li>
-        <li>Les coordonnées des pixels commencent à (0,0) inclusivement.</li>
+        <li>Changer l’ordre des axes,        par exemple de (<var>latitude</var>, <var>longitude</var>) vers (<var>longitude</var>, <var>latitude</var>).</li>
+        <li>Changer la direction des axes,   par exemple l’axe des <var>y</var> qui pointe habituellement vers le bas dans les images.</li>
+        <li>Changer le méridien d’origine,   par exemple du méridien de <cite>Paris</cite> vers celui de <cite>Greenwich</cite>.</li>
+        <li>Changer le nombre de dimensions, par exemple passer des coordonnées 3D vers 2D en supprimant la hauteur.</li>
+        <li>Convertir des unités de mesures, par exemple convertir des pieds en mètres.</li>
+        <li>Convertir des coordonnées pixels en coordonnées géographiques,
+            par exemple la conversion exprimée dans les fichiers <code>.tfw</code> qui accompagnent certaines images <abbr>TIFF</abbr>.</li>
+        <li>Prendre en charge une petite partie des projections cartographiques,
+            par exemple les paramètres <cite>False Easting</cite>, <cite>False Northing</cite> et <cite>Scale factor</cite>.</li>
       </ul>
-      <p>Alors la conversion des coordonnées pixels (<var>x</var>,<var>y</var>)
-        vers les coordonnées géographiques (<var>λ</var>,<var>φ</var>)
-        peut être représentée par les équations suivantes,
-        où <var>N</var><sub><var>x</var></sub> est la largeur
-        et <var>N</var><sub><var>y</var></sub> la hauteur de l’image en nombre de pixels.
-      </p><p>
-        <xi:include href="../math/PixelToGeographicTerms.html"/>
-      </p><p>
-        Les équations ci-dessus peuvent être représentées sous forme de matrices comme ci-dessous:
-      </p><p>
-      <xi:include href="../math/PixelToGeographic.html"/>
-      </p><p>
-        Dans ce cas particulier, les facteurs d’échelles <var>S</var> correspondent à la taille des pixels en degrés
-        et les termes de translations <var>T</var> correspondent aux coordonnées géographiques d’un coin de l’image
-        (pas nécessairement le coin inférieur gauche si certains axes ont été retournés).
-        Cette interprétation directe n’est possible que lorsque les contraintes énumérées plus haut sont respectées.
-        Les coefficients des matrices deviennent plus complexes si l’image a un cisaillement ou une rotation,
-        ou si les coordonnées des pixels ne commencent pas à (0,0).
-        Toutefois il n’est pas nécessaire d’utiliser des équations plus complexes pour gérer des cas plus génériques.
-        L’exemple ci-dessous prend comme point de départ la matrice d’une « conversion initiale »
-        dans laquelle les coefficients <var>S</var> et <var>T</var> sont les valeurs relativement simples données ci-dessus.
-        Ensuite la direction de l’axe des <var>y</var> est inversée de manière à correspondre
-        à la convention habituelle des systèmes de coordonnées des images (changement 1),
-        et les axes sont intervertis de manière à avoir la latitude avant la longitude (changement 2).
-        Notez que les concaténations de transformations affines écrites sous forme de multiplications matricielles
-        se lisent de droite à gauche:
-        <var>A</var>×<var>B</var>×<var>C</var> est équivalent à d’abord appliquer l’opération <var>C</var>,
-        suivit de l’opération <var>B</var> et finalement l’opération <var>A</var>.
-      </p>
-      <table class="hidden"><tr>
-        <th>Changement 2</th><th></th>
-        <th>Changement 1</th><th></th>
-        <th>Conversion initiale</th><th></th>
-        <th>Opérations combinées</th>
-      </tr><tr>
-        <td style="vertical-align: middle"><xi:include href="../math/AxisSwapping2D.html"/></td>
-        <td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
-        <td style="vertical-align: middle"><xi:include href="../math/InverseAxisY.html"/></td>
-        <td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
-        <td style="vertical-align: middle"><xi:include href="../math/PixelToGeographicSameAxisDirections.html"/></td>
-        <td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">=</td>
-        <td style="vertical-align: middle"><xi:include href="../math/PixelToGeographicReverseOrderAndY.html"/></td>
-      </tr></table>
       <p>
-        Un principe clé est qu’il n’y a pas besoin d’écrire un code dédié à ce type d’opérations sur les axes.
-        Ces opérations, et bien d’autres, sont prises en compte naturellement par l’algèbre matricielle.
-        On y gagne en généricité du code et en performance.
-        Apache <abbr>SIS</abbr> suit ce principe en utilisant les tranformations affine pour toutes les opérations
-        où elles peuvent s’appliquer.
-        Il n’y a par exemple aucun code dédié au changement de l’ordre des ordonnées dans une coordonnée.
+        Les transformations affines peuvent se combiner efficacement.
+        Peu importe le nombre de transformations affines que l’on enchaîne, le résultat sera exprimable par une seule transformation affine.
+        Cette propriété est plus facilement visible lorsque les transformations affines sont exprimées sous forme de matrices:
+        pour combiner les opérations, il suffit de multiplier les matrices.
+        Le cas des conversions des coordonnées pixels en coordonnées géographiques ci-dessous donne un exemple.
       </p>
-    </div>
 
-    <h4 id="AffineTransformAPI">Intégration avec les bibliothèques graphiques</h4>
-    <p>
-      A peu près toutes les bibliothèques graphiques supportent une forme de transformation de coordonnées,
-      souvent les <cite>transformations affines</cite> ou une légère généralisation.
-      Chaque bibliothèque défini son propre <abbr>API</abbr>.
-      Quelques exemples sont:
-    </p>
-    <table>
-      <caption>Implémentations des transformations affines dans des bibliothèques graphiques</caption>
-      <tr><th>Bibliothèque</th>                             <th>Implementation de la transformation</th>               <th>Dimensions</th></tr>
-      <tr><td>Java2D</td>                                   <td><code>java.awt.geom.AffineTransform</code></td>        <td>2</td></tr>
-      <tr><td>Java3D</td>                                   <td><code>javax.media.j3d.Transform3D</code></td>          <td>3</td></tr>
-      <tr><td>JavaFX</td>                                   <td><code>javafx.scene.transform.Affine</code></td>        <td>2 ou 3</td></tr>
-      <tr><td>Java Advanced Imaging (<abbr>JAI</abbr>)</td> <td><code>javax.media.jai.PerspectiveTransform</code></td> <td>2</td></tr>
-      <tr><td>Android</td>                                  <td><code>android.graphics.Matrix</code></td>              <td>2</td></tr>
-    </table>
-    <p>
-      Toutefois dans plusieurs cas, les transformations affines sont les seuls types d’opérations supportées par la bibliothèque graphique.
-      Apache <abbr>SIS</abbr> a besoin de gérer un plus grand nombre de type d’opérations,
-      parmi lesquelles les transformations affines ne sont que des cas particuliers.
-      Les projections cartographiques et les changements de référentiels notamment,
-      ne peuvent pas être représentés par des transformations affines.
-      <abbr>SIS</abbr> a aussi besoin de transformer des points ayant un nombre arbitraire de dimensions,
-      alors que les <abbr>API</abbr> cités ci-haut restreignent leur usage à un nombre fixe de dimensions.
-      Pour ces raisons, <abbr>SIS</abbr> ne peut pas utiliser directement ces <abbr>API</abbr>.
-      <abbr>SIS</abbr> utilise plutôt une interface plus abstraite, <code>org.opengis.referencing.transform.MathTransform</code>.
-      Mais dans le cas particulier où la transformation est réellement affine, <abbr>SIS</abbr> peut essayer d’utiliser
-      une implémentation existante, surtout Java2D.
-      Par exemple le code suivant peut être utilisé dans les situations où un objet Java2D est désiré:
-    </p>
-    <pre>MathTransform mt = ...;    // N’importe quelle instance créée par Apache SIS.
+      <div class="example">
+        <p><b>Exemple:</b>
+          supposons que nous disposons d’une image dont les coordonnées des pixels sont représentées par (<var>x</var>,<var>y</var>).
+          Supposons aussi que les contraintes suivantes sont respectées:
+        </p>
+        <ul>
+          <li>Il n’y a ni cisaillement, ni rotation, ni retournement de l’image.</li>
+          <li>Tous les pixels ont la même largeur en degrés de longitude.</li>
+          <li>Tous les pixels ont la même hauteur en degrés de latitude.</li>
+          <li>Les coordonnées des pixels commencent à (0,0) inclusivement.</li>
+        </ul>
+        <p>Alors la conversion des coordonnées pixels (<var>x</var>,<var>y</var>)
+          vers les coordonnées géographiques (<var>λ</var>,<var>φ</var>)
+          peut être représentée par les équations suivantes,
+          où <var>N</var><sub><var>x</var></sub> est la largeur
+          et <var>N</var><sub><var>y</var></sub> la hauteur de l’image en nombre de pixels.
+        </p><p>
+          <xi:include href="../math/PixelToGeographicTerms.html"/>
+        </p><p>
+          Les équations ci-dessus peuvent être représentées sous forme de matrices comme ci-dessous:
+        </p><p>
+        <xi:include href="../math/PixelToGeographic.html"/>
+        </p><p>
+          Dans ce cas particulier, les facteurs d’échelles <var>S</var> correspondent à la taille des pixels en degrés
+          et les termes de translations <var>T</var> correspondent aux coordonnées géographiques d’un coin de l’image
+          (pas nécessairement le coin inférieur gauche si certains axes ont été retournés).
+          Cette interprétation directe n’est possible que lorsque les contraintes énumérées plus haut sont respectées.
+          Les coefficients des matrices deviennent plus complexes si l’image a un cisaillement ou une rotation,
+          ou si les coordonnées des pixels ne commencent pas à (0,0).
+          Toutefois il n’est pas nécessaire d’utiliser des équations plus complexes pour gérer des cas plus génériques.
+          L’exemple ci-dessous prend comme point de départ la matrice d’une « conversion initiale »
+          dans laquelle les coefficients <var>S</var> et <var>T</var> sont les valeurs relativement simples données ci-dessus.
+          Ensuite la direction de l’axe des <var>y</var> est inversée de manière à correspondre
+          à la convention habituelle des systèmes de coordonnées des images (changement 1),
+          et les axes sont intervertis de manière à avoir la latitude avant la longitude (changement 2).
+          Notez que les concaténations de transformations affines écrites sous forme de multiplications matricielles
+          se lisent de droite à gauche:
+          <var>A</var>×<var>B</var>×<var>C</var> est équivalent à d’abord appliquer l’opération <var>C</var>,
+          suivit de l’opération <var>B</var> et finalement l’opération <var>A</var>.
+        </p>
+        <table class="hidden"><tr>
+          <th>Changement 2</th><th></th>
+          <th>Changement 1</th><th></th>
+          <th>Conversion initiale</th><th></th>
+          <th>Opérations combinées</th>
+        </tr><tr>
+          <td style="vertical-align: middle"><xi:include href="../math/AxisSwapping2D.html"/></td>
+          <td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
+          <td style="vertical-align: middle"><xi:include href="../math/InverseAxisY.html"/></td>
+          <td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
+          <td style="vertical-align: middle"><xi:include href="../math/PixelToGeographicSameAxisDirections.html"/></td>
+          <td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">=</td>
+          <td style="vertical-align: middle"><xi:include href="../math/PixelToGeographicReverseOrderAndY.html"/></td>
+        </tr></table>
+        <p>
+          Un principe clé est qu’il n’y a pas besoin d’écrire un code dédié à ce type d’opérations sur les axes.
+          Ces opérations, et bien d’autres, sont prises en compte naturellement par l’algèbre matricielle.
+          On y gagne en généricité du code et en performance.
+          Apache <abbr>SIS</abbr> suit ce principe en utilisant les tranformations affine pour toutes les opérations
+          où elles peuvent s’appliquer.
+          Il n’y a par exemple aucun code dédié au changement de l’ordre des ordonnées dans une coordonnée.
+        </p>
+      </div>
+
+      <h4 id="AffineTransformAPI">Intégration avec les bibliothèques graphiques</h4>
+      <p>
+        A peu près toutes les bibliothèques graphiques supportent une forme de transformation de coordonnées,
+        souvent les <cite>transformations affines</cite> ou une légère généralisation.
+        Chaque bibliothèque défini son propre <abbr>API</abbr>.
+        Quelques exemples sont:
+      </p>
+      <table>
+        <caption>Implémentations des transformations affines dans des bibliothèques graphiques</caption>
+        <tr><th>Bibliothèque</th>                             <th>Implementation de la transformation</th>               <th>Dimensions</th></tr>
+        <tr><td>Java2D</td>                                   <td><code>java.awt.geom.AffineTransform</code></td>        <td>2</td></tr>
+        <tr><td>Java3D</td>                                   <td><code>javax.media.j3d.Transform3D</code></td>          <td>3</td></tr>
+        <tr><td>JavaFX</td>                                   <td><code>javafx.scene.transform.Affine</code></td>        <td>2 ou 3</td></tr>
+        <tr><td>Java Advanced Imaging (<abbr>JAI</abbr>)</td> <td><code>javax.media.jai.PerspectiveTransform</code></td> <td>2</td></tr>
+        <tr><td>Android</td>                                  <td><code>android.graphics.Matrix</code></td>              <td>2</td></tr>
+      </table>
+      <p>
+        Toutefois dans plusieurs cas, les transformations affines sont les seuls types d’opérations supportées par la bibliothèque graphique.
+        Apache <abbr>SIS</abbr> a besoin de gérer un plus grand nombre de type d’opérations,
+        parmi lesquelles les transformations affines ne sont que des cas particuliers.
+        Les projections cartographiques et les changements de référentiels notamment,
+        ne peuvent pas être représentés par des transformations affines.
+        <abbr>SIS</abbr> a aussi besoin de transformer des points ayant un nombre arbitraire de dimensions,
+        alors que les <abbr>API</abbr> cités ci-haut restreignent leur usage à un nombre fixe de dimensions.
+        Pour ces raisons, <abbr>SIS</abbr> ne peut pas utiliser directement ces <abbr>API</abbr>.
+        <abbr>SIS</abbr> utilise plutôt une interface plus abstraite, <code>org.opengis.referencing.transform.MathTransform</code>.
+        Mais dans le cas particulier où la transformation est réellement affine, <abbr>SIS</abbr> peut essayer d’utiliser
+        une implémentation existante, surtout Java2D.
+        Par exemple le code suivant peut être utilisé dans les situations où un objet Java2D est désiré:
+      </p>
+
+<pre>MathTransform mt = ...;    // N’importe quelle instance créée par Apache SIS.
 if (mt instanceof AffineTransform) {
     AffineTransform at = (AffineTransform) mt;
     // Utiliser l’API de Java2D API à partir d’ici.
 }</pre>
-    <p>
-      Toutefois <abbr>SIS</abbr> n’utilisera Java2D que sur une base opportuniste.
-      Le forçage de type ci-haut n’est pas garantit de réussir, même si l’instance de
-      <code>MathTransform</code> répond aux conditions qui devrait permettre un usage de Java2D.
-    </p>
+
+      <p>
+        Toutefois <abbr>SIS</abbr> n’utilisera Java2D que sur une base opportuniste.
+        Le forçage de type ci-haut n’est pas garantit de réussir, même si l’instance de
+        <code>MathTransform</code> répond aux conditions qui devrait permettre un usage de Java2D.
+      </p>
 
 
-    <h3 id="MatrixLibrary">Particularités d’une bibliothèque de calculs matriciels pour un <abbr>SIG</abbr></h3>
-    <p>
-      Les <abbr>SIG</abbr> font un usage intensif de matrices afin d’afficher leurs cartes ou transformer des coordonnées.
-      On pourrait croire que le marché est suffisamment bien pourvu en excellentes bibliothèques de calculs matriciels, libres ou commerciales.
-      Pourtant, les <abbr>SIG</abbr> ont des besoins spécifiques qui divergent un peu des objectifs de plusieurs bibliothèques existantes.
-      Des manipulations de matrices comme celles décrites dans <a href="#AffineTransform">le chapitre sur les transformations affines</a>
-      interviennent dans quasiment toutes les opérations appliquées par Apache <abbr>SIS</abbr> sur des coordonnées.
-      Mais l’analyse de ces opérations révèle quelques patterns:
-    </p>
-    <ul>
-      <li><p>Ces matrices sont presque toujours de petites tailles, dépassant rarement 5 lignes par 5 colonnes.</p></li>
-      <li><p>Les opérations matricielles « lourdes » (multiplications ou inversions de matrices) ne surviennent pas dans des endroits où la performance est importante.
-          Dans la quasi-totalité des cas, elles ne sont effectuées qu’une fois pour toute, à la lecture d’un fichier,
-          ou lors des étapes de préparation avant de convertir des coordonnées.
-          Elles ne surviennent quasiment jamais dans la boucle convertissant chacune des coordonnées.</p></li>
-      <li><p>Dans une succession de multiplications et d’inversions de matrices, les erreurs d’arrondissement s’accumulent et grandissent rapidement
-          au point de se confondre avec certaines opérations légitimes, notamment les changements de référentiel.
-          Ces dernières s’expriment souvent par un changement de la taille, position et orientation de l’ellipsoïde
-          choisi comme approximation de la forme de la Terre.
-          Or ces changements de taille s’expriment en parties par million et les rotations en arc-secondes.
-          Retranscrites dans une matrice, ces valeurs sont donc assez petites.</p></li>
-      <li><p>Il arrive fréquemment que des matrices s’annulent en tout ou en partie lorsqu’elles sont combinées,
-          c’est-à-dire que leurs multiplications ramènent des facteurs d’échelles à 1 et des translations à 0.
-          Toutefois les erreurs d’arrondissements font que les valeurs obtenues sont rarement exactes,
-          mais plutôt des valeurs s’en rapprochant telles que 0,9999…97 à la place de 1.
-          L’approche habituelle pour contourner ce problème est d’effectuer les comparaisons de nombres à virgule flottante en tolérant un léger écart.
-          Mais il est difficile de choisir un seuil de tolérance qui gommera la plupart des erreurs d’arrondissement
-          sans considérer à tord un changement de référentiel comme un artefact (voir point précédent).</p></li>
-    </ul>
-    <p>
-      Ces points font que, pour un <abbr>SIG</abbr> comme Apache <abbr>SIS</abbr>, la précision d’une bibliothèque de calculs matriciels
-      est plus importante que la performance. Paradoxalement, un bon moyen de gagner en performance est justement d’investir davantage de temps de CPU
-      pour effectuer des opérations matricielles plus précises dans la phase de <em>préparation</em> (non d’<em>exécution</em>) de la transformation de coordonnées,
-      car on augmente ainsi les chances de détecter correctement quelles opérations s’annulent.
-      L’effort investit dans cette détection permet de sauver du temps là où ça compte: quand viendra le moment de boucler sur des millions de coordonnées à transformer.
-    </p><p>
-      Mais les bibliothèques dédiées aux calculs matriciels sont souvent conçues pour opérer de manière très performante
-      sur des matrices de grandes tailles, ayant par exemple des milliers de lignes et colonnes.
-      Elles sont ainsi conçues pour être capable de résoudre efficacement des systèmes d’équations linéaires comportant des centaines d’inconnues.
-      Les problèmes qu’elles résolvent sont certes difficiles, mais assez différents de ceux qui intéressent Apache <abbr>SIS</abbr>.
-      Pour cette raison, et aussi à cause d’un autre besoin spécifique détaillé dans les paragraphes suivants,
-      Apache <abbr>SIS</abbr> utilise ses propres fonctions de calculs matriciels.
-      Ces fonctions tentent de résoudre le problème de précision en utilisant l’arithmétique « double-double »
-      (une technique permettant de simuler une précision d’environ 120 bits)
-      au prix de la performance pendant une étape (la <em>préparation</em> de la transformation) où elle n’est pas jugée critique.
-    </p>
+      <h3 id="MatrixLibrary">Particularités d’une bibliothèque de calculs matriciels pour un <abbr>SIG</abbr></h3>
+      <p>
+        Les <abbr>SIG</abbr> font un usage intensif de matrices afin d’afficher leurs cartes ou transformer des coordonnées.
+        On pourrait croire que le marché est suffisamment bien pourvu en excellentes bibliothèques de calculs matriciels, libres ou commerciales.
+        Pourtant, les <abbr>SIG</abbr> ont des besoins spécifiques qui divergent un peu des objectifs de plusieurs bibliothèques existantes.
+        Des manipulations de matrices comme celles décrites dans <a href="#AffineTransform">le chapitre sur les transformations affines</a>
+        interviennent dans quasiment toutes les opérations appliquées par Apache <abbr>SIS</abbr> sur des coordonnées.
+        Mais l’analyse de ces opérations révèle quelques patterns:
+      </p>
+      <ul>
+        <li><p>Ces matrices sont presque toujours de petites tailles, dépassant rarement 5 lignes par 5 colonnes.</p></li>
+        <li><p>Les opérations matricielles « lourdes » (multiplications ou inversions de matrices) ne surviennent pas dans des endroits où la performance est importante.
+            Dans la quasi-totalité des cas, elles ne sont effectuées qu’une fois pour toute, à la lecture d’un fichier,
+            ou lors des étapes de préparation avant de convertir des coordonnées.
+            Elles ne surviennent quasiment jamais dans la boucle convertissant chacune des coordonnées.</p></li>
+        <li><p>Dans une succession de multiplications et d’inversions de matrices, les erreurs d’arrondissement s’accumulent et grandissent rapidement
+            au point de se confondre avec certaines opérations légitimes, notamment les changements de référentiel.
+            Ces dernières s’expriment souvent par un changement de la taille, position et orientation de l’ellipsoïde
+            choisi comme approximation de la forme de la Terre.
+            Or ces changements de taille s’expriment en parties par million et les rotations en arc-secondes.
+            Retranscrites dans une matrice, ces valeurs sont donc assez petites.</p></li>
+        <li><p>Il arrive fréquemment que des matrices s’annulent en tout ou en partie lorsqu’elles sont combinées,
+            c’est-à-dire que leurs multiplications ramènent des facteurs d’échelles à 1 et des translations à 0.
+            Toutefois les erreurs d’arrondissements font que les valeurs obtenues sont rarement exactes,
+            mais plutôt des valeurs s’en rapprochant telles que 0,9999…97 à la place de 1.
+            L’approche habituelle pour contourner ce problème est d’effectuer les comparaisons de nombres à virgule flottante en tolérant un léger écart.
+            Mais il est difficile de choisir un seuil de tolérance qui gommera la plupart des erreurs d’arrondissement
+            sans considérer à tord un changement de référentiel comme un artefact (voir point précédent).</p></li>
+      </ul>
+      <p>
+        Ces points font que, pour un <abbr>SIG</abbr> comme Apache <abbr>SIS</abbr>, la précision d’une bibliothèque de calculs matriciels
+        est plus importante que la performance. Paradoxalement, un bon moyen de gagner en performance est justement d’investir davantage de temps de CPU
+        pour effectuer des opérations matricielles plus précises dans la phase de <em>préparation</em> (non d’<em>exécution</em>) de la transformation de coordonnées,
+        car on augmente ainsi les chances de détecter correctement quelles opérations s’annulent.
+        L’effort investit dans cette détection permet de sauver du temps là où ça compte: quand viendra le moment de boucler sur des millions de coordonnées à transformer.
+      </p><p>
+        Mais les bibliothèques dédiées aux calculs matriciels sont souvent conçues pour opérer de manière très performante
+        sur des matrices de grandes tailles, ayant par exemple des milliers de lignes et colonnes.
+        Elles sont ainsi conçues pour être capable de résoudre efficacement des systèmes d’équations linéaires comportant des centaines d’inconnues.
+        Les problèmes qu’elles résolvent sont certes difficiles, mais assez différents de ceux qui intéressent Apache <abbr>SIS</abbr>.
+        Pour cette raison, et aussi à cause d’un autre besoin spécifique détaillé dans les paragraphes suivants,
+        Apache <abbr>SIS</abbr> utilise ses propres fonctions de calculs matriciels.
+        Ces fonctions tentent de résoudre le problème de précision en utilisant l’arithmétique « double-double »
+        (une technique permettant de simuler une précision d’environ 120 bits)
+        au prix de la performance pendant une étape (la <em>préparation</em> de la transformation) où elle n’est pas jugée critique.
+      </p>
 
-    <h4 id="NonSquareMatrix">Que faire des matrices qui ne sont pas carrées (et pourquoi)</h4>
-    <p>
-      Apache <abbr>SIS</abbr> a très souvent besoin d’inverser des matrices,
-      afin d’obtenir une conversion de coordonnées dans la direction inverse de la conversion originale.
-      Mais on n’inverse habituellement que des matrices carrées.
-      Or, <abbr>SIS</abbr> a besoin d’effectuer des inversions de matrices non-carrées.
-      Selon que l’on ait plus de lignes ou plus de colonnes:
-    </p>
-    <ul>
-      <li>Pour <abbr>SIS</abbr>, une matrice non-carrée est une conversion qui ajoute ou supprime une dimension aux coordonnées.</li>
-      <li>Pour les bibliothèques d’algèbre linéaire, une matrice non-carrée est un système d’équations sous-déterminé ou surdéterminé.</li>
-    </ul>
-    <p>
-      Pour mieux comprendre les difficultés que causerait une transposition trop directe des bibliothèques d’algèbre linéaire aux <abbr>SIG</abbr>,
-      imaginons une conversion (<var>φ₁</var>, <var>λ₁</var>, <var>h</var>) → (<var>φ₂</var>, <var>λ₂</var>)
-      qui projetterait les points d’un espace 3D vers une surface 2D.
-      Les termes <var>φ</var> sont des latitudes, <var>λ</var> des longitudes et
-      (<var>φ₂</var>, <var>λ₂</var>) n’égale pas forcement (<var>φ₁</var>, <var>λ₁</var>) si la hauteur <var>h</var> n’est pas perpendiculaire à la surface.
-    </p><p>
-      <xi:include href="../math/Geographic3Dto2D.html"/>
-    </p><p>
-      Pour des bibliothèques d’algèbre linéaire, la matrice ci-dessus représente un système d’équations sous-déterminé, et donc insoluble.
-      C’est-à-dire qu’on ne peut pas inverser cette conversion pour obtenir (<var>φ₂</var>, <var>λ₂</var>) → (<var>φ₁</var>, <var>λ₁</var>, <var>h</var>)
-      puisqu’on ne sait pas quelle valeur donner à <var>h</var>,
-      ce qui implique qu’on ne peut pas trouver (<var>φ₁</var>, <var>λ₁</var>) non-plus car ces valeurs dépendent peut-être de <var>h</var>.
-      Toutefois dans le cas des <abbr>SIG</abbr>, l’axe des hauteurs ellipsoïdales <var>h</var> est perpendiculaire à la surface de l’ellipsoïde
-      sur laquelle les latitudes et longitudes <em>géodésiques</em> (<var>φ</var>, <var>λ</var>) sont représentées
-      (notez que cette affirmation ne s’applique pas aux latitudes et longitudes <em>géocentriques</em>).
-      Cette perpendicularité rend <var>φ₁</var> et <var>λ₁</var> indépendants de <var>h</var>.
-      Dans ce genre de cas, on peut encore sauver les meubles.
-    </p><p>
-      Apache <abbr>SIS</abbr> procède en vérifiant si les valeurs de <var>h</var> sont indépendantes des valeurs de <var>φ</var> et <var>λ</var>.
-      Nous reconnaissons ce cas en vérifiant quels coefficients de la matrice ont la valeur zéro.
-      Si <abbr>SIS</abbr> arrive à identifier des dimensions indépendantes,
-      il peut les exclure temporairement de manière à inverser sans ambiguïté la conversion dans les dimensions restantes.
-      S’il ne trouve pas de dimension indépendante, alors une exception est levée.
-      Mais si une inversion a été possible, alors il reste à décider du sort des dimensions que <abbr>SIS</abbr> avait temporairement exclues.
-      Par défaut, <abbr>SIS</abbr> assignera la valeur <code>NaN</code> (<cite>Not-a-Number</cite>) à ces dimensions.
-      Toutefois dans le cas particulier des hauteurs ellipsoïdales <var>h</var> dans une opération (<var>φ₂</var>, <var>λ₂</var>) → (<var>φ₁</var>, <var>λ₁</var>, <var>h</var>),
-      la valeur zéro peut aussi être appropriée dans l’hypothèse où les coordonnées sont habituellement proches de la surface de l’ellipsoïde.
-      Mais dans tous les cas, le choix du coefficient à mettre à 0 ou <code>NaN</code> est basé sur la présomption que la matrice représente une transformation affine.
-      Ce n’est pas une opération qui peut être effectuée sur des matrices arbitraires.
-    </p><p>
-      Le traitement particulier décrit ci-haut permet à Apache <abbr>SIS</abbr> de résoudre
-      certains systèmes d’équations sous-déterminés que l’on rencontre couramment dans les <abbr>SIG</abbr>.
-      Dans notre exemple utilisant <code>NaN</code> comme valeur par défaut, la coordonnée <var>h</var> reste inconnue
-      – nous ne faisons pas surgir de l’information du néant – mais au moins les coordonnées (<var>φ</var>, <var>λ</var>) ont pu être récupérées.
-      Le problème inverse, celui des systèmes surdéterminés, est plus subtil.
-      Une approche classique des bibliothèques d’algèbre linéaire est de résoudre les systèmes surdéterminés par la méthode des moindres carrées.
-      Transposée à notre exemple, cette approche proposerait une conversion (<var>φ₂</var>, <var>λ₂</var>, <var>h</var>) → (<var>φ₁</var>, <var>λ₁</var>)
-      qui semble le meilleur compromis pour diverses valeurs de <var>φ₂</var>, <var>λ₂</var> et <var>h</var>,
-      tout en n’étant (sauf cas particuliers) une solution exacte pour personne.
-      De plus, les éventuelles combinaisons linéaires entre ces trois variables sont délicates compte tenu de l’hétérogénéité des unités de mesures,
-      avec par exemple les <var>h</var> en mètres et (<var>φ</var>, <var>λ</var>) en degrés.
-      Apache <abbr>SIS</abbr> procède plutôt comme pour les systèmes sous-déterminés: en exigeant que certaines dimensions soient indépendantes des autres,
-      faute de quoi la matrice sera considérée non-inversible.
-      En conséquence dans le cas des systèmes surdéterminés <abbr>SIS</abbr> refusera d’effectuer certaines opérations que les bibliothèques d’algèbre linéaire auraient faite,
-      mais en cas de succès les conversions obtenues seront garanties exactes (aux erreurs d’arrondissement prêts).
-    </p>
+      <h4 id="NonSquareMatrix">Que faire des matrices qui ne sont pas carrées (et pourquoi)</h4>
+      <p>
+        Apache <abbr>SIS</abbr> a très souvent besoin d’inverser des matrices,
+        afin d’obtenir une conversion de coordonnées dans la direction inverse de la conversion originale.
+        Mais on n’inverse habituellement que des matrices carrées.
+        Or, <abbr>SIS</abbr> a besoin d’effectuer des inversions de matrices non-carrées.
+        Selon que l’on ait plus de lignes ou plus de colonnes:
+      </p>
+      <ul>
+        <li>Pour <abbr>SIS</abbr>, une matrice non-carrée est une conversion qui ajoute ou supprime une dimension aux coordonnées.</li>
+        <li>Pour les bibliothèques d’algèbre linéaire, une matrice non-carrée est un système d’équations sous-déterminé ou surdéterminé.</li>
+      </ul>
+      <p>
+        Pour mieux comprendre les difficultés que causerait une transposition trop directe des bibliothèques d’algèbre linéaire aux <abbr>SIG</abbr>,
+        imaginons une conversion (<var>φ₁</var>, <var>λ₁</var>, <var>h</var>) → (<var>φ₂</var>, <var>λ₂</var>)
+        qui projetterait les points d’un espace 3D vers une surface 2D.
+        Les termes <var>φ</var> sont des latitudes, <var>λ</var> des longitudes et
+        (<var>φ₂</var>, <var>λ₂</var>) n’égale pas forcement (<var>φ₁</var>, <var>λ₁</var>) si la hauteur <var>h</var> n’est pas perpendiculaire à la surface.
+      </p><p>
+        <xi:include href="../math/Geographic3Dto2D.html"/>
+      </p><p>
+        Pour des bibliothèques d’algèbre linéaire, la matrice ci-dessus représente un système d’équations sous-déterminé, et donc insoluble.
+        C’est-à-dire qu’on ne peut pas inverser cette conversion pour obtenir (<var>φ₂</var>, <var>λ₂</var>) → (<var>φ₁</var>, <var>λ₁</var>, <var>h</var>)
+        puisqu’on ne sait pas quelle valeur donner à <var>h</var>,
+        ce qui implique qu’on ne peut pas trouver (<var>φ₁</var>, <var>λ₁</var>) non-plus car ces valeurs dépendent peut-être de <var>h</var>.
+        Toutefois dans le cas des <abbr>SIG</abbr>, l’axe des hauteurs ellipsoïdales <var>h</var> est perpendiculaire à la surface de l’ellipsoïde
+        sur laquelle les latitudes et longitudes <em>géodésiques</em> (<var>φ</var>, <var>λ</var>) sont représentées
+        (notez que cette affirmation ne s’applique pas aux latitudes et longitudes <em>géocentriques</em>).
+        Cette perpendicularité rend <var>φ₁</var> et <var>λ₁</var> indépendants de <var>h</var>.
+        Dans ce genre de cas, on peut encore sauver les meubles.
+      </p><p>
+        Apache <abbr>SIS</abbr> procède en vérifiant si les valeurs de <var>h</var> sont indépendantes des valeurs de <var>φ</var> et <var>λ</var>.
+        Nous reconnaissons ce cas en vérifiant quels coefficients de la matrice ont la valeur zéro.
+        Si <abbr>SIS</abbr> arrive à identifier des dimensions indépendantes,
+        il peut les exclure temporairement de manière à inverser sans ambiguïté la conversion dans les dimensions restantes.
+        S’il ne trouve pas de dimension indépendante, alors une exception est levée.
+        Mais si une inversion a été possible, alors il reste à décider du sort des dimensions que <abbr>SIS</abbr> avait temporairement exclues.
+        Par défaut, <abbr>SIS</abbr> assignera la valeur <code>NaN</code> (<cite>Not-a-Number</cite>) à ces dimensions.
+        Toutefois dans le cas particulier des hauteurs ellipsoïdales <var>h</var> dans une opération (<var>φ₂</var>, <var>λ₂</var>) → (<var>φ₁</var>, <var>λ₁</var>, <var>h</var>),
+        la valeur zéro peut aussi être appropriée dans l’hypothèse où les coordonnées sont habituellement proches de la surface de l’ellipsoïde.
+        Mais dans tous les cas, le choix du coefficient à mettre à 0 ou <code>NaN</code> est basé sur la présomption que la matrice représente une transformation affine.
+        Ce n’est pas une opération qui peut être effectuée sur des matrices arbitraires.
+      </p><p>
+        Le traitement particulier décrit ci-haut permet à Apache <abbr>SIS</abbr> de résoudre
+        certains systèmes d’équations sous-déterminés que l’on rencontre couramment dans les <abbr>SIG</abbr>.
+        Dans notre exemple utilisant <code>NaN</code> comme valeur par défaut, la coordonnée <var>h</var> reste inconnue
+        – nous ne faisons pas surgir de l’information du néant – mais au moins les coordonnées (<var>φ</var>, <var>λ</var>) ont pu être récupérées.
+        Le problème inverse, celui des systèmes surdéterminés, est plus subtil.
+        Une approche classique des bibliothèques d’algèbre linéaire est de résoudre les systèmes surdéterminés par la méthode des moindres carrées.
+        Transposée à notre exemple, cette approche proposerait une conversion (<var>φ₂</var>, <var>λ₂</var>, <var>h</var>) → (<var>φ₁</var>, <var>λ₁</var>)
+        qui semble le meilleur compromis pour diverses valeurs de <var>φ₂</var>, <var>λ₂</var> et <var>h</var>,
+        tout en n’étant (sauf cas particuliers) une solution exacte pour personne.
+        De plus, les éventuelles combinaisons linéaires entre ces trois variables sont délicates compte tenu de l’hétérogénéité des unités de mesures,
+        avec par exemple les <var>h</var> en mètres et (<var>φ</var>, <var>λ</var>) en degrés.
+        Apache <abbr>SIS</abbr> procède plutôt comme pour les systèmes sous-déterminés: en exigeant que certaines dimensions soient indépendantes des autres,
+        faute de quoi la matrice sera considérée non-inversible.
+        En conséquence dans le cas des systèmes surdéterminés <abbr>SIS</abbr> refusera d’effectuer certaines opérations que les bibliothèques d’algèbre linéaire auraient faite,
+        mais en cas de succès les conversions obtenues seront garanties exactes (aux erreurs d’arrondissement prêts).
+      </p>
 
-    <h4 id="MatrixLibrarySummary">La bibliothèque matricielle de Apache <abbr>SIS</abbr></h4>
-    <p>
-      En résumé, les besoins qui ont amené Apache <abbr>SIS</abbr> à fournir ses propres fonctions de calculs matriciels sont:
-    </p>
-    <ul>
-      <li>Structure légère pour les petites matrices, particulièrement celles de taille 3×3.</li>
-      <li>Précision accrue avec l’arithmétique « double-double », quitte à sacrifier un peu de performance dans des endroits où elle n’est pas critique.</li>
-      <li>Traitement particulier de l’inversion des matrices non-carrées pour des conversions de coordonnées.</li>
-    </ul>
-    <p>
-      Cette bibliothèque est fournie dans le paquet <code>org.apache.sis.matrix</code> du module <code>sis-referencing</code>.
-    </p>
+      <h4 id="MatrixLibrarySummary">La bibliothèque matricielle de Apache <abbr>SIS</abbr></h4>
+      <p>
+        En résumé, les besoins qui ont amené Apache <abbr>SIS</abbr> à fournir ses propres fonctions de calculs matriciels sont:
+      </p>
+      <ul>
+        <li>Structure légère pour les petites matrices, particulièrement celles de taille 3×3.</li>
+        <li>Précision accrue avec l’arithmétique « double-double », quitte à sacrifier un peu de performance dans des endroits où elle n’est pas critique.</li>
+        <li>Traitement particulier de l’inversion des matrices non-carrées pour des conversions de coordonnées.</li>
+      </ul>
+      <p>
+        Cette bibliothèque est fournie dans le paquet <code>org.apache.sis.matrix</code> du module <code>sis-referencing</code>.
+      </p>
+    </section>
   </body>
 </html>
