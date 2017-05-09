@@ -36,7 +36,7 @@
 <li><a href="#About">Conventions utilisées dans ce guide</a><ul>
 <li><a href="#CodeColors">Code de couleurs</a></li></ul></li></ul></li>
 <li><a href="#Referencing">Systèmes de références spatiales</a><ul>
-<li><a href="#CRS_Components">Composantes d’un système de références par coordonnées</a><ul>
+<li><a href="#ComponentsOfCRS">Composantes d’un système de références par coordonnées</a><ul>
 <li><a href="#Ellipsoid">Géoïde et ellipsoïde</a></li>
 <li><a href="#GeodeticDatum">Référentiel géodésique</a></li>
 <li><a href="#CoordinateSystem">Systèmes de coordonnées</a><ul>
@@ -52,21 +52,21 @@
 <li><a href="#CRSParsing">Lecture d’une définition au format GML ou WKT</a></li>
 <li><a href="#CRSFactory">Construction programmatique explicite</a></li>
 <li><a href="#CRS_UserCode">Ajout de définitions</a></li></ul></li>
-<li><a href="#CoordinateOperation">Opérations sur les coordonnées</a><ul>
+<li><a href="#CoordinateOperations">Opérations sur les coordonnées</a><ul>
 <li><a href="#MathTransform">Exécution de opérations</a></li>
 <li><a href="#TransformDerivative">Dérivées partielles des opérations</a><ul>
 <li><a href="#DerivativeAndEnvelope">Utilité des dérivées pour la reprojection d’enveloppes</a></li>
 <li><a href="#DerivativeAndRaster">Utilité des dérivées pour la reprojection d’images</a></li>
 <li><a href="#GetDerivative">Obtention de la dérivée en un point</a></li></ul></li></ul></li></ul></li>
 <li><a href="#Geometry">Géométries</a><ul>
-<li><a href="#Geometry-root">Classes de base</a><ul>
+<li><a href="#GeometryBase">Classes de base</a><ul>
 <li><a href="#DirectPosition">Points et positions directes</a></li>
 <li><a href="#Envelope">Enveloppes</a><ul>
 <li><a href="#AntiMeridian">Enveloppes traversant l’antiméridien</a></li></ul></li></ul></li></ul></li>
 <li><a href="#Coverage">Couvertures de données (Coverages)</a></li>
 <li><a href="#Utilities">Classes et méthodes utilitaires</a><ul>
-<li><a href="#ComparisonMode">Modes de comparaisons des objets</a></li>
-<li><a href="#ObjectConverters">Object converters</a></li>
+<li><a href="#ComparisonModes">Modes de comparaisons des objets</a></li>
+<li><a href="#ObjectConverters">Convertisseurs d’objets</a></li>
 <li><a href="#Internationalization">Internationalisation</a><ul>
 <li><a href="#LocalizedString">Chaînes de caractères distinctes pour chaque conventions locales</a></li>
 <li><a href="#InternationalString">Instance unique pour toutes les conventions locales</a></li>
@@ -85,7 +85,7 @@
 <li><a href="#Tests">Les suites de tests</a><ul>
 <li><a href="#GeoAPI-validators">Validations des instances</a></li>
 <li><a href="#GeoAPI-tests">Exécution des tests pré-définis</a></li></ul></li>
-<li><a href="#DesignNote">Notes de design</a><ul>
+<li><a href="#DesignNotes">Notes de design</a><ul>
 <li><a href="#AffineTransform">Utilisation des transformations affines</a><ul>
 <li><a href="#AffineTransformAPI">Intégration avec les bibliothèques graphiques</a></li></ul></li>
 <li><a href="#MatrixLibrary">Particularités d’une bibliothèque de calculs matriciels pour un SIG</a><ul>
@@ -95,6 +95,15 @@
 </nav>
 
 <main>
+
+
+
+
+
+
+
+
+
 <section>
 <header>
 <h1 id="Standards"><span class="section-number">1.</span> Standards et normes</h1>
@@ -154,7 +163,13 @@ mais qui risquent de le rattraper avant la fin.
 
 
 
+
+
+
+<section>
+<header>
 <h2 id="ConceptualModels"><span class="section-number">1.1.</span> Sources des modèles conceptuels de Apache SIS</h2>
+</header>
 <p>
 La majorité des standards utilisés par Apache <abbr title="Spatial Information System">SIS</abbr> ont été élaborés
 par le <a href="http://www.opengeospatial.org">consortium <i>Open Geospatial</i></a> (<abbr>OGC</abbr>),
@@ -189,7 +204,7 @@ plus facilement des informations géographiques.
 <summary>Pour en savoir plus sur le processus de standardisation</summary>
 <article id="OGC-process">
 <header>
-<h1>Processus de standardisation à l’<abbr>OGC</abbr></h1>
+<h2>Processus de standardisation à l’<abbr>OGC</abbr></h2>
 </header>
 <p>
 Les travaux de l’<abbr title="Open Geospatial Consortium">OGC</abbr> se font par courriers électroniques,
@@ -208,7 +223,7 @@ tandis que les <abbr>SWG</abbr> nécessitent de la part des participants un enga
 la diffusion du standard par des réclamations de propriétés intellectuelles.
 </p>
 
-<h2 id="OGC-SWG">Fonctionnement des groupes de travail (<abbr>SWG</abbr>)</h2>
+<h3 id="OGC-SWG">Fonctionnement des groupes de travail (<abbr>SWG</abbr>)</h3>
 <p>
 Pour être accepté, un projet de standardisation doit être supporté par un nombre minimal de membres appartement à des organisations distinctes.
 Ces membres fondateurs rédigent une charte définissant les objectifs du <abbr>SWG</abbr>,
@@ -235,7 +250,7 @@ Cette procédure nécessite plusieurs mois.
 Il existe une procédure plus rapide pour entériner des standards de fait, mais elle n’est appliquée qu’avec parcimonie.
 </p>
 
-<h2 id="OGC-OAB">Le conseil d’architecture (<abbr>OAB</abbr>) et le comité technique (<abbr>TC</abbr>)</h2>
+<h3 id="OGC-OAB">Le conseil d’architecture (<abbr>OAB</abbr>) et le comité technique (<abbr>TC</abbr>)</h3>
 <p>
 Toute proposition de standard est d’abord examinée par le conseil d’architecture (<i><abbr title="Open Geospatial Consortium">OGC</abbr> Architecture Board</i> — <abbr>OAB</abbr>).
 Ce conseil vérifie que le standard répond aux exigences de l’<abbr>OGC</abbr> sur la forme,
@@ -253,7 +268,7 @@ La coopération entre les deux organismes va dans les deux sens: l’<abbr>OGC</
 laquelle développer de nouveaux standards, et certains de ces nouveaux standards <abbr>OGC</abbr> deviennent des standards <abbr>ISO</abbr>.
 </p>
 
-<h2 id="OGC-RFC">Procédure de soumission de propositions de modifications</h2>
+<h3 id="OGC-RFC">Procédure de soumission de propositions de modifications</h3>
 <p>
 Tout utilisateur, qu’il soit membre ou non du consortium <i>Open Geospatial</i>, peut proposer des modifications à des standards <abbr title="Open Geospatial Consortium">OGC</abbr>.
 Une liste des propositions actuelles de changements, ainsi qu’un formulaire permettant d’en soumettre de nouvelles,
@@ -297,7 +312,7 @@ Certaines structures de données n’existent que dans quelques langages, par ex
 <summary>Pour en savoir plus sur les « spécifications d’implémentation »</summary>
 <article id="implementation-standard">
 <header>
-<h1>Note historique</h1>
+<h2>Note historique</h2>
 </header>
 <p>
 Au tournant du millénaire, les spécifications abstraites étaient explicitement concrétisées dans des <i>spécifications d’implémentations</i>.
@@ -340,6 +355,7 @@ n’apportant pas toujours de nouvelles fonctionnalités mais facilitant l’usa
 </p>
 </article>
 </details>
+
 <p>
 Le tableau suivant liste les principales normes utilisées par le projet.
 Plusieurs normes sont publiées à la fois comme standard <abbr title="International Organization for Standardization">ISO</abbr> et comme standard <abbr>OGC</abbr>,
@@ -391,6 +407,12 @@ Enfin, les paquets GeoAPI seront introduits dans le chapitre suivant.
 <td><code class="GeoAPI">org.opengis.referencing</code></td>
 <td><code class="SIS">org.apache.sis.referencing</code></td>
 </tr><tr>
+<td><abbr>ISO</abbr> 19112</td>
+<td/>
+<td><i>Spatial referencing by geographic identifier</i></td>
+<td><code class="GeoAPI">org.opengis.referencing.gazetteer</code></td>
+<td><code class="SIS">org.apache.sis.referencing.gazetteer</code></td>
+</tr><tr>
 <td><abbr>ISO</abbr> 19108</td>
 <td/>
 <td><i>Temporal Schema</i></td>
@@ -403,9 +425,9 @@ Enfin, les paquets GeoAPI seront introduits dans le chapitre suivant.
 <td><code class="GeoAPI">org.opengis.geometry</code></td>
 <td><code class="SIS">org.apache.sis.geometry</code></td>
 </tr><tr>
-<td><abbr>ISO</abbr> 19101</td>
+<td><abbr>ISO</abbr> 19109</td>
 <td>Topic 5</td>
-<td><i>Features</i></td>
+<td><i>Rules for application schema</i></td>
 <td><code class="GeoAPI">org.opengis.feature</code></td>
 <td><code class="SIS">org.apache.sis.feature</code></td>
 </tr><tr>
@@ -467,6 +489,12 @@ Enfin, les paquets GeoAPI seront introduits dans le chapitre suivant.
 </tr><tr>
 <td class="separator" colspan="5">Services web</td>
 </tr><tr>
+<td/>
+<td><abbr>CSW</abbr></td>
+<td><i>Catalog Services</i></td>
+<td/>
+<td/>
+</tr><tr>
 <td><abbr>ISO</abbr> 19128</td>
 <td><abbr>WMS</abbr></td>
 <td><i>Web Map Service</i></td>
@@ -516,10 +544,13 @@ Enfin, les paquets GeoAPI seront introduits dans le chapitre suivant.
 <td/>
 </tr>
 </table>
+</section>
 
 
-
+<section>
+<header>
 <h2 id="GeoAPI"><span class="section-number">1.2.</span> Des modèles conceptuels vers des interfaces Java: GeoAPI</h2>
+</header>
 <p>
 Le projet <a href="http://www.geoapi.org">GeoAPI</a> offre un ensemble d’interfaces Java pour les applications géo-spatiales.
 Dans une séries de paquets <code class="GeoAPI">org.opengis.*</code>, GeoAPI définit des structures représentant des méta-données,
@@ -555,7 +586,7 @@ quitte à obtenir une valeur nulle en attendant qu’une nouvelle version de la 
 <summary>Pour en savoir plus sur les origines du projet GeoAPI</summary>
 <article>
 <header>
-<h1>Historique du projet GeoAPI</h1>
+<h2>Historique du projet GeoAPI</h2>
 </header>
 <p>
 En 2001, le consortium <i>Open GIS</i> (l’ancien nom du consortium <i>Open Geospatial</i>) publia la spécification d’implémentation
@@ -614,7 +645,7 @@ et des fichiers de propriétés, décrits dans la section suivante.
 <summary>Pour en savoir plus sur les raisons d’une définition manuelle des interfaces Java</summary>
 <article id="SpecificationToInterfaces">
 <header>
-<h1>Des spécifications de l’<abbr title="Open Geospatial Consortium">OGC</abbr> aux interfaces Java</h1>
+<h2>Des spécifications de l’<abbr title="Open Geospatial Consortium">OGC</abbr> aux interfaces Java</h2>
 </header>
 <p>
 Il est possible de générer automatiquement des interfaces Java à partir des standards de l’<abbr>OGC</abbr> à l’aide d’outils existants.
@@ -733,7 +764,7 @@ On peut toutefois avoir un aperçu de son contenu en consultant la page listant 
 <details>
 <summary>Pour en savoir plus sur les modules de GeoAPI</summary>
 <article id="GeoAPI-modules">
-<h1>Les modules de GeoAPI</h1>
+<h2>Les modules de GeoAPI</h2>
 <p>
 Le projet GeoAPI est composé d’une partie standardisée (<code class="GeoAPI">geoapi</code>) et
 d’une partie expérimentale (<code class="GeoAPI">geoapi-pending</code>). Ces deux parties étant
@@ -757,7 +788,7 @@ Les versions finales de Apache <abbr>SIS</abbr> dépendent de ce module.
 (non pas une dépendance) avec des ajouts qui n’ont pas encore été approuvés comme un standard <abbr>OGC</abbr>.
 Certains ajouts apparaissent dans des interfaces normalement définies par le module <code class="GeoAPI">geoapi</code>,
 d’où la nécessité de les copier.
-Les branches de développement <code>jdk6</code>,
+Les branches de développement
 <code>jdk7</code> et <code>jdk8</code> de Apache <abbr>SIS</abbr> dépendent de ce module,
 mais cette dépendance est transformée en une dépendance vers le module <code class="GeoAPI">geoapi</code>
 standard au moment de fusionner les branches avec le tronc.
@@ -789,10 +820,7 @@ Apache <abbr>SIS</abbr> l’utilise pour tester son propre module <code class="S
 <li><p>
 <b><code class="GeoAPI">geoapi-openoffice</code></b> — contient
 un <i>add-in</i> pour les suites bureautiques Libre/OpenOffice.org.
-<!--
-            Apache <abbr>SIS</abbr> offre son propre <i>add-in</i> dans le module <code>sis-openoffice</code>,
-            mais utilise les mêmes noms de fonctions que le module de GeoAPI afin d’assurer une certaine compatibilité.
-            -->
+
 </p></li>
 </ul>
 </article>
@@ -818,17 +846,17 @@ pas autorisée à retourner la valeur <code>null</code>.
 
 <pre><b>package</b> <code class="GeoAPI">org.opengis.referencing.crs</code>;
 
-<code class="comment">/**
- * A 2D coordinate reference system used to approximate the shape of the earth on a planar surface.
- */</code>
-@<code class="GeoAPI">UML</code>(specification=ISO_19111, identifier=<i>"<code class="OGC">SC_ProjectedCRS</code>"</i>)
-<b>public</b> <b>interface</b> <code class="GeoAPI">ProjectedCRS</code> <b>extends</b> <code class="GeoAPI">GeneralDerivedCRS</code> {
-    <code class="comment">/**
-     * Returns the coordinate system, which must be Cartesian.
-     */</code>
-    @<code class="GeoAPI">UML</code>(obligation=MANDATORY, specification=ISO_19111, identifier=<i>"<code class="OGC">coordinateSystem</code>"</i>)
-    <code class="GeoAPI">CartesianCS</code> <code class="GeoAPI">getCoordinateSystem()</code>;
-}</pre>
+  <code class="comment">/**
+   * A 2D coordinate reference system used to approximate the shape of the earth on a planar surface.
+   */</code>
+  @<code class="GeoAPI">UML</code>(specification=ISO_19111, identifier=<i>"<code class="OGC">SC_ProjectedCRS</code>"</i>)
+  <b>public</b> <b>interface</b> <code class="GeoAPI">ProjectedCRS</code> <b>extends</b> <code class="GeoAPI">GeneralDerivedCRS</code> {
+      <code class="comment">/**
+       * Returns the coordinate system, which must be Cartesian.
+       */</code>
+      @<code class="GeoAPI">UML</code>(obligation=MANDATORY, specification=ISO_19111, identifier=<i>"<code class="OGC">coordinateSystem</code>"</i>)
+      <code class="GeoAPI">CartesianCS</code> <code class="GeoAPI">getCoordinateSystem()</code>;
+  }</pre>
 
 <p>
 Les méthodes d’introspections du Java permettent d’accéder à ces informations pendant l’exécution d’une application.
@@ -1082,10 +1110,13 @@ Ces classes peuvent être instanciées par l’instruction <code>new AbstractXXX
 Mais ces instanciations ne devraient être faites qu’en dernier recours,
 lorsqu’il n’est vraiment pas possible de déterminer le sous-type exact.
 </p>
+</section>
 
 
-
+<section>
+<header>
 <h2 id="About"><span class="section-number">1.3.</span> Conventions utilisées dans ce guide</h2>
+</header>
 <p>
 Les standards privilégient parfois l’application de certains termes génériques à des contextes particuliers,
 qui peuvent différer du contexte dans lequel d’autres communautés emploient ces termes.
@@ -1137,13 +1168,16 @@ Des compléments d’information apparaissent dans des boîtes grises.
 Le lecteur peut ignorer ces boîtes grises sans que cela ne nuise à la compréhension du texte.
 </p>
 </section>
+</section>
+
+
 <section>
 <header>
 <h1 id="Referencing"><span class="section-number">2.</span> Systèmes de références spatiales</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Standards">Chapitre précédent</a></div><div class="next-chapter"><a href="#Geometry">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc">
-<li><a href="#CRS_Components">Composantes d’un système de références par coordonnées</a><ul>
+<li><a href="#ComponentsOfCRS">Composantes d’un système de références par coordonnées</a><ul>
 <li><a href="#Ellipsoid">Géoïde et ellipsoïde</a></li>
 <li><a href="#GeodeticDatum">Référentiel géodésique</a></li>
 <li><a href="#CoordinateSystem">Systèmes de coordonnées</a><ul>
@@ -1159,7 +1193,7 @@ Le lecteur peut ignorer ces boîtes grises sans que cela ne nuise à la compréh
 <li><a href="#CRSParsing">Lecture d’une définition au format GML ou WKT</a></li>
 <li><a href="#CRSFactory">Construction programmatique explicite</a></li>
 <li><a href="#CRS_UserCode">Ajout de définitions</a></li></ul></li>
-<li><a href="#CoordinateOperation">Opérations sur les coordonnées</a><ul>
+<li><a href="#CoordinateOperations">Opérations sur les coordonnées</a><ul>
 <li><a href="#MathTransform">Exécution de opérations</a></li>
 <li><a href="#TransformDerivative">Dérivées partielles des opérations</a><ul>
 <li><a href="#DerivativeAndEnvelope">Utilité des dérivées pour la reprojection d’enveloppes</a></li>
@@ -1194,7 +1228,7 @@ Déclarer ces paramètres directement dans le <abbr title="Coordinate Reference 
 </ul>
 <article>
 <header>
-<h1>Bibliothèques de type « early binding » versus « late binding »</h1>
+<h2>Bibliothèques de type « early binding » versus « late binding »</h2>
 </header>
 <p>
 Le caractère universel du système <abbr title="World Geodetic System 1984">WGS84</abbr> rend tentante l’idée de l’utiliser comme système pivot,
@@ -1258,7 +1292,13 @@ Ces classes seront discutées dans <a href="#CoordinateOperation">une autre sect
 
 
 
-<h2 id="CRS_Components"><span class="section-number">2.1.</span> Composantes d’un système de références par coordonnées</h2>
+
+
+
+<section>
+<header>
+<h2 id="ComponentsOfCRS"><span class="section-number">2.1.</span> Composantes d’un système de références par coordonnées</h2>
+</header>
 <p>
 Les systèmes de références spatiales par coordonnées fournissent les informations nécessaires pour faire
 correspondre des coordonnées numériques à des positions dans le monde réel. Dans Apache <abbr title="Spatial Information System">SIS</abbr>,
@@ -1379,8 +1419,10 @@ et l’ordre des axes effectif peut être vérifié après la création du <abbr
 Mais si l’ordre (<var>x</var>, <var>y</var>) est désiré pour des raisons de compatibilité avec d’anciens standards <abbr>OGC</abbr> ou avec d’autres logiciels,
 alors les <abbr>CRS</abbr> peuvent être modifiés de manière à avoir la longitude en premier avec un appel à la méthode suivante:
 </p>
+
 <pre><code class="GeoAPI">CoordinateReferenceSystem</code> crs = …;  <code class="comment">// CRS obtenu de n’importe quelle façon.
 </code>crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)</pre>
+
 <p>
 Parmi les anciens standards de l’<abbr>OGC</abbr> qui utilisaient un ordre des axes non-conforme,
 un standard influent était la version 1 du format <cite>Well Known Text</cite> (<abbr>WKT</abbr>).
@@ -1426,10 +1468,13 @@ alors que les pays plutôt allongés dans le sens Nord-Sud préfèrent une proje
 
 <h4 id="CompoundWKT"><span class="section-number">2.1.6.1.</span> Format <i>Well-Known Text</i></h4>
 <p style="color: red">TODO</p>
+</section>
 
 
-
+<section>
+<header>
 <h2 id="GetCRS"><span class="section-number">2.2.</span> Obtention d’un système de référence spatial</h2>
+</header>
 <p style="color: red">TODO</p>
 
 <h3 id="CRSAuthorityFactory"><span class="section-number">2.2.1.</span> Systèmes prédéfinis par des autorités</h3>
@@ -1443,10 +1488,13 @@ alors que les pays plutôt allongés dans le sens Nord-Sud préfèrent une proje
 
 <h3 id="CRS_UserCode"><span class="section-number">2.2.4.</span> Ajout de définitions</h3>
 <p style="color: red">TODO</p>
+</section>
 
 
-
-<h2 id="CoordinateOperation"><span class="section-number">2.3.</span> Opérations sur les coordonnées</h2>
+<section>
+<header>
+<h2 id="CoordinateOperations"><span class="section-number">2.3.</span> Opérations sur les coordonnées</h2>
+</header>
 <p>
 Étant donné un système de référence des coordonnées (<abbr title="Coordinate Reference System">CRS</abbr>) <em>source</em> selon lequel sont exprimés des coordonnées existantes
 et un système de référence des coordonnées <em>destination</em> selon lequel les coordonnées sont désirées,
@@ -1474,7 +1522,9 @@ Dans cet exemple, ce critère entraîne la sélection d’une opération valide 
 La façon la plus facile d’obtenir une opération sur les coordonnées à partir des informations présentées ci-dessus
 est d’utiliser la classe de commodité <code class="SIS">org.apache.sis.referencing.CRS</code>:
 </p>
+
 <pre><code class="GeoAPI">CoordinateOperation</code> cop = CRS.findOperation(sourceCRS, targetCRS, areaOfInterest);</pre>
+
 <p>
 Parmi les information fournies par l’objet <code class="GeoAPI">CoordinateOperation</code> obtenu, on note en particulier:
 </p>
@@ -1591,10 +1641,12 @@ sous forme d’une matrice colonne (la raison sera plus claire bientôt):
 </math>
 </td>
 <td style="vertical-align:middle; min-width:500px; padding-left:60px">
+
 <pre style="margin:0"><code class="GeoAPI">DirectPosition</code> geographic = <b>new</b> DirectPosition2D(<var>φ</var>, <var>λ</var>);
 <code class="GeoAPI">DirectPosition</code> projected = <var><b>P</b></var>.transform(geographic, <b>null</b>);
 <b>double</b> <var>x</var> = projected.getOrdinate(0);
 <b>double</b> <var>y</var> = projected.getOrdinate(1);</pre>
+
 </td>
 </tr>
 </table>
@@ -1628,10 +1680,12 @@ sous forme d’une matrice colonne (la raison sera plus claire bientôt):
 </math>
 </td>
 <td style="vertical-align:middle; min-width:500px; padding-left:60px">
+
 <pre style="margin:0"><code class="GeoAPI">DirectPosition</code> geographic = <b>new</b> DirectPosition2D(<var>φ</var>, <var>λ</var>);
 <code class="GeoAPI">Matrix</code> jacobian = <var><b>P</b></var>.derivative(geographic);
 <b>double</b> dx_dλ = jacobian.getElement(0,1);
 <b>double</b> dy_dφ = jacobian.getElement(1,0);</pre>
+
 </td>
 </tr>
 </table>
@@ -1889,20 +1943,24 @@ sont souvent beaucoup plus compliquées à implémenter que les opérations orig
 mais par chance la matrice Jacobienne d’une fonction inverse est simplement l’inverse de la matrice Jacobienne de la fonction originale.
 Une fonction inverse peut donc implémenter le calcul de sa dérivée comme suit:
 </p>
+
 <pre>@Override
 <b>public</b> <code class="GeoAPI">Matrix</code> derivative(<code class="GeoAPI">DirectPosition</code> p) <b>throws</b> <code class="GeoAPI">TransformException</code> {
     <code class="GeoAPI">Matrix</code> jac = inverse().derivative(transform(p));
     <b>return</b> Matrices.inverse(jac);
-}
-</pre>
+}</pre>
+
 </section>
+</section>
+
+
 <section>
 <header>
 <h1 id="Geometry"><span class="section-number">3.</span> Géométries</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Referencing">Chapitre précédent</a></div><div class="next-chapter"><a href="#Coverage">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc">
-<li><a href="#Geometry-root">Classes de base</a><ul>
+<li><a href="#GeometryBase">Classes de base</a><ul>
 <li><a href="#DirectPosition">Points et positions directes</a></li>
 <li><a href="#Envelope">Enveloppes</a><ul>
 <li><a href="#AntiMeridian">Enveloppes traversant l’antiméridien</a></li></ul></li></ul></li></ul></nav>
@@ -1913,7 +1971,11 @@ et les classes de Apache <abbr title="Spatial Information System">SIS</abbr> qui
 
 
 
-<h2 id="Geometry-root"><span class="section-number">3.1.</span> Classes de base</h2>
+
+<section>
+<header>
+<h2 id="GeometryBase"><span class="section-number">3.1.</span> Classes de base</h2>
+</header>
 <p>
 Chaque objet géométrique est considéré comme un ensemble infini de points.
 En tant qu’ensemble, leurs opérations les plus fondamentales sont de même nature que les opérations standards des collections du Java.
@@ -2080,6 +2142,9 @@ est vrai, alors il est garanti que l’enveloppe est vide.
 </p>
 </aside>
 </section>
+</section>
+
+
 <section>
 <header>
 <h1 id="Coverage"><span class="section-number">4.</span> Couvertures de données (<i>Coverages</i>)</h1>
@@ -2157,14 +2222,16 @@ des instances de <code class="SIS">Range</code> ainsi que d’autres information
 </p>
 </aside>
 </section>
+
+
 <section>
 <header>
 <h1 id="Utilities"><span class="section-number">5.</span> Classes et méthodes utilitaires</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Coverage">Chapitre précédent</a></div><div class="next-chapter"><a href="#XML-ISO">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc">
-<li><a href="#ComparisonMode">Modes de comparaisons des objets</a></li>
-<li><a href="#ObjectConverters">Object converters</a></li>
+<li><a href="#ComparisonModes">Modes de comparaisons des objets</a></li>
+<li><a href="#ObjectConverters">Convertisseurs d’objets</a></li>
 <li><a href="#Internationalization">Internationalisation</a><ul>
 <li><a href="#LocalizedString">Chaînes de caractères distinctes pour chaque conventions locales</a></li>
 <li><a href="#InternationalString">Instance unique pour toutes les conventions locales</a></li>
@@ -2176,7 +2243,15 @@ Ce chapitre décrit des aspects de Apache <abbr title="Spatial Information Syste
 La plupart de ces utilitaires ne sont pas spécifiques aux systèmes d’information spatiales.
 </p>
 
-<h2 id="ComparisonMode"><span class="section-number">5.1.</span> Modes de comparaisons des objets</h2>
+
+
+
+
+
+<section>
+<header>
+<h2 id="ComparisonModes"><span class="section-number">5.1.</span> Modes de comparaisons des objets</h2>
+</header>
 <p>
 Il existe différentes opinions sur la façon d’implémenter la méthode <code>Object​.equals(Object)</code> du Java standard.
 Selon certains, il doit être possible de comparer différentes implémentations d’une même interface ou classe de base.
@@ -2243,10 +2318,13 @@ Dans l’expression <code>A.equals(B)</code>, le mode <code class="SIS">BY_CONTR
 (et donc par extension tous les autres modes qui en dépendent) ne comparera que les propriétés connues de <code>A</code>,
 sans se soucier de savoir si <code>B</code> en connaît davantage.
 </p>
+</section>
 
 
-
-<h2 id="ObjectConverters"><span class="section-number">5.2.</span> Object converters</h2>
+<section>
+<header>
+<h2 id="ObjectConverters"><span class="section-number">5.2.</span> Convertisseurs d’objets</h2>
+</header>
 <p>
 Il est parfois nécessaire de convertir une instance d’un type source <code>&lt;S&gt;</code> vers un type destination <code>&lt;T&gt;</code>
 alors que ces types ne sont pas connus au moment de la compilation.
@@ -2254,9 +2332,11 @@ Divers projets (Apache Common Convert, Spring, <i>etc.</i>)
 ont créé leur propres interfaces pour effectuer des conversions d’objets entre des types connus seulement au moment de l’exécution.
 Les détails varient, mais ces interfaces ressemblent typiquement à l’interface suivante:
 </p>
+
 <pre><b>interface</b> ObjectConverter&lt;S,T&gt; {   <code class="comment">// Certains projets utilisent seulement "Converter" comme nom d’interface.
 </code>    T apply(S object);             <code class="comment">// Un autre nom de méthode souvent utilisé par les autres projets est "convert".
 </code>}</pre>
+
 <p>
 Comme d’autres projets, Apache <abbr title="Spatial Information System">SIS</abbr> définit sa propre interface <code>ObjectConverter</code>.
 La principale différence entre l’interface de <abbr>SIS</abbr> est celle que l’on retrouve dans d’autres projets
@@ -2326,10 +2406,13 @@ Par exemple si la fonction de conversion inverse le signe des valeurs, alors la 
 Si la fonction de conversion ne préserve ni ne renverse l’ordre, alors la plage de valeurs ne peut pas être convertie du tout
 (parce qu’elle ne contiendrait plus le même ensemble de valeurs) même si les valeurs individuelles auraient pu être converties.
 </p>
+</section>
 
 
-
+<section>
+<header>
 <h2 id="Internationalization"><span class="section-number">5.3.</span> Internationalisation</h2>
+</header>
 <p>
 Dans une architecture où un programme exécuté sur un serveur fournit ses données à plusieurs clients,
 les conventions locales du serveur ne sont pas nécessairement les mêmes que celles des clients.
@@ -2347,34 +2430,37 @@ Certaines classes ne sont conçues que pour fonctionner selon une convention loc
 C’est évidemment le cas des implémentations standards de <code>java.text.Format</code>,
 puisqu’elles sont entièrement dédiées au travail d’internationalisation.
 Mais c’est aussi le cas de d’autres classes moins évidentes comme
-<code>javax.imageio.ImageReader</code>/<code>ImageWriter</code> ainsi que les sous-classes de <code>Exception</code>.
+<code>javax.imageio.ImageReader</code> et <code>ImageWriter</code>.
 Lorsque une de ces classes est implémentée par <abbr title="Spatial Information System">SIS</abbr>,
 nous l’identifions en implémentant l’interface <code class="SIS">org.apache.sis.util.Localized</code>.
 La méthode <code class="SIS">getLocale()</code> de cette interface permet alors de déterminer
 selon quelles conventions locales l’instance produira ses messages.
 </p>
 <p>
-Certaines sous-classes de <code>Exception</code> définies par <abbr>SIS</abbr> implémentent aussi l’interface <code class="SIS">Localized</code>.
-Pour ces exceptions, le message d’erreur peut être produit selon deux conventions locales selon qu’il s’adresse à l’administrateur du système ou au client:
-<code>getMessage()</code> retourne le message de l’exception selon les conventions par défaut du système, alors que
-<code>getLocalizedMessage()</code> retourne le message de l’exception selon les conventions locales spécifiées par <code class="SIS">getLocale()</code>.
-Ce <code>Locale</code> sera lui-même déterminé par l’objet <code class="SIS">Localized</code> qui a lancé l’exception.
+Une autre classe qui fournit différentes méthodes pour différentes langues est <code>java.lang.Throwable</code>.
+L’<abbr title="Application Programming Interface">API</abbr> standard du Java définie deux méthodes pour obtenir un message d’erreur:
+<code>getMessage()</code> et <code>getLocalizedMessage()</code>.
+Habituellement, ces deux méthodes retournent la même chaîne de caractères.
+Toutefois certaines exceptions lancées par Apache <abbr>SIS</abbr> peuvent utiliser différentes langues.
+La politique que <abbr>SIS</abbr> tente d’appliquer autant que possible est:
 </p>
+<ul>
+<li><code>getMessage()</code> retourne le message dans la langue par défaut de la <abbr title="Java Virtual Machine">JVM</abbr>.
+Dans une architecture client-serveur, c’est souvent la langue du système hébergeant le serveur.
+C’est la méthode recommandée pour enregistrer des messages dans le journal des événements,
+à l’intention des administrateurs systèmes.</li>
+<li><code>getLocalizedMessage()</code> retourne le message dans une langue qui dépend du contexte dans lequel l’exception s’est produite.
+C’est souvent la langue qui a été configurée pour une instance particulière de <code class="GeoAPI">Format</code> ou <code class="SIS">DataStore</code>,
+que l’on peut présumer être la langue du client se connectant au serveur.
+C’est la méthode recommandée pour afficher un message dans une fenêtre sur le poste de l’utilisateur.</li>
+</ul>
+
 <div class="example"><p><b>Exemple:</b>
-Supposons que dans un environnement où la langue par défaut serait l’anglais,
-un objet <code class="SIS">AngleFormat</code> est construit pour lire des angles selon les conventions françaises.
-Si une <code>ParseException</code> est lancée lors de l’utilisation de ce formateur,
-alors <code>getMessage()</code> retournera le message d’erreur en anglais
-tandis que <code>getLocalizedMessage()</code> retournera le message d’erreur en français.
+Si une erreur s’est produite alors qu’un client japonais s’est connecté à un serveur européen,
+le message fournit par <code>getLocalizedMessage()</code> pourra être envoyé à l’utilisateur au Japon
+alors que le message fournit par <code>getMessage()</code> pourra être enregistré dans le journal des événements du serveur.
+Ainsi, l’administrateur système pourra plus facilement analyser l’erreur même s’il ne connaît pas la langue du client.
 </p></div>
-<p>
-Les exceptions définies par <abbr>SIS</abbr> n’implémentent pas toutes l’interface <code class="SIS">Localized</code>.
-Seules celles dont le message est le plus susceptible d’être montré à l’utilisateur sont ainsi localisées.
-Les <code>ParseException</code> sont de bonnes candidates puisqu’elles surviennent souvent
-suite à une saisie incorrecte du client. En revanche les <code>NullPointerException</code>
-sont généralement la conséquence d’une erreur de programmation;
-elles peuvent être localisées dans la langue par défaut du système, mais ça sera généralement tout.
-</p>
 <p>
 La classe utilitaire <code class="SIS">org.apache.sis.util.Exceptions</code> fournit
 des méthodes de commodité pour obtenir des messages selon des conventions locales spécifiées
@@ -2464,8 +2550,9 @@ généralement utiliser la boucle de droite:
         <code class="comment">// Un espace blanc a été trouvé.
 </code>    }
 }</pre>
-</td>
-<td>
+
+</td><td>
+
 <pre style="margin-top: 6pt"><b>for</b> (<b>int</b> i=0; i&lt;string.length();) {
     <b>int</b> c = string.codePointAt(i);
     <b>if</b> (Character.isWhitespace(c)) {
@@ -2473,8 +2560,8 @@ généralement utiliser la boucle de droite:
 </code>    }
     i += Character.charCount(c);
 }</pre>
-</td>
-<td>
+
+</td><td>
 <center>(l’affichage dépend des capacités du navigateur)</center>
 <p style="font-size: 40px">&#128649; &#128677; &#128679; &#128683;
 &#128687; &#128696; &#128698; &#128697; &#128708; &#128685;</p>
@@ -2524,6 +2611,9 @@ et une utilisation de <code>isWhitespace(…)</code> dans pratiquement tout le r
 de la bibliothèque <abbr>SIS</abbr>.
 </p>
 </section>
+</section>
+
+
 <section>
 <header>
 <h1 id="XML-ISO"><span class="section-number">6.</span> Représentation des objets en <abbr>XML</abbr></h1>
@@ -2626,7 +2716,11 @@ Les <i>features</i> en sont un exemple, car leur structure est dynamique.
 
 
 
+
+<section>
+<header>
 <h2 id="XML-ISO-19115"><span class="section-number">6.1.</span> Représentation des méta-données selon <abbr title="International Organization for Standardization">ISO</abbr> 19115-3</h2>
+</header>
 <p>
 Pour chaque classe de méta-donnée, il existe un type <abbr>XML</abbr> portant le même nom que dans la spécification abstraite
 (par exemple <code class="OGC">gmd:MD_Metadata</code> et <code class="OGC">gmd:CI_Citation</code>).
@@ -2747,6 +2841,7 @@ alors que la partie droite référence cet élément:
 </tr>
 <tr>
 <td>
+
 <pre class="xml" style="margin-top: 6pt">&lt;MD_MetaData&gt;
   &lt;identificationInfo&gt;
     &lt;MD_DataIdentification id=<i>"<b>mon_id</b>"</i>&gt;
@@ -2754,11 +2849,13 @@ alors que la partie droite référence cet élément:
     &lt;/MD_DataIdentification&gt;
   &lt;/identificationInfo&gt;
 &lt;/MD_MetaData&gt;</pre>
-</td>
-<td>
+
+</td><td>
+
 <pre class="xml" style="margin-top: 6pt">&lt;MD_MetaData&gt;
   &lt;identificationInfo xlink:href=<i>"<b>#mon_id</b>"</i>/&gt;
 &lt;/MD_MetaData&gt;</pre>
+
 </td>
 </tr>
 </table>
@@ -2858,20 +2955,26 @@ et dont la méthode <code class="SIS">getNilReason()</code> retournera la consta
     &lt;/CI_Series&gt;
   &lt;/series&gt;
 &lt;/CI_Citation&gt;</pre>
-</td>
-<td>
+
+</td><td>
+
 <pre class="xml" style="margin-top: 6pt">&lt;CI_Citation&gt;
   &lt;series nilReason=<i>"unknown"</i>/&gt;
 &lt;/CI_Citation&gt;</pre>
+
 </td>
 </tr>
 </table>
 </section>
+</section>
+
+
 <section>
 <header>
 <h1 id="Annexes"><span class="section-number">7.</span> Annexes</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#XML-ISO">Chapitre précédent</a></div></div></nav>
 </header>
+
 <nav>Dans ce chapitre:<ul class="toc">
 <li><a href="#ReduceDependency">Réduire la dépendance directe envers Apache SIS</a><ul>
 <li><a href="#UML-annotation-indep">Correspondances entre GeoAPI et les spécifications abstraites</a></li>
@@ -2880,13 +2983,21 @@ et dont la méthode <code class="SIS">getNilReason()</code> retournera la consta
 <li><a href="#Tests">Les suites de tests</a><ul>
 <li><a href="#GeoAPI-validators">Validations des instances</a></li>
 <li><a href="#GeoAPI-tests">Exécution des tests pré-définis</a></li></ul></li>
-<li><a href="#DesignNote">Notes de design</a><ul>
+<li><a href="#DesignNotes">Notes de design</a><ul>
 <li><a href="#AffineTransform">Utilisation des transformations affines</a><ul>
 <li><a href="#AffineTransformAPI">Intégration avec les bibliothèques graphiques</a></li></ul></li>
 <li><a href="#MatrixLibrary">Particularités d’une bibliothèque de calculs matriciels pour un SIG</a><ul>
 <li><a href="#NonSquareMatrix">Que faire des matrices qui ne sont pas carrées (et pourquoi)</a></li>
 <li><a href="#MatrixLibrarySummary">La bibliothèque matricielle de Apache SIS</a></li></ul></li></ul></li></ul></nav>
+
+
+
+
+
+<section>
+<header>
 <h2 id="ReduceDependency"><span class="section-number">7.1.</span> Réduire la dépendance directe envers Apache SIS</h2>
+</header>
 <p>
 Les chapitres précédents utilisaient des méthodes statiques de Apache SIS par commodité.
 Dans certains cas, il est possible de remplacer ces méthodes statiques par du code ne faisant appel qu’à des méthodes de GeoAPI.
@@ -3060,9 +3171,13 @@ une partie des fonctionnalités de bibliothèques externes (Proj.4 et <abbr titl
 L’avantage de passer par ces interfaces est de disposer d’un modèle unifié pour exploiter deux <abbr title="Application Programming Interface">API</abbr> très différents,
 tout en se gardant la possibilité de basculer plus facilement à une autre bibliothèque si désiré.
 </p>
+</section>
 
 
+<section>
+<header>
 <h2 id="Tests"><span class="section-number">7.2.</span> Les suites de tests</h2>
+</header>
 <p>
 En plus des tests propres au projet, Apache SIS utilise aussi des tests définis par GeoAPI.
 Ces tests ont l’avantage d’utiliser une source externe définissant ce que doivent être les résultats
@@ -3229,11 +3344,14 @@ qui sera exécutée après chacun des tests.
         assertTrue(<code class="GeoAPI">transform</code> <b>instanceof</b> <code class="GeoAPI">MathTransform2D</code>);
     }
 }</pre>
+</section>
 
 
-
-<h2 id="DesignNote"><span class="section-number">7.3.</span> Notes de design</h2>
-<p>Les chapitres suivants expliquent les raisons derrières certains choix d'implémentation de Apache <abbr title="Spatial Information System">SIS</abbr>.</p>
+<section>
+<header>
+<h2 id="DesignNotes"><span class="section-number">7.3.</span> Notes de design</h2>
+</header>
+<p>Les chapitres suivants expliquent les raisons derrières certains choix d’implémentation de Apache <abbr title="Spatial Information System">SIS</abbr>.</p>
 
 
 <h3 id="AffineTransform"><span class="section-number">7.3.1.</span> Utilisation des transformations affines</h3>
@@ -3561,11 +3679,13 @@ Mais dans le cas particulier où la transformation est réellement affine, <abbr
 une implémentation existante, surtout Java2D.
 Par exemple le code suivant peut être utilisé dans les situations où un objet Java2D est désiré:
 </p>
+
 <pre><code class="GeoAPI">MathTransform</code> mt = ...;    <code class="comment">// N’importe quelle instance créée par Apache SIS.
 </code><b>if</b> (mt <b>instanceof</b> AffineTransform) {
     AffineTransform at = (AffineTransform) mt;
     <code class="comment">// Utiliser l’API de Java2D API à partir d’ici.
 </code>}</pre>
+
 <p>
 Toutefois <abbr>SIS</abbr> n’utilisera Java2D que sur une base opportuniste.
 Le forçage de type ci-haut n’est pas garantit de réussir, même si l’instance de
@@ -3734,6 +3854,7 @@ En résumé, les besoins qui ont amené Apache <abbr>SIS</abbr> à fournir ses p
 <p>
 Cette bibliothèque est fournie dans le paquet <code class="SIS">org.apache.sis.matrix</code> du module <code class="SIS">sis-referencing</code>.
 </p>
+</section>
 </section>
 </main>
 </body>
