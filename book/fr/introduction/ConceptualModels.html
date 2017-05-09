@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
+  <head>
+    <title>ConceptualModels</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="../../../content/book/book.css"/>
+  </head>
+  <body>
+    <!--
+      Content below this point is copied in "../../content/book/fr/developer-guide.html"
+      by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
+    -->
+    <section>
+      <header>
+        <h2 id="ConceptualModels">Sources des modèles conceptuels de Apache SIS</h2>
+      </header>
+      <p>
+        La majorité des standards utilisés par Apache <abbr>SIS</abbr> ont été élaborés
+        par le <a href="http://www.opengeospatial.org">consortium <i>Open Geospatial</i></a> (<abbr>OGC</abbr>),
+        parfois en collaboration avec l’<a href="http://www.iso.org">organisation internationale de normalisation</a> (<abbr>ISO</abbr>).
+        Certains standards de l’<abbr>ISO</abbr> deviennent eux-mêmes des standards Européens via la
+        <a href="http://inspire.jrc.ec.europa.eu">directive INSPIRE</a>, ou des standards français via l’<abbr>AFNOR</abbr>.
+        Ces standards offrent deux technologies clés:
+      </p>
+      <ul>
+        <li>
+          Permettre à une communauté d’annoncer leurs informations,
+          de manière à ce que des individus ou des systèmes en dehors de cette communauté puissent les découvrir.
+        </li>
+        <li>
+          Transférer des informations d’une communauté vers une autre en préservant leurs sémantiques,
+          même si les deux communautés utilisent des représentations internes très différentes.
+        </li>
+      </ul>
+      <p>
+        Ces standards sont fournis gratuitement à la communauté internationale sous la forme de
+        <a href="http://www.opengeospatial.org/standards/is">spécifications (fichiers <abbr title="Portable Document Format">PDF</abbr>)</a> ou de
+        <a href="http://schemas.opengis.net/gml/3.3/">schémas (fichiers <abbr title="XML Schema Definition">XSD</abbr>)</a>.
+        Les organismes de normalisation ne fabriquent pas de logiciel; pour obtenir une implémentation de ces spécifications,
+        les utilisateurs doivent choisir un des produits conformes disponibles sur le marché ou développer leur propres solutions.
+        C’est le respect volontaire de ces spécifications qui permet à des communautés à priori indépendantes d’échanger
+        plus facilement des informations géographiques.
+      </p>
+
+
+
+      <details>
+        <summary>Pour en savoir plus sur le processus de standardisation</summary>
+        <article id="OGC-process">
+          <header>
+            <h2>Processus de standardisation à l’<abbr>OGC</abbr></h2>
+          </header>
+          <p>
+            Les travaux de l’<abbr title="Open Geospatial Consortium">OGC</abbr> se font par courriers électroniques,
+            par conférences téléphoniques et par <a href="http://www.opengeospatial.org/event?category=ogctcpc">réunions réelles</a>.
+            L’<abbr>OGC</abbr> organise quatre réunions par années, chacune d’une durée de cinq jours,
+            hébergées par des organisations membres sponsorisant l’événement (compagnies, universités, centres de recherches, <i>etc.</i>).
+            Le continent hôte alterne entre l’Europe et l’Amérique du Nord, avec une présence croissante en Asie depuis 2011.
+            Ces réunions reçoivent habituellement entre 50 et 100 participants parmi les centaines de membres de l’<abbr>OGC</abbr>.
+            Certains participants sont présents à quasiment toutes les réunions et constituent des piliers de l’organisation.
+          </p><p>
+            Les réunions de l’<abbr>OGC</abbr> offrent des opportunités d’échanges avec des membres d’horizons diverses.
+            La création d’un standard <abbr>OGC</abbr> commence par le regroupement d’organisations ou d’individus constatant un intérêt commun pour une problématique.
+            Un groupe de travail est proposé sous l’appellation de <i>Domain Working Group</i> (<abbr>DWG</abbr>) ou <i>Standard Working Group</i> (<abbr>SWG</abbr>).
+            Les <abbr>DWG</abbr> sont ouverts à tout membre de l’<abbr>OGC</abbr>,
+            tandis que les <abbr>SWG</abbr> nécessitent de la part des participants un engagement à ne pas entraver
+            la diffusion du standard par des réclamations de propriétés intellectuelles.
+          </p>
+
+          <h3 id="OGC-SWG">Fonctionnement des groupes de travail (<abbr>SWG</abbr>)</h3>
+          <p>
+            Pour être accepté, un projet de standardisation doit être supporté par un nombre minimal de membres appartement à des organisations distinctes.
+            Ces membres fondateurs rédigent une charte définissant les objectifs du <abbr>SWG</abbr>,
+            qui doit être approuvée par le comité technique de l’<abbr>OGC</abbr>.
+            Chaque membre fondateur est doté d’un droit de vote, dans les limites d’un membre votant par organisation.
+            Tout nouveau membre qui souhaite joindre le <abbr>SWG</abbr> après sa création se verra attribué un rôle d’observateur,
+            avec attribution sur demande d’un droit de vote après quelques mois d’observation.
+          </p><p>
+            Un <abbr>SWG</abbr> peut contenir plusieurs dizaines de membres,
+            mais les volontaires effectuant l’essentiel du travail sont habituellement moins nombreux.
+            Leurs propositions sont soumises à l’ensemble des membres du groupe, qui peuvent les accepter par consentement unanime.
+            Les objections, s’il y en a, doivent être argumentées et une alternative proposée.
+            Les <abbr>SWG</abbr> essaient généralement de débattre d’un problème jusqu’à ce qu’un consensus se forme
+            plutôt que d’avancer malgré des votes négatifs, même s’ils sont minoritaires.
+            Les décisions du groupes sont alors intégrées dans la spécification par un membre assumant le rôle d’éditeur.
+          </p><p>
+            Le groupe de travail doit autant que possible structurer la spécification sous forme d’un noyau autour duquel gravite diverses extensions.
+            Une suite de tests doit accompagner le standard, et permettre de classer les implémentations en fonction du niveau des tests passés.
+            Au moins une <i>implémentation de référence</i> passant les tests doit exister pour démontrer que le standard est utilisable.
+          </p><p>
+            Lorsque le standard est jugé prêt, le <abbr>SWG</abbr> vote une motion
+            proposant de le soumettre au vote des instances supérieures de l’<abbr>OGC</abbr>.
+            Cette procédure nécessite plusieurs mois.
+            Il existe une procédure plus rapide pour entériner des standards de fait, mais elle n’est appliquée qu’avec parcimonie.
+          </p>
+
+          <h3 id="OGC-OAB">Le conseil d’architecture (<abbr>OAB</abbr>) et le comité technique (<abbr>TC</abbr>)</h3>
+          <p>
+            Toute proposition de standard est d’abord examinée par le conseil d’architecture (<i><abbr>OGC</abbr> Architecture Board</i> — <abbr>OAB</abbr>).
+            Ce conseil vérifie que le standard répond aux exigences de l’<abbr>OGC</abbr> sur la forme,
+            sur la modularisation, et en termes d’intégration avec les autres standards.
+            Si l’<abbr>OAB</abbr> donne son aval, le standard est alors soumis au vote des membres du comité technique (<abbr>TC</abbr>).
+            Ce comité regroupe les principaux membres de l’<abbr>OGC</abbr> qui sont seuls habilités à donner le vote final.
+            En cas d’approbation, le standard est diffusé publiquement pour commentaires pendant une période de quelques mois.
+            Au terme de cette période, le <abbr title="Standard Working Group">SWG</abbr> doit examiner et répondre à chacun des commentaires.
+            Les éventuelles modifications au standard sous soumises à l’<abbr>OAB</abbr>, puis le standard est définitivement publié.
+            Cette diffusion est alors annoncée par un communiqué de presse de l’<abbr>OGC</abbr>.
+          </p><p>
+            Certains membres de l’<abbr title="Open Geospatial Consortium">OGC</abbr> et du <abbr title="Technical Committe">TC</abbr>
+            assurent aussi la liaison avec l’organisation internationale de normalisation (<abbr title="International Organization for Standardization">ISO</abbr>).
+            La coopération entre les deux organismes va dans les deux sens: l’<abbr>OGC</abbr> adopte les standards <abbr>ISO</abbr> comme base sur
+            laquelle développer de nouveaux standards, et certains de ces nouveaux standards <abbr>OGC</abbr> deviennent des standards <abbr>ISO</abbr>.
+          </p>
+
+          <h3 id="OGC-RFC">Procédure de soumission de propositions de modifications</h3>
+          <p>
+            Tout utilisateur, qu’il soit membre ou non du consortium <i>Open Geospatial</i>, peut proposer des modifications à des standards <abbr>OGC</abbr>.
+            Une liste des propositions actuelles de changements, ainsi qu’un formulaire permettant d’en soumettre de nouvelles,
+            sont <a href="http://www.opengeospatial.org/standards/cr">disponibles en ligne</a>.
+            Chaque proposition est revue par le <abbr title="Standard Working Group">SWG</abbr>.
+          </p><p>
+            Certains groupes de travail utilisent d’autres systèmes de soumission en parallèle, par exemple GitHub,
+            hébergés en dehors des structures de l’<abbr>OGC</abbr>.
+          </p>
+        </article>
+      </details>
+
+
+
+      <p>
+        Outre ces organisations formelles de normalisation, il existe aussi des organisations qui ne sont pas officiellement
+        dédiées à l’élaboration de normes mais dont les travaux ont été largement adoptés comme standards de fait.
+        En particulier, la base de données <a href="http://www.epsg.org">EPSG</a> fournit des codes numériques permettant d’identifier
+        facilement un système de référence des coordonnées parmi <a href="../../tables/CoordinateReferenceSystems.html">plusieurs milliers</a>.
+        Cette base de données est offerte par des compagnies pétrolières qui ont vu leur intérêt à ce que leurs prospections se fassent
+        bien à l’endroit voulu, sachant qu’elles ne contrôlent pas toujours la production des cartes sur lesquelles elles se positionnent.
+        D’autres exemples de standards de fait sont les formats
+        <a href="http://geotiff.osgeo.org">GeoTIFF</a> pour les données réparties sur une grille (les images), et
+        <a href="http://fr.wikipedia.org/wiki/Shapefile">Shapefile</a> pour les données vectorielles (les géométries).
+      </p><p>
+        Les standards <abbr>OGC</abbr> sont spécifiés dans plusieurs dizaines de documents.
+        Chaque document élabore un service, par exemple les transformations de coordonnées.
+        Le fonctionnement de chaque service est décrit par un ensemble de classes d’objets et leurs interactions.
+        Ces éléments sont illustrés par des diagrammes <abbr>UML</abbr> (<i>Unified Modeling Language</i>)
+        dans des spécifications dites « abstraites ».
+        Les <a href="http://www.opengeospatial.org/standards/as">spécifications abstraites</a> ne font référence à aucun langage informatique concret.
+        Leurs concepts peuvent se concrétiser dans un langage de programmation, une base de données ou un schéma <abbr>XML</abbr> de manière plus ou moins directe.
+        Il existe toutefois une part d’arbitraire dans la façon de concrétiser une spécification abstraite, étant donné que des ajustements sont souvent nécessaires
+        pour tenir compte des contraintes ou des conventions du langage ciblé.
+        Certaines structures de données n’existent que dans quelques langages, par exemple les unions qui existent en C/C++ mais pas en Java.
+      </p>
+
+
+
+      <details>
+        <summary>Pour en savoir plus sur les « spécifications d’implémentation »</summary>
+        <article id="implementation-standard">
+          <header>
+            <h2>Note historique</h2>
+          </header>
+          <p>
+            Au tournant du millénaire, les spécifications abstraites étaient explicitement concrétisées dans des <i>spécifications d’implémentations</i>.
+            Le terme « implémentation » était ici à prendre au sens de tout type d’interfaces (Java ou autres) dérivées des diagrammes
+            <abbr title="Unified Modeling Language">UML</abbr> — et non pas d’implémentations au sens du Java.
+            Des telles spécifications existaient pour les langages <abbr title="Structured Query Language">SQL</abbr>,
+            <abbr title="Common Object Request Broker Architecture">CORBA</abbr>, <abbr title="Component Object Model">COM</abbr> et Java.
+            Ces langages étant capables d’exécuter des procédures, les spécifications de cette époque définissaient
+            non seulement des structures de données, mais aussi des opérations s’appliquant sur ces structures.
+          </p><p>
+            Par la suite, l’engouement pour le « web 2.0 » a fait grimper l’intérêt pour le <abbr>XML</abbr> au détriment des autres langages.
+            Les anciennes spécifications d’implémentations ont été dépréciées, et les schémas <abbr title="XML Schema Definition">XSD</abbr>
+            sont devenus la principale concrétisation des spécifications abstraites.
+            Même la façon de concevoir les spécifications abstraites a évoluée: les opérations y sont plus rarement définies,
+            par conséquence ce qui reste ressemble davantage à des descriptions de schémas de base de données.
+            Certaines opérations qui étaient définies dans les anciennes normes apparaissent maintenant, sous une autre forme, dans les spécifications des services web.
+            Enfin le terme « spécification d’implémentation » a été abandonné, pour être englobé dans « standard <abbr title="Open Geospatial Consortium">OGC</abbr> ».
+            Mais malgré leur dépréciation, les <a href="http://www.opengeospatial.org/docs/retired">anciennes spécifications d’implémentation</a>
+            restent utiles aux programmes en langage Java car:
+          </p>
+          <ul>
+            <li>
+              Leurs modèles plus simples, appliqués aux mêmes concepts, aident à comprendre les nouvelles spécifications.
+            </li>
+            <li>
+              Ils définissent parfois des façons simples d’effectuer des tâches courantes
+              là où les nouvelles spécifications se limitent au cas général.
+            </li>
+            <li>
+              Les opérations étant plus souvent omises dans les nouvelles spécifications,
+              les anciennes spécifications restent un complément utile pour définir des <abbr>API</abbr>.
+            </li>
+          </ul>
+          <p>
+            Le projet Apache <abbr title="Spatial Information System">SIS</abbr> se base sur les spécifications les plus récentes,
+            tout en puisant dans les archives de l’<abbr title="Open Geospatial Consortium">OGC</abbr>
+            pour compléter certains standards abstraits ou les rendre un peu plus facile d’utilisation.
+            Certaines anciennes définitions sont conservées comme « méthodes de commodités »,
+            n’apportant pas toujours de nouvelles fonctionnalités mais facilitant l’usage pratique d’une bibliothèque.
+          </p>
+        </article>
+      </details>
+
+      <p>
+        Le tableau suivant liste les principales normes utilisées par le projet.
+        Plusieurs normes sont publiées à la fois comme standard <abbr>ISO</abbr> et comme standard <abbr>OGC</abbr>,
+        d’où la disposition côte-à-côte des deux premières colonnes.
+        La section des « spécifications d’implémentation » liste des spécifications qui apportent peu de concepts nouveaux
+        comparativement aux spécifications abstraites, mais précisent comment les représenter dans des contextes précis
+        tels qu’un document <abbr>XML</abbr>.
+        Les normes dépréciées mais malgré tout partiellement utilisées apparaissent <s>barrées</s>.
+        Enfin, les paquets GeoAPI seront introduits dans le chapitre suivant.
+      </p>
+      <table>
+        <caption>Principaux standards en relation avec le projet Apache <abbr>SIS</abbr></caption>
+        <tr>
+          <th>Norme <abbr>ISO</abbr></th>
+          <th>Norme <abbr>OGC</abbr></th>
+          <th>Titre</th>
+          <th>Paquet de GeoAPI</th>
+          <th>Paquet de Apache SIS</th>
+        </tr><tr>
+          <td class="separator" colspan="5">Spécifications abstraites</td>
+        </tr><tr>
+          <td><abbr>ISO</abbr> 19103</td>
+          <td></td>
+          <td><i>Conceptual schema language</i></td>
+          <td><code>org.opengis.util</code></td>
+          <td><code>org.apache.sis.util.iso</code></td>
+        </tr><tr>
+          <td><abbr>ISO</abbr> 19115-1</td>
+          <td>Topic 11</td>
+          <td><i>Metadata</i></td>
+          <td><code>org.opengis.metadata</code></td>
+          <td><code>org.apache.sis.metadata.iso</code></td>
+        </tr><tr>
+          <td><abbr>ISO</abbr> 19115-2</td>
+          <td></td>
+          <td><i>Metadata — extensions for imagery and gridded data</i></td>
+          <td><code>org.opengis.metadata</code></td>
+          <td><code>org.apache.sis.metadata.iso</code></td>
+        </tr><tr>
+          <td><abbr>ISO</abbr> 19111</td>
+          <td>Topic 2</td>
+          <td><i>Spatial referencing by coordinates</i></td>
+          <td><code>org.opengis.referencing</code></td>
+          <td><code>org.apache.sis.referencing</code></td>
+        </tr><tr>
+          <td><abbr>ISO</abbr> 19111-2</td>
+          <td></td>
+          <td><i>Referencing — extension for parametric values</i></td>
+          <td><code>org.opengis.referencing</code></td>
+          <td><code>org.apache.sis.referencing</code></td>
+        </tr><tr>
+          <td><abbr>ISO</abbr> 19112</td>
+          <td></td>
+          <td><i>Spatial referencing by geographic identifier</i></td>
+          <td><code>org.opengis.referencing.gazetteer</code></td>
+          <td><code>org.apache.sis.referencing.gazetteer</code></td>
+        </tr><tr>
+          <td><abbr>ISO</abbr> 19108</td>
+          <td></td>
+          <td><i>Temporal Schema</i></td>
+          <td><code>org.opengis.temporal</code></td>
+          <td></td>
+        </tr><tr>
+          <td><abbr>ISO</abbr> 19107</td>
+          <td>Topic 1</td>
+          <td><i>Feature geometry</i></td>
+          <td><code>org.opengis.geometry</code></td>
+          <td><code>org.apache.sis.geometry</code></td>
+        </tr><tr>
+          <td><abbr>ISO</abbr> 19109</td>
+          <td>Topic 5</td>
+          <td><i>Rules for application schema</i></td>
+          <td><code>org.opengis.feature</code></td>
+          <td><code>org.apache.sis.feature</code></td>
+        </tr><tr>
+          <td><abbr>ISO</abbr> 19123</td>
+          <td>Topic 6</td>
+          <td><i>Schema for coverage geometry and functions</i></td>
+          <td><code>org.opengis.coverage</code></td>
+          <td><code>org.apache.sis.coverage</code></td>
+        </tr><tr>
+          <td><abbr>ISO</abbr> 19156</td>
+          <td>Topic 20</td>
+          <td><i>Observations and measurements</i></td>
+          <td><code>org.opengis.observation</code></td>
+          <td></td>
+        </tr><tr>
+          <td class="separator" colspan="5">Spécifications d’implémentation</td>
+        </tr><tr>
+          <td><abbr>ISO</abbr> 19139</td>
+          <td></td>
+          <td><i>Metadata <abbr>XML</abbr> schema implementation</i></td>
+          <td></td>
+          <td><code>org.apache.sis.xml</code></td>
+        </tr><tr>
+          <td><abbr>ISO</abbr> 19136</td>
+          <td>OGC 07-036</td>
+          <td><i>Geography Markup Language (<abbr>GML</abbr>) Encoding Standard</i></td>
+          <td></td>
+          <td><code>org.apache.sis.xml</code></td>
+        </tr><tr>
+          <td><abbr>ISO</abbr> 19162</td>
+          <td>OGC 12-063</td>
+          <td><i>Well-known text representation of coordinate reference systems</i></td>
+          <td></td>
+          <td><code>org.apache.sis.io.wkt</code></td>
+        </tr><tr>
+          <td><abbr>ISO</abbr> 13249</td>
+          <td></td>
+          <td><i><abbr>SQL</abbr> spatial</i></td>
+          <td></td>
+          <td></td>
+        </tr><tr>
+          <td></td>
+          <td><s><abbr>OGC</abbr> 01-009</s></td>
+          <td><s><i>Coordinate Transformation Services</i></s></td>
+          <td><code>org.opengis.referencing</code></td>
+          <td><code>org.apache.sis.referencing</code></td>
+        </tr><tr>
+          <td></td>
+          <td><s><abbr>OGC</abbr> 01-004</s></td>
+          <td><s><i>Grid Coverage</i></s></td>
+          <td><code>org.opengis.coverage</code></td>
+          <td><code>org.apache.sis.coverage</code></td>
+        </tr><tr>
+          <td></td>
+          <td><abbr>SLD</abbr></td>
+          <td><i>Styled Layer Descriptor</i></td>
+          <td><code>org.opengis.style</code></td>
+          <td></td>
+        </tr><tr>
+          <td class="separator" colspan="5">Services web</td>
+        </tr><tr>
+          <td></td>
+          <td><abbr>CSW</abbr></td>
+          <td><i>Catalog Services</i></td>
+          <td></td>
+          <td></td>
+        </tr><tr>
+          <td><abbr>ISO</abbr> 19128</td>
+          <td><abbr>WMS</abbr></td>
+          <td><i>Web Map Service</i></td>
+          <td></td>
+          <td></td>
+        </tr><tr>
+          <td></td>
+          <td><abbr>WMTS</abbr></td>
+          <td><i>Web Map Tile Service</i></td>
+          <td></td>
+          <td></td>
+        </tr><tr>
+          <td><abbr>ISO</abbr> 19142</td>
+          <td><abbr>WFS</abbr></td>
+          <td><i>Web Feature Service</i></td>
+          <td></td>
+          <td></td>
+        </tr><tr>
+          <td></td>
+          <td><abbr>WCS</abbr></td>
+          <td><i>Web Coverage Service</i></td>
+          <td></td>
+          <td></td>
+        </tr><tr>
+          <td></td>
+          <td><abbr>WPS</abbr></td>
+          <td><i>Web Processing Service</i></td>
+          <td></td>
+          <td></td>
+        </tr><tr>
+          <td></td>
+          <td>Open<abbr>LS</abbr></td>
+          <td><i>Location Services</i></td>
+          <td></td>
+          <td></td>
+        </tr><tr>
+          <td></td>
+          <td><abbr>SWE</abbr></td>
+          <td><i>Sensor Web Enablement</i></td>
+          <td></td>
+          <td></td>
+        </tr><tr>
+          <td></td>
+          <td><abbr>SOS</abbr></td>
+          <td><i>Sensor Observation Service</i></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+    </section>
+  </body>
+</html>

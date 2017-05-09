@@ -22,180 +22,19 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
   <head>
-    <title>Classes et méthodes utilitaires</title>
+    <title>Internationalization</title>
     <meta charset="UTF-8"/>
-    <link rel="stylesheet" type="text/css" href="../../content/book/book.css"/>
+    <link rel="stylesheet" type="text/css" href="../../../content/book/book.css"/>
   </head>
   <body>
     <!--
-      Content below this point is copied in "../../content/book/fr/developer-guide.html"
+      Content below this point is copied in "(…)/content/book/fr/developer-guide.html" file
       by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
     -->
     <section>
       <header>
-        <h1 id="Utilities">Classes et méthodes utilitaires</h1>
+        <h2 id="Internationalization">Internationalisation</h2>
       </header>
-      <p>
-        Ce chapitre décrit des aspects de Apache <abbr>SIS</abbr> qui s’appliquent à l’ensemble de la bibliothèque.
-        La plupart de ces utilitaires ne sont pas spécifiques aux systèmes d’information spatiales.
-      </p>
-
-      <h2 id="ComparisonMode">Modes de comparaisons des objets</h2>
-      <p>
-        Il existe différentes opinions sur la façon d’implémenter la méthode <code>Object.equals(Object)</code> du Java standard.
-        Selon certains, il doit être possible de comparer différentes implémentations d’une même interface ou classe de base.
-        Mais cette politique nécessite que chaque interface ou classe de base définisse entièrement dans sa Javadoc les critères ou calculs
-        que doivent employer les méthodes <code>equals(Object)</code> et <code>hashCode()</code> dans toutes les implémentations.
-        Cette approche est choisie notamment par <code>java.util.Collection</code> et ses interfaces filles.
-        La transposition de cette approche aux centaines d’interfaces de GeoAPI serait toutefois une entreprise ardue,
-        qui risquerait d’être assez peu suivie par les diverses implémentations.
-        En outre, elle se fait au détriment de la possibilité de prendre en compte des attributs supplémentaires dans les interfaces filles
-        si cette possibilité n’a pas été spécifiée dans l’interface parente.
-        Cette contrainte découle des points suivants du contrat des méthodes <code>equals(Object)</code> et <code>hashCode()</code>:
-      </p>
-      <ul>
-        <li><code>A.equals(B)</code> implique <code>B.equals(A)</code> (symétrie);</li>
-        <li><code>A.equals(B)</code> et <code>B.equals(C)</code> implique <code>A.equals(C)</code> (transitivité);</li>
-        <li><code>A.equals(B)</code> implique <code>A.hashCode() == B.hashCode()</code>.</li>
-      </ul>
-      <p>
-        Par exemple ces trois contraintes sont violées si <var>A</var> (et éventuellement <var>C</var>)
-        peuvent contenir des attributs que <var>B</var> ignore.
-        Pour contourner cette difficulté, une approche alternative consiste à exiger que les objets comparés par la méthode
-        <code>Object.equals(Object)</code> soient exactement de la même classe, c’est-à-dire que <code>A.getClass() == B.getClass()</code>.
-        Cette approche est parfois considérée contraire aux principes de la programmation orientée objets.
-        Dans la pratique, pour des applications relativement complexes, l’importance accordée à ces principes dépend du contexte dans lequel les objets sont comparés:
-        si les objets sont ajoutés à un <code>HashSet</code> ou utilisés comme clés dans un <code>HashMap</code>,
-        alors nous avons besoin d’un strict respect du contrat de <code>equals(Object)</code> et <code>hashCode()</code>.
-        Mais si le développeur compare les objets lui-même, par exemple pour vérifier si des informations qui l’intéresse ont changées,
-        alors les contraintes de symétrie, transitivité ou de cohérence avec les valeurs de hachages peuvent ne pas être pertinentes pour lui.
-        Des comparaisons plus permissives peuvent être souhaitables, allant parfois jusqu’à tolérer de légers écarts dans les valeurs numériques.
-      </p>
-      <p>
-        Afin de donner une certaine flexibilité aux développeurs, un grand nombre de classes de la bibliothèque <abbr>SIS</abbr>
-        implémentent l’interface <code>org.apache.sis.util.LenientComparable</code>, qui défini une méthode <code class="SIS">equals(Object, ComparisonMode)</code>.
-        Les principaux modes de comparaisons sont:
-      </p>
-      <ul>
-        <li><p>
-          <b><code class="SIS">STRICT</code></b> — Les objets comparés doivent être de la même classe
-          et tous leurs attributs strictement égaux, y compris d’éventuels attributs publics propres à l’implémentation.
-        </p></li>
-        <li><p>
-          <b><code class="SIS">BY_CONTRACT</code></b> — Les objets comparés doivent implémenter la même interface de GeoAPI (ou tout autre standard),
-          mais n’ont pas besoin d’être de la même classe d’implémentation. Seuls les attributs définis dans l’interface sont comparés;
-          tout autres attributs propres à l’implémentation — même s’ils sont publics — sont ignorés.
-        </p></li>
-        <li><p>
-          <b><code class="SIS">IGNORE_METADATA</code></b> — Comme <code class="SIS">BY_CONTRACT</code>,
-          mais ne compare que les attributs qui influencent les opérations (calculs numériques ou autre) effectuées par l’objet.
-          Par exemple dans un référentiel géodésique, la longitude (par rapport à Greenwich) du méridien d’origine sera pris en compte
-          alors que le nom de ce méridien sera ignoré.
-        </p></li>
-        <li><p>
-          <b><code class="SIS">APPROXIMATIVE</code></b> — Comme <code class="SIS">IGNORE_METADATA</code>,
-          mais tolère de légères différences dans les valeurs numériques.
-        </p></li>
-      </ul>
-      <p>
-        Le mode par défaut, utilisé par les toutes les méthodes <code>equals(Object)</code> de <abbr>SIS</abbr>,
-        est <code class="SIS">STRICT</code>. Ce mode est choisi pour une utilisation sécuritaire — notamment avec <code>HashMap</code> —
-        sans nécessiter de définitions rigoureuses des méthodes <code>equals(Object)</code> et <code>hashCode()</code> dans toutes les interfaces.
-        Avec ce mode, l’ordre des objets (<code>A.equals(B)</code> ou <code>B.equals(A)</code>) n’a pas d’importance.
-        C’est toutefois le seul mode à offrir cette garantie.
-        Dans l’expression <code>A.equals(B)</code>, le mode <code class="SIS">BY_CONTRACT</code>
-        (et donc par extension tous les autres modes qui en dépendent) ne comparera que les propriétés connues de <code>A</code>,
-        sans se soucier de savoir si <code>B</code> en connaît davantage.
-      </p>
-
-
-
-      <h2 id="ObjectConverters">Object converters</h2>
-      <p>
-        Il est parfois nécessaire de convertir une instance d’un type source <code>&lt;S&gt;</code> vers un type destination <code>&lt;T&gt;</code>
-        alors que ces types ne sont pas connus au moment de la compilation.
-        Divers projets (Apache Common Convert, Spring, <i>etc.</i>)
-        ont créé leur propres interfaces pour effectuer des conversions d’objets entre des types connus seulement au moment de l’exécution.
-        Les détails varient, mais ces interfaces ressemblent typiquement à l’interface suivante:
-      </p>
-
-<pre>interface ObjectConverter&lt;S,T&gt; {   // Certains projets utilisent seulement "Converter" comme nom d’interface.
-    T apply(S object);             // Un autre nom de méthode souvent utilisé par les autres projets est "convert".
-}</pre>
-
-      <p>
-        Comme d’autres projets, Apache <abbr>SIS</abbr> définit sa propre interface <code>ObjectConverter</code>.
-        La principale différence entre l’interface de <abbr>SIS</abbr> est celle que l’on retrouve dans d’autres projets
-        est que <abbr>SIS</abbr> fournit des informations à propos de certaines propriétés mathématiques des convertisseurs.
-        Un convertisseur de Apache <abbr>SIS</abbr> peut avoir aucune, une ou plusieurs des propriétés suivantes:
-      </p>
-      <dl>
-        <dt><dfn>Injective</dfn></dt>
-        <dd>Une fonction est injective si aucune paire de valeurs de <var>S</var> ne peut produire la même valeur de <var>T</var>.
-          <div class="example"><p><b>Exemple:</b>
-            la conversion <code>Integer</code> → <code>String</code> effectuée par <code>Integer.toString()</code>
-            est une fonction <cite>injective</cite> car si deux valeurs de type <code>Integer</code> ne sont pas égales,
-            alors il est garanti que leurs conversions produiront différentes valeurs de <code>String</code>.
-            En revanche la conversion <code>String</code> → <code>Integer</code> effectuée par <code>Integer.valueOf(String)</code>
-            n’est <strong>pas</strong> une fonction injective
-            parce que plusieurs valeurs distinctes de type <code>String</code> peuvent être converties vers la même valeur de type <code>Integer</code>.
-            Par exemple les conversions des chaînes de caractères "42", "+42" et "0042" donnent toutes la même valeur entière 42.
-          </p></div>
-        </dd>
-
-        <dt><dfn>Surjective</dfn></dt>
-        <dd>Une fonction est surjective si chaque valeur de <var>T</var> peut être produite à partir d’au moins une valeur de <var>S</var>.
-          <div class="example"><p><b>Exemple:</b>
-            la conversion <code>String</code> → <code>Integer</code> effectuée par <code>Integer.valueOf(String)</code>
-            est une fonction <cite>surjective</cite> car chaque valeur de type <code>Integer</code> peut être produite
-            à partir d’un moins une valeur de <code>String</code>.
-            En revanche la conversion <code>Integer</code> → <code>String</code> effectuée par <code>Integer.toString()</code>
-            n’est <strong>pas</strong> une fonction surjective parce qu’elle ne peut pas produire toutes les valeurs possibles de type <code>String</code>.
-            Par exemple il n’y a aucun moyen de produire la valeur "ABC" avec la méthode <code>Integer.toString()</code>.
-          </p></div>
-        </dd>
-
-        <dt><dfn>Bijective</dfn></dt>
-        <dd>Une fonction est bijective s’il y a une relation de un-à-un entre les valeurs de <var>S</var> et de <var>T</var>.
-          <div class="example"><p><b>Note:</b>
-            la propriété <cite>bijective</cite> est définie ici pour des raisons de clarté,
-            mais en fait n’a pas d’item explicite dans l’énumération <code>FunctionProperty</code> de Apache <abbr>SIS</abbr>.
-            Ce n’est pas nécessaire puisqu’une fonction qui est à la fois <cite>injective</cite> et <cite>surjective</cite>
-            est nécessairement bijective.
-          </p></div>
-        </dd>
-
-        <dt><dfn>Préservant l’ordre</dfn></dt>
-        <dd>Une fonction préserve l’ordre si toute séquence de valeurs <var>S</var> croissantes correspond à une séquence de valeurs <var>T</var> croissantes.
-          <div class="example"><p><b>Exemple:</b>
-            la conversion du type <code>Integer</code> vers <code>Long</code> préserve l’ordre naturel des éléments.
-            Toutefois la conversion du type <code>Integer</code> vers <code>String</code> ne préserve <strong>pas</strong> l’ordre naturel,
-            parce que des séquences des nombres entiers croissants ont un ordre différents
-            lorsque les chaînes de caractères sont classées par ordre lexicographique.
-            Par exemple 1, 2, 10 devient "1", "10", "2".
-          </p></div>
-        </dd>
-
-        <dt><dfn>Renversant l’ordre</dfn></dt>
-        <dd>Une fonction renverse l’ordre si toute séquence de valeurs <var>S</var> croissantes correspond à une séquence de valeurs <var>T</var> décroissantes.
-          <div class="example"><p><b>Exemple:</b>
-            une conversion qui inverse le signe des nombres.
-          </p></div>
-        </dd>
-      </dl>
-      <p>
-        Ces informations peuvent sembler inutiles lorsque l’on convertit des valeurs sans tenir compte du contexte où elles apparaissent.
-        Mais lorsque la valeur à convertir fait parti d’un objet plus gros, alors ces informations peuvent impacter la façon dont la valeur convertie sera utilisée.
-        Par exemple la conversion d’une plage de valeurs représentée par [<var>min</var> … <var>max</var>] est directe lorsque la fonction de conversion préserve l’ordre.
-        Mais si la fonction de conversion renverse l’ordre, alors les valeurs minimale et maximale doivent être interchangées.
-        Par exemple si la fonction de conversion inverse le signe des valeurs, alors la plage convertie sera [-<var>max</var> … -<var>min</var>].
-        Si la fonction de conversion ne préserve ni ne renverse l’ordre, alors la plage de valeurs ne peut pas être convertie du tout
-        (parce qu’elle ne contiendrait plus le même ensemble de valeurs) même si les valeurs individuelles auraient pu être converties.
-      </p>
-
-
-
-      <h2 id="Internationalization">Internationalisation</h2>
       <p>
         Dans une architecture où un programme exécuté sur un serveur fournit ses données à plusieurs clients,
         les conventions locales du serveur ne sont pas nécessairement les mêmes que celles des clients.

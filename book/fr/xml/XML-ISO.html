@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="fr">
+  <head>
+    <title>XML-ISO</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="../../../content/book/book.css"/>
+  </head>
+  <body>
+    <!--
+      Content below this point is copied in "(…)/content/book/fr/developer-guide.html" file
+      by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
+    -->
+    <section>
+      <header>
+        <h1 id="XML-ISO">Représentation des objets en <abbr>XML</abbr></h1>
+      </header>
+      <p>
+        Les objets définis par les standards <abbr>OGC</abbr>/<abbr>ISO</abbr> doivent pouvoir être échangés sur internet
+        entre des machines distantes, utilisant des logiciels différents écrits dans des langages différents.
+        Quelques uns des formats les plus connus sont
+        le <abbr>WKT</abbr> (<i>Well-Known Text</i>) et
+        le <abbr>WKB</abbr> (<i>Well-Known Binary</i>).
+        Mais le format le plus exhaustif et souvent considéré comme la référence est le <abbr>XML</abbr>,
+        au point où la façon de représenter les objets <abbr>ISO</abbr> dans ce format fait parfois l’objet d’un standard international à part entière.
+        Ainsi, les classes de méta-données sont décrites dans le standard <abbr>ISO</abbr> 19115-1 (une spécification dite <i>abstraite</i>),
+        alors que la représentation de ces classes en <abbr>XML</abbr> est décrite par les standards <abbr>ISO</abbr> 19115-3 et 19139.
+      </p>
+      <p>
+        Les différents standards <abbr>OGC</abbr>/<abbr>ISO</abbr> n’emploient pas tous la même stratégie pour exprimer les objets en <abbr>XML</abbr>.
+        Le standard <abbr>ISO</abbr> 19115-3 en particulier emploie une approche plus verbeuse que les autres normes,
+        et fera l’objet d’une <a href="#XML-ISO-19115">section particulière</a>.
+        Mais la plupart des formats <abbr>XML</abbr> ont en commun de définir des types et des attributs supplémentaires
+        qui ne font pas partie des spécifications abstraites d’origines.
+        Ces attributs supplémentaires sont habituellement propres au <abbr>XML</abbr> et peuvent ne pas apparaître directement dans l’<abbr>API</abbr> de Apache <abbr>SIS</abbr>.
+        Certains de ces attributs, notamment <code class="OGC">id</code>, <code class="OGC">uuid</code> et <code>xlink:href</code>,
+        restent toutefois accessibles sous forme de paires clé-valeurs.
+      </p>
+      <p>
+        Les documents <abbr>XML</abbr> peuvent employer les préfixes de leur choix,
+        mais les préfixes suivants sont couramment employés dans la pratique.
+        Ils apparaissent donc par défaut dans les documents produits par Apache <abbr>SIS</abbr>.
+        Ces préfixes sont définis dans la classe <code>org.apache.sis.xml.Namespaces</code>.
+      </p>
+      <table>
+        <caption>Préfixes d’espaces de noms <abbr>XML</abbr> courants</caption>
+        <tr>
+          <th>Préfixe</th>
+          <th>Espace de nom</th>
+        </tr>
+        <tr>
+          <td><code>gco</code></td>
+          <td><code>http://www.isotc211.org/2005/gco</code></td>
+        </tr>
+        <tr>
+          <td><code>gfc</code></td>
+          <td><code>http://www.isotc211.org/2005/gfc</code></td>
+        </tr>
+        <tr>
+          <td><code>gmd</code></td>
+          <td><code>http://www.isotc211.org/2005/gmd</code></td>
+        </tr>
+        <tr>
+          <td><code>gmi</code></td>
+          <td><code>http://www.isotc211.org/2005/gmi</code></td>
+        </tr>
+        <tr>
+          <td><code>gmx</code></td>
+          <td><code>http://www.isotc211.org/2005/gmx</code></td>
+        </tr>
+        <tr>
+          <td><code>gml</code></td>
+          <td><code>http://www.opengis.net/gml/3.2</code></td>
+        </tr>
+        <tr>
+          <td><code>xlink</code></td>
+          <td><code>http://www.w3.org/1999/xlink</code></td>
+        </tr>
+      </table>
+
+      <aside>
+        <h2>Outils de lecture et d’écriture de documents <abbr>XML</abbr></h2>
+        <p>
+          Apache <abbr>SIS</abbr> emploie différentes bibliothèques pour lire et écrire différents type d’objets.
+          La bibliothèque utilisée dépend de la complexité de l’objet et des contraintes de performances.
+          Par exemple les annotations de <abbr title="Java Architecture for XML Binding">JAXB</abbr> ont l’avantage d’être proches du code,
+          ce qui facilite la maintenance de la correspondance entre le Java et le <abbr>XML</abbr>.
+          En revanche <abbr title="Simple API for XML">SAX</abbr> a l’avantage d’être performant.
+          De manière générale, Apache <abbr>SIS</abbr> emploie:
+        </p>
+        <ul>
+          <li>
+            <abbr>JAXB</abbr> pour les objets qui ne sont pas répétés très souvent dans le document
+            mais dont la structure est complexe, avec des arborescences profondes.
+            L’ensemble des méta-données <abbr>ISO</abbr> 19115-3 est un exemple typique.
+          </li>
+          <li>
+            <abbr>SAX</abbr> pour les objets relativement simples mais pouvant exister en très grand nombre.
+            L’ensemble des points dans une géométrie est un exemple typique.
+          </li>
+          <li>
+            <abbr title="Document Object Model">DOM</abbr> comme une alternative à <abbr>JAXB</abbr>
+            lorsque les éléments <abbr>XML</abbr> ne correspondent pas directement à des attributs Java.
+            Les <i>features</i> en sont un exemple, car leur structure est dynamique.
+          </li>
+        </ul>
+      </aside>
+
+      <xi:include href="XML-ISO-19115.html"/>
+    </section>
+  </body>
+</html>

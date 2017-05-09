@@ -20,362 +20,21 @@
   under the License.
 -->
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
-      xmlns:xi = "http://www.w3.org/2001/XInclude">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
   <head>
-    <title>Annexes</title>
+    <title>DesignNotes</title>
     <meta charset="UTF-8"/>
-    <link rel="stylesheet" type="text/css" href="../../content/book/book.css"/>
+    <link rel="stylesheet" type="text/css" href="../../../content/book/book.css"/>
   </head>
   <body>
     <!--
-      Content below this point is copied in "../../content/book/en/developer-guide.html"
+      Content below this point is copied in "(…)/content/book/en/developer-guide.html" file
       by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
     -->
     <section>
       <header>
-        <h1 id="Annexes">Annexes</h1>
+        <h2 id="DesignNotes">Design notes</h2>
       </header>
-      <h2 id="ReduceDependency">Reduce direct dependency to Apache SIS</h2>
-      <p>
-        Previous chapters used Apache SIS static methods for convenience.
-        In some cases, usage of those convenience methods can be replaced by Java code using only GeoAPI methods.
-        Such replacements may be desirable for applications who want to reduce direct dependency toward Apache SIS,
-        for example in order to ease migrations between SIS and other GeoAPI implementations.
-        However this may require that applications write their own convenience methods.
-        The following sections provide some tip for easing this task.
-      </p>
-
-      <h3 id="UML-annotation-indep">Mapping given by <code>@UML</code> annotations</h3>
-      <p>
-        For each class, method and constant defined by an <abbr>OGC</abbr> or <abbr>ISO</abbr> standard,
-        GeoAPI indicates its provenance using annotations defined in the <code>org.opengis.annotation</code> package.
-        This mapping is described in the <a href="#UML-annotation">chapter about GeoAPI</a>.
-        Java reflection methods allow access to this information during the execution of an application.
-        Class <code>org.apache.sis.util.iso.Types</code> provides static convenience methods like
-        <code class="SIS">getStandardName(Class)</code>, but one can avoid those methods.
-        The following example displays the standard name for the method <code class="GeoAPI">getTitle()</code> from the <code>Citation</code> interface:
-      </p>
-
-<pre>Class&lt;?&gt; type   = Citation.class;
-Method   method = type.getMethod("<code class="GeoAPI">getTitle</code>", (Class&lt;?&gt;[]) null);
-UML      annot  = method.getAnnotation(UML.class);
-String   id     = annot.identifier();
-System.out.println("The standard name for the " + method.getName() + " method is " + id);</pre>
-
-      <p>
-        The reverse operation — getting the Java class and method from a standard name — is a bit more complicated.
-        It requires reading the <code class="GeoAPI">class-index.properties</code> file provided in the <code>org.opengis.annotation</code> package.
-        The following example reads the files just before searching for the name of the interface corresponding to <code>CI_Citation</code>.
-        Users are always encouraged to only read this file once and then save its contents in their application's cache.
-      </p>
-
-<pre>Properties isoToGeoAPI = new Properties();
-try (InputStream in = UML.class.getResourceAsStream("<code class="GeoAPI">class-index.properties</code>")) {
-    isoToGeoAPI.load(in);
-}
-String isoName = "<code class="OGC">CI_Citation</code>";
-String geoName = getProperty(isoName);
-Class&lt;?&gt;  type = Class.forName(geoName);
-System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + isoName + " is " + type);</pre>
-
-      <p>
-        The <code>org.apache.sis.util.iso.Types</code> convenience method for above task is
-        <code class="SIS">forStandardName(String)</code>.
-      </p>
-
-
-
-      <h3 id="ServiceLoader">Fetching implementations of GeoAPI interfaces</h3>
-      <p>
-        GeoAPI defines factories (<code>Factory</code>) that can create implementations of interfaces.
-        For example, <code>DatumFactory</code> provides methods that can create instances which implement interfaces of the
-        <code>org.opengis.referencing.datum</code> package.
-        A <code>Factory</code> must be implemented by a geospatial library,
-        and declared as a <i>service</i> as defined by the <code>java.util.ServiceLoader</code> class.
-        The <code>ServiceLoader</code> javadoc explains this procedure.
-        In brief, the library must create a file in the <code>META-INF/services/</code> directory,
-        with a name corresponding to the complete name of an interface in the factory
-        (in the preceding example, <code>org.opengis.referencing.datum.DatumFactory</code>).
-        On one line, this text file must include the complete name of the class that implements this interface.
-        This class may be hidden from users, as they do not need to know of its existence.
-      </p>
-      <p>
-        If the library has correctly declared its factories as services,
-        users may import them by using <code>ServiceLoader</code>, as in the example below.
-        This example only takes the first factory located; if there is more than one factory -
-        for example when multiple libraries coexist — then the choice is left to the user.
-      </p>
-
-<pre>import org.opengis.referencing.GeodeticDatum;
-import org.opengis.referencing.DatumFactory;
-import java.util.ServiceLoader;
-
-public class MyApplication {
-    public void createMyDatum() {
-        ServiceLoader  loader = ServiceLoader.load(DatumFactory.class);
-        DatumFactory  factory = loader.iterator().next();
-        GeodeticDatum myDatum = factory.<code class="GeoAPI">createGeodeticDatum</code>(…);
-    }
-}</pre>
-
-
-
-      <h4 id="GeoAPI-simple">Defining custom implementations</h4>
-      <p>
-        Implementing GeoAPI oneself in order to meet very specific needs is not difficult.
-        A developer might concentrate on a handful of interfaces among the hundreds available,
-        while keeping other interfaces as extension points to eventually implement as needed.
-      </p>
-      <p>
-        The conceptual model that the interfaces represent is complex. But this complexity may be reduced by combining certain interfaces.
-        For example, many libraries, even well-known ones, do not distinguish between a <cite>Coordinate System</cite> (<abbr>CS</abbr>)
-        and a <cite>Coordinate <u>Reference</u> System</cite> (<abbr>CRS</abbr>).
-        A developer that also wishes not to make this distinction may implement these two interfaces with the same class.
-        The resulting implementation may have a simpler class hierarchy than that of GeoAPI interfaces.
-        The <code>geoapi-examples</code> module, discussed later, provides such combinations.
-        The following table lists a few possible combinations:
-      </p>
-      <table>
-        <tr>
-          <th>Main Interface</th>
-          <th>Auxiliary Interface</th>
-          <th>Use</th>
-        </tr>
-        <tr>
-          <td><code>CoordinateReferenceSystem</code></td>
-          <td><code>CoordinateSystem</code></td>
-          <td>Description of a spatial reference system (<abbr>CRS</abbr>).</td>
-        </tr>
-        <tr>
-          <td><code>GeodeticDatum</code></td>
-          <td><code>Ellipsoid</code></td>
-          <td>Description of the geodetic datum.</td>
-        </tr>
-        <tr>
-          <td><code>CoordinateOperation</code></td>
-          <td><code>MathTransform</code></td>
-          <td>Coordinate transformation operations.</td>
-        </tr>
-        <tr>
-          <td><code>IdentifiedObject</code></td>
-          <td><code>ReferenceIdentifier</code></td>
-          <td>An objet (usually a <abbr>CRS</abbr>) that we can identify by a code.</td>
-        </tr>
-        <tr>
-          <td><code>Citation</code></td>
-          <td><code>InternationalString</code></td>
-          <td>Bibliographic reference consisting of a simple title.</td>
-        </tr>
-        <tr>
-          <td><code>GeographicBoundingBox</code></td>
-          <td><code>Extent</code></td>
-          <td>Spatial area in degrees of longitude and latitude.</td>
-        </tr>
-        <tr>
-          <td><code>ParameterValue</code></td>
-          <td><code>ParameterDescriptor</code></td>
-          <td>Description of a parameter (name, type) associated with its value.</td>
-        </tr>
-        <tr>
-          <td><code>ParameterValueGroup</code></td>
-          <td><code>ParameterDescriptorGroup</code></td>
-          <td>Description of a set of parameters associated with their values.</td>
-        </tr>
-      </table>
-      <p id="GeoAPI-examples">
-        The <code>geoapi-examples</code> module provides examples of simple implementations.
-        Many of these classes implement more than one interface at a time in order to provide a simpler conceptual model.
-        The <a href="http://www.geoapi.org/geoapi-examples/apidocs/overview-summary.html">javadoc for this module</a>
-        lists key packages and classes along with the combinations performed.
-        This module illustrates not only how GeoAPI might be implemented,
-        but also how the implementation might be tested using <code>geoapi-conformance</code>.
-      </p>
-      <p>
-        Although its primary goal is to serve as a source of inspiration for implementors,
-        <code>geoapi-examples</code> was also designed so as to be usable by applications with very simple needs.
-        As all the examples are in the public domain, developers are invited to freely adapt copies of these classes as necessary.
-        However, if changes are made outside the framework of the GeoAPI project,
-        fair use demands that modified copies be placed in a package with a different name than <code>org.opengis</code>.
-      </p>
-      <p>
-        For somewhat more involved needs, developers are invited to examine the
-        <code>geoapi-proj4</code> and <code>geoapi-netcdf</code> modules.
-        These two modules provide examples of adaptors that are allowed, via GeoAPI interfaces,
-        to use some of the features of external libraries (Proj.4 and <abbr>NetCDF</abbr>).
-        The advantage of using these interfaces is to provide a unified model to operate two very different <abbr>API</abbr>s,
-        while retaining the ability to switch easily to another library if desired.
-      </p>
-
-
-
-      <h2 id="Tests">Test suites</h2>
-      <p>
-        In addition to its own tests, Apache SIS uses tests defined by GeoAPI.
-        One advantages is that those tests provide an external source for the definition of expected results
-        (for example the numerical values of coordinates obtained after a map projection).
-        Such external source reduce the risk that some tests are actually anti-regression tests
-        instead of correctness tests.
-        Those tests can also be used by projects other than Apache SIS.
-      </p>
-      <p id="GeoAPI-conformance">
-        The <code>geoapi-conformance</code> module provides <i>validators</i>, a JUnit <i>test suite</i>, and <i>report generators</i>
-        in the form of <abbr title="Hypertext Markup Language">HTML</abbr> pages.
-        This module may be used with any GeoAPI implementation.
-        For developers of a geospatial library, it offers the following advantages:
-      </p>
-      <ul>
-        <li>Reduces the tedious task of writing tests by using existing tests.</li>
-        <li>Increases confidence in the validity of tests,
-          since <code>geoapi-conformance</code> has its own test suite and is applied to other implementations.</li>
-        <li>Facilitates comparison with other implementations.</li>
-      </ul>
-
-
-
-      <h3 id="GeoAPI-validators">Instance validations</h3>
-      <p>
-        GeoAPI can validate an instance of its interfaces by checking that certain constraints are observed.
-        Many constraints can not be expressed in the method signature. Those constraints
-        are usually described textually in the abstract specifications or in the javadoc.
-      </p>
-      <div class="example"><p><b>Example:</b>
-        A coordinate conversion or transformation (<code>CC_CoordinateOperation</code>) may require a sequence of several steps.
-        In such a sequence of operations (<code>CC_ConcatenatedOperation</code>), for each step (<code>CC_SingleOperation</code>)
-        the number of output dimensions must equal the number of input dimensions in the next operation.
-        Expressed in Java, this constraint stipulates that for the entire index 0 &lt; <var>i</var> &lt; <var>n</var> where <var>n</var>
-        is the number of operations, we have <code>coordOperation[i].targetDimensions == coordOperation[i-1].sourceDimensions</code>.
-      </p></div>
-
-      <p>
-        The easiest way to perform these verifications is to call the static methods <code class="GeoAPI">validate(…)</code>
-        of the <code>org.opengis.test.Validators</code> class.
-        As all of <code>Validators</code> methods bear the same name, it is enough to write “<code>validate(<var>value</var>)</code>”
-        and then let the compiler choose the most appropriate method for the type of object given in argument.
-        If the object type is not known at the time of compilation,
-        the <code class="GeoAPI">dispatch(Object)</code> method can be invoked for redirecting the work to the most appropriate <code class="GeoAPI">validate(…)</code> method.
-      </p>
-      <p>
-        All <code class="GeoAPI">validate(…)</code> functions follow a chain of dependencies,
-        meaning that they will also validate each component of the object to be validated.
-        For example, the validation of a <code>GeographicCRS</code> implies the validation of its component
-        <code>GeodeticDatum</code>, which itself implies the validation of its component <code>Ellipsoid</code>, and so on.
-        Thus it is unnecessary to validate the components explicitely, unless the developer wishes to isolate the test for a particular item known to cause problems.
-      </p>
-      <p>
-        By default, validations are as strict as possible. It is always possible to relax certain rules.
-        The most common is to tolerate the absence of attributes that would normally be mandatory.
-        This rule and a few others may be modified globally for all tests executed by the currently running <abbr title="Java Virtual Machine">JVM</abbr>,
-        as in the following example:
-      </p>
-
-<pre>import org.opengis.metadata.Metadata;
-import org.opengis.test.Validators;
-import org.junit.Test;
-
-public class MyTest {
-    /*
-     * Tolerate the absence of mandatory attributes in metadata and citation packages.
-     * This modification applies to all tests executed by the currently running <abbr>JVM</abbr>.
-     * If there are multiple test classes, this initialization may be performed
-     * in a parent class to all test classes.
-     */
-    static {
-        Validators.<code class="GeoAPI">DEFAULT.metadata.requireMandatoryAttributes</code> = false;
-        Validators.<code class="GeoAPI">DEFAULT.citation.requireMandatoryAttributes</code> = false;
-    }
-
-    @Test
-    public void testMyMetadata() {
-        Metadata myObject = …; // Create an object here.
-        Validators.<code class="GeoAPI">validate</code>(myObject);
-    }
-}</pre>
-
-      <p>
-        Rules may also be modified for a particular test suite without affecting the default configuration of the standard <abbr>JVM</abbr>.
-        This approach requires the creation of a new instance of the validator that we wish to modify the configuration.
-      </p>
-
-<pre>import org.opengis.metadata.Metadata;
-import org.opengis.test.ValidatorContainer;
-import org.junit.Test;
-
-public class MyTest {
-    private final ValidatorContainer validators;
-
-    public MyTest() {
-        validators = new ValidatorContainer();
-        validators.<code class="GeoAPI">metadata.requireMandatoryAttributes</code> = false;
-        validators.<code class="GeoAPI">citation.requireMandatoryAttributes</code> = false;
-    }
-
-    @Test
-    public void testMyMetadata() {
-        Metadata myObject = …; // Create an object here.
-        validators.<code class="GeoAPI">validate</code>(myObject);
-    }
-}</pre>
-
-
-
-      <h3 id="GeoAPI-tests">Executing pre-defined tests</h3>
-      <p>
-        JUnit tests are defined in the <code>org.opengis.test</code> sub-packages.
-        All test classes bear a name ending in "<code>Test</code>".
-        GeoAPI also provides an <code>org.opengis.test.TestSuite</code> class including all test classes defined in the
-        <code>geoapi-conformance</code> module, but Apache <abbr>SIS</abbr> does not use it.
-        Instead, Apache <abbr>SIS</abbr> inherits GeoAPI’s <code class="GeoAPI">*Test</code> classes on a case-by-case basis,
-        in the appropriate modules.
-        The example below gives an example of a customized GeoAPI test:
-        The <a href="http://www.geoapi.org/geoapi-conformance/apidocs/org/opengis/test/referencing/ParameterizedTransformTest.html">parent test javadoc</a>
-        documents the tests performed in detail.
-        In this example, only one test is modified and all the others are inherited as they are (it is not necessary to repeat them in the sub-class).
-        However, this example adds a supplemental verification, annotated with <code>@After</code>, which will be executed after each test.
-      </p>
-
-<pre>import org.junit.*;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.opengis.test.referencing.ParameterizedTransformTest;
-import static org.junit.Assert.*;
-
-@RunWith(JUnit4.class)
-public class MyTest extends ParameterizedTransformTest {
-    /**
-     * Specify our own coordinate transformation factory for the GeoAPI tests.
-     * GeoAPI will test the objects created by this factory.
-     */
-    public MyTest() {
-        super(new MyMathTransformFactory());
-    }
-
-    /**
-     * Changes the behaviour of a test. This example relaxes the requirements of this test a little,
-     * by accepting errors of up to 10 centimetres, rather than the default value of 1 cm.
-     * This change only applies to this method, and does not affect the other inherited tests.
-     */
-    @Test
-    @Override
-    public void testLambertAzimuthalEqualArea() throws FactoryException, TransformException {
-        <code class="GeoAPI">tolerance</code> = 0.1; // 10 cm tolerance.
-        super.<code class="GeoAPI">testLambertAzimuthalEqualArea()</code>;
-    }
-
-    /**
-     * Supplemental verification performed after each test, inherited or not.
-     * In this example, we are verifying that the transformation tested
-     * works correctly in two-dimensional spaces.
-     */
-    @After
-    public void ensureAllTransformAreMath2D() {
-        assertTrue(<code class="GeoAPI">transform</code> instanceof MathTransform2D);
-    }
-}</pre>
-
-
-
-      <h2 id="DesignNote">Design notes</h2>
       <p>Following chapters explain the rational behind some implementation choices done in Apache <abbr>SIS</abbr>.</p>
 
 
@@ -421,11 +80,11 @@ public class MyTest extends ParameterizedTransformTest {
           where <var>N</var><sub><var>x</var></sub> is the image width and
           <var>N</var><sub><var>y</var></sub> the image height in number of pixels:
         </p><p>
-          <xi:include href="../math/PixelToGeographicTerms.html"/>
+          <xi:include href="../../math/PixelToGeographicTerms.html"/>
         </p><p>
           Above equations can be represented in matrix form as below:
         </p><p>
-        <xi:include href="../math/PixelToGeographic.html"/>
+        <xi:include href="../../math/PixelToGeographic.html"/>
         </p><p>
           In this particular case, scale factors <var>S</var> are the pixel size in degrees
           and translation terms <var>T</var> are the geographic coordinate of an image corner
@@ -448,13 +107,13 @@ public class MyTest extends ParameterizedTransformTest {
           <th>Initial conversion</th><th></th>
           <th>Concatenated operation</th>
         </tr><tr>
-          <td style="vertical-align: middle"><xi:include href="../math/AxisSwapping2D.html"/></td>
+          <td style="vertical-align: middle"><xi:include href="../../math/AxisSwapping2D.html"/></td>
           <td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
-          <td style="vertical-align: middle"><xi:include href="../math/InverseAxisY.html"/></td>
+          <td style="vertical-align: middle"><xi:include href="../../math/InverseAxisY.html"/></td>
           <td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
-          <td style="vertical-align: middle"><xi:include href="../math/PixelToGeographicSameAxisDirections.html"/></td>
+          <td style="vertical-align: middle"><xi:include href="../../math/PixelToGeographicSameAxisDirections.html"/></td>
           <td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">=</td>
-          <td style="vertical-align: middle"><xi:include href="../math/PixelToGeographicReverseOrderAndY.html"/></td>
+          <td style="vertical-align: middle"><xi:include href="../../math/PixelToGeographicReverseOrderAndY.html"/></td>
         </tr></table>
         <p>
           A key principle is that there is no need to write Java code dedicated to above kinds of axis changes.
@@ -568,7 +227,7 @@ if (mt instanceof AffineTransform) {
         The <var>φ</var> terms are latitudes, the <var>λ</var> terms are longitudes and
         (<var>φ₂</var>, <var>λ₂</var>) may be different than (<var>φ₁</var>, <var>λ₁</var>) if <var>h</var> axis is not perpendicular to the surface.
       </p><p>
-        <xi:include href="../math/Geographic3Dto2D.html"/>
+        <xi:include href="../../math/Geographic3Dto2D.html"/>
       </p><p>
         For linear algebra libraries, the above non-square matrix represents an under-determined system of equations and may be considered unresolvable.
         Indeed the above coordinate operation can not be inverted as a (<var>φ₂</var>, <var>λ₂</var>) → (<var>φ₁</var>, <var>λ₁</var>, <var>h</var>)
@@ -620,6 +279,6 @@ if (mt instanceof AffineTransform) {
       <p>
         This library is provided in the <code>org.apache.sis.matrix</code> package of the <code>sis-referencing</code> module.
       </p>
-    <section>
+    </section>
   </body>
 </html>

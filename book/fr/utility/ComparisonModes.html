@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
+  <head>
+    <title>ComparisonModes</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="../../../content/book/book.css"/>
+  </head>
+  <body>
+    <!--
+      Content below this point is copied in "(…)/content/book/fr/developer-guide.html" file
+      by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
+    -->
+    <section>
+      <header>
+        <h2 id="ComparisonModes">Modes de comparaisons des objets</h2>
+      </header>
+      <p>
+        Il existe différentes opinions sur la façon d’implémenter la méthode <code>Object.equals(Object)</code> du Java standard.
+        Selon certains, il doit être possible de comparer différentes implémentations d’une même interface ou classe de base.
+        Mais cette politique nécessite que chaque interface ou classe de base définisse entièrement dans sa Javadoc les critères ou calculs
+        que doivent employer les méthodes <code>equals(Object)</code> et <code>hashCode()</code> dans toutes les implémentations.
+        Cette approche est choisie notamment par <code>java.util.Collection</code> et ses interfaces filles.
+        La transposition de cette approche aux centaines d’interfaces de GeoAPI serait toutefois une entreprise ardue,
+        qui risquerait d’être assez peu suivie par les diverses implémentations.
+        En outre, elle se fait au détriment de la possibilité de prendre en compte des attributs supplémentaires dans les interfaces filles
+        si cette possibilité n’a pas été spécifiée dans l’interface parente.
+        Cette contrainte découle des points suivants du contrat des méthodes <code>equals(Object)</code> et <code>hashCode()</code>:
+      </p>
+      <ul>
+        <li><code>A.equals(B)</code> implique <code>B.equals(A)</code> (symétrie);</li>
+        <li><code>A.equals(B)</code> et <code>B.equals(C)</code> implique <code>A.equals(C)</code> (transitivité);</li>
+        <li><code>A.equals(B)</code> implique <code>A.hashCode() == B.hashCode()</code>.</li>
+      </ul>
+      <p>
+        Par exemple ces trois contraintes sont violées si <var>A</var> (et éventuellement <var>C</var>)
+        peuvent contenir des attributs que <var>B</var> ignore.
+        Pour contourner cette difficulté, une approche alternative consiste à exiger que les objets comparés par la méthode
+        <code>Object.equals(Object)</code> soient exactement de la même classe, c’est-à-dire que <code>A.getClass() == B.getClass()</code>.
+        Cette approche est parfois considérée contraire aux principes de la programmation orientée objets.
+        Dans la pratique, pour des applications relativement complexes, l’importance accordée à ces principes dépend du contexte dans lequel les objets sont comparés:
+        si les objets sont ajoutés à un <code>HashSet</code> ou utilisés comme clés dans un <code>HashMap</code>,
+        alors nous avons besoin d’un strict respect du contrat de <code>equals(Object)</code> et <code>hashCode()</code>.
+        Mais si le développeur compare les objets lui-même, par exemple pour vérifier si des informations qui l’intéresse ont changées,
+        alors les contraintes de symétrie, transitivité ou de cohérence avec les valeurs de hachages peuvent ne pas être pertinentes pour lui.
+        Des comparaisons plus permissives peuvent être souhaitables, allant parfois jusqu’à tolérer de légers écarts dans les valeurs numériques.
+      </p>
+      <p>
+        Afin de donner une certaine flexibilité aux développeurs, un grand nombre de classes de la bibliothèque <abbr>SIS</abbr>
+        implémentent l’interface <code>org.apache.sis.util.LenientComparable</code>, qui défini une méthode <code class="SIS">equals(Object, ComparisonMode)</code>.
+        Les principaux modes de comparaisons sont:
+      </p>
+      <ul>
+        <li><p>
+          <b><code class="SIS">STRICT</code></b> — Les objets comparés doivent être de la même classe
+          et tous leurs attributs strictement égaux, y compris d’éventuels attributs publics propres à l’implémentation.
+        </p></li>
+        <li><p>
+          <b><code class="SIS">BY_CONTRACT</code></b> — Les objets comparés doivent implémenter la même interface de GeoAPI (ou tout autre standard),
+          mais n’ont pas besoin d’être de la même classe d’implémentation. Seuls les attributs définis dans l’interface sont comparés;
+          tout autres attributs propres à l’implémentation — même s’ils sont publics — sont ignorés.
+        </p></li>
+        <li><p>
+          <b><code class="SIS">IGNORE_METADATA</code></b> — Comme <code class="SIS">BY_CONTRACT</code>,
+          mais ne compare que les attributs qui influencent les opérations (calculs numériques ou autre) effectuées par l’objet.
+          Par exemple dans un référentiel géodésique, la longitude (par rapport à Greenwich) du méridien d’origine sera pris en compte
+          alors que le nom de ce méridien sera ignoré.
+        </p></li>
+        <li><p>
+          <b><code class="SIS">APPROXIMATIVE</code></b> — Comme <code class="SIS">IGNORE_METADATA</code>,
+          mais tolère de légères différences dans les valeurs numériques.
+        </p></li>
+      </ul>
+      <p>
+        Le mode par défaut, utilisé par les toutes les méthodes <code>equals(Object)</code> de <abbr>SIS</abbr>,
+        est <code class="SIS">STRICT</code>. Ce mode est choisi pour une utilisation sécuritaire — notamment avec <code>HashMap</code> —
+        sans nécessiter de définitions rigoureuses des méthodes <code>equals(Object)</code> et <code>hashCode()</code> dans toutes les interfaces.
+        Avec ce mode, l’ordre des objets (<code>A.equals(B)</code> ou <code>B.equals(A)</code>) n’a pas d’importance.
+        C’est toutefois le seul mode à offrir cette garantie.
+        Dans l’expression <code>A.equals(B)</code>, le mode <code class="SIS">BY_CONTRACT</code>
+        (et donc par extension tous les autres modes qui en dépendent) ne comparera que les propriétés connues de <code>A</code>,
+        sans se soucier de savoir si <code>B</code> en connaît davantage.
+      </p>
+    </section>
+  </body>
+</html>

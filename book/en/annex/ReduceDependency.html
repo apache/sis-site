@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>ReduceDependency</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="../../../content/book/book.css"/>
+  </head>
+  <body>
+    <!--
+      Content below this point is copied in "(…)/content/book/en/developer-guide.html" file
+      by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
+    -->
+    <section>
+      <header>
+        <h2 id="ReduceDependency">Reduce direct dependency to Apache SIS</h2>
+      </header>
+      <p>
+        Previous chapters used Apache SIS static methods for convenience.
+        In some cases, usage of those convenience methods can be replaced by Java code using only GeoAPI methods.
+        Such replacements may be desirable for applications who want to reduce direct dependency toward Apache SIS,
+        for example in order to ease migrations between SIS and other GeoAPI implementations.
+        However this may require that applications write their own convenience methods.
+        The following sections provide some tip for easing this task.
+      </p>
+
+      <h3 id="UML-annotation-indep">Mapping given by <code>@UML</code> annotations</h3>
+      <p>
+        For each class, method and constant defined by an <abbr>OGC</abbr> or <abbr>ISO</abbr> standard,
+        GeoAPI indicates its provenance using annotations defined in the <code>org.opengis.annotation</code> package.
+        This mapping is described in the <a href="#UML-annotation">chapter about GeoAPI</a>.
+        Java reflection methods allow access to this information during the execution of an application.
+        Class <code>org.apache.sis.util.iso.Types</code> provides static convenience methods like
+        <code class="SIS">getStandardName(Class)</code>, but one can avoid those methods.
+        The following example displays the standard name for the method <code class="GeoAPI">getTitle()</code> from the <code>Citation</code> interface:
+      </p>
+
+<pre>Class&lt;?&gt; type   = Citation.class;
+Method   method = type.getMethod("<code class="GeoAPI">getTitle</code>", (Class&lt;?&gt;[]) null);
+UML      annot  = method.getAnnotation(UML.class);
+String   id     = annot.identifier();
+System.out.println("The standard name for the " + method.getName() + " method is " + id);</pre>
+
+      <p>
+        The reverse operation — getting the Java class and method from a standard name — is a bit more complicated.
+        It requires reading the <code class="GeoAPI">class-index.properties</code> file provided in the <code>org.opengis.annotation</code> package.
+        The following example reads the files just before searching for the name of the interface corresponding to <code>CI_Citation</code>.
+        Users are always encouraged to only read this file once and then save its contents in their application's cache.
+      </p>
+
+<pre>Properties isoToGeoAPI = new Properties();
+try (InputStream in = UML.class.getResourceAsStream("<code class="GeoAPI">class-index.properties</code>")) {
+    isoToGeoAPI.load(in);
+}
+String isoName = "<code class="OGC">CI_Citation</code>";
+String geoName = getProperty(isoName);
+Class&lt;?&gt;  type = Class.forName(geoName);
+System.out.println("The GeoAPI interface for <abbr>ISO</abbr> type " + isoName + " is " + type);</pre>
+
+      <p>
+        The <code>org.apache.sis.util.iso.Types</code> convenience method for above task is
+        <code class="SIS">forStandardName(String)</code>.
+      </p>
+
+
+
+      <h3 id="ServiceLoader">Fetching implementations of GeoAPI interfaces</h3>
+      <p>
+        GeoAPI defines factories (<code>Factory</code>) that can create implementations of interfaces.
+        For example, <code>DatumFactory</code> provides methods that can create instances which implement interfaces of the
+        <code>org.opengis.referencing.datum</code> package.
+        A <code>Factory</code> must be implemented by a geospatial library,
+        and declared as a <i>service</i> as defined by the <code>java.util.ServiceLoader</code> class.
+        The <code>ServiceLoader</code> javadoc explains this procedure.
+        In brief, the library must create a file in the <code>META-INF/services/</code> directory,
+        with a name corresponding to the complete name of an interface in the factory
+        (in the preceding example, <code>org.opengis.referencing.datum.DatumFactory</code>).
+        On one line, this text file must include the complete name of the class that implements this interface.
+        This class may be hidden from users, as they do not need to know of its existence.
+      </p>
+      <p>
+        If the library has correctly declared its factories as services,
+        users may import them by using <code>ServiceLoader</code>, as in the example below.
+        This example only takes the first factory located; if there is more than one factory -
+        for example when multiple libraries coexist — then the choice is left to the user.
+      </p>
+
+<pre>import org.opengis.referencing.GeodeticDatum;
+import org.opengis.referencing.DatumFactory;
+import java.util.ServiceLoader;
+
+public class MyApplication {
+    public void createMyDatum() {
+        ServiceLoader  loader = ServiceLoader.load(DatumFactory.class);
+        DatumFactory  factory = loader.iterator().next();
+        GeodeticDatum myDatum = factory.<code class="GeoAPI">createGeodeticDatum</code>(…);
+    }
+}</pre>
+
+
+
+      <h4 id="GeoAPI-simple">Defining custom implementations</h4>
+      <p>
+        Implementing GeoAPI oneself in order to meet very specific needs is not difficult.
+        A developer might concentrate on a handful of interfaces among the hundreds available,
+        while keeping other interfaces as extension points to eventually implement as needed.
+      </p>
+      <p>
+        The conceptual model that the interfaces represent is complex. But this complexity may be reduced by combining certain interfaces.
+        For example, many libraries, even well-known ones, do not distinguish between a <cite>Coordinate System</cite> (<abbr>CS</abbr>)
+        and a <cite>Coordinate <u>Reference</u> System</cite> (<abbr>CRS</abbr>).
+        A developer that also wishes not to make this distinction may implement these two interfaces with the same class.
+        The resulting implementation may have a simpler class hierarchy than that of GeoAPI interfaces.
+        The <code>geoapi-examples</code> module, discussed later, provides such combinations.
+        The following table lists a few possible combinations:
+      </p>
+      <table>
+        <tr>
+          <th>Main Interface</th>
+          <th>Auxiliary Interface</th>
+          <th>Use</th>
+        </tr>
+        <tr>
+          <td><code>CoordinateReferenceSystem</code></td>
+          <td><code>CoordinateSystem</code></td>
+          <td>Description of a spatial reference system (<abbr>CRS</abbr>).</td>
+        </tr>
+        <tr>
+          <td><code>GeodeticDatum</code></td>
+          <td><code>Ellipsoid</code></td>
+          <td>Description of the geodetic datum.</td>
+        </tr>
+        <tr>
+          <td><code>CoordinateOperation</code></td>
+          <td><code>MathTransform</code></td>
+          <td>Coordinate transformation operations.</td>
+        </tr>
+        <tr>
+          <td><code>IdentifiedObject</code></td>
+          <td><code>ReferenceIdentifier</code></td>
+          <td>An objet (usually a <abbr>CRS</abbr>) that we can identify by a code.</td>
+        </tr>
+        <tr>
+          <td><code>Citation</code></td>
+          <td><code>InternationalString</code></td>
+          <td>Bibliographic reference consisting of a simple title.</td>
+        </tr>
+        <tr>
+          <td><code>GeographicBoundingBox</code></td>
+          <td><code>Extent</code></td>
+          <td>Spatial area in degrees of longitude and latitude.</td>
+        </tr>
+        <tr>
+          <td><code>ParameterValue</code></td>
+          <td><code>ParameterDescriptor</code></td>
+          <td>Description of a parameter (name, type) associated with its value.</td>
+        </tr>
+        <tr>
+          <td><code>ParameterValueGroup</code></td>
+          <td><code>ParameterDescriptorGroup</code></td>
+          <td>Description of a set of parameters associated with their values.</td>
+        </tr>
+      </table>
+      <p id="GeoAPI-examples">
+        The <code>geoapi-examples</code> module provides examples of simple implementations.
+        Many of these classes implement more than one interface at a time in order to provide a simpler conceptual model.
+        The <a href="http://www.geoapi.org/geoapi-examples/apidocs/overview-summary.html">javadoc for this module</a>
+        lists key packages and classes along with the combinations performed.
+        This module illustrates not only how GeoAPI might be implemented,
+        but also how the implementation might be tested using <code>geoapi-conformance</code>.
+      </p>
+      <p>
+        Although its primary goal is to serve as a source of inspiration for implementors,
+        <code>geoapi-examples</code> was also designed so as to be usable by applications with very simple needs.
+        As all the examples are in the public domain, developers are invited to freely adapt copies of these classes as necessary.
+        However, if changes are made outside the framework of the GeoAPI project,
+        fair use demands that modified copies be placed in a package with a different name than <code>org.opengis</code>.
+      </p>
+      <p>
+        For somewhat more involved needs, developers are invited to examine the
+        <code>geoapi-proj4</code> and <code>geoapi-netcdf</code> modules.
+        These two modules provide examples of adaptors that are allowed, via GeoAPI interfaces,
+        to use some of the features of external libraries (Proj.4 and <abbr>NetCDF</abbr>).
+        The advantage of using these interfaces is to provide a unified model to operate two very different <abbr>API</abbr>s,
+        while retaining the ability to switch easily to another library if desired.
+      </p>
+    </section>
+  </body>
+</html>

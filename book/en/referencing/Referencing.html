@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
+  <head>
+    <title>Referencing</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="../../../content/book/book.css"/>
+  </head>
+  <body>
+    <!--
+      Content below this point is copied in "(…)/content/book/en/developer-guide.html" file
+      by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
+    -->
+    <section>
+      <header>
+        <h1 id="Referencing">Spatial reference systems</h1>
+      </header>
+      <p>
+        For locating a point on Earth one can use identifiers like city name or postal address
+        — an approach known as <cite>spatial reference systems by identifiers</cite> —
+        or use numerical values valid in a given coordinate system like latitudes and longitudes
+        — an approach known as <cite>spatial reference systems by coordinates</cite>.
+        Each reference system implies approximations like
+        the choice of a figure of the Earth (geoid, ellipsoid, <i>etc.</i>) used as an approximation of Earth shape,
+        the choice of geometric properties (angles, distances, <i>etc.</i>) to be preserved when a map is shown on plane surface, and
+        a lost of precision when coordinates are transformed to systems using a different <a href="#GeodeticDatum">datum</a>.
+      </p><p>
+        A very common misbelief is that one can avoid this complexity by using a single coordinate reference system
+        (typically <abbr title="World Geodetic System 1984">WGS84</abbr>) as a universal system for all data.
+        The next chapters will explain why the reality is not so simple.
+        Whether a universal reference system can suit an application needs or not depends on the desired positional accuracy
+        and the kind of calculations to be performed with the data.
+        Unless otherwise specified, Apache <abbr>SIS</abbr> aims to represent coordinates on Earth with an accuracy of one centimetre or better.
+        But the accuracy can be altered by various situations:
+      </p>
+      <ul>
+        <li>Points should be inside the domain of validity as given by <code>ReferenceSystem.getDomainOfValidity()</code>.</li>
+        <li>Distance measurements in a given map projection are true only is some special locations,
+            named for instance “standards parallels”.</li>
+        <li>Positional accuracy is altered after coordinate transformations.
+            The new accuracy is described by <code>CoordinateOperation.getCoordinateOperationAccuracy()</code>.</li>
+        <li>Finding the most appropriate coordinate transformation parameters require the use of a geodetic dataset like <abbr>EPSG</abbr>.
+            Declaring those parameters within the <abbr>CRS</abbr> (for example with a <code>TOWGS84</code> element) is often not sufficient.</li>
+      </ul>
+      <article>
+        <header>
+          <h2>“Early binding” versus “late binding” implementations</h2>
+        </header>
+        <p>
+          Because of the <abbr>WGS84</abbr> ubiquity, it is tempting to use that system as a hub or a pivot system
+          for all coordinate transformations.
+          The use of an “universal” system as a pivot simplifies the design of coordinate transformations libraries.
+          For example transformations from datum <var>A</var> to datum <var>B</var> can be done by first transforming
+          from <var>A</var> to <abbr>WGS84</abbr>, then from <abbr>WGS84</abbr> to <var>B</var>.
+          With such approach, a coordinate transformations library would only need to associate each
+          <code>GeodeticDatum</code> instance with the transformation parameters from that datum to <abbr>WGS84</abbr>.
+          This approach was encouraged in version 1 of <abbr>WKT</abbr> format, since that format specified a
+          <code>TOWGS84[…]</code> element (removed in <abbr>WKT</abbr> version 2) precisely for that purpose.
+          This approach is known in <abbr>EPSG</abbr> guidance notes as “early binding” implementations
+          since information about coordinate transformations are associated early in geodetic object definitions,
+          usually right at <code>GeographicCRS</code> creation time.
+          While <abbr>EPSG</abbr> acknowledges that this approach is commonly used,
+          this is not a recommended strategy for the following reasons:
+        </p>
+        <ul>
+          <li>More than one transformation may exist from datum <var>A</var> to datum <var>B</var>,
+              where each transformation is designed for a different geographic area.</li>
+          <li>Some operations are designed specifically for transformations from <var>A</var> to <var>B</var>
+              and do not have the same accuracy than an operation using <abbr>WGS84</abbr> as an intermediate step.</li>
+          <li><abbr>WGS84</abbr> itself has been updated many times,
+              which makes it a kind of moving target (admittedly slowly) for coordinate transformations libraries.</li>
+          <li>Different systems could be used as the pivot system, for example the <cite>Galileo Reference Frame</cite>
+              (<abbr>GTRF</abbr>) created for the European <abbr>GPS</abbr> competitor.</li>
+        </ul>
+        <div class="example"><p><b>Example:</b>
+          the <abbr>EPSG</abbr> geodetic dataset defines about 50 transformations from <abbr>NAD27</abbr> to <abbr>NAD83</abbr>.
+          In an early binding approach, the same geographic <abbr>CRS</abbr> (namely “<abbr>NAD27</abbr>”) in the <abbr>WKT</abbr> 1
+          format would need to be defined with a <code>TOWGS84[-8, 160, 176]</code> element for coordinates in <abbr>USA</abbr>
+          or with a <code>TOWGS84[-10, 158, 187]</code> element for coordinates in Canada.
+          Different parameter values exist for other regions like Cuba, so it is not possible to represent such diversity
+          with a single <code>TOWGS84[…]</code> element associated to a <abbr>CRS</abbr>.
+          But even when restricting <abbr>CRS</abbr> usage to the domain of validity of its single <code>TOWGS84[…]</code> element,
+          those transformations are still approximative with a 10 metres accuracy in the <abbr>USA</abbr> case.
+          More accurate transformations exist in the form of <abbr>NADCON</abbr> grid shift files,
+          but those transformations are from <abbr>NAD27</abbr> to <abbr>NAD83</abbr> (which move together on the same continental plate),
+          not to <abbr>WGS84</abbr> (which move independently).
+          The difference was often ignored when <abbr>NAD83</abbr> and <abbr>WGS84</abbr> were considered as practically equivalent,
+          but that assumption is subject to more caution today.
+        </p></div>
+        <p>
+          <abbr>EPSG</abbr> rather recommends the use of “late binding” approach,
+          in which coordinate transformation methods and parameters are defined for
+          “<var>A</var> to <var>B</var>” pairs of systems (eventually completed with domain of validity)
+          rather than associated to standalone datums.
+          Apache <abbr>SIS</abbr> is a “late binding” implementation,
+          while some reminiscences of “early binding” approach still exist in the form of the
+          <code>DefaultGeodeticDatum.getBursaWolfParameters()</code> property.
+          The later is used only if <abbr>SIS</abbr> fails to apply the late binding approach for given reference systems.
+        </p>
+      </article>
+      <p>
+        The <code>sis-referencing</code> module provides a set of classes implementing
+        different specializations of the <code>ReferenceSystem</code> interface, together with required components.
+        Those implementations store spatial reference system descriptions, together with metadata like their domain of validity.
+        However those objects do not perform any operation on coordinate values.
+        Coordinates <cite>conversions</cite> or <cite>transformations</cite> are performed by another family of types,
+        with <code>CoordinateOperation</code> as the root interface.
+        Those types will be discussed in <a href="#CoordinateOperation">another section</a>.
+      </p>
+
+      <xi:include href="ComponentsOfCRS.html"/>
+      <xi:include href="GetCRS.html"/>
+      <xi:include href="CoordinateOperations.html"/>
+    </section>
+  </body>
+</html>
