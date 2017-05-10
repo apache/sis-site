@@ -33,8 +33,15 @@ Partially translated by <i>Christina Hough</i></p>
 <li><a href="#UML-annotation">Explicit mapping given by @UML annotations</a></li>
 <li><a href="#MappingToJDK">Implicit mapping to standard JDK</a></li>
 <li><a href="#GeoAPI-implementation">Implementations provided by Apache SIS</a></li></ul></li>
-<li><a href="#About">Conventions used in this guide</a><ul>
+<li><a href="#AboutBook">Conventions used in this guide</a><ul>
 <li><a href="#CodeColors">Code colors</a></li></ul></li></ul></li>
+<li><a href="#DataAccess">Geospatial data access</a></li>
+<li><a href="#Coverage">Data coverages</a></li>
+<li><a href="#Geometry">Geometries</a><ul>
+<li><a href="#GeometryBase">Base classes</a><ul>
+<li><a href="#DirectPosition">Direct points and positions</a></li>
+<li><a href="#Envelope">Envelopes</a><ul>
+<li><a href="#AntiMeridian">Envelopes that cross the antimeridian</a></li></ul></li></ul></li></ul></li>
 <li><a href="#Referencing">Spatial reference systems</a><ul>
 <li><a href="#ComponentsOfCRS">Components of a reference system by coordinates</a><ul>
 <li><a href="#Ellipsoid">Geoid et ellipsoid</a></li>
@@ -58,13 +65,12 @@ Partially translated by <i>Christina Hough</i></p>
 <li><a href="#DerivativeAndEnvelope">Transform derivatives applied to envelopes</a></li>
 <li><a href="#DerivativeAndRaster">Transform derivatives applied to rasters</a></li>
 <li><a href="#GetDerivative">Getting the derivative at a point</a></li></ul></li>
-<li><a href="#CoordinateOperationSteps">Conceptual versus real chain of coordinate operations</a></li></ul></li></ul></li>
-<li><a href="#Geometry">Geometries</a><ul>
-<li><a href="#GeometryBase">Base classes</a><ul>
-<li><a href="#DirectPosition">Direct points and positions</a></li>
-<li><a href="#Envelope">Envelopes</a><ul>
-<li><a href="#AntiMeridian">Envelopes that cross the antimeridian</a></li></ul></li></ul></li></ul></li>
-<li><a href="#Coverage">Data coverages</a></li>
+<li><a href="#CoordinateOperationSteps">Conceptual versus real chain of coordinate operations</a></li></ul></li>
+<li><a href="#Formats">Date storage formats</a></li>
+<li><a href="#XML-ISO">Representing objects in XML</a><ul>
+<li><a href="#XML-ISO-19115">Representing metadata according to ISO 19115-3</a><ul>
+<li><a href="#gco-id">Identification of already-defined instances</a></li>
+<li><a href="#nilReason">Representing missing values</a></li></ul></li></ul></li></ul></li>
 <li><a href="#Utilities">Utility classes and methods</a><ul>
 <li><a href="#ComparisonModes">Comparison modes of objects</a></li>
 <li><a href="#ObjectConverters">Object converters</a></li>
@@ -74,10 +80,6 @@ Partially translated by <i>Christina Hough</i></p>
 <li><a href="#Locale.ROOT">Locale.ROOT convention</a></li>
 <li><a href="#UnicodePoint">Treatment of characters</a><ul>
 <li><a href="#Whitespaces">Blank spaces interpretation</a></li></ul></li></ul></li></ul></li>
-<li><a href="#XML-ISO">Representing objects in XML</a><ul>
-<li><a href="#XML-ISO-19115">Representing metadata according to ISO 19115-3</a><ul>
-<li><a href="#gco-id">Identification of already-defined instances</a></li>
-<li><a href="#nilReason">Representing missing values</a></li></ul></li></ul></li>
 <li><a href="#Annexes">Annexes</a><ul>
 <li><a href="#ReduceDependency">Reduce direct dependency to Apache SIS</a><ul>
 <li><a href="#UML-annotation-indep">Mapping given by @UML annotations</a></li>
@@ -105,10 +107,11 @@ Partially translated by <i>Christina Hough</i></p>
 
 
 
+
 <section>
 <header>
 <h1 id="Standards"><span class="section-number">1.</span> Standards and norms</h1>
-<nav><div class="chapter-links"><div class="next-chapter"><a href="#Referencing">Next chapter</a> ➡</div></div></nav>
+<nav><div class="chapter-links"><div class="next-chapter"><a href="#DataAccess">Next chapter</a> ➡</div></div></nav>
 </header>
 <nav>In this chapter:<ul class="toc">
 <li><a href="#ConceptualModels">Sources of conceptual models used by Apache SIS</a></li>
@@ -116,7 +119,7 @@ Partially translated by <i>Christina Hough</i></p>
 <li><a href="#UML-annotation">Explicit mapping given by @UML annotations</a></li>
 <li><a href="#MappingToJDK">Implicit mapping to standard JDK</a></li>
 <li><a href="#GeoAPI-implementation">Implementations provided by Apache SIS</a></li></ul></li>
-<li><a href="#About">Conventions used in this guide</a><ul>
+<li><a href="#AboutBook">Conventions used in this guide</a><ul>
 <li><a href="#CodeColors">Code colors</a></li></ul></li></ul></nav>
 <p>
 A geospatial information community is a collection of systems or individuals capable of exchanging their geospatial data
@@ -540,12 +543,12 @@ Developers of client applications benefit from the greater knowledge base availa
 Interoperability is facilitated by a better separation between applications that <em>call</em> GeoAPI functions,
 and libraries that <em>implement</em> GeoAPI.
 The separation is similar to that offered by the <a href="http://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/"><abbr title="Java DataBase Connectivity">JDBC</abbr></a> (<i>Java Database Connectivity</i>) interfaces of standard Java.
-Using the interfaces' <abbr title="Application Programming Interface">API</abbr>, developers can ignore the underlying implementation.
+Using the interfaces’ <abbr title="Application Programming Interface">API</abbr>, developers can ignore the underlying implementation.
 For example, they can perform cartographic projections with the help of the <a href="http://www.geoapi.org/geoapi-proj4/index.html">Proj.4</a> library, or the Apache <abbr title="Spatial Information System">SIS</abbr> library,
 without having to change their programs when they change libraries.
 </p></li>
 <li><p>
-The developers of libraries inherit the expertise of the specifications' authors, via the models that represent interfaces.
+The developers of libraries inherit the expertise of the specifications’ authors, via the models that represent interfaces.
 GeoAPI also provides a framework within which developers can prioritize the implementation of the features they most need,
 while leaving the remaining features as extension points for future developments.
 For example, clients can call a GeoAPI function even if it is not yet supported by the library,
@@ -556,7 +559,7 @@ and simply get a null value until a new version of the library returns a relevan
 
 <details>
 <summary>More about the GeoAPI project</summary>
-<article>
+<article id="GeoAPI-history">
 <header>
 <h2>GeoAPI project history</h2>
 </header>
@@ -755,7 +758,7 @@ The final versions of Apache <abbr>SIS</abbr> depend on this module.
 <em>copy</em> of all interfaces in the <code class="GeoAPI">geoapi</code> module
 (not a dependence) with additions that have not yet been approved as an <abbr>OGC</abbr> standard.
 Some additions appear in interfaces normally defined by the <code class="GeoAPI">geoapi</code> module, hence the need to copy them.
-Apache <abbr>SIS</abbr>'s development branches <code>jdk7</code> and <code>jdk8</code> depend on this module,
+Apache <abbr>SIS</abbr>’s development branches <code>jdk7</code> and <code>jdk8</code> depend on this module,
 but this dependence becomes a dependence on the <code class="GeoAPI">geoapi</code> standard module when the branches are merged to the trunk.
 </p></li>
 <li><p>
@@ -840,7 +843,7 @@ Some classes and methods have neither an <code class="GeoAPI">@UML</code> annota
 They are either extensions of GeoAPI, or else types defined in other libraries, such as standard <abbr title="Java Development Kit">JDK</abbr>.
 In this last case, the mapping to <abbr>ISO</abbr> standards is implicit.
 The following table describes this mapping for <abbr>ISO</abbr> 19103 types.
-Java's primitive types are preferred when applicable,
+Java’s primitive types are preferred when applicable,
 but where necessary their wrappers are used in order to authorize null values.
 </p>
 <table>
@@ -998,8 +1001,8 @@ but GeoAPI often uses the <code class="GeoAPI">InternationalString</code> interf
 For example, it is useful on a server that simultaneously provides pages in multiple languages.
 By returning translations when objects are used rather than at the time of their creation,
 we allow the <abbr title="Spatial Information System">SIS</abbr> library to provide the same instances of <code class="GeoAPI">Metadata</code>
-or <code class="GeoAPI">Coverage</code> (for example) for the same data, regardless of the client's language.
-Translations may be made on the fly with the help of the application's <code>ResourceBundle</code>,
+or <code class="GeoAPI">Coverage</code> (for example) for the same data, regardless of the client’s language.
+Translations may be made on the fly with the help of the application’s <code>ResourceBundle</code>,
 or may be provided directly with the data (as in the case of <code class="GeoAPI">Metadata</code>).
 </p>
 <p>
@@ -1065,7 +1068,7 @@ However such instantiations should be done only in last resort, when it is not p
 
 <section>
 <header>
-<h2 id="About"><span class="section-number">1.3.</span> Conventions used in this guide</h2>
+<h2 id="AboutBook"><span class="section-number">1.3.</span> Conventions used in this guide</h2>
 </header>
 <p>
 Standards sometimes favour the application of certain generic terms to particular contexts,
@@ -1076,9 +1079,9 @@ But the functions to which they are applied by certain <abbr>ISO</abbr> standard
 For example, <abbr>ISO</abbr> 19123 applies these terms to <code class="OGC">CV_Coverage</code> objects,
 seen as functions in which the <i>domain</i> is the set of spatio-temporal coordinates encompassed by the data,
 and the <i>range</i> is the set of values encompassed.
-But <abbr title="University Corporation for Atmospheric Research">UCAR</abbr>'s <abbr title="Network Common Data Form">NetCDF</abbr> library
+But <abbr title="University Corporation for Atmospheric Research">UCAR</abbr>’s <abbr title="Network Common Data Form">NetCDF</abbr> library
 applies these terms instead to the function of converting pixel indices (its <i>domain</i>) to spatial-temporal coordinates (its <i>range</i>).
-Thus the <abbr>UCAR</abbr> library's <i>range</i> may be the <i>domain</i> of <abbr>ISO</abbr> 19123.
+Thus the <abbr>UCAR</abbr> library’s <i>range</i> may be the <i>domain</i> of <abbr>ISO</abbr> 19123.
 </p><p>
 The Apache <abbr title="Spatial Information System">SIS</abbr> library prefers as much as possible to use terms in the sense of <abbr title="Open Geospatial Consortium">OGC</abbr> and <abbr>ISO</abbr> norms.
 Particular care must be taken, however, with the interfaces between <abbr>SIS</abbr> and certain other external libraries,
@@ -1121,8 +1124,283 @@ Text in gray boxes are for information purpose only and can be ignored.
 
 <section>
 <header>
-<h1 id="Referencing"><span class="section-number">2.</span> Spatial reference systems</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Standards">Previous chapter</a></div><div class="next-chapter"><a href="#Geometry">Next chapter</a> ➡</div></div></nav>
+<h1 id="DataAccess"><span class="section-number">2.</span> Geospatial data access</h1>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Standards">Previous chapter</a></div><div class="next-chapter"><a href="#Coverage">Next chapter</a> ➡</div></div></nav>
+</header>
+<nav>In this chapter:<ul class="toc"/></nav>
+<p>
+<span style="color: red">TODO</span>
+</p>
+</section>
+
+
+<section>
+<header>
+<h1 id="Coverage"><span class="section-number">3.</span> Data coverages</h1>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#DataAccess">Previous chapter</a></div><div class="next-chapter"><a href="#Geometry">Next chapter</a> ➡</div></div></nav>
+</header>
+<nav>In this chapter:<ul class="toc"/></nav>
+<p>
+Images, or <i>rasters</i>, are a particular case of a data structure called a <i>coverage</i>.
+We could think of this as a “coverage of data.”
+The title of the <abbr title="International Organization for Standardization">ISO</abbr> 19123 standard that describes them, “Coverage Geometry and Functions”,
+nicely summarizes the two essential elements of coverages:
+</p>
+<ul>
+<li>
+<p>
+A coverage is a function which returns an attribute value from an entered coordinate.
+The set of values that may be entered is called the domain, while the set of values that may be returned is called the range.
+The domain is often the spatio-temporal area covered by the data,
+but nothing in <abbr title="Spatial Information System">SIS</abbr> prevents coverages from extending to other dimensions.
+For example, thermodynamic studies often use an area where the dimensions are temperature and pressure.
+</p>
+<div class="example"><p><b>Example:</b>
+The pixel values of an image may contain measures for terrain elevation.
+If the function <var>h</var> = <var>f</var>(φ,λ) allows us to obtain (eventually, with the help of interpolations)
+the elevation <var>h</var> according the the geographic coordinate (φ,λ),
+then the geographic envelope of the image defined by the domain — the function <var>f</var> — is the <i>coverage</i>,
+and the set of values <var>h</var> that this function can return is the <i>range</i>.
+</p></div>
+</li>
+<li>
+<p>
+Different types of coverages may be characterized by the geometry of their cells.
+In particular, a coverage is not necessarily composed of quadrilateral cells.
+However, given that quadrilateral cells are by far the most frequent (since this is the usual geometry of image pixels),
+we often use the term “grid coverage” to specify coverages composed of such cells.
+In <abbr>SIS</abbr>, the geometry of coverages is described by the <code class="SIS">GridGeometry</code> class.
+</p>
+</li>
+</ul>
+<p>
+The characteristics of the spatial domain are defined by <abbr>ISO</abbr> 19123 standard,
+while the characteristics of range are not included in the standard.
+The standard simply mentions that ranges may be finite or infinite,
+and are not necessarily numerical.
+For example, the values returned by a coverage may come from an enumeration (“this is a forest,” “this is a lake,” etc.).
+However, the standard defines two important types of coverage which have an impact on the types of authorized ranges:
+<i>discrete</i> coverages and <i>continuous</i> coverages.
+Stated simply, continuous coverages are functions that can use interpolation methods.
+Thus, since interpolations are only possible with numeric values, the ranges of non-numeric values may only be used with coverages of the
+<code class="OGC">CV_DiscreteCoverage</code> type.
+</p>
+<aside>
+<h2>SIS’s <code class="SIS">Range</code> class and its relationship to the standards</h2>
+<p>
+The distinction between the ranges of all types of values and the ranges of numeric values is represented in
+<abbr title="Spatial Information System">SIS</abbr> by the <code class="SIS">Range</code> and <code class="SIS">NumberRange</code>
+classes respectively.
+The <code class="SIS">NumberRange</code> is used more often, and is also the one that most closely approaches the
+<a href="http://en.wikipedia.org/wiki/Interval_%28mathematics%29">the common mathematical concept of an interval</a>.
+This textual representation approaches the specifications of <abbr title="International Organization for Standardization">ISO</abbr> 31-11 standard,
+except that the comma is replaced by the character “…” as the separator of minimal and maximal values.
+For example, “[0 … 256)” represents the range of values from 0 inclusive to 256 exclusive.
+</p>
+<p>
+<code class="SIS">Range</code> objects are only indirectly associated with coverages.
+In <abbr>SIS</abbr>, the values that can return coverages are described by objects of the
+<code class="SIS">SampleDimension</code> type. It is these that contain instances of <code class="SIS">Range</code>,
+as well as other information such as <i>transfer function</i> (described later).
+</p>
+</aside>
+</section>
+
+
+<section>
+<header>
+<h1 id="Geometry"><span class="section-number">4.</span> Geometries</h1>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Coverage">Previous chapter</a></div><div class="next-chapter"><a href="#Referencing">Next chapter</a> ➡</div></div></nav>
+</header>
+<nav>In this chapter:<ul class="toc">
+<li><a href="#GeometryBase">Base classes</a><ul>
+<li><a href="#DirectPosition">Direct points and positions</a></li>
+<li><a href="#Envelope">Envelopes</a><ul>
+<li><a href="#AntiMeridian">Envelopes that cross the antimeridian</a></li></ul></li></ul></li></ul></nav>
+<p>
+This chapter introduces a few aspects of <abbr title="International Organization for Standardization">ISO</abbr> 19107 standard (<i>Spatial schema</i>)
+and the Apache <abbr title="Spatial Information System">SIS</abbr> classes that implement them.
+</p>
+
+
+
+
+<section>
+<header>
+<h2 id="GeometryBase"><span class="section-number">4.1.</span> Base classes</h2>
+</header>
+<p>
+Each geometric object is considered an infinite set of points.
+As a set, their most fundamental operations are of the same nature as the standard operations of Java collections.
+We may therefore see a geometry as a kind of <code>java.util.Set</code> in which the elements are points,
+except that the number of elements contained in the set is infinite (with the exception of geometries representing a simple point).
+To better represent this concept, the <abbr title="International Organization for Standardization">ISO</abbr> standard and GeoAPI define a <code class="OGC">TransfiniteSet</code> interface
+which we could see as a <code>Set</code> of infinite size.
+Although a parent relationship exists conceptually between these interfaces,
+GeoAPI does not define <code class="GeoAPI">TransfiniteSet</code> as a sub-interface of <code>java.util.Set</code>,
+as the definition of certain methods such as <code>size()</code> and <code>iterator()</code> would be problematic.
+However, we find very similar methods such as <code class="GeoAPI">contains(…)</code> and <code class="GeoAPI">intersects(…)</code>.
+</p>
+<p>
+All geometries are specializations of <code class="GeoAPI">TransfiniteSet</code>.
+The parent class of those geometries is called <code class="OGC">GM_Object</code> in <abbr>ISO</abbr> 19107 standard.
+GeoAPI interfaces use the <code class="GeoAPI">Geometry</code> name instead, as the omission of the <code class="OGC">GM_</code>
+prefix (as prescribed in GeoAPI convention) would leave a name too similar to Java’s <code>Object</code> class.
+</p>
+
+
+
+<h3 id="DirectPosition"><span class="section-number">4.1.1.</span> Direct points and positions</h3>
+<p>
+<abbr title="International Organization for Standardization">ISO</abbr> 19107 defines two types of structures to represent a point:
+<code class="OGC">GM_Point</code> and <code class="OGC">DirectPosition</code>.
+The first type is a true geometry and may therefore be relatively cumbersome, depending on the implementation.
+The second type is not formally considered to be a geometry;
+it extends neither <code class="OGC">GM_Object</code> nor <code class="OGC">TransfiniteSet</code>.
+It barely defines any operations besides the storing of a sequence of numbers representing a coordinate.
+It may therefore be a more lightweight object.
+</p>
+<p>
+In order to allow the <abbr title="Application Programming Interface">API</abbr> to work equally with these two types of positions,
+<abbr>ISO</abbr> 19107 defines <code class="OGC">Position</code> as a <cite>union</cite> of
+<code class="OGC">DirectPosition</code> and <code class="OGC">GM_Point</code>.
+It is a union in the sense of C/C++. For the Java language, GeoAPI obtains the same effect by defining
+<code class="GeoAPI">Position</code> as the parent interface of <code class="GeoAPI">DirectPosition</code> and <code class="GeoAPI">Point</code>.
+In practice, the great majority of Apache <abbr title="Spatial Information System">SIS</abbr>’s <abbr>API</abbr> works on <code class="GeoAPI">DirectPosition</code>s,
+or occasionally on <code class="GeoAPI">Position</code>s when it seems useful to also allow geometric points.
+</p>
+
+
+
+<h3 id="Envelope"><span class="section-number">4.1.2.</span> Envelopes</h3>
+<p>
+Envelopes store minimal and maximal coordinate values of a geometry.
+Envelopes are <em>not</em> geometries themselves; they are not infinite sets of points (<code class="OGC">TransfiniteSet</code>).
+There is no guarantee that all the positions contained within the limits of an envelope are geographically valid.
+Envelopes must be seen as information about extreme values that might take the coordinates of a geometry as if
+each dimension were independent of the others, nothing more.
+Nevertheless, we speak of envelopes as rectangles, cubes or hyper-cubes (depending on the number of dimensions)
+in order to facilitate discussion, while bearing in mind their non-geometric nature.
+</p>
+<div class="example"><p><b>Example:</b>
+We could test whether a position is within the limits of an envelope.
+A positive result does not guarantee that the position is within the geometry delimited by the envelope,
+but a negative result guarantees that it is outside the envelope.
+We can perform intersection tests in the same way.
+On the other hand, it makes little sense to apply a rotation to an envelope,
+as the result may be very different from that which we would obtain be performing a rotation on the original geometry,
+and then recalculating its envelope.
+</p></div>
+<p>
+An envelope might be represented by two positions corresponding to two opposite corners of a rectangle,
+cube or hyper-cube.
+For the first corner, we often take the one whose ordinates all have the maximal value (<code class="OGC">upperCorner</code>).
+When displayed using a conventional system of coordinates (with <var>y</var> axis values running upwards),
+these two positions appear respectively in the lower left corner and the upper right corner of a rectangle.
+Care must be taken with different coordinate systems, however, which may vary the positions of these corners on the screen.
+The expressions <i>lower corner</i> and <i>upper corner</i> should thus be understood in the mathematical rather than the visual sense.
+</p>
+
+
+
+<h4 id="AntiMeridian"><span class="section-number">4.1.2.1.</span> Envelopes that cross the antimeridian</h4>
+<p>
+Minimums and maximums are the values most often assigned to <code class="OGC">lowerCorner</code>
+and <code class="OGC">upperCorner</code>.
+But the situation becomes complicated when an envelope crosses the antimeridian (-180° or 180° longitude).
+For example, an envelope 10° in size may begin at 175° longitude and end at -175°.
+In this case, the longitude value assigned to <code class="OGC">lowerCorner</code> is greater than that assigned to <code class="OGC">upperCorner</code>.
+Apache <abbr title="Spatial Information System">SIS</abbr> therefore uses a slightly different definition of these two corners:
+</p>
+<ul>
+<li><b><code class="SIS">lowerCorner</code>:</b>
+the starting point, if we move along the inside of the envelope in the direction of ascending values.
+</li>
+<li><b><code class="SIS">upperCorner</code>:</b>
+the end-point, if we move along the inside of the envelope in the direction of ascending values.
+</li>
+</ul>
+<p>
+If the envelope does not cross the antimeridian, these two definitions are equivalent to the selection of minimal and
+maximal values respectively. This is the case in the green rectangle in the figure below.
+When the envelope crosses the antimeridian, the <code class="SIS">lowerCorner</code> and the
+<code class="SIS">upperCorner</code> appear again at the bottom and top of the rectangle
+(assuming a standard system of coordinates), so their names remain appropriate from a visual standpoint.
+However, the left and right positions are switched.
+This case is illustrated by the red rectangle in the figure below.
+</p>
+<p style="text-align:center">
+<img alt="Envelope example with and without anti-meridian spanning." src="../../apidocs/org/apache/sis/geometry/doc-files/AntiMeridian.png"/>
+</p>
+<p>
+The notions of inclusion and intersection, however, interpreted slightly differently in these two cases.
+In the usual case where we do not cross the antimeridian, the green rectangle covers a region of inclusion.
+The regions excluded from this rectangle continue on to infinity in all directions.
+In other words, the region of inclusion is not repeated every 360°.
+But in the case of the red rectangle, the information provided by the envelope actually covers a region of exclusion
+between the two edges of the rectangle. The region of inclusion extends to infinity to the left and right.
+We could stipulate that all longitudes below -180° or above 180° are considered excluded,
+but this would be an arbitrary decision that would not be an exact counterpart to the usual case (green rectangle).
+A developer may wish to use these values, for example, in a mosaic where the map of the world is repeated several times
+horizontally and each repetition is considered distinct.
+If developers wish to perform operations as though the regions of inclusion or exclusion were repeated every 360°,
+they themselves will have to bring the longitudinal values between -180° and 180° in advance.
+All the <code class="SIS">add(…)</code>, <code class="SIS">contains(…)</code>,
+<code class="SIS">intersect(…)</code>, etc. functions of all the envelopes defined in the
+<code class="SIS">org.apache.sis.geometry</code> package perform their calculations according to this convention.
+</p>
+<aside>
+<h5>Generalizing to other types of axes</h5>
+<p>
+This section specifically relates to longitude, as it is the most usual example of a cyclic axis.
+However, in Apache <abbr title="Spatial Information System">SIS</abbr> envelopes, there is no explicit mention of longitude, or of its 360° cycle.
+The characteristics of the range of values of each axis (its extremum, units, type of cycle, etc.)
+are attributes of <code class="GeoAPI">CoordinateSystemAxis</code> objects,
+indirectly associated with envelopes via the coordinate reference system.
+Apache <abbr>SIS</abbr> inspects these attributes to determine the way in which it must perform these operations.
+Thus, any axis associated with the code <code class="GeoAPI">RangeMeaning.WRAPAROUND</code> benefit from
+the same treatment as does longitude.
+For example, this could be a time axis for climatological data (one “year” represents the average temperature in all the
+months of January, followed by the average of all the months of February, etc.)
+This generalization also applies to longitude axes defined by a range of 0° to 360° rather than -180° to 180°.
+</p>
+</aside>
+<p>
+In order for functions such as <code class="SIS">add(…)</code> to work correctly,
+all objects involved must use the same coordinate reference system, including the same range of values.
+Thus an envelope that expresses longitudes in the range [-180 … +180]° is not compatible with an envelope that expresses
+longitudes in the range [0 … 360]°.
+The conversions, if necessary, are up to the user
+(the <code class="SIS">Envelopes</code> class provides convenience methods to do this).
+Moreover, the envelope’s coordinates must be included within the system of coordinates,
+unless the developer explicitly decides to consider (for example) 300° longitude as a position distinct from -60°.
+The <code class="SIS">GeneralEnvelope</code> class provides a <code class="SIS">normalize()</code> method to bring
+coordinates within the desired limits, sometimes at the coast of <cite><i>lower</i></cite> values being higher than
+<cite><i>upper</i></cite> values.
+</p>
+<aside>
+<h5>The special case of [+0 … -0] range</h5>
+<p>
+Java (or more generally, IEEE Standard 754) defines two values distinct from zero:
+a positive zero and a negative zero. These two values are considered equal when we compare them with the <code>==</code> operator in Java.
+But in <abbr title="Spatial Information System">SIS</abbr> envelopes, they may actually return opposite results for axes using <code class="GeoAPI">RangeMeaning.WRAPAROUND</code>.
+An envelope whose range is [0 … 0], [-0 … -0] or [-0 … +0] would normally be considered an empty envelope,
+but the [+0 … -0] range would in fact be considered to include the entire set of values all around the world.
+This behaviour conforms to the definition of <code class="SIS">lowerCorner</code> and <code class="SIS">upperCorner</code>,
+which considers +0 as the starting point, and -0 as the end-point after cycling through all possible values.
+Such behaviour only occurs for the pair of values +0 and -0, and only in that order.
+For all other real values, if the condition <code>lower</code> <code>==</code> <code>upper</code> is true,
+then it is guaranteed that the envelope is empty.
+</p>
+</aside>
+</section>
+</section>
+
+
+<section>
+<header>
+<h1 id="Referencing"><span class="section-number">5.</span> Spatial reference systems</h1>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Geometry">Previous chapter</a></div><div class="next-chapter"><a href="#Utilities">Next chapter</a> ➡</div></div></nav>
 </header>
 <nav>In this chapter:<ul class="toc">
 <li><a href="#ComponentsOfCRS">Components of a reference system by coordinates</a><ul>
@@ -1147,7 +1425,12 @@ Text in gray boxes are for information purpose only and can be ignored.
 <li><a href="#DerivativeAndEnvelope">Transform derivatives applied to envelopes</a></li>
 <li><a href="#DerivativeAndRaster">Transform derivatives applied to rasters</a></li>
 <li><a href="#GetDerivative">Getting the derivative at a point</a></li></ul></li>
-<li><a href="#CoordinateOperationSteps">Conceptual versus real chain of coordinate operations</a></li></ul></li></ul></nav>
+<li><a href="#CoordinateOperationSteps">Conceptual versus real chain of coordinate operations</a></li></ul></li>
+<li><a href="#Formats">Date storage formats</a></li>
+<li><a href="#XML-ISO">Representing objects in XML</a><ul>
+<li><a href="#XML-ISO-19115">Representing metadata according to ISO 19115-3</a><ul>
+<li><a href="#gco-id">Identification of already-defined instances</a></li>
+<li><a href="#nilReason">Representing missing values</a></li></ul></li></ul></li></ul></nav>
 <p>
 For locating a point on Earth one can use identifiers like city name or postal address
 — an approach known as <cite>spatial reference systems by identifiers</cite> —
@@ -1248,7 +1531,7 @@ Those types will be discussed in <a href="#CoordinateOperation">another section<
 
 <section>
 <header>
-<h2 id="ComponentsOfCRS"><span class="section-number">2.1.</span> Components of a reference system by coordinates</h2>
+<h2 id="ComponentsOfCRS"><span class="section-number">5.1.</span> Components of a reference system by coordinates</h2>
 </header>
 <p>
 Spatial reference systems by coordinates provide necessary information for mapping numerical coordinate values
@@ -1270,7 +1553,7 @@ Those standards are completed by two other standards defining exchange formats:
 and the <cite>Well-Known Text</cite> (<abbr>WKT</abbr>) — a text format easier to read by humans.
 </p>
 
-<h3 id="Ellipsoid"><span class="section-number">2.1.1.</span> Geoid et ellipsoid</h3>
+<h3 id="Ellipsoid"><span class="section-number">5.1.1.</span> Geoid et ellipsoid</h3>
 <p>
 Since the real topographic surface is difficult to represent mathematically, it is not used directly.
 A slightly more convenient surface is the geoid,
@@ -1299,7 +1582,7 @@ the Michigan state used an ellipsoid based on the “Clarke 1866” ellipsoid bu
 This modification aimed to take in account the average state height above mean sea level.</p>
 </div>
 
-<h3 id="GeodeticDatum"><span class="section-number">2.1.2.</span> Geodetic datum</h3>
+<h3 id="GeodeticDatum"><span class="section-number">5.1.2.</span> Geodetic datum</h3>
 <p>
 For defining a geodetic system in a country, a national authority selects an ellipsoid matching closely the country surface.
 Differences between that ellipsoid and the geoid’s hollows and bumps are usually less than 100 metres.
@@ -1341,10 +1624,10 @@ Updating data to the new datum would imply transforming some straight lines or s
 into more irregular shapes, if the shapes are large enough.
 </p>
 
-<h3 id="CoordinateSystem"><span class="section-number">2.1.3.</span> Coordinate systems</h3>
+<h3 id="CoordinateSystem"><span class="section-number">5.1.3.</span> Coordinate systems</h3>
 <p style="color: red">TODO</p>
 
-<h4 id="AxisOrder"><span class="section-number">2.1.3.1.</span> Axis order</h4>
+<h4 id="AxisOrder"><span class="section-number">5.1.3.1.</span> Axis order</h4>
 <p>
 The axis order is specified by the authority (typically a national agency) defining the <cite>Coordinate Reference System</cite> (<abbr title="Coordinate Reference System">CRS</abbr>).
 The order depends on the <abbr>CRS</abbr> type and the country defining the <abbr>CRS</abbr>.
@@ -1389,13 +1672,13 @@ To avoid ambiguities, users are encouraged to always provide explicit <code>AXIS
 The <abbr>WKT</abbr> format will be presented in more details in the next sections.
 </p>
 
-<h3 id="GeographicCRS"><span class="section-number">2.1.4.</span> Geographic reference systems</h3>
+<h3 id="GeographicCRS"><span class="section-number">5.1.4.</span> Geographic reference systems</h3>
 <p style="color: red">TODO</p>
 
-<h4 id="GeographicWKT"><span class="section-number">2.1.4.1.</span> <i>Well-Known Text</i> format</h4>
+<h4 id="GeographicWKT"><span class="section-number">5.1.4.1.</span> <i>Well-Known Text</i> format</h4>
 <p style="color: red">TODO</p>
 
-<h3 id="ProjectedCRS"><span class="section-number">2.1.5.</span> Map projections</h3>
+<h3 id="ProjectedCRS"><span class="section-number">5.1.5.</span> Map projections</h3>
 <p>
 Map projections represent a curved surface (the Earth) on a plane surface (a map or a computer screen)
 with some control over deformations: one can preserve either the angles or the areas, but not both in same time.
@@ -1405,40 +1688,40 @@ while countries elongated along the North-South axis prefer a Transverse Mercato
 </p>
 <p style="color: red">TODO</p>
 
-<h4 id="ProjectedWKT"><span class="section-number">2.1.5.1.</span> <i>Well-Known Text</i> format</h4>
+<h4 id="ProjectedWKT"><span class="section-number">5.1.5.1.</span> <i>Well-Known Text</i> format</h4>
 <p style="color: red">TODO</p>
 
-<h3 id="CompoundCRS"><span class="section-number">2.1.6.</span> Vertical and temporal dimensions</h3>
+<h3 id="CompoundCRS"><span class="section-number">5.1.6.</span> Vertical and temporal dimensions</h3>
 <p style="color: red">TODO</p>
 
-<h4 id="CompoundWKT"><span class="section-number">2.1.6.1.</span> <i>Well-Known Text</i> format</h4>
+<h4 id="CompoundWKT"><span class="section-number">5.1.6.1.</span> <i>Well-Known Text</i> format</h4>
 <p style="color: red">TODO</p>
 </section>
 
 
 <section>
 <header>
-<h2 id="GetCRS"><span class="section-number">2.2.</span> Fetching a spatial reference system</h2>
+<h2 id="GetCRS"><span class="section-number">5.2.</span> Fetching a spatial reference system</h2>
 </header>
 <p style="color: red">TODO</p>
 
-<h3 id="CRSAuthorityFactory"><span class="section-number">2.2.1.</span> Looking <abbr title="Coordinate Reference System">CRS</abbr> defined by authorities</h3>
+<h3 id="CRSAuthorityFactory"><span class="section-number">5.2.1.</span> Looking <abbr title="Coordinate Reference System">CRS</abbr> defined by authorities</h3>
 <p style="color: red">TODO</p>
 
-<h3 id="CRSParsing"><span class="section-number">2.2.2.</span> Reading definitions in GML or WKT format</h3>
+<h3 id="CRSParsing"><span class="section-number">5.2.2.</span> Reading definitions in GML or WKT format</h3>
 <p style="color: red">TODO</p>
 
-<h3 id="CRSFactory"><span class="section-number">2.2.3.</span> Constructing programmatically</h3>
+<h3 id="CRSFactory"><span class="section-number">5.2.3.</span> Constructing programmatically</h3>
 <p style="color: red">TODO</p>
 
-<h3 id="CRS_UserCode"><span class="section-number">2.2.4.</span> Adding new <abbr title="Coordinate Reference System">CRS</abbr> definitions</h3>
+<h3 id="CRS_UserCode"><span class="section-number">5.2.4.</span> Adding new <abbr title="Coordinate Reference System">CRS</abbr> definitions</h3>
 <p style="color: red">TODO</p>
 </section>
 
 
 <section>
 <header>
-<h2 id="CoordinateOperations"><span class="section-number">2.3.</span> Coordinate operations</h2>
+<h2 id="CoordinateOperations"><span class="section-number">5.3.</span> Coordinate operations</h2>
 </header>
 <p>
 Given a <em>source</em> coordinate reference system (<abbr title="Coordinate Reference System">CRS</abbr>) in which existing coordinate values are expressed,
@@ -1502,7 +1785,7 @@ Furthermore its accuracy is certainly less than the centimetric accuracy that we
 Consequently verifying the domain of validity and the positional accuracy declared in the transformation metadata is of particular importance.
 </p>
 
-<h3 id="MathTransform"><span class="section-number">2.3.1.</span> Executing an operation on coordinate values</h3>
+<h3 id="MathTransform"><span class="section-number">5.3.1.</span> Executing an operation on coordinate values</h3>
 <p>
 The <code class="GeoAPI">CoordinateOperation</code> object introduced in above section provides high-level informations
 (source and target <abbr title="Coordinate Reference System">CRS</abbr>, domain of validity, positional accuracy, operation parameters, <i>etc</i>).
@@ -1553,7 +1836,7 @@ Note that all geographic coordinates below express latitude before longitude.
 }</pre>
 
 
-<h3 id="TransformDerivative"><span class="section-number">2.3.2.</span> Partial derivatives of coordinate operations</h3>
+<h3 id="TransformDerivative"><span class="section-number">5.3.2.</span> Partial derivatives of coordinate operations</h3>
 <p>
 Previous section shows how to project a coordinate from one reference system to another one.
 There is another, less known, operation which does not compute the projected coordinates of a given point,
@@ -1697,7 +1980,7 @@ One can use that information for determining if axes have been swapped or their 
 But the usefulness of map projection derivatives goes further.
 </p>
 
-<h4 id="DerivativeAndEnvelope"><span class="section-number">2.3.2.1.</span> Transform derivatives applied to envelopes</h4>
+<h4 id="DerivativeAndEnvelope"><span class="section-number">5.3.2.1.</span> Transform derivatives applied to envelopes</h4>
 <p>
 <span style="color: red">TODO</span>
 </p>
@@ -1733,7 +2016,7 @@ The same cubic line can have two minimums.</li>
 </p>
 
 
-<h4 id="DerivativeAndRaster"><span class="section-number">2.3.2.2.</span> Transform derivatives applied to rasters</h4>
+<h4 id="DerivativeAndRaster"><span class="section-number">5.3.2.2.</span> Transform derivatives applied to rasters</h4>
 <p>
 <span style="color: red">TODO</span>
 </p>
@@ -1774,7 +2057,7 @@ Continuing…
 <span style="color: red">TODO</span>
 </p>
 
-<h4 id="GetDerivative"><span class="section-number">2.3.2.3.</span> Getting the derivative at a point</h4>
+<h4 id="GetDerivative"><span class="section-number">5.3.2.3.</span> Getting the derivative at a point</h4>
 <p>
 <span style="color: red">TODO</span>
 Example:</p>
@@ -1795,7 +2078,7 @@ Example:</p>
 }</pre>
 
 
-<h3 id="CoordinateOperationSteps"><span class="section-number">2.3.3.</span> Conceptual versus real chain of coordinate operations</h3>
+<h3 id="CoordinateOperationSteps"><span class="section-number">5.3.3.</span> Conceptual versus real chain of coordinate operations</h3>
 <p>
 Coordinate operations may include many steps, each with their own set of parameters.
 For example transformations from one datum (e.g. <abbr title="North American Datum 1927">NAD27</abbr>) to another datum (e.g. <abbr title="World Geodetic System 1984">WGS84</abbr>)
@@ -2027,17 +2310,10 @@ It may occasionally be useful for advanced debugging.
 
 <section>
 <header>
-<h1 id="Geometry"><span class="section-number">3.</span> Geometries</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Referencing">Previous chapter</a></div><div class="next-chapter"><a href="#Coverage">Next chapter</a> ➡</div></div></nav>
+<h2 id="Formats"><span class="section-number">5.4.</span> Date storage formats</h2>
 </header>
-<nav>In this chapter:<ul class="toc">
-<li><a href="#GeometryBase">Base classes</a><ul>
-<li><a href="#DirectPosition">Direct points and positions</a></li>
-<li><a href="#Envelope">Envelopes</a><ul>
-<li><a href="#AntiMeridian">Envelopes that cross the antimeridian</a></li></ul></li></ul></li></ul></nav>
 <p>
-This chapter introduces a few aspects of <abbr title="International Organization for Standardization">ISO</abbr> 19107 standard (<i>Spatial schema</i>)
-and the Apache <abbr title="Spatial Information System">SIS</abbr> classes that implement them.
+<span style="color: red">TODO</span>
 </p>
 
 
@@ -2045,641 +2321,8 @@ and the Apache <abbr title="Spatial Information System">SIS</abbr> classes that 
 
 <section>
 <header>
-<h2 id="GeometryBase"><span class="section-number">3.1.</span> Base classes</h2>
+<h2 id="XML-ISO"><span class="section-number">5.5.</span> Representing objects in <abbr>XML</abbr></h2>
 </header>
-<p>
-Each geometric object is considered an infinite set of points.
-As a set, their most fundamental operations are of the same nature as the standard operations of Java collections.
-We may therefore see a geometry as a kind of <code>java.util.Set</code> in which the elements are points,
-except that the number of elements contained in the set is infinite (with the exception of geometries representing a simple point).
-To better represent this concept, the <abbr title="International Organization for Standardization">ISO</abbr> standard and GeoAPI define a <code class="OGC">TransfiniteSet</code> interface
-which we could see as a <code>Set</code> of infinite size.
-Although a parent relationship exists conceptually between these interfaces,
-GeoAPI does not define <code class="GeoAPI">TransfiniteSet</code> as a sub-interface of <code>java.util.Set</code>,
-as the definition of certain methods such as <code>size()</code> and <code>iterator()</code> would be problematic.
-However, we find very similar methods such as <code class="GeoAPI">contains(…)</code> and <code class="GeoAPI">intersects(…)</code>.
-</p>
-<p>
-All geometries are specializations of <code class="GeoAPI">TransfiniteSet</code>.
-The parent class of those geometries is called <code class="OGC">GM_Object</code> in <abbr>ISO</abbr> 19107 standard.
-GeoAPI interfaces use the <code class="GeoAPI">Geometry</code> name instead, as the omission of the <code class="OGC">GM_</code>
-prefix (as prescribed in GeoAPI convention) would leave a name too similar to Java's <code>Object</code> class.
-</p>
-
-
-
-<h3 id="DirectPosition"><span class="section-number">3.1.1.</span> Direct points and positions</h3>
-<p>
-<abbr title="International Organization for Standardization">ISO</abbr> 19107 defines two types of structures to represent a point:
-<code class="OGC">GM_Point</code> and <code class="OGC">DirectPosition</code>.
-The first type is a true geometry and may therefore be relatively cumbersome, depending on the implementation.
-The second type is not formally considered to be a geometry;
-it extends neither <code class="OGC">GM_Object</code> nor <code class="OGC">TransfiniteSet</code>.
-It barely defines any operations besides the storing of a sequence of numbers representing a coordinate.
-It may therefore be a more lightweight object.
-</p>
-<p>
-In order to allow the <abbr title="Application Programming Interface">API</abbr> to work equally with these two types of positions,
-<abbr>ISO</abbr> 19107 defines <code class="OGC">Position</code> as a <cite>union</cite> of
-<code class="OGC">DirectPosition</code> and <code class="OGC">GM_Point</code>.
-It is a union in the sense of C/C++. For the Java language, GeoAPI obtains the same effect by defining
-<code class="GeoAPI">Position</code> as the parent interface of <code class="GeoAPI">DirectPosition</code> and <code class="GeoAPI">Point</code>.
-In practice, the great majority of Apache <abbr title="Spatial Information System">SIS</abbr>'s <abbr>API</abbr> works on <code class="GeoAPI">DirectPosition</code>s,
-or occasionally on <code class="GeoAPI">Position</code>s when it seems useful to also allow geometric points.
-</p>
-
-
-
-<h3 id="Envelope"><span class="section-number">3.1.2.</span> Envelopes</h3>
-<p>
-Envelopes store minimal and maximal coordinate values of a geometry.
-Envelopes are <em>not</em> geometries themselves; they are not infinite sets of points (<code class="OGC">TransfiniteSet</code>).
-There is no guarantee that all the positions contained within the limits of an envelope are geographically valid.
-Envelopes must be seen as information about extreme values that might take the coordinates of a geometry as if
-each dimension were independent of the others, nothing more.
-Nevertheless, we speak of envelopes as rectangles, cubes or hyper-cubes (depending on the number of dimensions)
-in order to facilitate discussion, while bearing in mind their non-geometric nature.
-</p>
-<div class="example"><p><b>Example:</b>
-We could test whether a position is within the limits of an envelope.
-A positive result does not guarantee that the position is within the geometry delimited by the envelope,
-but a negative result guarantees that it is outside the envelope.
-We can perform intersection tests in the same way.
-On the other hand, it makes little sense to apply a rotation to an envelope,
-as the result may be very different from that which we would obtain be performing a rotation on the original geometry,
-and then recalculating its envelope.
-</p></div>
-<p>
-An envelope might be represented by two positions corresponding to two opposite corners of a rectangle,
-cube or hyper-cube.
-For the first corner, we often take the one whose ordinates all have the maximal value (<code class="OGC">upperCorner</code>).
-When displayed using a conventional system of coordinates (with <var>y</var> axis values running upwards),
-these two positions appear respectively in the lower left corner and the upper right corner of a rectangle.
-Care must be taken with different coordinate systems, however, which may vary the positions of these corners on the screen.
-The expressions <i>lower corner</i> and <i>upper corner</i> should thus be understood in the mathematical rather than the visual sense.
-</p>
-
-
-
-<h4 id="AntiMeridian"><span class="section-number">3.1.2.1.</span> Envelopes that cross the antimeridian</h4>
-<p>
-Minimums and maximums are the values most often assigned to <code class="OGC">lowerCorner</code>
-and <code class="OGC">upperCorner</code>.
-But the situation becomes complicated when an envelope crosses the antimeridian (-180° or 180° longitude).
-For example, an envelope 10° in size may begin at 175° longitude and end at -175°.
-In this case, the longitude value assigned to <code class="OGC">lowerCorner</code> is greater than that assigned to <code class="OGC">upperCorner</code>.
-Apache <abbr title="Spatial Information System">SIS</abbr> therefore uses a slightly different definition of these two corners:
-</p>
-<ul>
-<li><b><code class="SIS">lowerCorner</code>:</b>
-the starting point, if we move along the inside of the envelope in the direction of ascending values.
-</li>
-<li><b><code class="SIS">upperCorner</code>:</b>
-the end-point, if we move along the inside of the envelope in the direction of ascending values.
-</li>
-</ul>
-<p>
-If the envelope does not cross the antimeridian, these two definitions are equivalent to the selection of minimal and
-maximal values respectively. This is the case in the green rectangle in the figure below.
-When the envelope crosses the antimeridian, the <code class="SIS">lowerCorner</code> and the
-<code class="SIS">upperCorner</code> appear again at the bottom and top of the rectangle
-(assuming a standard system of coordinates), so their names remain appropriate from a visual standpoint.
-However, the left and right positions are switched.
-This case is illustrated by the red rectangle in the figure below.
-</p>
-<p style="text-align:center">
-<img alt="Envelope example with and without anti-meridian spanning." src="../../apidocs/org/apache/sis/geometry/doc-files/AntiMeridian.png"/>
-</p>
-<p>
-The notions of inclusion and intersection, however, interpreted slightly differently in these two cases.
-In the usual case where we do not cross the antimeridian, the green rectangle covers a region of inclusion.
-The regions excluded from this rectangle continue on to infinity in all directions.
-In other words, the region of inclusion is not repeated every 360°.
-But in the case of the red rectangle, the information provided by the envelope actually covers a region of exclusion
-between the two edges of the rectangle. The region of inclusion extends to infinity to the left and right.
-We could stipulate that all longitudes below -180° or above 180° are considered excluded,
-but this would be an arbitrary decision that would not be an exact counterpart to the usual case (green rectangle).
-A developer may wish to use these values, for example, in a mosaic where the map of the world is repeated several times
-horizontally and each repetition is considered distinct.
-If developers wish to perform operations as though the regions of inclusion or exclusion were repeated every 360°,
-they themselves will have to bring the longitudinal values between -180° and 180° in advance.
-All the <code class="SIS">add(…)</code>, <code class="SIS">contains(…)</code>,
-<code class="SIS">intersect(…)</code>, etc. functions of all the envelopes defined in the
-<code class="SIS">org.apache.sis.geometry</code> package perform their calculations according to this convention.
-</p>
-<aside>
-<h5>Generalizing to other types of axes</h5>
-<p>
-This section specifically relates to longitude, as it is the most usual example of a cyclic axis.
-However, in Apache <abbr title="Spatial Information System">SIS</abbr> envelopes, there is no explicit mention of longitude, or of its 360° cycle.
-The characteristics of the range of values of each axis (its extremum, units, type of cycle, etc.)
-are attributes of <code class="GeoAPI">CoordinateSystemAxis</code> objects,
-indirectly associated with envelopes via the coordinate reference system.
-Apache <abbr>SIS</abbr> inspects these attributes to determine the way in which it must perform these operations.
-Thus, any axis associated with the code <code class="GeoAPI">RangeMeaning.WRAPAROUND</code> benefit from
-the same treatment as does longitude.
-For example, this could be a time axis for climatological data (one “year” represents the average temperature in all the
-months of January, followed by the average of all the months of February, etc.)
-This generalization also applies to longitude axes defined by a range of 0° to 360° rather than -180° to 180°.
-</p>
-</aside>
-<p>
-In order for functions such as <code class="SIS">add(…)</code> to work correctly,
-all objects involved must use the same coordinate reference system, including the same range of values.
-Thus an envelope that expresses longitudes in the range [-180 … +180]° is not compatible with an envelope that expresses
-longitudes in the range [0 … 360]°.
-The conversions, if necessary, are up to the user
-(the <code class="SIS">Envelopes</code> class provides convenience methods to do this).
-Moreover, the envelope's coordinates must be included within the system of coordinates,
-unless the developer explicitly decides to consider (for example) 300° longitude as a position distinct from -60°.
-The <code class="SIS">GeneralEnvelope</code> class provides a <code class="SIS">normalize()</code> method to bring
-coordinates within the desired limits, sometimes at the coast of <cite><i>lower</i></cite> values being higher than
-<cite><i>upper</i></cite> values.
-</p>
-<aside>
-<h5>The special case of [+0 … -0] range</h5>
-<p>
-Java (or more generally, IEEE Standard 754) defines two values distinct from zero:
-a positive zero and a negative zero. These two values are considered equal when we compare them with the <code>==</code> operator in Java.
-But in <abbr title="Spatial Information System">SIS</abbr> envelopes, they may actually return opposite results for axes using <code class="GeoAPI">RangeMeaning.WRAPAROUND</code>.
-An envelope whose range is [0 … 0], [-0 … -0] or [-0 … +0] would normally be considered an empty envelope,
-but the [+0 … -0] range would in fact be considered to include the entire set of values all around the world.
-This behaviour conforms to the definition of <code class="SIS">lowerCorner</code> and <code class="SIS">upperCorner</code>,
-which considers +0 as the starting point, and -0 as the end-point after cycling through all possible values.
-Such behaviour only occurs for the pair of values +0 and -0, and only in that order.
-For all other real values, if the condition <code>lower</code> <code>==</code> <code>upper</code> is true,
-then it is guaranteed that the envelope is empty.
-</p>
-</aside>
-</section>
-</section>
-
-
-<section>
-<header>
-<h1 id="Coverage"><span class="section-number">4.</span> Data coverages</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Geometry">Previous chapter</a></div><div class="next-chapter"><a href="#Utilities">Next chapter</a> ➡</div></div></nav>
-</header>
-<nav>In this chapter:<ul class="toc"/></nav>
-<p>
-Images, or <i>rasters</i>, are a particular case of a data structure called a <i>coverage</i>.
-We could think of this as a “coverage of data.”
-The title of the <abbr title="International Organization for Standardization">ISO</abbr> 19123 standard that describes them, “Coverage Geometry and Functions”,
-nicely summarizes the two essential elements of coverages:
-</p>
-<ul>
-<li>
-<p>
-A coverage is a function which returns an attribute value from an entered coordinate.
-The set of values that may be entered is called the domain, while the set of values that may be returned is called the range.
-The domain is often the spatio-temporal area covered by the data,
-but nothing in <abbr title="Spatial Information System">SIS</abbr> prevents coverages from extending to other dimensions.
-For example, thermodynamic studies often use an area where the dimensions are temperature and pressure.
-</p>
-<div class="example"><p><b>Example:</b>
-The pixel values of an image may contain measures for terrain elevation.
-If the function <var>h</var> = <var>f</var>(φ,λ) allows us to obtain (eventually, with the help of interpolations)
-the elevation <var>h</var> according the the geographic coordinate (φ,λ),
-then the geographic envelope of the image defined by the domain — the function <var>f</var> — is the <i>coverage</i>,
-and the set of values <var>h</var> that this function can return is the <i>range</i>.
-</p></div>
-</li>
-<li>
-<p>
-Different types of coverages may be characterized by the geometry of their cells.
-In particular, a coverage is not necessarily composed of quadrilateral cells.
-However, given that quadrilateral cells are by far the most frequent (since this is the usual geometry of image pixels),
-we often use the term “grid coverage” to specify coverages composed of such cells.
-In <abbr>SIS</abbr>, the geometry of coverages is described by the <code class="SIS">GridGeometry</code> class.
-</p>
-</li>
-</ul>
-<p>
-The characteristics of the spatial domain are defined by <abbr>ISO</abbr> 19123 standard,
-while the characteristics of range are not included in the standard.
-The standard simply mentions that ranges may be finite or infinite,
-and are not necessarily numerical.
-For example, the values returned by a coverage may come from an enumeration (“this is a forest,” “this is a lake,” etc.).
-However, the standard defines two important types of coverage which have an impact on the types of authorized ranges:
-<i>discrete</i> coverages and <i>continuous</i> coverages.
-Stated simply, continuous coverages are functions that can use interpolation methods.
-Thus, since interpolations are only possible with numeric values, the ranges of non-numeric values may only be used with coverages of the
-<code class="OGC">CV_DiscreteCoverage</code> type.
-</p>
-<aside>
-<h2>SIS's <code class="SIS">Range</code> class and its relationship to the standards</h2>
-<p>
-The distinction between the ranges of all types of values and the ranges of numeric values is represented in
-<abbr title="Spatial Information System">SIS</abbr> by the <code class="SIS">Range</code> and <code class="SIS">NumberRange</code>
-classes respectively.
-The <code class="SIS">NumberRange</code> is used more often, and is also the one that most closely approaches the
-<a href="http://en.wikipedia.org/wiki/Interval_%28mathematics%29">the common mathematical concept of an interval</a>.
-This textual representation approaches the specifications of <abbr title="International Organization for Standardization">ISO</abbr> 31-11 standard,
-except that the comma is replaced by the character “…” as the separator of minimal and maximal values.
-For example, “[0 … 256)” represents the range of values from 0 inclusive to 256 exclusive.
-</p>
-<p>
-<code class="SIS">Range</code> objects are only indirectly associated with coverages.
-In <abbr>SIS</abbr>, the values that can return coverages are described by objects of the
-<code class="SIS">SampleDimension</code> type. It is these that contain instances of <code class="SIS">Range</code>,
-as well as other information such as <i>transfer function</i> (described later).
-</p>
-</aside>
-</section>
-
-
-<section>
-<header>
-<h1 id="Utilities"><span class="section-number">5.</span> Utility classes and methods</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Coverage">Previous chapter</a></div><div class="next-chapter"><a href="#XML-ISO">Next chapter</a> ➡</div></div></nav>
-</header>
-<nav>In this chapter:<ul class="toc">
-<li><a href="#ComparisonModes">Comparison modes of objects</a></li>
-<li><a href="#ObjectConverters">Object converters</a></li>
-<li><a href="#Internationalization">Internationalization</a><ul>
-<li><a href="#LocalizedString">Distinct character sequences for each locale</a></li>
-<li><a href="#InternationalString">Single instance for all supported locales</a></li>
-<li><a href="#Locale.ROOT">Locale.ROOT convention</a></li>
-<li><a href="#UnicodePoint">Treatment of characters</a><ul>
-<li><a href="#Whitespaces">Blank spaces interpretation</a></li></ul></li></ul></li></ul></nav>
-<p>
-This chapter describes aspects of Apache <abbr title="Spatial Information System">SIS</abbr> that apply to the entire library.
-Most of these utilities are not specific to spatial information systems.
-</p>
-
-
-
-
-
-
-<section>
-<header>
-<h2 id="ComparisonModes"><span class="section-number">5.1.</span> Comparison modes of objects</h2>
-</header>
-<p>
-There are various opinions on how to implement Java standard’s <code>Object​.equals(Object)</code> method.
-According to some, it should be possible to compare different implementations of the same interface or base class.
-But to follow this policy, each interface or base class’s javadoc must define the algorithms that all implementations
-shall use for their <code>equals(Object)</code> and <code>hashCode()</code> methods.
-This approach is common in <code>java.util.Collection</code> and its child interfaces.
-Transferring this approach to certain GeoAPI interfaces, however, would be a difficult task,
-and would probably not be followed in many implementations.
-Moreover, it comes at the expense of being able to take into account supplementary attributes in the child interfaces,
-unless this possibility has been specified in the parent interface.
-This constraint arises from the following points of the <code>equals(Object)</code> and <code>hashCode()</code> method contracts:
-</p>
-<ul>
-<li><code>A.equals(B)</code> implies <code>B.equals(A)</code> (symmetry);</li>
-<li><code>A.equals(B)</code> and <code>B.equals(C)</code> implies <code>A.equals(C)</code> (transitivity);</li>
-<li><code>A.equals(B)</code> implies <code>A.hashCode() == B.hashCode()</code>.</li>
-</ul>
-<p>
-For example, these three constraints are violated if <var>A</var> (and eventually <var>C</var>) can contain attributes
-which <var>B</var> ignores.
-To bypass this problem, an alternative approach is to require that the objects compared by the
-<code>Object​.equals(Object)</code> method be of the same class; in other words, <code>A.getClass() == B.getClass()</code>.
-This approach is sometimes regarded as contrary to the principles of object oriented programming.
-In practice, for relatively complex applications, the important accorded to these principles depends on the context
-in which the objects are compared:
-if the objects are added to a <code>HashSet</code> or used as keys in a <code>HashMap</code>,
-we would need a stricter adherence to the <code>equals(Object)</code> and <code>hashCode()</code> contract.
-But if the developer is comparing the objects his- or herself, for example to check that the relevant information has been changed,
-then the constraints of symmetry, transitivity or coherence with the hash values may be of little interest.
-More permissive comparisons may be desirable, sometimes going so far as to tolerate minor discrepancies in numerical values.
-</p>
-<p>
-In order to allow developers a certain amount of flexibility, many classes in the <abbr title="Spatial Information System">SIS</abbr>
-library implement the <code class="SIS">org.apache.sis.util.LenientComparable</code> interface,
-which defines a <code class="SIS">equals(Object, ComparisonMode)</code> method.
-The principle modes of comparison are:
-</p>
-<ul>
-<li><p>
-<b><code class="SIS">STRICT</code></b> — The objects compared must share the same class and have exactly equal attributes,
-including any possible public attributes specific to the implementation.
-</p></li>
-<li><p>
-<b><code class="SIS">BY_CONTRACT</code></b> — The objects compared must implement the same GeoAPI (or other standard)
-interface, but need not be of the same implementation class.
-Only the attributes defined in the interface are compared;
-all other attributes specific to the implementation — even if they are public — are ignored.
-</p></li>
-<li><p>
-<b><code class="SIS">IGNORE_METADATA</code></b> — Like <code class="SIS">BY_CONTRACT</code>,
-but only compares attributes that influence the operations (numeric calculations or otherwise) performed by the object.
-For example, in a geodesic datum, the longitude (in relation to Greenwich) of the original meridian
-would be taken into account, while the name of the meridian would be ignored.
-</p></li>
-<li><p>
-<b><code class="SIS">APPROXIMATIVE</code></b> — Like <code class="SIS">IGNORE_METADATA</code>,
-but tolerates minor discrepancies in numerical values.
-</p></li>
-</ul>
-<p>
-The default mode, used in all <code>equals(Object)</code> methods in <abbr>SIS</abbr>,
-is <code class="SIS">STRICT</code>. This mode is chosen for a safe operation — particularly with <code>HashMap</code> —
-without the need to rigorously define <code>equals(Object)</code> and <code>hashCode()</code> operations in every interface.
-With this mode, the order of objects (<code>A.equals(B)</code> or <code>B.equals(A)</code>) is unimportant.
-It is, however, the only mode that offers this guarantee.
-In the expression <code>A.equals(B)</code>, the <code class="SIS">BY_CONTRACT</code> mode
-(and so by extension all other modes that depend on it) only compares the properties known to <code>A</code>,
-regardless of whether <code>B</code> knows more.
-</p>
-</section>
-
-
-<section>
-<header>
-<h2 id="ObjectConverters"><span class="section-number">5.2.</span> Object converters</h2>
-</header>
-<p>
-There is sometime a need to convert instances from a <var>source</var> Java type to a <var>target</var> Java type
-while those types are unknown at compile time.
-Various projects (Apache Common Convert, Spring, <i>etc.</i>)
-have created their own interface for performing object conversions between types known only at runtime.
-Details vary, but such interfaces typically look like below:
-</p>
-
-<pre><b>interface</b> ObjectConverter&lt;S,T&gt; {   <code class="comment">// Some projects use only "Converter" as interface name.
-</code>    T apply(S object);             <code class="comment">// Another method name commonly found in other projects is "convert".
-</code>}</pre>
-
-<p>
-Like other projects, Apache <abbr title="Spatial Information System">SIS</abbr> also defines its own <code>ObjectConverter</code> interface.
-The main difference between <abbr>SIS</abbr> converter interface and the interfaces found in other projects
-is that <abbr>SIS</abbr> converters provide some information about their mathematical properties.
-An Apache <abbr>SIS</abbr> converter can have zero, one or many of the following properties:
-</p>
-<dl>
-<dt><dfn>Injective</dfn></dt>
-<dd>A function is injective if no pair of <var>S</var> values can produce the same <var>T</var> value.
-<div class="example"><p><b>Example:</b>
-the <code>Integer</code> → <code>String</code> conversion performed by <code>Integer​.toString()</code>
-is an <cite>injective</cite> function because if two <code>Integer</code> values are not equal,
-then it is guaranteed that their conversions will result in different <code>String</code> values.
-However the <code>String</code> → <code>Integer</code> conversion performed by <code>Integer​.valueOf(String)</code>
-is <strong>not</strong> an injective function
-because many distinct <code>String</code> values can be converted to the same <code>Integer</code> value.
-For example converting the "42", "+42" and "0042" character strings all result in the same 42 integer value.
-</p></div>
-</dd>
-
-<dt><dfn>Surjective</dfn></dt>
-<dd>A function is surjective if each values of <var>T</var> can be created from at least one value of <var>S</var>.
-<div class="example"><p><b>Example:</b>
-the <code>String</code> → <code>Integer</code> conversion performed by <code>Integer​.valueOf(String)</code>
-is a <cite>surjective</cite> function because every <code>Integer</code> value can be created from at least one <code>String</code> value.
-However the <code>Integer</code> → <code>String</code> conversion performed by <code>Integer​.toString()</code>
-is <strong>not</strong> a surjective function because it can not produce all possible <code>String</code> values.
-For example there is no way to produce the "ABC" value with the <code>Integer​.toString()</code> method.
-</p></div>
-</dd>
-
-<dt><dfn>Bijective</dfn></dt>
-<dd>A function is bijective if there is a one-to-one relationship between <var>S</var> and <var>T</var> values.
-<div class="example"><p><b>Note:</b>
-the <cite>bijective</cite> property is defined here for clarity, but actually does not have an explicit item
-in Apache <abbr>SIS</abbr> <code>FunctionProperty</code> enumeration.
-It is not necessary since a function that is both <cite>injective</cite> and <cite>surjective</cite> is necessarily bijective.
-</p></div>
-</dd>
-
-<dt><dfn>Order preserving</dfn></dt>
-<dd>A function is order preserving if any sequence of increasing <var>S</var> values is mapped to a sequence of increasing <var>T</var> values.
-<div class="example"><p><b>Example:</b>
-conversion from <code>Integer</code> to <code>Long</code> preserve the natural ordering of elements.
-However conversions from <code>Integer</code> to <code>String</code> do <strong>not</strong> preserve natural ordering,
-because some sequences of increasing integer values are ordered differently when their string representations are sorted by lexicographic order.
-For example 1, 2, 10 become "1", "10", "2".
-</p></div>
-</dd>
-
-<dt><dfn>Order reversing</dfn></dt>
-<dd>A function is order reversing if any sequence of increasing <var>S</var> values is mapped to a sequence of decreasing <var>T</var> values.
-<div class="example"><p><b>Example:</b>
-a conversion that reverses the sign of numbers.
-</p></div>
-</dd>
-</dl>
-<p>
-Above information may seem unnecessary when values are converted without taking in account the context in which the values appear.
-But when the value to convert is part of a bigger object, then above information can affect the way the converted value will be used.
-For example conversion of a [<var>min</var> … <var>max</var>] range is straightforward when the converter is <cite>order preserving</cite>.
-But if the converter is <cite>order reversing</cite>, then the minimum and maximum values need to be interchanged.
-For example if the converter reverses the sign of values, then the converted range is [-<var>max</var> … -<var>min</var>].
-If the converter is neither order preserving or order reversing, then range conversion is not allowed at all
-(because it does not contain the same set of values) even if the minimum and maximum values could be converted individually.
-</p>
-</section>
-
-
-<section>
-<header>
-<h2 id="Internationalization"><span class="section-number">5.3.</span> Internationalization</h2>
-</header>
-<p>
-In an architecture where a program executed on a server provides its data to multiple clients,
-the server’s locale conventions are not necessarily the same as those of the clients.
-Conventions may differ in language, but also in the way they write numeric values
-(even between two countries that speak the same language) as well in time zone.
-To produce messages that conform to the client’s conventions, <abbr title="Spatial Information System">SIS</abbr> uses
-two approaches, distinguished by their level of granularity: at the level of the messages themselves,
-or at the level of the objects that create the messages.
-The approach used also determines whether it is possible to share the same instance of an object for all languages.
-</p>
-
-<h3 id="LocalizedString"><span class="section-number">5.3.1.</span> Distinct character sequences for each locale</h3>
-<p>
-Some classes are only designed to function according to one locale convention at a time.
-This is of course true for the standard implementations of <code>java.text.Format</code>,
-as they are entirely dedicated to the work of internationalization.
-But it is also the case for other less obvious classes like <code>javax.imageio.ImageReader</code> and <code>ImageWriter</code>.
-When one of these classes is implemented by <abbr title="Spatial Information System">SIS</abbr>,
-we identify it by implementing the <code class="SIS">org.apache.sis.util.Localized</code> interface.
-The <code class="SIS">getLocale()</code> method of this interface can determine the locale conventions
-by which the instance produces its message.
-</p>
-<p>
-Another class that provides different methods for different locales is <code>java.lang.Throwable</code>.
-The standard Java <abbr title="Application Programming Interface">API</abbr> defines two methods for getting the error message:
-<code>getMessage()</code> and <code>getLocalizedMessage()</code>.
-Usually those two methods return the same character sequences,
-but some exceptions thrown by Apache <abbr>SIS</abbr> may use different locales.
-The policy that <abbr>SIS</abbr> tries to apply on a <em>best-effort</em> basis is:
-</p>
-<ul>
-<li><code>getMessage()</code> returns the message in the <abbr title="Java Virtual Machine">JVM</abbr> default locale.
-In a client-server architecture, this is often the locale on the server side.
-This is the recommended language for logging messages to be read by system administrators.</li>
-<li><code>getLocalizedMessage()</code> returns the message in a locale that depends on the context
-in which the exception has been thrown. This is often the locale used by a particular <code class="GeoAPI">Format</code>
-or <code class="SIS">DataStore</code> instance, and can be presumed to be the locale on the client side.
-This is the recommended language to show in the user application.</li>
-</ul>
-
-<div class="example"><p><b>Example:</b>
-If an error occurred while a Japanese client connected to an European server, the localized message may be sent
-to the client in Japanese language as given by <code>getLocalizedMessage()</code> while the same error may be
-logged on the server side in the French (for example) language as given by <code>getMessage()</code>.
-This allows system administrator to analyze the issue without the need to understand client’s language.
-</p></div>
-<p>
-The utility class <code class="SIS">org.apache.sis.util.Exceptions</code> provides convenience methods to get messages
-according to the conventions of a given locale, when this information is available.
-</p>
-
-
-
-<h3 id="InternationalString"><span class="section-number">5.3.2.</span> Single instance for all supported locales</h3>
-<p>
-The <abbr title="Application Programming Interface">API</abbr> conventions defined by <abbr title="Spatial Information System">SIS</abbr> or inherited by GeoAPI favour the use of the
-<code class="GeoAPI">InternationalString</code> type when the value of a <code>String</code> type would likely be localized.
-This approach allows us to defer the internationalization process to the time when a character sequence is requested,
-rather than the time when the object that contains them is created.
-This is particularly useful for immutable classes used for creating unique instances independently of locale conventions.
-</p>
-<div class="example"><p><b>Example:</b>
-<abbr>SIS</abbr> includes only one instance of the <code class="GeoAPI">OperationMethod</code>
-type representing the Mercator projection, regardless of the client’s language.
-But its <code class="GeoAPI">getName()</code> method (indirectly) provides an instance of
-<code class="GeoAPI">InternationalString</code>, so that <code>toString(Locale.ENGLISH)</code> returns <cite>Mercator projection</cite>
-while <code>toString(Locale.FRENCH)</code> returns <cite>Projection de Mercator</cite>.
-</p></div>
-<p>
-When defining spatial objects independently of locale conventions, we reduce the risk of computational overload.
-For example, it is easier to detect that two maps use the same cartographic projection if this last is represented by the
-same instance of <code class="GeoAPI">CoordinateOperation</code>,
-even if the projection has a different name depending on the country.
-Moreover, certain types of <code class="GeoAPI">CoordinateOperation</code> may require coordinate transformation matrices,
-so sharing a single instance becomes even more preferable in order to reduce memory consumption.
-</p>
-
-
-
-<h3 id="Locale.ROOT"><span class="section-number">5.3.3.</span> <code>Locale.ROOT</code> convention</h3>
-<p>
-All <abbr title="Spatial Information System">SIS</abbr> methods receiving or returning the value of a <code>Locale</code> type accept the <code>Locale.ROOT</code> value.
-This value is interpreted as specifying not to localize the text.
-The notion of a <cite>non-localized text</cite> is a little false, as it is always necessary to chose a formatting convention.
-This convention however, though very close to English, is usually slightly different.
-For example:
-</p>
-<ul>
-<li>
-Identifiers are written as they appear in <abbr title="Unified Modeling Language">UML</abbr> diagrams,
-such as <cite>blurredImage</cite> instead of <cite>Blurred image</cite>.
-</li>
-<li>
-Dates are written according to the <abbr title="International Organization for Standardization">ISO</abbr> 8601 format,
-which does not correspond to English conventions.
-</li>
-<li>
-Numbers are written using their <code>toString()</code> methods, rather than using a <code>java.text.NumberFormat</code>.
-As a result, there are differences in the number of significant digits,
-use of exponential notation and the absence of thousands separators.
-</li>
-</ul>
-
-
-
-<h3 id="UnicodePoint"><span class="section-number">5.3.4.</span> Treatment of characters</h3>
-<p>
-In Java, sequences of characters use UTF-16 encoding.
-There is a direct correspondence between the values of the <code>char</code> type and the great majority of characters,
-which facilitates the use of sequences so long as these characters are sufficient.
-However, certain Unicode characters cannot be represented by a single <code>char</code>.
-These <i>supplementary characters</i> include certain ideograms,
-but also road and geographical symbols in the 1F680 to 1F700 range.
-Support for these supplementary characters requires slightly more complex interactions than the classic case,
-where we may assume a direct correspondence.
-Thus, instead of the loop on the left below, international applications must generally use the loop on the right:
-</p>
-
-<table class="hidden">
-<tr>
-<th>Loop to Avoid</th>
-<th>Recommended loop</th>
-<th>Supplementary character examples</th>
-</tr>
-<tr>
-<td>
-
-<pre style="margin-top: 6pt"><b>for</b> (<b>int</b> i=0; i&lt;string.length(); i++) {
-    <b>char</b> c = string.charAt(i);
-    <b>if</b> (Character.isWhitespace(c)) {
-        <code class="comment">// A blank space was found.
-</code>    }
-}</pre>
-
-</td><td>
-
-<pre style="margin-top: 6pt"><b>for</b> (<b>int</b> i=0; i&lt;string.length();) {
-    <b>int</b> c = string.codePointAt(i);
-    <b>if</b> (Character.isWhitespace(c)) {
-        <code class="comment">// A blank space was found.
-</code>    }
-    i += Character.charCount(c);
-}</pre>
-
-</td><td>
-<center>(rendering depends on browser capabilities)</center>
-<p style="font-size: 40px">&#128649; &#128677; &#128679; &#128683;
-&#128687; &#128696; &#128698; &#128697; &#128708; &#128685;</p>
-</td>
-</tr>
-</table>
-
-<p>
-<abbr title="Spatial Information System">SIS</abbr> supports supplementary characters by using the loop on the right where necessary,
-but the loop on the left is occasionally used when it is known that the characters searched for are not supplementary characters,
-even if some may be present in the sequence in which we are searching.
-</p>
-
-
-
-<h4 id="Whitespaces"><span class="section-number">5.3.4.1.</span> Blank spaces interpretation</h4>
-<p>
-Standard Java provides two methods for determining whether a character is a blank space:
-<code>Character​.isWhitespace(…)</code> and <code>Character​.isSpaceChar(…)</code>.
-These two methods differ in their interpretations of non-breaking spaces, tabs and line breaks.
-The first method conforms to the interpretation currently used in languages such as Java, C/C++ and <abbr>XML</abbr>,
-which considers tabs and line breaks to be blank spaces, while non-breaking spaces are read as not blank.
-The second method — which conforms strictly to the Unicode definition — makes the opposite interpretation.
-</p>
-<p>
-<abbr title="Spatial Information System">SIS</abbr> uses each of these methods in different contexts.
-<code>isWhitespace(…)</code> is used to <em>separate</em> the elements of a list (numbers, dates, words, etc.),
-while <code>isSpaceChar(…)</code> is used to ignore blank spaces <em>inside</em> a single element.
-</p>
-<div class="example"><p><b>Example:</b>
-Take a list of numbers represented according to French conventions.
-Each number may contain <em>non-breaking spaces</em> as thousands separators,
-while the different numbers in the list may be separated by ordinary spaces, tabs or line breaks.
-When analyzing a number, we want to consider the non-breaking spaces as being part of the number,
-whereas a tab or a line break most likely indicates a separation between this number and the next.
-We would thus use <code>isSpaceChar(…)</code>.
-Conversely, when separating the numbers in the list, we want to consider tabs and line breaks as separators,
-but not non-breaking spaces.
-We would thus use <code>isWhitespace(…)</code>.
-The role of ordinary spaces, to which either case might apply, should be decided beforehand.
-</p></div>
-<p>
-In practice, this distinction is reflected in the use of <code>isSpaceChar(…)</code> in the implementations of <code>java.text.Format</code>,
-or the use of <code>isWhitespace(…)</code> in nearly all the rest of the <abbr>SIS</abbr> library.
-</p>
-</section>
-</section>
-
-
-<section>
-<header>
-<h1 id="XML-ISO"><span class="section-number">6.</span> Representing objects in <abbr>XML</abbr></h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Utilities">Previous chapter</a></div><div class="next-chapter"><a href="#Annexes">Next chapter</a> ➡</div></div></nav>
-</header>
-<nav>In this chapter:<ul class="toc">
-<li><a href="#XML-ISO-19115">Representing metadata according to ISO 19115-3</a><ul>
-<li><a href="#gco-id">Identification of already-defined instances</a></li>
-<li><a href="#nilReason">Representing missing values</a></li></ul></li></ul></nav>
 <p>
 Objects defined by <abbr title="Open Geospatial Consortium">OGC</abbr>/<abbr title="International Organization for Standardization">ISO</abbr> standards must be able to communicate with remote machines via the Internet,
 using different software written in different languages.
@@ -2773,7 +2416,7 @@ when the <abbr>XML</abbr> elements do not correspond exactly to Java attributes.
 
 <section>
 <header>
-<h2 id="XML-ISO-19115"><span class="section-number">6.1.</span> Representing metadata according to <abbr title="International Organization for Standardization">ISO</abbr> 19115-3</h2>
+<h3 id="XML-ISO-19115"><span class="section-number">5.5.1.</span> Representing metadata according to <abbr title="International Organization for Standardization">ISO</abbr> 19115-3</h3>
 </header>
 <p>
 For each metadata class, there is an <abbr>XML</abbr> type with the same name than in the abstract specification
@@ -2854,7 +2497,7 @@ The corresponding classes are defined in internal <abbr>SIS</abbr> packages.
 These classes may be ignored, unless the developer wishes to implement his or her own classes whose instances must be written in <abbr title="Java Architecture for XML Binding">JAXB</abbr>.
 </p>
 
-<aside>
+<aside id="XML-SIS">
 <h3>Implementation strategy in Apache <abbr title="Spatial Information System">SIS</abbr></h3>
 <p>
 <code class="SIS">org.apache.sis.internal.jaxb.*</code> packages (non-public) define <abbr title="Java Architecture for XML Binding">JAXB</abbr> adaptors for all types of <abbr title="International Organization for Standardization">ISO</abbr> objects.
@@ -2876,7 +2519,7 @@ These attributes do not have dedicated Java methods, but are accessible indirect
 </aside>
 
 
-<h3 id="gco-id"><span class="section-number">6.1.1.</span> Identification of already-defined instances</h3>
+<h4 id="gco-id"><span class="section-number">5.5.1.1.</span> Identification of already-defined instances</h4>
 <p>
 The parent element may contain an <code class="OGC">id</code> or <code class="OGC">uuid</code> attribute.
 If one of these attributes is present, the parent attribute may be completely omitted;
@@ -2962,7 +2605,7 @@ where all types of identifiers (not only <abbr>XML</abbr>) associated with an ob
 
 
 
-<h3 id="nilReason"><span class="section-number">6.1.2.</span> Representing missing values</h3>
+<h4 id="nilReason"><span class="section-number">5.5.1.2.</span> Representing missing values</h4>
 <p>
 When a property is not defined, the corresponding GeoAPI method usually returns <code>null</code>.
 However, things become complicated when the missing property is a value considered mandatory by <abbr title="International Organization for Standardization">ISO</abbr> 19115 standard.
@@ -3017,12 +2660,396 @@ But when a <code class="OGC">nilReason</code> is present, the <abbr>SIS</abbr> i
 </table>
 </section>
 </section>
+</section>
+
+
+<section>
+<header>
+<h1 id="Utilities"><span class="section-number">6.</span> Utility classes and methods</h1>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Referencing">Previous chapter</a></div><div class="next-chapter"><a href="#Annexes">Next chapter</a> ➡</div></div></nav>
+</header>
+<nav>In this chapter:<ul class="toc">
+<li><a href="#ComparisonModes">Comparison modes of objects</a></li>
+<li><a href="#ObjectConverters">Object converters</a></li>
+<li><a href="#Internationalization">Internationalization</a><ul>
+<li><a href="#LocalizedString">Distinct character sequences for each locale</a></li>
+<li><a href="#InternationalString">Single instance for all supported locales</a></li>
+<li><a href="#Locale.ROOT">Locale.ROOT convention</a></li>
+<li><a href="#UnicodePoint">Treatment of characters</a><ul>
+<li><a href="#Whitespaces">Blank spaces interpretation</a></li></ul></li></ul></li></ul></nav>
+<p>
+This chapter describes aspects of Apache <abbr title="Spatial Information System">SIS</abbr> that apply to the entire library.
+Most of these utilities are not specific to spatial information systems.
+</p>
+
+
+
+
+
+
+<section>
+<header>
+<h2 id="ComparisonModes"><span class="section-number">6.1.</span> Comparison modes of objects</h2>
+</header>
+<p>
+There are various opinions on how to implement Java standard’s <code>Object​.equals(Object)</code> method.
+According to some, it should be possible to compare different implementations of the same interface or base class.
+But to follow this policy, each interface or base class’s javadoc must define the algorithms that all implementations
+shall use for their <code>equals(Object)</code> and <code>hashCode()</code> methods.
+This approach is common in <code>java.util.Collection</code> and its child interfaces.
+Transferring this approach to certain GeoAPI interfaces, however, would be a difficult task,
+and would probably not be followed in many implementations.
+Moreover, it comes at the expense of being able to take into account supplementary attributes in the child interfaces,
+unless this possibility has been specified in the parent interface.
+This constraint arises from the following points of the <code>equals(Object)</code> and <code>hashCode()</code> method contracts:
+</p>
+<ul>
+<li><code>A.equals(B)</code> implies <code>B.equals(A)</code> (symmetry);</li>
+<li><code>A.equals(B)</code> and <code>B.equals(C)</code> implies <code>A.equals(C)</code> (transitivity);</li>
+<li><code>A.equals(B)</code> implies <code>A.hashCode() == B.hashCode()</code>.</li>
+</ul>
+<p>
+For example, these three constraints are violated if <var>A</var> (and eventually <var>C</var>) can contain attributes
+which <var>B</var> ignores.
+To bypass this problem, an alternative approach is to require that the objects compared by the
+<code>Object​.equals(Object)</code> method be of the same class; in other words, <code>A.getClass() == B.getClass()</code>.
+This approach is sometimes regarded as contrary to the principles of object oriented programming.
+In practice, for relatively complex applications, the important accorded to these principles depends on the context
+in which the objects are compared:
+if the objects are added to a <code>HashSet</code> or used as keys in a <code>HashMap</code>,
+we would need a stricter adherence to the <code>equals(Object)</code> and <code>hashCode()</code> contract.
+But if the developer is comparing the objects his- or herself, for example to check that the relevant information has been changed,
+then the constraints of symmetry, transitivity or coherence with the hash values may be of little interest.
+More permissive comparisons may be desirable, sometimes going so far as to tolerate minor discrepancies in numerical values.
+</p>
+<p>
+In order to allow developers a certain amount of flexibility, many classes in the <abbr title="Spatial Information System">SIS</abbr>
+library implement the <code class="SIS">org.apache.sis.util.LenientComparable</code> interface,
+which defines a <code class="SIS">equals(Object, ComparisonMode)</code> method.
+The principle modes of comparison are:
+</p>
+<ul>
+<li><p>
+<b><code class="SIS">STRICT</code></b> — The objects compared must share the same class and have exactly equal attributes,
+including any possible public attributes specific to the implementation.
+</p></li>
+<li><p>
+<b><code class="SIS">BY_CONTRACT</code></b> — The objects compared must implement the same GeoAPI (or other standard)
+interface, but need not be of the same implementation class.
+Only the attributes defined in the interface are compared;
+all other attributes specific to the implementation — even if they are public — are ignored.
+</p></li>
+<li><p>
+<b><code class="SIS">IGNORE_METADATA</code></b> — Like <code class="SIS">BY_CONTRACT</code>,
+but only compares attributes that influence the operations (numeric calculations or otherwise) performed by the object.
+For example, in a geodesic datum, the longitude (in relation to Greenwich) of the original meridian
+would be taken into account, while the name of the meridian would be ignored.
+</p></li>
+<li><p>
+<b><code class="SIS">APPROXIMATIVE</code></b> — Like <code class="SIS">IGNORE_METADATA</code>,
+but tolerates minor discrepancies in numerical values.
+</p></li>
+</ul>
+<p>
+The default mode, used in all <code>equals(Object)</code> methods in <abbr>SIS</abbr>,
+is <code class="SIS">STRICT</code>. This mode is chosen for a safe operation — particularly with <code>HashMap</code> —
+without the need to rigorously define <code>equals(Object)</code> and <code>hashCode()</code> operations in every interface.
+With this mode, the order of objects (<code>A.equals(B)</code> or <code>B.equals(A)</code>) is unimportant.
+It is, however, the only mode that offers this guarantee.
+In the expression <code>A.equals(B)</code>, the <code class="SIS">BY_CONTRACT</code> mode
+(and so by extension all other modes that depend on it) only compares the properties known to <code>A</code>,
+regardless of whether <code>B</code> knows more.
+</p>
+</section>
+
+
+<section>
+<header>
+<h2 id="ObjectConverters"><span class="section-number">6.2.</span> Object converters</h2>
+</header>
+<p>
+There is sometime a need to convert instances from a <var>source</var> Java type to a <var>target</var> Java type
+while those types are unknown at compile time.
+Various projects (Apache Common Convert, Spring, <i>etc.</i>)
+have created their own interface for performing object conversions between types known only at runtime.
+Details vary, but such interfaces typically look like below:
+</p>
+
+<pre><b>interface</b> ObjectConverter&lt;S,T&gt; {   <code class="comment">// Some projects use only "Converter" as interface name.
+</code>    T apply(S object);             <code class="comment">// Another method name commonly found in other projects is "convert".
+</code>}</pre>
+
+<p>
+Like other projects, Apache <abbr title="Spatial Information System">SIS</abbr> also defines its own <code>ObjectConverter</code> interface.
+The main difference between <abbr>SIS</abbr> converter interface and the interfaces found in other projects
+is that <abbr>SIS</abbr> converters provide some information about their mathematical properties.
+An Apache <abbr>SIS</abbr> converter can have zero, one or many of the following properties:
+</p>
+<dl>
+<dt><dfn>Injective</dfn></dt>
+<dd>A function is injective if no pair of <var>S</var> values can produce the same <var>T</var> value.
+<div class="example"><p><b>Example:</b>
+the <code>Integer</code> → <code>String</code> conversion performed by <code>Integer​.toString()</code>
+is an <cite>injective</cite> function because if two <code>Integer</code> values are not equal,
+then it is guaranteed that their conversions will result in different <code>String</code> values.
+However the <code>String</code> → <code>Integer</code> conversion performed by <code>Integer​.valueOf(String)</code>
+is <strong>not</strong> an injective function
+because many distinct <code>String</code> values can be converted to the same <code>Integer</code> value.
+For example converting the "42", "+42" and "0042" character strings all result in the same 42 integer value.
+</p></div>
+</dd>
+
+<dt><dfn>Surjective</dfn></dt>
+<dd>A function is surjective if each values of <var>T</var> can be created from at least one value of <var>S</var>.
+<div class="example"><p><b>Example:</b>
+the <code>String</code> → <code>Integer</code> conversion performed by <code>Integer​.valueOf(String)</code>
+is a <cite>surjective</cite> function because every <code>Integer</code> value can be created from at least one <code>String</code> value.
+However the <code>Integer</code> → <code>String</code> conversion performed by <code>Integer​.toString()</code>
+is <strong>not</strong> a surjective function because it can not produce all possible <code>String</code> values.
+For example there is no way to produce the "ABC" value with the <code>Integer​.toString()</code> method.
+</p></div>
+</dd>
+
+<dt><dfn>Bijective</dfn></dt>
+<dd>A function is bijective if there is a one-to-one relationship between <var>S</var> and <var>T</var> values.
+<div class="example"><p><b>Note:</b>
+the <cite>bijective</cite> property is defined here for clarity, but actually does not have an explicit item
+in Apache <abbr>SIS</abbr> <code>FunctionProperty</code> enumeration.
+It is not necessary since a function that is both <cite>injective</cite> and <cite>surjective</cite> is necessarily bijective.
+</p></div>
+</dd>
+
+<dt><dfn>Order preserving</dfn></dt>
+<dd>A function is order preserving if any sequence of increasing <var>S</var> values is mapped to a sequence of increasing <var>T</var> values.
+<div class="example"><p><b>Example:</b>
+conversion from <code>Integer</code> to <code>Long</code> preserve the natural ordering of elements.
+However conversions from <code>Integer</code> to <code>String</code> do <strong>not</strong> preserve natural ordering,
+because some sequences of increasing integer values are ordered differently when their string representations are sorted by lexicographic order.
+For example 1, 2, 10 become "1", "10", "2".
+</p></div>
+</dd>
+
+<dt><dfn>Order reversing</dfn></dt>
+<dd>A function is order reversing if any sequence of increasing <var>S</var> values is mapped to a sequence of decreasing <var>T</var> values.
+<div class="example"><p><b>Example:</b>
+a conversion that reverses the sign of numbers.
+</p></div>
+</dd>
+</dl>
+<p>
+Above information may seem unnecessary when values are converted without taking in account the context in which the values appear.
+But when the value to convert is part of a bigger object, then above information can affect the way the converted value will be used.
+For example conversion of a [<var>min</var> … <var>max</var>] range is straightforward when the converter is <cite>order preserving</cite>.
+But if the converter is <cite>order reversing</cite>, then the minimum and maximum values need to be interchanged.
+For example if the converter reverses the sign of values, then the converted range is [-<var>max</var> … -<var>min</var>].
+If the converter is neither order preserving or order reversing, then range conversion is not allowed at all
+(because it does not contain the same set of values) even if the minimum and maximum values could be converted individually.
+</p>
+</section>
+
+
+<section>
+<header>
+<h2 id="Internationalization"><span class="section-number">6.3.</span> Internationalization</h2>
+</header>
+<p>
+In an architecture where a program executed on a server provides its data to multiple clients,
+the server’s locale conventions are not necessarily the same as those of the clients.
+Conventions may differ in language, but also in the way they write numeric values
+(even between two countries that speak the same language) as well in time zone.
+To produce messages that conform to the client’s conventions, <abbr title="Spatial Information System">SIS</abbr> uses
+two approaches, distinguished by their level of granularity: at the level of the messages themselves,
+or at the level of the objects that create the messages.
+The approach used also determines whether it is possible to share the same instance of an object for all languages.
+</p>
+
+<h3 id="LocalizedString"><span class="section-number">6.3.1.</span> Distinct character sequences for each locale</h3>
+<p>
+Some classes are only designed to function according to one locale convention at a time.
+This is of course true for the standard implementations of <code>java.text.Format</code>,
+as they are entirely dedicated to the work of internationalization.
+But it is also the case for other less obvious classes like <code>javax.imageio.ImageReader</code> and <code>ImageWriter</code>.
+When one of these classes is implemented by <abbr title="Spatial Information System">SIS</abbr>,
+we identify it by implementing the <code class="SIS">org.apache.sis.util.Localized</code> interface.
+The <code class="SIS">getLocale()</code> method of this interface can determine the locale conventions
+by which the instance produces its message.
+</p>
+<p>
+Another class that provides different methods for different locales is <code>java.lang.Throwable</code>.
+The standard Java <abbr title="Application Programming Interface">API</abbr> defines two methods for getting the error message:
+<code>getMessage()</code> and <code>getLocalizedMessage()</code>.
+Usually those two methods return the same character sequences,
+but some exceptions thrown by Apache <abbr>SIS</abbr> may use different locales.
+The policy that <abbr>SIS</abbr> tries to apply on a <em>best-effort</em> basis is:
+</p>
+<ul>
+<li><code>getMessage()</code> returns the message in the <abbr title="Java Virtual Machine">JVM</abbr> default locale.
+In a client-server architecture, this is often the locale on the server side.
+This is the recommended language for logging messages to be read by system administrators.</li>
+<li><code>getLocalizedMessage()</code> returns the message in a locale that depends on the context
+in which the exception has been thrown. This is often the locale used by a particular <code class="GeoAPI">Format</code>
+or <code class="SIS">DataStore</code> instance, and can be presumed to be the locale on the client side.
+This is the recommended language to show in the user application.</li>
+</ul>
+
+<div class="example"><p><b>Example:</b>
+If an error occurred while a Japanese client connected to an European server, the localized message may be sent
+to the client in Japanese language as given by <code>getLocalizedMessage()</code> while the same error may be
+logged on the server side in the French (for example) language as given by <code>getMessage()</code>.
+This allows system administrator to analyze the issue without the need to understand client’s language.
+</p></div>
+<p>
+The utility class <code class="SIS">org.apache.sis.util.Exceptions</code> provides convenience methods to get messages
+according to the conventions of a given locale, when this information is available.
+</p>
+
+
+
+<h3 id="InternationalString"><span class="section-number">6.3.2.</span> Single instance for all supported locales</h3>
+<p>
+The <abbr title="Application Programming Interface">API</abbr> conventions defined by <abbr title="Spatial Information System">SIS</abbr> or inherited by GeoAPI favour the use of the
+<code class="GeoAPI">InternationalString</code> type when the value of a <code>String</code> type would likely be localized.
+This approach allows us to defer the internationalization process to the time when a character sequence is requested,
+rather than the time when the object that contains them is created.
+This is particularly useful for immutable classes used for creating unique instances independently of locale conventions.
+</p>
+<div class="example"><p><b>Example:</b>
+<abbr>SIS</abbr> includes only one instance of the <code class="GeoAPI">OperationMethod</code>
+type representing the Mercator projection, regardless of the client’s language.
+But its <code class="GeoAPI">getName()</code> method (indirectly) provides an instance of
+<code class="GeoAPI">InternationalString</code>, so that <code>toString(Locale.ENGLISH)</code> returns <cite>Mercator projection</cite>
+while <code>toString(Locale.FRENCH)</code> returns <cite>Projection de Mercator</cite>.
+</p></div>
+<p>
+When defining spatial objects independently of locale conventions, we reduce the risk of computational overload.
+For example, it is easier to detect that two maps use the same cartographic projection if this last is represented by the
+same instance of <code class="GeoAPI">CoordinateOperation</code>,
+even if the projection has a different name depending on the country.
+Moreover, certain types of <code class="GeoAPI">CoordinateOperation</code> may require coordinate transformation matrices,
+so sharing a single instance becomes even more preferable in order to reduce memory consumption.
+</p>
+
+
+
+<h3 id="Locale.ROOT"><span class="section-number">6.3.3.</span> <code>Locale.ROOT</code> convention</h3>
+<p>
+All <abbr title="Spatial Information System">SIS</abbr> methods receiving or returning the value of a <code>Locale</code> type accept the <code>Locale.ROOT</code> value.
+This value is interpreted as specifying not to localize the text.
+The notion of a <cite>non-localized text</cite> is a little false, as it is always necessary to chose a formatting convention.
+This convention however, though very close to English, is usually slightly different.
+For example:
+</p>
+<ul>
+<li>
+Identifiers are written as they appear in <abbr title="Unified Modeling Language">UML</abbr> diagrams,
+such as <cite>blurredImage</cite> instead of <cite>Blurred image</cite>.
+</li>
+<li>
+Dates are written according to the <abbr title="International Organization for Standardization">ISO</abbr> 8601 format,
+which does not correspond to English conventions.
+</li>
+<li>
+Numbers are written using their <code>toString()</code> methods, rather than using a <code>java.text.NumberFormat</code>.
+As a result, there are differences in the number of significant digits,
+use of exponential notation and the absence of thousands separators.
+</li>
+</ul>
+
+
+
+<h3 id="UnicodePoint"><span class="section-number">6.3.4.</span> Treatment of characters</h3>
+<p>
+In Java, sequences of characters use UTF-16 encoding.
+There is a direct correspondence between the values of the <code>char</code> type and the great majority of characters,
+which facilitates the use of sequences so long as these characters are sufficient.
+However, certain Unicode characters cannot be represented by a single <code>char</code>.
+These <i>supplementary characters</i> include certain ideograms,
+but also road and geographical symbols in the 1F680 to 1F700 range.
+Support for these supplementary characters requires slightly more complex interactions than the classic case,
+where we may assume a direct correspondence.
+Thus, instead of the loop on the left below, international applications must generally use the loop on the right:
+</p>
+
+<table class="hidden">
+<tr>
+<th>Loop to Avoid</th>
+<th>Recommended loop</th>
+<th>Supplementary character examples</th>
+</tr>
+<tr>
+<td>
+
+<pre style="margin-top: 6pt"><b>for</b> (<b>int</b> i=0; i&lt;string.length(); i++) {
+    <b>char</b> c = string.charAt(i);
+    <b>if</b> (Character.isWhitespace(c)) {
+        <code class="comment">// A blank space was found.
+</code>    }
+}</pre>
+
+</td><td>
+
+<pre style="margin-top: 6pt"><b>for</b> (<b>int</b> i=0; i&lt;string.length();) {
+    <b>int</b> c = string.codePointAt(i);
+    <b>if</b> (Character.isWhitespace(c)) {
+        <code class="comment">// A blank space was found.
+</code>    }
+    i += Character.charCount(c);
+}</pre>
+
+</td><td>
+<center>(rendering depends on browser capabilities)</center>
+<p style="font-size: 40px">&#128649; &#128677; &#128679; &#128683;
+&#128687; &#128696; &#128698; &#128697; &#128708; &#128685;</p>
+</td>
+</tr>
+</table>
+
+<p>
+<abbr title="Spatial Information System">SIS</abbr> supports supplementary characters by using the loop on the right where necessary,
+but the loop on the left is occasionally used when it is known that the characters searched for are not supplementary characters,
+even if some may be present in the sequence in which we are searching.
+</p>
+
+
+
+<h4 id="Whitespaces"><span class="section-number">6.3.4.1.</span> Blank spaces interpretation</h4>
+<p>
+Standard Java provides two methods for determining whether a character is a blank space:
+<code>Character​.isWhitespace(…)</code> and <code>Character​.isSpaceChar(…)</code>.
+These two methods differ in their interpretations of non-breaking spaces, tabs and line breaks.
+The first method conforms to the interpretation currently used in languages such as Java, C/C++ and <abbr>XML</abbr>,
+which considers tabs and line breaks to be blank spaces, while non-breaking spaces are read as not blank.
+The second method — which conforms strictly to the Unicode definition — makes the opposite interpretation.
+</p>
+<p>
+<abbr title="Spatial Information System">SIS</abbr> uses each of these methods in different contexts.
+<code>isWhitespace(…)</code> is used to <em>separate</em> the elements of a list (numbers, dates, words, etc.),
+while <code>isSpaceChar(…)</code> is used to ignore blank spaces <em>inside</em> a single element.
+</p>
+<div class="example"><p><b>Example:</b>
+Take a list of numbers represented according to French conventions.
+Each number may contain <em>non-breaking spaces</em> as thousands separators,
+while the different numbers in the list may be separated by ordinary spaces, tabs or line breaks.
+When analyzing a number, we want to consider the non-breaking spaces as being part of the number,
+whereas a tab or a line break most likely indicates a separation between this number and the next.
+We would thus use <code>isSpaceChar(…)</code>.
+Conversely, when separating the numbers in the list, we want to consider tabs and line breaks as separators,
+but not non-breaking spaces.
+We would thus use <code>isWhitespace(…)</code>.
+The role of ordinary spaces, to which either case might apply, should be decided beforehand.
+</p></div>
+<p>
+In practice, this distinction is reflected in the use of <code>isSpaceChar(…)</code> in the implementations of <code>java.text.Format</code>,
+or the use of <code>isWhitespace(…)</code> in nearly all the rest of the <abbr>SIS</abbr> library.
+</p>
+</section>
+</section>
 
 
 <section>
 <header>
 <h1 id="Annexes"><span class="section-number">7.</span> Annexes</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#XML-ISO">Previous chapter</a></div></div></nav>
+<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Utilities">Previous chapter</a></div></div></nav>
 </header>
 
 <nav>In this chapter:<ul class="toc">
@@ -3078,7 +3105,7 @@ System.out.println(<i>"The standard name for the "</i> + method.getName() + <i>"
 The reverse operation — getting the Java class and method from a standard name — is a bit more complicated.
 It requires reading the <code class="GeoAPI">class-index.properties</code> file provided in the <code class="GeoAPI">org.opengis.annotation</code> package.
 The following example reads the files just before searching for the name of the interface corresponding to <code class="OGC">CI_Citation</code>.
-Users are always encouraged to only read this file once and then save its contents in their application's cache.
+Users are always encouraged to only read this file once and then save its contents in their application’s cache.
 </p>
 
 <pre>Properties isoToGeoAPI = <b>new</b> Properties();

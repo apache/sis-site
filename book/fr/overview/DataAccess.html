@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="fr">
+  <head>
+    <title>DataAccess</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="../../../content/book/book.css"/>
+  </head>
+  <body>
+    <!--
+      Content below this point is copied in "(…)/content/book/fr/developer-guide.html" file
+      by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
+    -->
+    <section>
+      <header>
+        <h1 id="DataAccess">Accès aux données géospatiales</h1>
+      </header>
+      <p>
+        Bien qu’il soit possible de créer des structures de données directement en mémoire,
+        le plus souvent les données sont lues à partir de fichiers ou autres types d’entrepôts.
+        Il y a plusieurs moyens d’accéder à ces données, mais une façon pratique est d’utiliser
+        la méthode de commodité <code>DataStores.open(Object)</code>.
+        L’argument donné à cette méthode peut être un chemin vers un fichier
+        (<code>File</code>, <code>Path</code>, <code>URL</code>, <code>URI</code>),
+        un flux d’entrée vers un fichier déjà ouvert
+        (<code>Channel</code>, <code>DataInput</code>, <code>InputStream</code>, <code>Reader</code>),
+        une connexion à une base de données (<code>DataSource</code>, <code>Connection</code>)
+        ou d’autres types d’objets spécifiques à la source de données.
+        La méthode <code>DataStores.open(Object)</code> se charge de détecter le format de données
+        et retourne une instance de <code>DataStore</code> pouvant le lire.
+      </p>
+      <p>
+        Les fonctionnalités d’un <code>DataStore</code> dépendent de la nature des données à manipuler
+        (couvertures de données, ensembles de géométries, séries temporelles, <i>etc.</i>),
+        mais dans tous les cas il y aura toujours au moins quelques méta-données que l’on peut extraire.
+        Les méta-données permettent d’identifier les phénomènes ou entités décrits par les données
+        (température, occupation du sol, <i>etc.</i>),
+        la région géographique ou la plage temporelle couverte par les données ainsi que leur résolution.
+        Certains sources suffisamment riches fournissent aussi une estimation de la qualité des données,
+        des informations permettant de contacter la personne ou l’organisme responsable des données,
+        les contraintes légales ou techniques à l’utilisation, l’historique des traitements,
+        les dates prévues des prochaines mise-à-jour de mises-à-jour, <i>etc.</i>
+      </p>
+      <p>
+        Les différents formats de données ont souvent leur propre modèle de méta-données,
+        mais Apache <abbr>SIS</abbr> les traduits tous vers un modèle unique afin de cacher cette hétérogénéité.
+        Cette approche, consistant à choisir un seul modèle de méta-données comme <em>modèle pivot</em>, est fréquemment utilisée par d’autres bibliothèques aussi.
+        Par exemple Apache Tika utilise le standard <cite>Dublin Core</cite> comme modèle pivot,
+        alors que Java Image I/O définit son propre modèle pivot dans le paquet <code>javax.imageio.metadata</code>.
+        Pour Apache <abbr>SIS</abbr>, le modèle pivot choisit est le standard international de méta-données en information géographique
+        <cite><abbr>ISO</abbr> 19115-1:2014 — principes de base</cite>, complété par
+        <cite><abbr>ISO</abbr> 19115-2 — extensions pour l’acquisition et le traitement</cite>.
+        Ce modèle organise les méta-données dans une arborescence où chaque information est accessible via un chemin bien définit,
+        peu importe l’origine de cette information.
+        Par exemple si un format de données peut nous fournir les coordonnées géographiques d’une boîte englobant toutes les données,
+        alors cette information sera toujours accessible (peu importe le format de données) à partir de l’objet <code>Metadata</code>
+        sous le noeud <code>identificationInfo</code>, sous-noeud <code>extent</code>, sous-noeud <code>geographicElement</code>.
+      </p>
+      <div class="example"><p><b>Exemple:</b>
+        le code suivant lit un fichier de méta-données d’une image Landsat-8 située au Vietnam:
+        </p>
+
+<pre>try (DataStore ds = DataStores.open(new File("LC81230522014071LGN00_MTL.txt"))) {
+    Metadata md = getMetadata();
+
+    // Afin de simplifier cet exemple, nous omettons les vérifications de valeurs nulles ou de collections vides.
+    Identification   idInfo = md    .getIdentificationInfo().iterator().next();
+    Extent           extent = idInfo.getExtents()           .iterator().next();
+    GeographicExtent bbox   = extent.getGeographicElements().iterator().next();
+
+    System.out.println("La région géographique des données est:");
+    System.out.println(bbox);
+}</pre>
+
+        <p>
+          Cet exemple produira la sortie suivante:
+        </p>
+
+<pre><samp>La région géographique des données est:
+Geographic Bounding Box
+  ├─West bound longitude…………………………… 108°20′10,464″E
+  ├─East bound longitude…………………………… 110°26′39,66″E
+  ├─South bound latitude…………………………… 10°29′59,604″N
+  └─North bound latitude…………………………… 12°37′25,716″N</samp></pre>
+
+      </div>
+    </section>
+  </body>
+</html>
