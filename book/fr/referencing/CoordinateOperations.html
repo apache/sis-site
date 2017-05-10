@@ -63,7 +63,7 @@
         est d’utiliser la classe de commodité <code>org.apache.sis.referencing.CRS</code>:
       </p>
 
-<pre>CoordinateOperation cop = CRS.findOperation(sourceCRS, targetCRS, areaOfInterest);</pre>
+<pre><code>CoordinateOperation cop = CRS.findOperation(sourceCRS, targetCRS, areaOfInterest);</code></pre>
 
       <p>
         Parmi les information fournies par l’objet <code>CoordinateOperation</code> obtenu, on note en particulier:
@@ -121,7 +121,7 @@
         Notons que toutes les coordonnées géographiques dans ce code ont la latitude avant la longitude.
       </p>
 
-<pre>import org.opengis.geometry.DirectPosition;
+<pre><code>import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.TransformException;
@@ -146,7 +146,7 @@ public class MyApp {
         System.out.println("Source: " + ptSrc);
         System.out.println("Target: " + ptDst);
     }
-}</pre>
+}</code></pre>
 
 
       <h3 id="TransformDerivative">Dérivées partielles des opérations</h3>
@@ -182,10 +182,10 @@ public class MyApp {
           </td>
           <td style="vertical-align:middle; min-width:500px; padding-left:60px">
 
-<pre style="margin:0">DirectPosition geographic = new DirectPosition2D(<var>φ</var>, <var>λ</var>);
+<pre style="margin:0"><code>DirectPosition geographic = new DirectPosition2D(<var>φ</var>, <var>λ</var>);
 DirectPosition projected = <var><b>P</b></var>.transform(geographic, null);
 double <var>x</var> = projected.getOrdinate(0);
-double <var>y</var> = projected.getOrdinate(1);</pre>
+double <var>y</var> = projected.getOrdinate(1);</code></pre>
 
           </td>
         </tr>
@@ -221,10 +221,10 @@ double <var>y</var> = projected.getOrdinate(1);</pre>
           </td>
           <td style="vertical-align:middle; min-width:500px; padding-left:60px">
 
-<pre style="margin:0">DirectPosition geographic = new DirectPosition2D(<var>φ</var>, <var>λ</var>);
+<pre style="margin:0"><code>DirectPosition geographic = new DirectPosition2D(<var>φ</var>, <var>λ</var>);
 Matrix jacobian = <var><b>P</b></var>.derivative(geographic);
 double dx_dλ = jacobian.getElement(0,1);
-double dy_dφ = jacobian.getElement(1,0);</pre>
+double dy_dφ = jacobian.getElement(1,0);</code></pre>
 
           </td>
         </tr>
@@ -467,10 +467,10 @@ double dy_dφ = jacobian.getElement(1,0);</pre>
         afin de permettre à <abbr>SIS</abbr> de réutiliser un maximum de termes communs.
         Exemple:</p>
 
-<pre>AbstractMathTransform projection = ...;         // Une projection cartographique de Apache SIS.
+<pre><code>AbstractMathTransform projection = ...;         // Une projection cartographique de Apache SIS.
 double[] sourcePoint = {longitude, latitude};   // La coordonnée géographique que l’on veut projeter.
 double[] targetPoint = new double[2];           // Là où on mémorisera le résultat de la projection.
-Matrix   derivative  = projection.<code class="SIS">transform</code>(sourcePoint, 0, targetPoint, 0, true);</pre>
+Matrix   derivative  = projection.<code class="SIS">transform</code>(sourcePoint, 0, targetPoint, 0, true);</code></pre>
 
       <p>
         Si seule la matrice Jacobienne est désirée (sans la projection du point), alors la méthode
@@ -484,11 +484,11 @@ Matrix   derivative  = projection.<code class="SIS">transform</code>(sourcePoint
         Une fonction inverse peut donc implémenter le calcul de sa dérivée comme suit:
       </p>
 
-<pre>@Override
+<pre><code>@Override
 public Matrix derivative(DirectPosition p) throws TransformException {
     Matrix jac = inverse().derivative(transform(p));
     return Matrices.inverse(jac);
-}</pre>
+}</code></pre>
 
     </section>
   </body>

@@ -55,11 +55,11 @@
         L’exemple suivant affiche le nom standard de la méthode <code class="GeoAPI">getTitle()</code> de l’interface <code>Citation</code>:
       </p>
 
-<pre>Class&lt;?&gt; type   = Citation.class;
+<pre><code>Class&lt;?&gt; type   = Citation.class;
 Method   method = type.getMethod("<code class="GeoAPI">getTitle</code>", (Class&lt;?&gt;[]) null);
 UML      annot  = method.getAnnotation(UML.class);
 String   id     = annot.identifier();
-System.out.println("Le nom standard de la méthode " + method.getName() + " est " + id);</pre>
+System.out.println("Le nom standard de la méthode " + method.getName() + " est " + id);</code></pre>
 
       <p>
         L’opération inverse — obtenir la classe et méthode Java d’un nom standard — est un peu plus lourde.
@@ -70,14 +70,14 @@ System.out.println("Le nom standard de la méthode " + method.getName() + " est 
         une cache de leur application.
       </p>
 
-<pre>Properties isoToGeoAPI = new Properties();
+<pre><code>Properties isoToGeoAPI = new Properties();
 try (InputStream in = UML.class.getResourceAsStream("<code class="GeoAPI">class-index.properties</code>")) {
     isoToGeoAPI.load(in);
 }
 String isoName = "<code class="OGC">CI_Citation</code>";
 String geoName = isoToGeoAPI.getProperty(isoName);
 Class&lt;?&gt;  type = Class.forName(geoName);
-System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + isoName + " est " + type);</pre>
+System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + isoName + " est " + type);</code></pre>
 
       <p>
         La méthode de commodité de <code>org.apache.sis.util.iso.Types</code> correspondante à cette operation est
@@ -107,7 +107,7 @@ System.out.println("L’interface GeoAPI pour le type <abbr>ISO</abbr> " + isoNa
         par exemple lorsque plusieurs bibliothèques cohabitent, alors le choix est laissé à l’utilisateur.
       </p>
 
-<pre>import org.opengis.referencing.GeodeticDatum;
+<pre><code>import org.opengis.referencing.GeodeticDatum;
 import org.opengis.referencing.DatumFactory;
 import java.util.ServiceLoader;
 
@@ -117,7 +117,7 @@ public class MyApplication {
         DatumFactory  factory = loader.iterator().next();
         GeodeticDatum myDatum = factory.<code class="GeoAPI">createGeodeticDatum</code>(…);
     }
-}</pre>
+}</code></pre>
 
 
 

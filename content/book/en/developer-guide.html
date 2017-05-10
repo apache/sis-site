@@ -802,7 +802,7 @@ indicates that this method is defined using the <code class="OGC">coordinateSyst
 and that this association is mandatory — meaning, in Java, that the method is not allowed to return a <code>null</code> value.
 </p>
 
-<pre><b>package</b> <code class="GeoAPI">org.opengis.referencing.crs</code>;
+<pre><code><b>package</b> <code class="GeoAPI">org.opengis.referencing.crs</code>;
 
 <code class="comment">/**
  * A 2D coordinate reference system used to approximate the shape of the earth on a planar surface.
@@ -814,7 +814,7 @@ and that this association is mandatory — meaning, in Java, that the method is 
      */</code>
     @<code class="GeoAPI">UML</code>(obligation=MANDATORY, specification=ISO_19111, identifier=<i>"<code class="OGC">coordinateSystem</code>"</i>)
     <code class="GeoAPI">CartesianCS</code> <code class="GeoAPI">getCoordinateSystem()</code>;
-}</pre>
+}</code></pre>
 
 <p>
 Java reflection methods allow access to this information during the execution of an application.
@@ -826,8 +826,8 @@ For example the following code will display
 “Standard name of type <code class="GeoAPI">org.opengis.referencing.crs.ProjectedCRS</code> is <code class="OGC">SC_ProjectedCRS</code>”:
 </p>
 
-<pre>Class&lt;?&gt; type = <code class="GeoAPI">ProjectedCRS</code>.<b>class</b>;
-System.out.println(<i>"Standard name of type "</i> + type.getName() + <i>" is "</i> + Types.getStandardName(type));</pre>
+<pre><code>Class&lt;?&gt; type = <code class="GeoAPI">ProjectedCRS</code>.<b>class</b>;
+System.out.println(<i>"Standard name of type "</i> + type.getName() + <i>" is "</i> + Types.getStandardName(type));</code></pre>
 
 <p>
 The <code class="SIS">Types​.forStandardName(String)</code> convenience method performs the reverse operation.
@@ -1015,10 +1015,10 @@ Extensions are made available by the <code class="GeoAPI">valueOf(String)</code>
 creates new instances if the name provided does not correspond to the name of an existing instance.
 </p>
 
-<pre><code class="GeoAPI">MediumName</code> cdRom  = <code class="GeoAPI">MediumName</code>.<code class="GeoAPI">CD_ROM;</code>
+<pre><code><code class="GeoAPI">MediumName</code> cdRom  = <code class="GeoAPI">MediumName</code>.<code class="GeoAPI">CD_ROM;</code>
 <code class="GeoAPI">MediumName</code> usbKey = <code class="GeoAPI">MediumName</code>.<code class="GeoAPI">valueOf</code>(<i>"<code class="GeoAPI">USB_KEY</code>"</i>); <code class="comment">// There is no constraint on this value.
 </code><b>assert</b> <code class="GeoAPI">MediumName</code>.<code class="GeoAPI">valueOf</code>(<i>"<code class="GeoAPI">CD_ROM</code>"</i>)  == cdRom  : <i>"valueOf must return existing constants."</i>;
-<b>assert</b> <code class="GeoAPI">MediumName</code>.<code class="GeoAPI">valueOf</code>(<i>"<code class="GeoAPI">USB_KEY</code>"</i>) == usbKey : <i>"valueOf must cache the previously requested values."</i>;</pre>
+<b>assert</b> <code class="GeoAPI">MediumName</code>.<code class="GeoAPI">valueOf</code>(<i>"<code class="GeoAPI">USB_KEY</code>"</i>) == usbKey : <i>"valueOf must cache the previously requested values."</i>;</code></pre>
 
 
 
@@ -1648,8 +1648,8 @@ But if (<var>x</var>, <var>y</var>) axis order is wanted for compatibility with 
 then <abbr>CRS</abbr> forced to <cite>longitude first</cite> axis order can be created by a call to the following method:
 </p>
 
-<pre><code class="GeoAPI">CoordinateReferenceSystem</code> crs = …;               <code class="comment">// CRS obtained by any means.
-</code>crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)</pre>
+<pre><code><code class="GeoAPI">CoordinateReferenceSystem</code> crs = …;               <code class="comment">// CRS obtained by any means.
+</code>crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)</code></pre>
 
 <p>
 Among the legacy <abbr>OGC</abbr> standards that used the non-conform axis order,
@@ -1752,7 +1752,7 @@ The easiest way to obtain a coordinate operation from above-cited information
 is to use the <code class="SIS">org.apache.sis.referencing.CRS</code> convenience class:
 </p>
 
-<pre><code class="GeoAPI">CoordinateOperation</code> cop = CRS.findOperation(sourceCRS, targetCRS, areaOfInterest);</pre>
+<pre><code><code class="GeoAPI">CoordinateOperation</code> cop = CRS.findOperation(sourceCRS, targetCRS, areaOfInterest);</code></pre>
 
 <p>
 Among the information provided by <code class="GeoAPI">CoordinateOperation</code> object, the following are of special interest:
@@ -1808,7 +1808,7 @@ But more advanced applications will typically use <abbr>EPSG</abbr> codes instea
 Note that all geographic coordinates below express latitude before longitude.
 </p>
 
-<pre><b>import</b> org.opengis.geometry.<code class="GeoAPI">DirectPosition</code>;
+<pre><code><b>import</b> org.opengis.geometry.<code class="GeoAPI">DirectPosition</code>;
 <b>import</b> org.opengis.referencing.crs.<code class="GeoAPI">CoordinateReferenceSystem</code>;
 <b>import</b> org.opengis.referencing.operation.<code class="GeoAPI">CoordinateOperation</code>;
 <b>import</b> org.opengis.referencing.operation.<code class="GeoAPI">TransformException</code>;
@@ -1833,7 +1833,7 @@ Note that all geographic coordinates below express latitude before longitude.
         System.out.println(<i>"Source: "</i> + ptSrc);
         System.out.println(<i>"Target: "</i> + ptDst);
     }
-}</pre>
+}</code></pre>
 
 
 <h3 id="TransformDerivative"><span class="section-number">5.3.2.</span> Partial derivatives of coordinate operations</h3>
@@ -1869,10 +1869,10 @@ The formula below represents the map projection result as a column matrix
 </td>
 <td style="vertical-align:middle; min-width:500px; padding-left:60px">
 
-<pre style="margin:0"><code class="GeoAPI">DirectPosition</code> geographic = <b>new</b> DirectPosition2D(<var>φ</var>, <var>λ</var>);
+<pre style="margin:0"><code><code class="GeoAPI">DirectPosition</code> geographic = <b>new</b> DirectPosition2D(<var>φ</var>, <var>λ</var>);
 <code class="GeoAPI">DirectPosition</code> projected = <var><b>P</b></var>.transform(geographic, <b>null</b>);
 <b>double</b> <var>x</var> = projected.getOrdinate(0);
-<b>double</b> <var>y</var> = projected.getOrdinate(1);</pre>
+<b>double</b> <var>y</var> = projected.getOrdinate(1);</code></pre>
 
 </td>
 </tr>
@@ -1908,10 +1908,10 @@ The formula below represents the map projection result as a column matrix
 </td>
 <td style="vertical-align:middle; min-width:500px; padding-left:60px">
 
-<pre style="margin:0"><code class="GeoAPI">DirectPosition</code> geographic = <b>new</b> DirectPosition2D(<var>φ</var>, <var>λ</var>);
+<pre style="margin:0"><code><code class="GeoAPI">DirectPosition</code> geographic = <b>new</b> DirectPosition2D(<var>φ</var>, <var>λ</var>);
 <code class="GeoAPI">Matrix</code> jacobian = <var><b>P</b></var>.derivative(geographic);
 <b>double</b> dx_dλ = jacobian.getElement(0,1);
-<b>double</b> dy_dφ = jacobian.getElement(1,0);</pre>
+<b>double</b> dy_dφ = jacobian.getElement(1,0);</code></pre>
 
 </td>
 </tr>
@@ -2062,20 +2062,20 @@ Continuing…
 <span style="color: red">TODO</span>
 Example:</p>
 
-<pre><code class="SIS">AbstractMathTransform</code> projection = ...;         <code class="comment">// An Apache SIS map projection.
+<pre><code><code class="SIS">AbstractMathTransform</code> projection = ...;         <code class="comment">// An Apache SIS map projection.
 </code><b>double</b>[] sourcePoint = {longitude, latitude};   <code class="comment">// The geographic coordinate to project.
 </code><b>double</b>[] targetPoint = <b>new</b> <b>double</b>[2];           <code class="comment">// Where to store the projection result.
-</code><code class="GeoAPI">Matrix</code>   derivative  = projection.<code class="SIS">transform</code>(sourcePoint, 0, targetPoint, 0, <b>true</b>);</pre>
+</code><code class="GeoAPI">Matrix</code>   derivative  = projection.<code class="SIS">transform</code>(sourcePoint, 0, targetPoint, 0, <b>true</b>);</code></pre>
 
 <p>
 <span style="color: red">TODO</span>
 </p>
 
-<pre>@Override
+<pre><code>@Override
 <b>public</b> <code class="GeoAPI">Matrix</code> derivative(<code class="GeoAPI">DirectPosition</code> p) <b>throws</b> <code class="GeoAPI">TransformException</code> {
     <code class="GeoAPI">Matrix</code> jac = inverse().derivative(transform(p));
     <b>return</b> Matrices.inverse(jac);
-}</pre>
+}</code></pre>
 
 
 <h3 id="CoordinateOperationSteps"><span class="section-number">5.3.3.</span> Conceptual versus real chain of coordinate operations</h3>
@@ -2228,7 +2228,7 @@ This kind of metadata could hardly be guessed from the mathematical function alo
 </div>
 <div>
 
-<pre><code class="GeoAPI">CoordinateOperation</code>[<i>"NAD27 to WGS 84 (3)"</i>,
+<pre><samp><code class="GeoAPI">CoordinateOperation</code>[<i>"NAD27 to WGS 84 (3)"</i>,
   SourceCRS[<span style="font-family:serif"><i>full CRS definition required here but omitted <b>for</b> brevity</i></span>],
   TargetCRS[<span style="font-family:serif"><i>full CRS definition required here but omitted <b>for</b> brevity</i></span>],
   Method[<i>"Geocentric translations (geog2D domain)"</i>],
@@ -2238,7 +2238,7 @@ This kind of metadata could hardly be guessed from the mathematical function alo
   OperationAccuracy[20.0],
   Area[<i>"Canada - onshore and offshore"</i>],
   BBox[40.04, -141.01, 86.46, -47.74],
-  Id[<i>"EPSG"</i>, 1172, <i>"8.9"</i>]]</pre>
+  Id[<i>"EPSG"</i>, 1172, <i>"8.9"</i>]]</samp></pre>
 
 </div>
 </div>
@@ -2277,7 +2277,7 @@ By default the ellipsoidal height before conversion is set to zero.</p></li>
 </div>
 <div>
 
-<pre>Concat_MT[
+<pre><samp>Concat_MT[
   Param_MT[<i>"Affine parametric transformation"</i>,
     Parameter[<span style="font-family:serif"><i>parameters performing axis swapping omitted <b>for</b> brevity</i></span>]],
   Inverse_MT[Param_MT[<i>"Geographic3D to 2D conversion"</i>]],
@@ -2293,7 +2293,7 @@ By default the ellipsoidal height before conversion is set to zero.</p></li>
     Parameter[<i>"semi_minor"</i>, 6356752.314245179]],
   Param_MT[<i>"Geographic3D to 2D conversion"</i>],
   Param_MT[<i>"Affine parametric transformation"</i>,
-    Parameter[<span style="font-family:serif"><i>parameters performing axis swapping omitted <b>for</b> brevity</i></span>]]]</pre>
+    Parameter[<span style="font-family:serif"><i>parameters performing axis swapping omitted <b>for</b> brevity</i></span>]]]</samp></pre>
 
 </div>
 </div>
@@ -2436,7 +2436,7 @@ This practice doubles the depth of the hierarchy, and introduces duplication at 
 as in the following example:
 </p>
 
-<pre class="xml"><b>&lt;MD_Metadata&gt;</b>
+<pre><samp class="xml"><b>&lt;MD_Metadata&gt;</b>
   &lt;identificationInfo&gt;
     <b>&lt;MD_DataIdentification&gt;</b>
       &lt;citation&gt;
@@ -2464,7 +2464,7 @@ as in the following example:
       &lt;/citation&gt;
     <b>&lt;/MD_DataIdentification&gt;</b>
   &lt;/identificationInfo&gt;
-<b>&lt;/MD_Metadata&gt;</b></pre>
+<b>&lt;/MD_Metadata&gt;</b></samp></pre>
 
 <p>
 The preceding example, like all documents that conform to <abbr>ISO</abbr> 19115-3,
@@ -2536,19 +2536,19 @@ while the part on the right references this element:
 <tr>
 <td>
 
-<pre class="xml" style="margin-top: 6pt">&lt;MD_MetaData&gt;
+<pre style="margin-top: 6pt"><samp class="xml">&lt;MD_MetaData&gt;
   &lt;identificationInfo&gt;
     &lt;MD_DataIdentification id=<i>"<b>my_id</b>"</i>&gt;
       <code class="comment">&lt;!-- insert child properties here --&gt;</code>
     &lt;/MD_DataIdentification&gt;
   &lt;/identificationInfo&gt;
-&lt;/MD_MetaData&gt;</pre>
+&lt;/MD_MetaData&gt;</samp></pre>
 
 </td><td>
 
-<pre class="xml" style="margin-top: 6pt">&lt;MD_MetaData&gt;
+<pre style="margin-top: 6pt"><samp class="xml">&lt;MD_MetaData&gt;
   &lt;identificationInfo xlink:href=<i>"<b>#my_id</b>"</i>/&gt;
-&lt;/MD_MetaData&gt;</pre>
+&lt;/MD_MetaData&gt;</samp></pre>
 
 </td>
 </tr>
@@ -2581,7 +2581,7 @@ Each of these keys may be associated with a different type of value (usually <co
 For example, the following code defines a value for the <code class="OGC">uuid</code> attribute:
 </p>
 
-<pre><b>import</b> org.apache.sis.metadata.iso.<code class="SIS">DefaultMetadata</code>;
+<pre><code><b>import</b> org.apache.sis.metadata.iso.<code class="SIS">DefaultMetadata</code>;
 <b>import</b> org.apache.sis.xml.<code class="SIS">IdentifierSpace</code>;
 <b>import</b> java.util.UUID;
 
@@ -2591,7 +2591,7 @@ For example, the following code defines a value for the <code class="OGC">uuid</
         <code class="SIS"><code class="SIS">DefaultMetadata</code></code> metadata = <b>new</b> <code class="SIS"><code class="SIS">DefaultMetadata</code></code>();
         metadata.<code class="SIS">getIdentifierMap().putSpecialized</code>(<code class="SIS">IdentifierSpace</code>.UUID, identifier);
     }
-}</pre>
+}</code></pre>
 
 <p>
 Although this mechanism has been defined in order to better support the representation of <abbr>XML</abbr> attributes
@@ -2641,19 +2641,19 @@ But when a <code class="OGC">nilReason</code> is present, the <abbr>SIS</abbr> i
 <tr>
 <td>
 
-<pre class="xml" style="margin-top: 6pt">&lt;CI_Citation&gt;
+<pre style="margin-top: 6pt"><samp class="xml">&lt;CI_Citation&gt;
   &lt;series&gt;
     &lt;CI_Series&gt;
       <code class="comment">&lt;!-- insert child properties here --&gt;</code>
     &lt;/CI_Series&gt;
   &lt;/series&gt;
-&lt;/CI_Citation&gt;</pre>
+&lt;/CI_Citation&gt;</samp></pre>
 
 </td><td>
 
-<pre class="xml" style="margin-top: 6pt">&lt;CI_Citation&gt;
+<pre style="margin-top: 6pt"><samp class="xml">&lt;CI_Citation&gt;
   &lt;series nilReason=<i>"unknown"</i>/&gt;
-&lt;/CI_Citation&gt;</pre>
+&lt;/CI_Citation&gt;</samp></pre>
 
 </td>
 </tr>
@@ -2775,9 +2775,9 @@ have created their own interface for performing object conversions between types
 Details vary, but such interfaces typically look like below:
 </p>
 
-<pre><b>interface</b> ObjectConverter&lt;S,T&gt; {   <code class="comment">// Some projects use only "Converter" as interface name.
+<pre><code><b>interface</b> ObjectConverter&lt;S,T&gt; {   <code class="comment">// Some projects use only "Converter" as interface name.
 </code>    T apply(S object);             <code class="comment">// Another method name commonly found in other projects is "convert".
-</code>}</pre>
+</code>}</code></pre>
 
 <p>
 Like other projects, Apache <abbr title="Spatial Information System">SIS</abbr> also defines its own <code>ObjectConverter</code> interface.
@@ -2979,22 +2979,22 @@ Thus, instead of the loop on the left below, international applications must gen
 <tr>
 <td>
 
-<pre style="margin-top: 6pt"><b>for</b> (<b>int</b> i=0; i&lt;string.length(); i++) {
+<pre style="margin-top: 6pt"><code><b>for</b> (<b>int</b> i=0; i&lt;string.length(); i++) {
     <b>char</b> c = string.charAt(i);
     <b>if</b> (Character.isWhitespace(c)) {
         <code class="comment">// A blank space was found.
 </code>    }
-}</pre>
+}</code></pre>
 
 </td><td>
 
-<pre style="margin-top: 6pt"><b>for</b> (<b>int</b> i=0; i&lt;string.length();) {
+<pre style="margin-top: 6pt"><code><b>for</b> (<b>int</b> i=0; i&lt;string.length();) {
     <b>int</b> c = string.codePointAt(i);
     <b>if</b> (Character.isWhitespace(c)) {
         <code class="comment">// A blank space was found.
 </code>    }
     i += Character.charCount(c);
-}</pre>
+}</code></pre>
 
 </td><td>
 <center>(rendering depends on browser capabilities)</center>
@@ -3095,11 +3095,11 @@ Class <code class="SIS">org.apache.sis.util.iso.Types</code> provides static con
 The following example displays the standard name for the method <code class="GeoAPI">getTitle()</code> from the <code class="GeoAPI">Citation</code> interface:
 </p>
 
-<pre>Class&lt;?&gt; type   = <code class="GeoAPI">Citation</code>.<b>class</b>;
+<pre><code>Class&lt;?&gt; type   = <code class="GeoAPI">Citation</code>.<b>class</b>;
 Method   method = type.getMethod(<i>"<code class="GeoAPI">getTitle</code>"</i>, (Class&lt;?&gt;[]) <b>null</b>);
 <code class="GeoAPI">UML</code>      annot  = method.getAnnotation(<code class="GeoAPI">UML</code>.<b>class</b>);
 String   id     = annot.identifier();
-System.out.println(<i>"The standard name for the "</i> + method.getName() + <i>" method is "</i> + id);</pre>
+System.out.println(<i>"The standard name for the "</i> + method.getName() + <i>" method is "</i> + id);</code></pre>
 
 <p>
 The reverse operation — getting the Java class and method from a standard name — is a bit more complicated.
@@ -3108,14 +3108,14 @@ The following example reads the files just before searching for the name of the 
 Users are always encouraged to only read this file once and then save its contents in their application’s cache.
 </p>
 
-<pre>Properties isoToGeoAPI = <b>new</b> Properties();
+<pre><code>Properties isoToGeoAPI = <b>new</b> Properties();
 <b>try</b> (InputStream in = <code class="GeoAPI">UML</code>.<b>class</b>.getResourceAsStream(<i>"<code class="GeoAPI">class-index.properties</code>"</i>)) {
     isoToGeoAPI.load(in);
 }
 String isoName = <i>"<code class="OGC">CI_Citation</code>"</i>;
 String geoName = getProperty(isoName);
 Class&lt;?&gt;  type = Class.forName(geoName);
-System.out.println(<i>"The GeoAPI interface for <abbr>ISO</abbr> type "</i> + isoName + <i>" is "</i> + type);</pre>
+System.out.println(<i>"The GeoAPI interface for <abbr>ISO</abbr> type "</i> + isoName + <i>" is "</i> + type);</code></pre>
 
 <p>
 The <code class="SIS">org.apache.sis.util.iso.Types</code> convenience method for above task is
@@ -3145,7 +3145,7 @@ This example only takes the first factory located; if there is more than one fac
 for example when multiple libraries coexist — then the choice is left to the user.
 </p>
 
-<pre><b>import</b> org.opengis.referencing.<code class="GeoAPI">GeodeticDatum</code>;
+<pre><code><b>import</b> org.opengis.referencing.<code class="GeoAPI">GeodeticDatum</code>;
 <b>import</b> org.opengis.referencing.<code class="GeoAPI">DatumFactory</code>;
 <b>import</b> java.util.ServiceLoader;
 
@@ -3155,7 +3155,7 @@ for example when multiple libraries coexist — then the choice is left to the u
         <code class="GeoAPI">DatumFactory</code>  factory = loader.iterator().next();
         <code class="GeoAPI">GeodeticDatum</code> myDatum = factory.<code class="GeoAPI">createGeodeticDatum</code>(…);
     }
-}</pre>
+}</code></pre>
 
 
 
@@ -3310,7 +3310,7 @@ This rule and a few others may be modified globally for all tests executed by th
 as in the following example:
 </p>
 
-<pre><b>import</b> org.opengis.metadata.<code class="GeoAPI">Metadata</code>;
+<pre><code><b>import</b> org.opengis.metadata.<code class="GeoAPI">Metadata</code>;
 <b>import</b> org.opengis.test.<code class="GeoAPI">Validators</code>;
 <b>import</b> org.junit.Test;
 
@@ -3331,14 +3331,14 @@ as in the following example:
         <code class="GeoAPI">Metadata</code> myObject = …; <code class="comment">// Create an object here.
 </code>        <code class="GeoAPI">Validators</code>.<code class="GeoAPI">validate</code>(myObject);
     }
-}</pre>
+}</code></pre>
 
 <p>
 Rules may also be modified for a particular test suite without affecting the default configuration of the standard <abbr>JVM</abbr>.
 This approach requires the creation of a new instance of the validator that we wish to modify the configuration.
 </p>
 
-<pre><b>import</b> org.opengis.metadata.<code class="GeoAPI">Metadata</code>;
+<pre><code><b>import</b> org.opengis.metadata.<code class="GeoAPI">Metadata</code>;
 <b>import</b> org.opengis.test.<code class="GeoAPI">ValidatorContainer</code>;
 <b>import</b> org.junit.Test;
 
@@ -3356,7 +3356,7 @@ This approach requires the creation of a new instance of the validator that we w
         <code class="GeoAPI">Metadata</code> myObject = …; <code class="comment">// Create an object here.
 </code>        validators.<code class="GeoAPI">validate</code>(myObject);
     }
-}</pre>
+}</code></pre>
 
 
 
@@ -3375,7 +3375,7 @@ In this example, only one test is modified and all the others are inherited as t
 However, this example adds a supplemental verification, annotated with <code>@After</code>, which will be executed after each test.
 </p>
 
-<pre><b>import</b> org.junit.*;
+<pre><code><b>import</b> org.junit.*;
 <b>import</b> org.junit.runner.RunWith;
 <b>import</b> org.junit.runners.JUnit4;
 <b>import</b> org.opengis.test.referencing.<code class="GeoAPI">ParameterizedTransformTest</code>;
@@ -3399,7 +3399,7 @@ However, this example adds a supplemental verification, annotated with <code>@Af
     @Test
     @Override
     <b>public</b> <b>void</b> testLambertAzimuthalEqualArea() <b>throws</b> <code class="GeoAPI">FactoryException</code>, <code class="GeoAPI">TransformException</code> {
-        <code class="GeoAPI">tolerance</code> = 0.1; <code class="comment">// 10 cm tolerance.
+        <code class="GeoAPI">tolerance</code> = 0.1;                    <code class="comment">// 10 cm tolerance.
 </code>        <b>super</b>.<code class="GeoAPI">testLambertAzimuthalEqualArea()</code>;
     }
 
@@ -3412,7 +3412,7 @@ However, this example adds a supplemental verification, annotated with <code>@Af
     <b>public</b> <b>void</b> ensureAllTransformAreMath2D() {
         assertTrue(<code class="GeoAPI">transform</code> <b>instanceof</b> <code class="GeoAPI">MathTransform2D</code>);
     }
-}</pre>
+}</code></pre>
 </section>
 
 
@@ -3740,11 +3740,11 @@ But in the special case where the transform is actually affine, <abbr>SIS</abbr>
 in particular Java2D. The following Java code can be used in situations where the Java2D object is desired:
 </p>
 
-<pre><code class="GeoAPI">MathTransform</code> mt = ...;    <code class="comment">// Any math transform created by Apache SIS.
+<pre><code><code class="GeoAPI">MathTransform</code> mt = ...;    <code class="comment">// Any math transform created by Apache SIS.
 </code><b>if</b> (mt <b>instanceof</b> AffineTransform) {
     AffineTransform at = (AffineTransform) mt;
     <code class="comment">// Use Java2D API from here.
-</code>}</pre>
+</code>}</code></pre>
 
 <p>
 Apache <abbr>SIS</abbr> uses Java2D on a <em>best effort</em> basis only.

@@ -64,7 +64,7 @@
         is to use the <code>org.apache.sis.referencing.CRS</code> convenience class:
       </p>
 
-<pre>CoordinateOperation cop = CRS.findOperation(sourceCRS, targetCRS, areaOfInterest);</pre>
+<pre><code>CoordinateOperation cop = CRS.findOperation(sourceCRS, targetCRS, areaOfInterest);</code></pre>
 
       <p>
         Among the information provided by <code>CoordinateOperation</code> object, the following are of special interest:
@@ -120,7 +120,7 @@
         Note that all geographic coordinates below express latitude before longitude.
       </p>
 
-<pre>import org.opengis.geometry.DirectPosition;
+<pre><code>import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.TransformException;
@@ -145,7 +145,7 @@ public class MyApp {
         System.out.println("Source: " + ptSrc);
         System.out.println("Target: " + ptDst);
     }
-}</pre>
+}</code></pre>
 
 
       <h3 id="TransformDerivative">Partial derivatives of coordinate operations</h3>
@@ -181,10 +181,10 @@ public class MyApp {
           </td>
           <td style="vertical-align:middle; min-width:500px; padding-left:60px">
 
-<pre style="margin:0">DirectPosition geographic = new DirectPosition2D(<var>φ</var>, <var>λ</var>);
+<pre style="margin:0"><code>DirectPosition geographic = new DirectPosition2D(<var>φ</var>, <var>λ</var>);
 DirectPosition projected = <var><b>P</b></var>.transform(geographic, null);
 double <var>x</var> = projected.getOrdinate(0);
-double <var>y</var> = projected.getOrdinate(1);</pre>
+double <var>y</var> = projected.getOrdinate(1);</code></pre>
 
           </td>
         </tr>
@@ -220,10 +220,10 @@ double <var>y</var> = projected.getOrdinate(1);</pre>
           </td>
           <td style="vertical-align:middle; min-width:500px; padding-left:60px">
 
-<pre style="margin:0">DirectPosition geographic = new DirectPosition2D(<var>φ</var>, <var>λ</var>);
+<pre style="margin:0"><code>DirectPosition geographic = new DirectPosition2D(<var>φ</var>, <var>λ</var>);
 Matrix jacobian = <var><b>P</b></var>.derivative(geographic);
 double dx_dλ = jacobian.getElement(0,1);
-double dy_dφ = jacobian.getElement(1,0);</pre>
+double dy_dφ = jacobian.getElement(1,0);</code></pre>
 
           </td>
         </tr>
@@ -374,20 +374,20 @@ double dy_dφ = jacobian.getElement(1,0);</pre>
         <span style="color: red">TODO</span>
         Example:</p>
 
-<pre>AbstractMathTransform projection = ...;         // An Apache SIS map projection.
+<pre><code>AbstractMathTransform projection = ...;         // An Apache SIS map projection.
 double[] sourcePoint = {longitude, latitude};   // The geographic coordinate to project.
 double[] targetPoint = new double[2];           // Where to store the projection result.
-Matrix   derivative  = projection.<code class="SIS">transform</code>(sourcePoint, 0, targetPoint, 0, true);</pre>
+Matrix   derivative  = projection.<code class="SIS">transform</code>(sourcePoint, 0, targetPoint, 0, true);</code></pre>
 
       <p>
         <span style="color: red">TODO</span>
       </p>
 
-<pre>@Override
+<pre><code>@Override
 public Matrix derivative(DirectPosition p) throws TransformException {
     Matrix jac = inverse().derivative(transform(p));
     return Matrices.inverse(jac);
-}</pre>
+}</code></pre>
 
 
       <h3 id="CoordinateOperationSteps">Conceptual versus real chain of coordinate operations</h3>
@@ -540,7 +540,7 @@ public Matrix derivative(DirectPosition p) throws TransformException {
           </div>
           <div>
 
-<pre>CoordinateOperation["NAD27 to WGS 84 (3)",
+<pre><samp>CoordinateOperation["NAD27 to WGS 84 (3)",
   SourceCRS[<span style="font-family:serif"><i>full CRS definition required here but omitted for brevity</i></span>],
   TargetCRS[<span style="font-family:serif"><i>full CRS definition required here but omitted for brevity</i></span>],
   Method["Geocentric translations (geog2D domain)"],
@@ -550,7 +550,7 @@ public Matrix derivative(DirectPosition p) throws TransformException {
   OperationAccuracy[20.0],
   Area["Canada - onshore and offshore"],
   BBox[40.04, -141.01, 86.46, -47.74],
-  Id["EPSG", 1172, "8.9"]]</pre>
+  Id["EPSG", 1172, "8.9"]]</samp></pre>
 
           </div>
         </div>
@@ -589,7 +589,7 @@ public Matrix derivative(DirectPosition p) throws TransformException {
           </div>
           <div>
 
-<pre>Concat_MT[
+<pre><samp>Concat_MT[
   Param_MT["Affine parametric transformation",
     Parameter[<span style="font-family:serif"><i>parameters performing axis swapping omitted for brevity</i></span>]],
   Inverse_MT[Param_MT["Geographic3D to 2D conversion"]],
@@ -605,7 +605,7 @@ public Matrix derivative(DirectPosition p) throws TransformException {
     Parameter["semi_minor", 6356752.314245179]],
   Param_MT["Geographic3D to 2D conversion"],
   Param_MT["Affine parametric transformation",
-    Parameter[<span style="font-family:serif"><i>parameters performing axis swapping omitted for brevity</i></span>]]]</pre>
+    Parameter[<span style="font-family:serif"><i>parameters performing axis swapping omitted for brevity</i></span>]]]</samp></pre>
 
           </div>
         </div>
