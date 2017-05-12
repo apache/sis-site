@@ -1208,21 +1208,21 @@ les dates prévues des prochaines mise-à-jour de mises-à-jour, <i>etc.</i>
 </p>
 <p>
 Les différents formats de données ont souvent leur propre modèle de méta-données,
-mais Apache <abbr title="Spatial Information System">SIS</abbr> les traduits tous vers un modèle unique afin de cacher cette hétérogénéité.
+mais Apache <abbr title="Spatial Information System">SIS</abbr> les traduit tous vers un modèle unique afin de cacher cette hétérogénéité.
 Cette approche, consistant à choisir un seul modèle de méta-données comme <em>modèle pivot</em>, est fréquemment utilisée par d’autres bibliothèques aussi.
 Par exemple Apache Tika utilise le standard <cite>Dublin Core</cite> comme modèle pivot,
-alors que Java Image I/O définit son propre modèle pivot dans le paquet <code>javax.imageio.metadata</code>.
-Pour Apache <abbr>SIS</abbr>, le modèle pivot choisit est le standard international de méta-données en information géographique
+alors que Java Image I/O définit son propre modèle standard dans le paquet <code>javax.imageio.metadata</code>.
+Pour Apache <abbr>SIS</abbr>, le modèle pivot choisi est le standard international de méta-données en information géographique
 <cite><abbr title="International Organization for Standardization">ISO</abbr> 19115-1:2014 — principes de base</cite>, complété par
 <cite><abbr>ISO</abbr> 19115-2 — extensions pour l’acquisition et le traitement</cite>.
-Ce modèle organise les méta-données dans une arborescence où chaque information est accessible via un chemin bien définit,
+Ce modèle organise les méta-données dans une arborescence où chaque information est accessible via un chemin bien défini,
 peu importe l’origine de cette information.
 Par exemple si un format de données peut nous fournir les coordonnées géographiques d’une boîte englobant toutes les données,
 alors cette information sera toujours accessible (peu importe le format de données) à partir de l’objet <code class="GeoAPI">Metadata</code>
 sous le noeud <code>identificationInfo</code>, sous-noeud <code>extent</code>, sous-noeud <code>geographicElement</code>.
 </p>
 <div class="example"><p><b>Exemple:</b>
-le code suivant lit un fichier de méta-données d’une image Landsat-8 située au Vietnam:
+le code suivant lit un fichier de méta-données d’une image Landsat-8 et affiche les limites géographiques qui y sont déclarées:
 </p>
 
 <pre><code><b>try</b> (DataStore ds = DataStores.open(<b>new</b> File(<i>"LC81230522014071LGN00_MTL.txt"</i>))) {
@@ -1238,7 +1238,7 @@ le code suivant lit un fichier de méta-données d’une image Landsat-8 située
 }</code></pre>
 
 <p>
-Cet exemple produira la sortie suivante:
+Cet exemple produit la sortie suivante (la région est située au Vietnam):
 </p>
 
 <pre><samp>La région géographique des données est:
@@ -1248,7 +1248,60 @@ Geographic Bounding Box
   ├─South bound latitude…………………………… 10°29′59,604″N
   └─North bound latitude…………………………… 12°37′25,716″N</samp></pre>
 
+<p>
+Le code Java dans cet exemple extrait des éléments de méta-données par des appels à des méthodes Java telles que <code class="GeoAPI">getExtents()</code>,
+mais les chapitres suivants introduiront d’autres façons utilisant des identifiants sous forme de chaînes de caractères.
+Ces approches alternatives sont plus pratiques lorsque l’on ne connaît pas à l’avance les méthodes à appeler.
+</p>
 </div>
+
+<p>
+La norme <abbr>ISO</abbr> 19115 définit des centaines d’éléments.
+Certains de ces éléments seront introduits progressivement dans les chapitres suivants.
+Mais afin de donner une petite idée de ce qui est disponible, le tableau suivant en liste quelques uns.
+La plupart des noeuds acceptent un nombre arbitraire de valeurs.
+Par exemple il peut y avoir plusieurs zones géographiques décrites sous le noeud <code class="OGC">extent</code>.
+</p>
+
+<table style="line-height:1">
+<caption>Quelques éléments de méta-données extraits de ISO 19115</caption>
+<tr><th>Élément</th>                                <th>Description</th></tr>
+<tr><td style="padding-top:9px">Metadata</td>       <td style="padding-top:9px">Méta-données à propos d’un jeu de données, d’un service ou autres ressources.</td></tr>
+<tr><td>  ├─Reference system info</td>              <td>Description du système de référence spatial et temporel utilisé dans le jeu de données.</td></tr>
+<tr><td>  ├─Identification info</td>                <td>Information de base à propos de la ressource décrite par les méta-données.</td></tr>
+<tr><td>  │   ├─Citation</td>                       <td>Nom selon lequel la ressource est connue, ainsi que des dates de références, la forme de présentation, <i>etc.</i></td></tr>
+<tr><td>  │   │   └─Cited responsible party</td>    <td>Rôle, nom, contact et position des individus ou organisations qui sont responsables de la ressource.</td></tr>
+<tr><td>  │   ├─Topic category</td>                 <td>Principaux thèmes de la ressource (agriculture, climatologie, environnement, économie, santé, transport, <i>etc.</i>).</td></tr>
+<tr><td>  │   ├─Descriptive keywords</td>           <td>Mots-clés, leurs types, et référence vers la source les définissant.</td></tr>
+<tr><td>  │   ├─Spatial resolution</td>             <td>Facteur (échelle, taille de pixel) donnant une idée globale de la densité spatiale des données de la ressource.</td></tr>
+<tr><td>  │   ├─Temporal resolution</td>            <td>La plus petite période temporelle pouvant être résolue dans la ressource.</td></tr>
+<tr><td>  │   ├─Extent</td>                         <td>Étendue spatiale et temporelle de la ressource.</td></tr>
+<tr><td>  │   ├─Resource format</td>                <td>Description du format de la ressource.</td></tr>
+<tr><td>  │   ├─Resource maintenance</td>           <td>Information sur la fréquence des mises-à-jours de la ressources, ainsi que la portée de ces mises-à-jours.</td></tr>
+<tr><td>  │   └─Resource constraints</td>           <td>Information sur les contraintes légales ou de sécurités qui s’appliquent à la ressource.</td></tr>
+<tr><td>  ├─Content info</td>                       <td>Information sur le catalogue d’entités ainsi que les caractéristiques des couvertures de données ou images.</td></tr>
+<tr><td>  │   ├─Imaging condition</td>              <td>Conditions qui affectent les images (image floue, brouillard, semi-obscurité, <i>etc.</i>).</td></tr>
+<tr><td>  │   ├─Cloud cover percentage</td>         <td>Proportion des données masquées par les nuages, comme pourcentage de l’étendue spatiale.</td></tr>
+<tr><td>  │   └─Attribute group</td>                <td>Information sur les groupes d’attributs de la ressource.</td></tr>
+<tr><td>  │       ├─Content type</td>               <td>Types d’information représentée par les valeurs (classification thématique, mesures physiques, <i>etc.</i>).</td></tr>
+<tr><td>  │       └─Attribute</td>                  <td>Information sur un attribut d’une ressource.</td></tr>
+<tr><td>  │           ├─Sequence identifier</td>    <td>Nom ou numéro unique qui identifie l’attribut dans une couverture de données.</td></tr>
+<tr><td>  │           ├─Peak response</td>          <td>Longueur d’onde à laquelle la réponse du capteur est maximale.</td></tr>
+<tr><td>  │           ├─Min/max value</td>          <td>Valeur minimale/maximale des données pour chaque dimension d’échantillonage inclue dans la ressource.</td></tr>
+<tr><td>  │           ├─Units</td>                  <td>Unités de mesures pour chaque dimension d’échantillonage inclue dans la ressource.</td></tr>
+<tr><td>  │           └─Transfer function type</td> <td>Type de fonction de transfert utilisée pour convertir un élément en valeur physique.</td></tr>
+<tr><td>  ├─Distribution info</td>                  <td>Information sur les distributeurs et les façons d’obtenir la ressource.</td></tr>
+<tr><td>  │   ├─Distribution format</td>            <td>Description des formats dans lesquels les données peuvent être distribuées.</td></tr>
+<tr><td>  │   └─Transfer options</td>               <td>Moyens techniques et médias par lesquels une ressource peut être obtenue à partir de son distributeur.</td></tr>
+<tr><td>  ├─Data quality info</td>                  <td>Évaluation globale de la qualité de la ressource.</td></tr>
+<tr><td>  ├─Acquisition information</td>            <td>Information sur l’acquisition des données.</td></tr>
+<tr><td>  │   ├─Environmental conditions</td>       <td>Conditions environnementales dans lesquels les données ont été acquises.</td></tr>
+<tr><td>  │   └─Platform</td>                       <td>Information générale sur la plate-forme à partir de laquelle les données ont été acquises.</td></tr>
+<tr><td>  │       └─Instrument</td>                 <td>Instruments montées sur la plate-forme.</td></tr>
+<tr><td>  └─Resource lineage</td>                   <td>Information sur la provenance, les sources et/ou les étapes de production de la ressource.</td></tr>
+<tr><td>      ├─Source</td>                         <td>Information sur les données sources utilisées pour créer les données décrites par les méta-données.</td></tr>
+<tr><td>      └─Process step</td>                   <td>Historique des événements survenues dans la productions des données.</td></tr>
+</table>
 </section>
 
 
