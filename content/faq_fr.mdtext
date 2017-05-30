@@ -1,20 +1,41 @@
+Title:  Questions fréquentes (FAQ)
+Notice: Licensed to the Apache Software Foundation (ASF) under one
+        or more contributor license agreements.  See the NOTICE file
+        distributed with this work for additional information
+        regarding copyright ownership.  The ASF licenses this file
+        to you under the Apache License, Version 2.0 (the
+        "License"); you may not use this file except in compliance
+        with the License.  You may obtain a copy of the License at
+        .
+          http://www.apache.org/licenses/LICENSE-2.0
+        .
+        Unless required by applicable law or agreed to in writing,
+        software distributed under the License is distributed on an
+        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+        KIND, either express or implied.  See the License for the
+        specific language governing permissions and limitations
+        under the License.
+
+
+Cette page liste quelques questions fréquemment posées à propos de Apache SIS.
+Son contenu est traduit de la [page de FAQ en anglais](faq.html).
+
 [TOC]
 
 
+
 Géoréférencement    {#referencing}
-=============================
+==================================
 
 Pour bien commencer    {#referencing-intro}
----------------------------------------
+-------------------------------------------
 
 ### Comment transformer une coordonnée ?    {#transform-point}
 
 Le code java suivant projète une coordonnée de _World Geodetic System 1984_ (WGS84) vers _WGS 84 / UTM zone 33N_.
-
-Afin de rendre cet exemple un peu plus simple, le code utilise des constantes prédéfinies dans la classe `CommonCRS`
-mais les applications plus avancées utilisent habituellement des codes EPSG à la place.
-
-Note : les coordonnées ci-dessous sont en latitude puis longitude.
+Afin de rendre cet exemple un peu plus simple, le code utilise des constantes prédéfinies dans la classe `CommonCRS`.
+Mais les applications plus avancées utilisent habituellement des codes EPSG à la place.
+Notez que les coordonnées ci-dessous sont en latitude puis longitude.
 
     :::java
     import org.opengis.geometry.DirectPosition;
@@ -29,7 +50,7 @@ Note : les coordonnées ci-dessous sont en latitude puis longitude.
     public class MyApp {
         public static void main(String[] args) throws FactoryException, TransformException {
             CoordinateReferenceSystem sourceCRS = CommonCRS.WGS84.geographic();
-            CoordinateReferenceSystem targetCRS = CommonCRS.WGS84.UTM(40, 14);  // Get whatever zone is valid for 14°E.
+            CoordinateReferenceSystem targetCRS = CommonCRS.WGS84.UTM(40, 14);      // Obtient la zone valide pour 14°E.
             CoordinateOperation operation = CRS.findOperation(sourceCRS, targetCRS, null);
 
             // Les lignes ci-dessus sont coûteuses et ne devraient être appelées qu’une fois pour un ensemble de points.
@@ -74,11 +95,11 @@ pour certains `ProjectedCRS` de l’hémisphère sud (Afrique de sud, Australie,
 
 Pour chaque CRS identifié par un code EPSG, l’ordre officiel des axes peut être vérifié avec
 le registre EPSG à l’adresse [http://www.epsg-registry.org](http://www.epsg-registry.org)
-(à ne pas confondre avec d’autres sites ayant "epsg" dans leur nom
+(à ne pas confondre avec d’autres sites ayant « epsg » dans leur nom
 mais qui sont sans aucune relation avec l’organisme en charge des définitions EPSG) :
-Cliquez sur le lien _"Retrieve by code"_ et entrez le code numérique.
-Cliquez ensuite sur le lien _"View"_ de la partie droite
-et cliquez sur le symbole _"+"_ à gauche de _"Axes"_.
+Cliquez sur le lien _« Retrieve by code »_ et entrez le code numérique.
+Cliquez ensuite sur le lien _« View »_ de la partie droite
+et cliquez sur le symbole _« + »_ à gauche de _« Axes »_.
 
 Les standards OGC récents stipulent que l’ordre des axes est celui défini par l’autorité.
 Les standards OGC plus anciens utilisaient l’ordre des axes (_x_, _y_), ignorant la définition de l’autorité.
@@ -104,13 +125,13 @@ Ce changement se fait avec le code suivant :
 Systèmes de Référence des Coordonnées    {#crs}
 -----------------------------------------------
 
-### Comment créer une projection de type Universal Transverse universelle de Mercator (UTM) ?    {#UTM}
+### Comment créer une projection de type Transverse Universelle de Mercator (UTM) ?    {#UTM}
 
 Si la zone UTM n’est pas connue, une façon simple est d’utiliser la méthode `universal(…)` sur l’une des constantes de `CommonCRS`.
 Cette méthode prend en argument une coordonnées géographique en (_latitude_, _longitude_) et en calcule la zone UTM correspondante.
 Voir [le code java ci-dessus](#transform-point).
 
-Si la zone UTM est connue, une solution est d’utiliser la fabrique des autorités "EPSG" ou "AUTO".
+Si la zone UTM est connue, une solution est d’utiliser la fabrique des autorités « EPSG » ou « AUTO ».
 Le code EPSG de certaines projections UTM peut être déterminé comme suit,
 où _zone_ est un nombre de 1 à 60 inclusif (sauf spécifié autrement) :
 
@@ -138,11 +159,11 @@ mais qui ignore la nature ellipsoïdale de ce référentiel et utilise un forme 
 Depuis la version 6.15 de la base EPSG, la façon privilégiée d’obtenir cette projection est d’utiliser la méthode `CRS.forCode("EPSG:3857")`.
 Il faut noter que l’usage de cette projection **n’est pas** recommandé, sauf pour des raisons de compatibilité.
 
-La définition de EPSG:3857 utilise une formule de projection nommée _"Popular Visualisation Pseudo Mercator"_.
+La définition de EPSG:3857 utilise une formule de projection nommée _« Popular Visualisation Pseudo Mercator »_.
 La base EPSG propose aussi d’autres projections qui utilisent des formules sphériques.
-Ces méthodes ont le mot "(Spherical)" dans leur nom, par exemple _"Mercator (Spherical)"_
-(qui diffère de _"Popular Visualisation Pseudo Mercator"_ par l’utilisation d’une sphère de rayon plus approprié).
-Ces formules de projections peuvent être utilisées dans les définitions Well Known Text (WKT).
+Ces méthodes ont le mot « (Spherical) » dans leur nom, par exemple _« Mercator (Spherical) »_
+(qui diffère de _« Popular Visualisation Pseudo Mercator »_ par l’utilisation d’une sphère de rayon plus approprié).
+Ces formules de projections peuvent être utilisées dans les définitions _Well Known Text_ (WKT).
 
 Il est possible d’utiliser une formule sphérique avec une projection qui n’a pas de contrepartie sphérique
 en déclarant explicitement les paramètres `"semi_major"` et `"semi_minor"` dans la définition WKT.
@@ -152,7 +173,7 @@ Ces paramètres sont généralement déduit du référentiel, mais Apache SIS au
 
 ### Comment puis-je identifier le type de projection d’un CRS ?    {#projectionKind}
 
-Le terme "type de projection" (Mercator, Lambert Conformal, _etc._) est appelé _Operation Method_ dans la terminologie ISO 19111.
+Le terme « type de projection » (Mercator, Lambert Conformal, _etc._) est appelé _Operation Method_ dans la terminologie ISO 19111.
 Une approche possible est de vérifier la valeur de `OperationMethod.getName()` et de comparer avec les noms OGC et EPSG
 listés à la page [Coordinate Operation Methods](tables/CoordinateOperationMethods.html).
 
@@ -182,17 +203,17 @@ En conséquence, si le CRS possède un ordre des axes (_longitude_, _latitude_),
     CoordinateReferenceSystem myCRS = …;
     Integer identifier = IdentifiedObjects.lookupEPSG(myCRS);
     if (identifier != null) {
-        System.out.println("The EPSG code has been found: " + identifier);
+        System.out.println("Le code EPSG a été trouvé : " + identifier);
     }
 
 
 
-### Comment obtenir l’URN "urn:ogc:def:crs:…" d’un CRS existant ?    {#lookupURN}
+### Comment obtenir l’URN « urn:ogc:def:crs:… » d’un CRS existant ?    {#lookupURN}
 
 L’OGC définit les URN pour les identifiants de CRS, par exemple `"urn:​ogc:​def:​crs:​epsg:​7.1:​4326"`
 avec `"7.1"` comme version de la base EPSG utilisée.
 Les URN peuvent ou non être présentes dans la collection d’identifiants retournée par `crs.getIdentifiers()`.
-Dans beaucoup de cas (principalement quand le CRS provient d’un Well Known Text), seul des identifiants simples comme `"EPSG:​4326"` sont présents.
+Dans beaucoup de cas (principalement quand le CRS provient d’un _Well Known Text_), seul des identifiants simples comme `"EPSG:​4326"` sont présents.
 Une façon simple de construire une URN complète est d’utiliser le code ci-dessous.
 Cet exemple peut avoir à parcourir la base EPSG afin de trouver les informations qui n’apparaissent pas explicitement dans `myCRS`.
 
@@ -213,11 +234,10 @@ Elle peut échouer s’il y a une légère différence (par exemple d’arrondie
 entre le CRS fourni et le CRS trouvé dans la base de données.
 
 
-### Comment déterminer si deux CRS sont "fonctionnellement" égaux ?  {#equalsIgnoreMetadata}
+### Comment déterminer si deux CRS sont « fonctionnellement » égaux ?  {#equalsIgnoreMetadata}
 
 Deux CRS peuvent ne pas être considérés égaux s’ils sont associés à des métadonnées différentes
 (nom, identifiant, domaine d’usage, domaine de validité, remarque), même s’ils représentent mathématiquement le même CRS.
-
 Afin de tester si deux CRS sont fonctionnellement équivalents, utilisez la méthode `Utilities.equalsIgnoreMetadata(myFirstCRS, mySecondCRS)`.
 
 
@@ -239,7 +259,6 @@ Ce cas se produit principalement à cause des ordonnées données dans le mauvai
 Les développeurs ont tendance à présumer que l’ordre des  axes est (_x_, _y_) ou (_longitude_, _latitude_)
 mais les géographes et pilotes utilisent l’ordre (_latitude_, _longitude_) depuis des siècles
 et la base de données EPSG définit les systèmes de coordonnées de cette façon.
-
 Si une transformation de coordonnées semble produire des valeurs complètement fausses,
 la première chose à faire est d’afficher les CRS source et cible :
 
@@ -266,12 +285,12 @@ Si l’ordre (_longitude_, _latitude_) est voulu, Apache SIS est capable de le f
 ### Les ordres des axes sont corrects mais les coordonnées transformées sont encore fausses.  {#projectionName}
 
 Vérifiez que se sont les bonnes projections qui sont utilisées. Certains noms sont déroutants.
-Par exemple _"Oblique Mercator"_ et _"Hotine Oblique Mercator"_ (dans l’autorité EPSG) sont deux projections différentes.
-Mais _"Oblique Mercator"_ (sans le Hotine) de l’autorité EPSG est aussi appelée _"Hotine Oblique Mercator Azimuth Center"_ par ESRI.
-tandis que _"Hotine Oblique Mercator"_ (de l’autorité EPSG) est appelée _"Hotine Oblique Mercator Azimuth Natural Origin"_ par ESRI.
+Par exemple _« Oblique Mercator »_ et _« Hotine Oblique Mercator »_ (dans l’autorité EPSG) sont deux projections différentes.
+Mais _« Oblique Mercator »_ (sans le Hotine) de l’autorité EPSG est aussi appelée _« Hotine Oblique Mercator Azimuth Center »_ par ESRI.
+tandis que _« Hotine Oblique Mercator »_ (de l’autorité EPSG) est appelée _« Hotine Oblique Mercator Azimuth Natural Origin »_ par ESRI.
 
-La projection _"Oblique Stereographic"_ (de l’autorité EPSG) est appelée _"Double Stereographic"_ par ESRI.
-ESRI définit aussi une projection _"Stereographic"_ qui est en réalité une projection oblique comme la précédente mais avec des formules différentes.
+La projection _« Oblique Stereographic »_ (de l’autorité EPSG) est appelée _« Double Stereographic »_ par ESRI.
+ESRI définit aussi une projection _« Stereographic »_ qui est en réalité une projection oblique comme la précédente mais avec des formules différentes.
 
 
 
@@ -279,8 +298,8 @@ ESRI définit aussi une projection _"Stereographic"_ qui est en réalité une pr
 
 La spécification _Well Known Text_ (WKT) a été interprétée de différentes façons en fonction des implémentations logicielles.
 Un problème subtil vient des unités d’angles pour le méridien d’origine et les paramètres de projection.
-La spécification WKT 1 stipule clairement : _"Si l’élément `PRIMEM` apparaît dans `GEOGCS`,
-alors l’unité des longitudes doit correspondre à celle du système de coordonnées géographiques"_ (traduction libre de OGC 01-009).
+La spécification WKT 1 stipule clairement : _« Si l’élément `PRIMEM` apparaît dans `GEOGCS`,
+alors l’unité des longitudes doit correspondre à celle du système de coordonnées géographiques »_ (traduction libre de OGC 01-009).
 Toutefois ESRI et GDAL entres autres utilisent inconditionnellement des degrés décimaux, ignorant cette partie de la spécification WKT.
 Ce problème peut être identifié en inspectant l’extrait de WKT suivant :
 
@@ -332,7 +351,7 @@ peuvent avoir quelques mètres de différence avec la transformation exécutée 
 Les résultats dépendent de la présence de la fabrique EPSG dans le chemin de classes (classpath),
 **peu importe comment le CRS a été créé**, parce-que la fabrique EPSG spécifie explicitement l’opération à appliquer pour certaines paires de CRS.
 Dans ces cas, l’opération spécifiée par EPSG a priorité par rapport aux paramètres de Bursa-Wolf
-(l’element `TOWGS84` de la version 1 du format Well Known Text).
+(l’element `TOWGS84` de la version 1 du format _Well Known Text_).
 
 Une connexion à la base EPSG peut avoir été établie dans un environnement (typiquement celui JEE)
 et pas dans l’autre (typiquement un IDE) car uniquement le premier à un pilote JDBC.
@@ -347,7 +366,6 @@ Assurez vous également que les [paramètres de connexion à la base EPSG](epsg.
 
 Pour les CRS 2D horizontaux créés avec la base de données EPSG, l’appel à `CRS.findOperation(…)` devrait toujours marcher.
 Pour les CRS 3D ayant n’importe quel axe de hauteur autre que la hauteur ellipsoïdale, ou pour les CRS 2D de type `EngineeringCRS`, la méthode peu échouer.
-
 Il reste à noter que dans le cas ou la méthode `CRS.findOperation(…)` ne lève pas d’erreur, l’appel à `MathTransform.transform(…)` peut
 produire des valeurs `NaN` or `Infinity`si la coordonnée transformée est éloignée de la zone de validité.
 
@@ -389,7 +407,6 @@ sinon l’exception suivante sera lancée :
 
 La solution de contournement la plus simple est de décorer l’implémentation dans une des implémentations
 fournies dans le paquet `org.apache.metadata.iso`.
-
 Toutes les implémentations du SDK fournissent des constructeurs de copies peu profondes pour rendre cela plus simple.
 Il est uniquement nécéssaire de décorer la classes racine, pas les attributs.
 Les valeurs des attributs seront décorées automatiquement au besoin par les adaptateurs JAXB.
