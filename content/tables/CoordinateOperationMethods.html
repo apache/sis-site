@@ -15,24 +15,35 @@
     <header>
       <h1>Apache SIS™ Coordinate Operation Methods</h1>
       <p>
-        The following tables summarize the coordinate operation methods known to Apache SIS, together with the recognized parameters.
-        Unless otherwise noticed, all parameters are mandatory
-        (in the sense that they should always be shown in forms, regardless of whether they have default value),
-        but two of them are handled in a special way: the <code>semi-major</code> and <code>semi-minor</code> parameters.
-        Those two parameters are needed for all map projections, but usually do not need to be specified explicitely since they are inferred from the ellipsoid.
-        The only exception is when <a href="http://sis.apache.org/apidocs/org/apache/sis/referencing/operation/transform/DefaultMathTransformFactory.html">creating parameterized transforms directly</a>.
-      </p><p>
-        All map projections support also implicit <code>earth_radius</code> and <code>inverse_flattening</code> parameters (not shown below).
-        Read and write operations on those implicit parameters are delegated to the <code>semi-major</code> and <code>semi-minor</code> parameters.
+        The following tables summarize the coordinate operation methods known to Apache SIS 0.8-SNAPSHOT
+        together with the recognized parameters. There is three kinds of parameters:
       </p>
+      <ul class="verbose">
+        <li>
+          The <code>semi-major</code> and <code>semi-minor</code> parameters are needed for all map projections,
+          but usually do not need to be specified explicitely since they are inferred from the ellipsoid
+          (unless <a href="http://sis.apache.org/apidocs/org/apache/sis/referencing/operation/transform/DefaultMathTransformFactory.html">creating parameterized transforms directly</a>).
+          For this reason, those parameters are usually not shown in <a href="http://www.epsg-registry.org">EPSG registry</a>
+          or <a href="http://docs.opengeospatial.org/is/12-063r5/12-063r5.html">Well Known Text</a> (WKT) definitions.
+        </li><li>
+          The <code>earth_radius</code> and <code>inverse_flattening</code> parameters (not shown below) are implicitly supported by all map projections.
+          They are other ways to specify the ellipsoid (actually rarely used).
+          Read and write operations on those implicit parameters are converted into equivalent operations on <code>semi-major</code> and <code>semi-minor</code> parameters.
+        </li><li>
+          Unless otherwise noticed, all other parameters are mandatory
+          (in the sense that they should always be shown in forms, regardless of whether they have default value).
+        </li>
+      </ul>
     </header>
     <nav>
-      <p><b>Table of content:</b></p>
+      <h2>Table of content:</h2>
       <ul>
         <li>
           Cylindrical projections
           <ul>
             <li><a href="#1029">Equidistant Cylindrical (Spherical)</a></li>
+            <li><a href="#9835">Lambert Cylindrical Equal Area</a></li>
+            <li><a href="#9834">Lambert Cylindrical Equal Area (Spherical)</a></li>
             <li><a href="#1026">Mercator (Spherical)</a></li>
             <li><a href="#9804">Mercator (variant A)</a></li>
             <li><a href="#9805">Mercator (variant B)</a></li>
@@ -45,6 +56,7 @@
         </li><li>
           Conic projections
           <ul>
+            <li><a href="#9822">Albers Equal Area</a></li>
             <li><a href="#9801">Lambert Conic Conformal (1SP)</a></li>
             <li><a href="#9802">Lambert Conic Conformal (2SP)</a></li>
             <li><a href="#9803">Lambert Conic Conformal (2SP Belgium)</a></li>
@@ -64,11 +76,14 @@
         </li><li>
           Conversions
           <ul>
+            <li><a href="#9843">Axis order reversal (2D)</a></li>
+            <li><a href="#9844">Axis order reversal (geographic3D horizontal)</a></li>
             <li><a href="#Geocentric_To_Ellipsoid">Geocentric_To_Ellipsoid</a></li>
             <li><a href="#9602">Geographic/geocentric conversions</a></li>
-            <li><a href="#Geographic2D to 3D conversion">Geographic2D to 3D conversion</a></li>
+            <li><a href="#Geographic2D_to_3D_conversion">Geographic2D to 3D conversion</a></li>
             <li><a href="#9659">Geographic3D to 2D conversion</a></li>
-            <li><a href="#Interpolation 1D">Interpolation 1D</a></li>
+            <li><a href="#Interpolation_1D">Interpolation 1D</a></li>
+            <li><a href="#9824">Transverse Mercator Zoned Grid System</a></li>
           </ul>
         </li><li>
           Tranformations
@@ -83,6 +98,7 @@
             <li><a href="#9603">Geocentric translations (geog2D domain)</a></li>
             <li><a href="#1035">Geocentric translations (geog3D domain)</a></li>
             <li><a href="#9619">Geographic2D offsets</a></li>
+            <li><a href="#9618">Geographic2D with Height Offsets</a></li>
             <li><a href="#9660">Geographic3D offsets</a></li>
             <li><a href="#9601">Longitude rotation</a></li>
             <li><a href="#9604">Molodensky</a></li>
@@ -112,7 +128,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -133,7 +149,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -160,7 +176,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -190,7 +206,7 @@
                     <td>standard_parallel</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>ProjStdParallel1</td>
+                    <td>StdParallel1</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>lat_ts</td>
@@ -220,7 +236,7 @@
                     <td>latitude_of_projection_origin</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>ProjCenterLat</td>
+                    <td>CenterLat</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>lat_0</td>
@@ -250,7 +266,7 @@
                     <td>longitude_of_projection_origin</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>ProjCenterLong</td>
+                    <td>CenterLong</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>lon_0</td>
@@ -289,7 +305,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -319,7 +335,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -335,21 +351,21 @@
     </article>
     <article>
       <header>
-        <h2 id="1026">Mercator (Spherical)</h2>
+        <h2 id="9835">Lambert Cylindrical Equal Area</h2>
       </header>
       <blockquote>
         <table class="info">
           <tr>
             <th>EPSG code:</th>
-            <td>1026, <del>9841</del></td>
+            <td>9835</td>
           </tr>
           <tr>
             <th>Aliases:</th>
-            <td>Mercator (1SP) (Spherical)</td>
+            <td><span class="non-epsg">OGC:</span><code>Cylindrical_Equal_Area</code>, <span class="non-epsg">ESRI:</span><code>Cylindrical_Equal_Area</code>, <span class="non-epsg">GeoTIFF:</span><code>CT_CylindricalEqualArea</code>, <span class="non-epsg">Proj4:</span><code>cea</code></td>
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -370,7 +386,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -397,7 +413,405 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>b</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td>8823</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude of 1st standard parallel</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>standard_parallel_1</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Standard_Parallel_1</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>standard_parallel</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>StdParallel1</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_ts</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-90</td>
+            <td class="center">…</td>
+            <td class="left">90)°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8802</td>
+            <td class="sep">
+              <details>
+                <summary>Longitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>central_meridian</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Central_Meridian</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>longitude_of_projection_origin</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>NatOriginLong</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lon_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-180</td>
+            <td class="center">…</td>
+            <td class="left">180]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8806</td>
+            <td class="sep">
+              <details>
+                <summary>False easting</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Easting</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseEasting</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>x_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td>8807</td>
+            <td class="sep">
+              <details>
+                <summary>False northing</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Northing</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseNorthing</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>y_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9834">Lambert Cylindrical Equal Area (Spherical)</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9834</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Major</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_major_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMajorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>a</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Minor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_minor_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMinorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>b</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td>8823</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude of 1st standard parallel</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>standard_parallel_1</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Standard_Parallel_1</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>standard_parallel</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>StdParallel1</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_ts</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-90</td>
+            <td class="center">…</td>
+            <td class="left">90)°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8802</td>
+            <td class="sep">
+              <details>
+                <summary>Longitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>central_meridian</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Central_Meridian</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>longitude_of_projection_origin</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>NatOriginLong</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lon_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-180</td>
+            <td class="center">…</td>
+            <td class="left">180]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8806</td>
+            <td class="sep">
+              <details>
+                <summary>False easting</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Easting</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseEasting</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>x_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td>8807</td>
+            <td class="sep">
+              <details>
+                <summary>False northing</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Northing</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseNorthing</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>y_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="1026">Mercator (Spherical)</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>1026, <del>9841</del></td>
+          </tr>
+          <tr>
+            <th>Aliases:</th>
+            <td>Mercator (1SP) (Spherical)</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Major</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_major_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMajorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>a</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Minor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_minor_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -526,7 +940,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -556,7 +970,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -589,7 +1003,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -610,7 +1024,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -637,7 +1051,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -766,7 +1180,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -796,7 +1210,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -826,7 +1240,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -847,7 +1261,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -874,7 +1288,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -904,7 +1318,7 @@
                     <td>standard_parallel</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>ProjStdParallel1</td>
+                    <td>StdParallel1</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>lat_ts</td>
@@ -1003,7 +1417,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -1033,7 +1447,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -1059,7 +1473,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -1080,7 +1494,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -1107,7 +1521,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -1137,7 +1551,7 @@
                     <td>standard_parallel</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>ProjStdParallel1</td>
+                    <td>StdParallel1</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>lat_ts</td>
@@ -1236,7 +1650,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -1266,7 +1680,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -1286,7 +1700,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -1307,7 +1721,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -1334,7 +1748,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -1463,7 +1877,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -1493,7 +1907,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -1522,7 +1936,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -1543,7 +1957,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -1570,7 +1984,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -1699,7 +2113,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -1729,7 +2143,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -1762,7 +2176,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -1783,7 +2197,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -1810,7 +2224,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -1939,7 +2353,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -1969,7 +2383,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -1993,7 +2407,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -2014,7 +2428,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -2041,7 +2455,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -2170,7 +2584,7 @@
               </details>
             </td>
             <td class="sep">See note ¹</td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -2200,7 +2614,7 @@
               </details>
             </td>
             <td class="sep">See note ²</td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -2219,21 +2633,21 @@
     </article>
     <article>
       <header>
-        <h2 id="9801">Lambert Conic Conformal (1SP)</h2>
+        <h2 id="9822">Albers Equal Area</h2>
       </header>
       <blockquote>
         <table class="info">
           <tr>
             <th>EPSG code:</th>
-            <td>9801</td>
+            <td>9822</td>
           </tr>
           <tr>
             <th>Aliases:</th>
-            <td><span class="non-epsg">OGC:</span><code>Lambert_Conformal_Conic_1SP</code>, <span class="non-epsg">GeoTIFF:</span><code>CT_LambertConfConic_1SP</code></td>
+            <td><span class="non-epsg">OGC:</span><code>Albers_Conic_Equal_Area</code>, <span class="non-epsg">ESRI:</span><code>Albers_Equal_Area_Conic</code>, <span class="non-epsg">ESRI:</span><code>Albers</code>, <span class="non-epsg">NetCDF:</span><code>AlbersEqualArea</code>, <span class="non-epsg">GeoTIFF:</span><code>CT_AlbersEqualArea</code>, <span class="non-epsg">Proj4:</span><code>aea</code></td>
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -2254,7 +2668,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -2281,7 +2695,265 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>b</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td>8821</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude of false origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>latitude_of_center</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Latitude_Of_Origin</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>latitude_of_projection_origin</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>NatOriginLat</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-90</td>
+            <td class="center">…</td>
+            <td class="left">90]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8822</td>
+            <td class="sep">
+              <details>
+                <summary>Longitude of false origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>longitude_of_center</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Central_Meridian</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>longitude_of_central_meridian</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>NatOriginLong</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lon_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-180</td>
+            <td class="center">…</td>
+            <td class="left">180]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8823</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude of 1st standard parallel</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>standard_parallel_1</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Standard_Parallel_1</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>standard_parallel</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>StdParallel1</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_ts</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-90</td>
+            <td class="center">…</td>
+            <td class="left">90]°</td>
+            <td class="sep">Latitude of origin</td>
+          </tr><tr>
+            <td>8824</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude of 2nd standard parallel</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>standard_parallel_2</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Standard_Parallel_2</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>StdParallel2</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_2</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-90</td>
+            <td class="center">…</td>
+            <td class="left">90]°</td>
+            <td class="sep">Standard parallel 1</td>
+          </tr><tr>
+            <td>8826</td>
+            <td class="sep">
+              <details>
+                <summary>Easting at false origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Easting</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseEasting</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>x_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td>8827</td>
+            <td class="sep">
+              <details>
+                <summary>Northing at false origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Northing</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseNorthing</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>y_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9801">Lambert Conic Conformal (1SP)</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9801</td>
+          </tr>
+          <tr>
+            <th>Aliases:</th>
+            <td><span class="non-epsg">OGC:</span><code>Lambert_Conformal_Conic_1SP</code>, <span class="non-epsg">GeoTIFF:</span><code>CT_LambertConfConic_1SP</code></td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Major</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_major_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMajorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>a</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Minor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_minor_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -2410,7 +3082,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -2440,7 +3112,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -2464,7 +3136,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -2485,7 +3157,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -2512,7 +3184,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -2602,7 +3274,7 @@
                     <td>standard_parallel</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>ProjStdParallel1</td>
+                    <td>StdParallel1</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>lat_ts</td>
@@ -2668,7 +3340,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -2698,7 +3370,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -2722,7 +3394,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -2743,7 +3415,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -2770,7 +3442,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -2860,7 +3532,7 @@
                     <td>standard_parallel</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>ProjStdParallel1</td>
+                    <td>StdParallel1</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>lat_ts</td>
@@ -2926,7 +3598,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -2956,7 +3628,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -2976,7 +3648,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -2997,7 +3669,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -3024,7 +3696,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -3114,7 +3786,7 @@
                     <td>standard_parallel</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>ProjStdParallel1</td>
+                    <td>StdParallel1</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>lat_ts</td>
@@ -3180,7 +3852,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -3210,7 +3882,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -3244,7 +3916,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -3265,7 +3937,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -3292,7 +3964,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -3421,7 +4093,7 @@
               </details>
             </td>
             <td class="sep">See note ¹</td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -3451,7 +4123,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -3481,7 +4153,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -3502,7 +4174,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -3529,7 +4201,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -3658,7 +4330,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -3688,7 +4360,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -3712,7 +4384,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -3733,7 +4405,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -3760,7 +4432,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -3889,7 +4561,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -3919,7 +4591,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -3943,7 +4615,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -3964,7 +4636,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -3991,7 +4663,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -4081,7 +4753,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -4111,7 +4783,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -4131,7 +4803,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -4152,7 +4824,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -4179,7 +4851,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -4269,7 +4941,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -4299,7 +4971,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -4315,7 +4987,7 @@
         <table class="info">
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -4336,7 +5008,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -4363,7 +5035,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -4377,7 +5049,7 @@
             <td class="left">∞) m</td>
             <td class="sep"></td>
           </tr><tr>
-            <td></td>
+            <td>8832</td>
             <td class="sep">
               <details>
                 <summary><span class="non-epsg">ESRI:</span><code>Standard_Parallel_1</code></summary>
@@ -4395,7 +5067,7 @@
             <td class="left">90]°</td>
             <td class="sep">90°</td>
           </tr><tr>
-            <td></td>
+            <td>8833</td>
             <td class="sep">
               <details>
                 <summary><span class="non-epsg">ESRI:</span><code>Central_Meridian</code></summary>
@@ -4422,7 +5094,7 @@
             <td class="left">180]°</td>
             <td class="sep">0°</td>
           </tr><tr>
-            <td></td>
+            <td>8806</td>
             <td class="sep">
               <details>
                 <summary><span class="non-epsg">ESRI:</span><code>False_Easting</code></summary>
@@ -4444,12 +5116,12 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
           </tr><tr>
-            <td></td>
+            <td>8807</td>
             <td class="sep">
               <details>
                 <summary><span class="non-epsg">ESRI:</span><code>False_Northing</code></summary>
@@ -4471,7 +5143,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -4487,7 +5159,7 @@
         <table class="info">
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -4508,7 +5180,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -4535,7 +5207,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -4549,7 +5221,7 @@
             <td class="left">∞) m</td>
             <td class="sep"></td>
           </tr><tr>
-            <td></td>
+            <td>8832</td>
             <td class="sep">
               <details>
                 <summary><span class="non-epsg">ESRI:</span><code>Standard_Parallel_1</code></summary>
@@ -4567,7 +5239,7 @@
             <td class="left">0]°</td>
             <td class="sep">-90°</td>
           </tr><tr>
-            <td></td>
+            <td>8833</td>
             <td class="sep">
               <details>
                 <summary><span class="non-epsg">ESRI:</span><code>Central_Meridian</code></summary>
@@ -4594,7 +5266,7 @@
             <td class="left">180]°</td>
             <td class="sep">0°</td>
           </tr><tr>
-            <td></td>
+            <td>8806</td>
             <td class="sep">
               <details>
                 <summary><span class="non-epsg">ESRI:</span><code>False_Easting</code></summary>
@@ -4616,12 +5288,12 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
           </tr><tr>
-            <td></td>
+            <td>8807</td>
             <td class="sep">
               <details>
                 <summary><span class="non-epsg">ESRI:</span><code>False_Northing</code></summary>
@@ -4643,10 +5315,48 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9843">Axis order reversal (2D)</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9843</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <td>None</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9844">Axis order reversal (geographic3D horizontal)</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9844</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <td>None</td>
           </tr>
         </table>
       </blockquote>
@@ -4659,7 +5369,7 @@
         <table class="info">
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -4680,7 +5390,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -4707,7 +5417,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -4740,7 +5450,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -4761,7 +5471,7 @@
                     <td>semi_major_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMajor</td>
+                    <td>SemiMajorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>a</td>
@@ -4788,7 +5498,7 @@
                     <td>semi_minor_axis</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>SemiMinor</td>
+                    <td>SemiMinorAxis</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>b</td>
@@ -4807,13 +5517,13 @@
     </article>
     <article>
       <header>
-        <h2 id="Geographic2D to 3D conversion">Geographic2D to 3D conversion</h2>
+        <h2 id="Geographic2D_to_3D_conversion">Geographic2D to 3D conversion</h2>
       </header>
       <blockquote>
         <table class="info">
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -4830,7 +5540,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -4850,26 +5560,22 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
-            <th>EPSG</th>
-            <th class="sep">Name</th>
-            <th class="sep">Remarks</th>
-            <th class="sep" colspan="3">Value domain</th>
-            <th class="sep">Default</th>
+            <td>None</td>
           </tr>
         </table>
       </blockquote>
     </article>
     <article>
       <header>
-        <h2 id="Interpolation 1D">Interpolation 1D</h2>
+        <h2 id="Interpolation_1D">Interpolation 1D</h2>
       </header>
       <blockquote>
         <table class="info">
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -4906,6 +5612,231 @@
     </article>
     <article>
       <header>
+        <h2 id="9824">Transverse Mercator Zoned Grid System</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9824</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Major</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_major_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMajorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>a</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Minor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_minor_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMinorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>b</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td>8801</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>latitude_of_origin</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Latitude_Of_Origin</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>latitude_of_projection_origin</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>NatOriginLat</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-90</td>
+            <td class="center">…</td>
+            <td class="left">90]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8830</td>
+            <td class="sep">
+              <details>
+                <summary>Initial longitude</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-180</td>
+            <td class="center">…</td>
+            <td class="left">180]°</td>
+            <td class="sep">-180°</td>
+          </tr><tr>
+            <td>8831</td>
+            <td class="sep">
+              <details>
+                <summary>Zone width</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞)°</td>
+            <td class="sep">6°</td>
+          </tr><tr>
+            <td>8805</td>
+            <td class="sep">
+              <details>
+                <summary>Scale factor at natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>scale_factor</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Scale_Factor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>scale_factor_at_central_meridian</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>ScaleAtNatOrigin</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>k</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞)</td>
+            <td class="sep">1</td>
+          </tr><tr>
+            <td>8806</td>
+            <td class="sep">
+              <details>
+                <summary>False easting</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Easting</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseEasting</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>x_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td>8807</td>
+            <td class="sep">
+              <details>
+                <summary>False northing</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Northing</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseNorthing</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>y_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
         <h2 id="9605">Abridged Molodensky</h2>
       </header>
       <blockquote>
@@ -4920,7 +5851,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -5011,7 +5942,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -5029,7 +5960,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -5047,7 +5978,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -5061,7 +5992,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep"></td>
@@ -5099,7 +6030,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -5218,7 +6149,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -5239,7 +6170,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -5257,7 +6188,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -5275,7 +6206,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -5295,8 +6226,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8609</td>
             <td class="sep">
@@ -5313,8 +6244,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8610</td>
             <td class="sep">
@@ -5331,8 +6262,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8611</td>
             <td class="sep">
@@ -5347,10 +6278,10 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
-            <td class="left">∞) 1.0E-6</td>
-            <td class="sep">1</td>
+            <td class="left">∞) ppm</td>
+            <td class="sep">0 ppm</td>
           </tr>
         </table>
       </blockquote>
@@ -5367,7 +6298,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -5444,7 +6375,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -5462,7 +6393,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -5480,7 +6411,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -5500,8 +6431,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8609</td>
             <td class="sep">
@@ -5518,8 +6449,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8610</td>
             <td class="sep">
@@ -5536,8 +6467,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8611</td>
             <td class="sep">
@@ -5552,10 +6483,10 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
-            <td class="left">∞) 1.0E-6</td>
-            <td class="sep">1</td>
+            <td class="left">∞) ppm</td>
+            <td class="sep">0 ppm</td>
           </tr>
         </table>
       </blockquote>
@@ -5572,7 +6503,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -5649,7 +6580,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -5667,7 +6598,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -5685,7 +6616,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -5705,8 +6636,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8609</td>
             <td class="sep">
@@ -5723,8 +6654,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8610</td>
             <td class="sep">
@@ -5741,8 +6672,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8611</td>
             <td class="sep">
@@ -5757,10 +6688,10 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
-            <td class="left">∞) 1.0E-6</td>
-            <td class="sep">1</td>
+            <td class="left">∞) ppm</td>
+            <td class="sep">0 ppm</td>
           </tr>
         </table>
       </blockquote>
@@ -5777,7 +6708,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -5868,12 +6799,6 @@
             <td class="sep">gr3df97a.txt</td>
           </tr>
         </table>
-        <table class="footnotes">
-          <tr>
-            <td>¹</td>
-            <td>The parameter type will be changed from ‘java.io.File’ to ‘java.nio.file.Path’ when Apache SIS will upgrade to Java 7.</td>
-          </tr>
-        </table>
       </blockquote>
     </article>
     <article>
@@ -5888,7 +6813,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -5909,7 +6834,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -5927,7 +6852,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -5945,7 +6870,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -5965,7 +6890,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -6042,7 +6967,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -6060,7 +6985,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -6078,7 +7003,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -6098,7 +7023,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -6175,7 +7100,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -6193,7 +7118,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -6211,7 +7136,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -6231,7 +7156,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -6248,7 +7173,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞)°</td>
             <td class="sep">0°</td>
@@ -6262,10 +7187,75 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞)°</td>
             <td class="sep">0°</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9618">Geographic2D with Height Offsets</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9618</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td>8601</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude offset</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞)°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8602</td>
+            <td class="sep">
+              <details>
+                <summary>Longitude offset</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞)°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8604</td>
+            <td class="sep">
+              <details>
+                <summary>Geoid undulation</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
           </tr>
         </table>
       </blockquote>
@@ -6282,7 +7272,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -6299,7 +7289,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞)°</td>
             <td class="sep">0°</td>
@@ -6313,7 +7303,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞)°</td>
             <td class="sep">0°</td>
@@ -6327,7 +7317,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -6347,7 +7337,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -6364,7 +7354,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞)°</td>
             <td class="sep">0°</td>
@@ -6388,7 +7378,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -6479,7 +7469,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -6497,7 +7487,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -6515,7 +7505,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -6529,7 +7519,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep"></td>
@@ -6563,7 +7553,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -6596,12 +7586,6 @@
             <td class="sep">conus.los</td>
           </tr>
         </table>
-        <table class="footnotes">
-          <tr>
-            <td>¹</td>
-            <td>The parameter type will be changed from ‘java.io.File’ to ‘java.nio.file.Path’ when Apache SIS will upgrade to Java 7.</td>
-          </tr>
-        </table>
       </blockquote>
     </article>
     <article>
@@ -6616,7 +7600,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -6637,12 +7621,6 @@
             <td class="sep"></td>
           </tr>
         </table>
-        <table class="footnotes">
-          <tr>
-            <td>¹</td>
-            <td>The parameter type will be changed from ‘java.io.File’ to ‘java.nio.file.Path’ when Apache SIS will upgrade to Java 7.</td>
-          </tr>
-        </table>
       </blockquote>
     </article>
     <article>
@@ -6661,7 +7639,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -6682,7 +7660,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -6700,7 +7678,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -6718,7 +7696,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -6738,8 +7716,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8609</td>
             <td class="sep">
@@ -6756,8 +7734,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8610</td>
             <td class="sep">
@@ -6774,8 +7752,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8611</td>
             <td class="sep">
@@ -6790,10 +7768,10 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
-            <td class="left">∞) 1.0E-6</td>
-            <td class="sep">1</td>
+            <td class="left">∞) ppm</td>
+            <td class="sep">0 ppm</td>
           </tr>
         </table>
       </blockquote>
@@ -6810,7 +7788,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -6887,7 +7865,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -6905,7 +7883,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -6923,7 +7901,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -6943,8 +7921,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8609</td>
             <td class="sep">
@@ -6961,8 +7939,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8610</td>
             <td class="sep">
@@ -6979,8 +7957,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8611</td>
             <td class="sep">
@@ -6995,10 +7973,10 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
-            <td class="left">∞) 1.0E-6</td>
-            <td class="sep">1</td>
+            <td class="left">∞) ppm</td>
+            <td class="sep">0 ppm</td>
           </tr>
         </table>
       </blockquote>
@@ -7015,7 +7993,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -7092,7 +8070,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -7110,7 +8088,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -7128,7 +8106,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
@@ -7148,8 +8126,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8609</td>
             <td class="sep">
@@ -7166,8 +8144,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8610</td>
             <td class="sep">
@@ -7184,8 +8162,8 @@
             <td class="sep"></td>
             <td class="sep right">[-648,000</td>
             <td class="center">…</td>
-            <td class="left">648,000]"</td>
-            <td class="sep">0 ''</td>
+            <td class="left">648,000]″</td>
+            <td class="sep">0 ″</td>
           </tr><tr>
             <td>8611</td>
             <td class="sep">
@@ -7200,10 +8178,10 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
-            <td class="left">∞) 1.0E-6</td>
-            <td class="sep">1</td>
+            <td class="left">∞) ppm</td>
+            <td class="sep">0 ppm</td>
           </tr>
         </table>
       </blockquote>
@@ -7220,7 +8198,7 @@
           </tr>
         </table>
         <table class="param">
-          <caption>Operation parameters:</caption>
+          <caption>Operation parameters:</caption>
           <tr>
             <th>EPSG</th>
             <th class="sep">Name</th>
@@ -7237,7 +8215,7 @@
               </details>
             </td>
             <td class="sep"></td>
-            <td class="sep right">(-∞</td>
+            <td class="sep right">(−∞</td>
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
