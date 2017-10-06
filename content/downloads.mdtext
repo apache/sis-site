@@ -107,23 +107,15 @@ If you accept those terms of use, then the following dependency can be added:
     <dependencies>
       <dependency>
         <groupId>org.apache.sis.non-free</groupId>
-        <artifactId>sis-epsg</artifactId>
+        <artifactId>sis-embedded-data</artifactId>
         <version>${sis.version}</version>
-        <scope>runtime</scope>
-      </dependency>
-
-      <!-- Following dependency can be omitted on Oracle JDK6, JDK7 or JDK8
-           since those Java distributions contain Derby (a.k.a JavaDB). -->
-      <dependency>
-        <groupId>org.apache.derby</groupId>
-        <artifactId>derby</artifactId>
-        <version>10.12.1.1</version>
         <scope>runtime</scope>
       </dependency>
     </dependencies>
 
-In addition, user should set the `SIS_DATA` environment variable to an initially empty directory
-where Apache SIS will store the EPSG geodetic database.
+Above dependency uses a read-only embedded Derby database.
+But it is also possible to use an EPSG database on HSQL or PostgreSQL,
+or a database allowing additions of user definitions.
 See [How to use EPSG geodetic dataset](epsg.html) page for more information.
 
 

@@ -58,19 +58,29 @@ For example:
 
 The first time that the command-line tool needs to query EPSG, it will prompt the user for authorization
 to download EPSG geodetic dataset from Maven Central. If the user accepts EPSG terms of use, then a local
-copy of the EPSG geodetic dataset will be created and stored in the `apache-sis-0.7/data` sub-directory.
+copy of the EPSG geodetic dataset will be created and stored in the `apache-sis-0.8/data` sub-directory.
 
 If the command-line tool does not offer to download the EPSG geodetic dataset,
-try adding a `derby-<version>.jar` file (download lib-distribution from [Derby project][Derby]) in the `apache-sis-0.7/lib` sub-directory.
+try adding a `derby-<version>.jar` file (download lib-distribution from [Derby project][Derby]) in the `apache-sis-0.8/lib` sub-directory.
 This is normally not needed with Oracle JDK6, JDK7 or JDK8 because Apache SIS tries to use the JavaDB embedded
 in those distributions, but may be necessary with other distributions or in security-constrained environments.
 
 For using the installed EPSG geodetic dataset in your own application, apply *one* of the following choices:
 
-  * Set the `SIS_DATA` environment variable to the path to the `apache-sis-0.7/data` directory _(preferred choice)_.
-  * Set the `derby.system.home` Java property to the path to the `apache-sis-0.7/data/Databases` directory.
+  * Set the `SIS_DATA` environment variable to the path of `apache-sis-0.8/data` directory _(preferred choice)_.
+  * Set the `derby.system.home` Java property to the path of `apache-sis-0.8/data/Databases` directory.
 
 Alternatively `SIS_DATA` or `derby.system.home` can be set to the path of any other directory which contain the same files.
+Examples are shown below for Unix systems, assuming that the current directory is the directory where `apache-sis-0.8-bin.zip`
+has been unzipped:
+
+    :::bash
+    export SIS_DATA=apache-sis-0.8/data
+    java -classpath apache-sis-0.8/lib/sis.jar:myApp.jar myMainClass
+
+If the `SIS_DATA` environment variable can not be set, Java property can be used as a fallback:
+
+    java -Dderby.system.home=apache-sis-0.8/data/Databases -classpath apache-sis-0.8/lib/sis.jar:myApp.jar myMainClass
 
 
 
@@ -78,22 +88,72 @@ Add a Maven dependency    {#maven}
 ==============================================================
 
 Maven projects can get the EPSG geodetic dataset automatically, _without any prompt for terms of use agreement_,
-if they add a dependency to the
-<code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​0.7</code>
-artifact in their project.
-We assume that developers who add this dependency explicitely in their project agree with EPSG terms of use.
-The `<dependency>` fragment to use in `pom.xml` files is given in the [download](downloads.html#epsg) page.
+if they add a `sis-epsg` or `sis-embedded-data` dependency (from `org.apache.sis.non-free` group) in their project.
+Those two approaches have advantages and inconvenient described in following sub-sections.
+In both cases, we assume that developers who add those dependencies explicitely in their project agree with
+[EPSG terms of use][EPSG-ToU].
 
-In addition, users need to apply *one* of the following choices:
+
+
+As database installer     {#maven-epsg}
+---------------------------------------
+
+With `sis-epsg` artifact on the classpath, Apache SIS will create a local copy of EPSG database when first needed.
+The target database must be specified by users with *one* of the following choices:
 
   * Set the `SIS_DATA` environment variable to the path of an initially empty directory _(preferred choice)_.
+    The specified directory must exist, but sub-directories will be created as needed.
   * Set the `derby.system.home` Java property to the path of an initially empty directory,
-    or a directory that contain other Derby databases.
+    or a directory that contain other Derby databases. The specified directory must exist.
   * Register a `DataSource` under the `java:comp/env/jdbc/SpatialMetadata` name in a JNDI directory
     (see [next section](#jndi)). The database must exist but can be initially empty.
 
-The directory referenced by `SIS_DATA` or `derby.system.home` must exist.
-Sub-directories in that directory will be created as needed.
+The Maven dependency is as below (the Derby dependency can be replaced by another database driver
+if that database is specified by JNDI):
+
+    :::xml
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.sis.non-free</groupId>
+        <artifactId>sis-epsg</artifactId>
+        <version>${sis.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <!-- Following dependency can be omitted on Oracle JDK6, JDK7 or JDK8
+           since those Java distributions contain Derby (a.k.a JavaDB). -->
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derby</artifactId>
+        <version>10.13.1.1</version>
+        <scope>runtime</scope>
+      </dependency>
+    </dependencies>
+
+See the [download](downloads.html#epsg) page for more information about Maven dependency declaration.
+
+
+
+As embedded database     {#maven-embedded}
+------------------------------------------
+
+With `sis-embedded-data` artifact on the classpath, there is no need to setup environment variable, Java property or JNDI.
+However this simplicity come with the following inconvenient: a larger download, no option for choosing which data to use
+(and consequently which license to accept), no possibility to choose the database engine (i.e. the database software is
+fixed to Derby), and no possibility to add user data (i.e. the database is read-only).
+This dependency can be declared as below (note that `sis-epsg` should *not* be specified in the same project than `sis-embedded-data`):
+
+    :::xml
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.sis.non-free</groupId>
+        <artifactId>sis-embedded-data</artifactId>
+        <version>${sis.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+    </dependencies>
+
+See the [download](downloads.html#epsg) page for more information about Maven dependency declaration.
 
 
 
@@ -101,12 +161,11 @@ Use Java Naming and Directory Interface    {#jndi}
 ==================================================
 
 While Apache SIS uses Apache Derby by default, it is also possible to use another database software like HSQL or PostgreSQL.
-The database must exist but can be empty, in which case it will be populated with an EPSG schema when first needed
-if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​0.7</code> dependency is on the classpath
-(see [above section](#maven)).
-
 For using an arbitrary database, register a `javax.sql.DataSource` instance through the Java Naming and Directory Interface (JNDI).
 That registration can be done programmatically (by Java code) or by configuring XML files in some environments.
+The database must exist but can be empty, in which case it will be populated with an EPSG schema when first needed
+if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​0.8</code> dependency is on the classpath
+(see [above section](#maven-epsg)).
 
 
 
