@@ -36,17 +36,17 @@
         <h1 id="DataAccess">Accès aux données géospatiales</h1>
       </header>
       <p>
-        Bien qu’il soit possible de créer des structures de données directement en mémoire,
+        Bien qu’il soit possible de créer des structures de données programmatiquement en mémoire,
         le plus souvent les données sont lues à partir de fichiers ou autres types d’entrepôts.
         Il y a plusieurs moyens d’accéder à ces données, mais une façon pratique est d’utiliser
-        la méthode de commodité <code>DataStores.open(Object)</code>.
+        la méthode de commodité <code class="sis">DataStores.open(Object)</code>.
         L’argument donné à cette méthode peut être un chemin vers un fichier
         (<code>File</code>, <code>Path</code>, <code>URL</code>, <code>URI</code>),
         un flux d’entrée vers un fichier déjà ouvert
         (<code>Channel</code>, <code>DataInput</code>, <code>InputStream</code>, <code>Reader</code>),
         une connexion à une base de données (<code>DataSource</code>, <code>Connection</code>)
         ou d’autres types d’objets spécifiques à la source de données.
-        La méthode <code>DataStores.open(Object)</code> se charge de détecter le format de données
+        La méthode <code class="sis">DataStores.open(Object)</code> se charge de détecter le format de données
         et retourne une instance de <code>DataStore</code> pouvant le lire.
       </p>
       <p>
@@ -59,10 +59,10 @@
         Certains sources suffisamment riches fournissent aussi une estimation de la qualité des données,
         des informations permettant de contacter la personne ou l’organisme responsable des données,
         les contraintes légales ou techniques à l’utilisation, l’historique des traitements,
-        les dates prévues des prochaines mise-à-jour de mises-à-jour, <i>etc.</i>
+        les dates prévues des prochaines mises-à-jour, <i>etc.</i>
       </p>
       <p>
-        Les différents formats de données ont souvent leur propre modèle de méta-données,
+        Les différents formats de données ont souvent leurs propres modèles de méta-données,
         mais Apache <abbr>SIS</abbr> les traduit tous vers un modèle unique afin de cacher cette hétérogénéité.
         Cette approche, consistant à choisir un seul modèle de méta-données comme <em>modèle pivot</em>, est fréquemment utilisée par d’autres bibliothèques aussi.
         Par exemple Apache Tika utilise le standard <cite>Dublin Core</cite> comme modèle pivot,
@@ -74,14 +74,15 @@
         peu importe l’origine de cette information.
         Par exemple si un format de données peut nous fournir les coordonnées géographiques d’une boîte englobant toutes les données,
         alors cette information sera toujours accessible (peu importe le format de données) à partir de l’objet <code>Metadata</code>
-        sous le noeud <code>identificationInfo</code>, sous-noeud <code>extent</code>, sous-noeud <code>geographicElement</code>.
+        sous le noeud <code class="OGC">identificationInfo</code>, sous-noeud <code class="OGC">extent</code>,
+        sous-noeud <code class="OGC">geographicElement</code>.
       </p>
       <div class="example"><p><b>Exemple:</b>
           le code suivant lit un fichier de méta-données d’une image Landsat-8 et affiche les limites géographiques qui y sont déclarées:
         </p>
 
 <pre><code>try (DataStore ds = DataStores.open(new File("LC81230522014071LGN00_MTL.txt"))) {
-    Metadata md = getMetadata();
+    Metadata md = ds.getMetadata();
 
     // Afin de simplifier cet exemple, nous omettons les vérifications de valeurs nulles ou de collections vides.
     Identification   idInfo = md    .getIdentificationInfo().iterator().next();
@@ -106,7 +107,7 @@ Geographic Bounding Box
         <p>
           Le code Java dans cet exemple extrait des éléments de méta-données par des appels à des méthodes Java telles que <code class="GeoAPI">getExtents()</code>,
           mais les chapitres suivants introduiront d’autres façons utilisant des identifiants sous forme de chaînes de caractères.
-          Ces approches alternatives sont plus pratiques lorsque l’on ne connaît pas à l’avance les méthodes à appeler.
+          Ces approches alternatives sont plus pratiques lorsque l’on ne connaît pas au moment de la compilation quelles méthodes appeler.
         </p>
       </div>
 

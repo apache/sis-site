@@ -36,8 +36,78 @@
         <h1 id="DataAccess">Geospatial data access</h1>
       </header>
       <p>
-        <span style="color: red">TODO</span>
+        It is possible to instantiate data structures programmatically in memory.
+        But more often, data are read from files or other kinds of data stores.
+        There is different ways to access those data, but an easy way is to use
+        the <code class="sis">DataStores.open(Object)</code> convenience method.
+        The method argument can be a path to a data file
+        (<code>File</code>, <code>Path</code>, <code>URL</code>, <code>URI</code>), a stream
+        (<code>Channel</code>, <code>DataInput</code>, <code>InputStream</code>, <code>Reader</code>),
+        a connection to a data base (<code>DataSource</code>, <code>Connection</code>)
+        or other kinds of object specific to the data source.
+        The <code class="sis">DataStores.open(Object)</code> method detects data formats
+        and returns a <code>DataStore</code> instance for that format.
       </p>
+      <p>
+        <code>DataStore</code> functionalities depend on the kind of data (coverage, feature set, time series, <i>etc.</i>).
+        But in any cases, there is always some metadata that can be obtained.
+        Metadata allows to identify the phenomenon or features described by the data
+        (temperature, land occupation, <i>etc.</i>),
+        the geographic area or temporal period covered by the data, together with their resolution.
+        Some rich data source provides also a data quality estimation,
+        contact information for the responsible person or organization,
+        legal or technical constraints on data usage,
+        the history of processing apply on the data,
+        expected updates schedule, <i>etc.</i>
+      </p>
+      <p>
+        Various data formats have their own metadata model, but Apache <abbr>SIS</abbr> translates all of them
+        in a unique metadata model in order to hide this heterogeneity.
+        This approach — to select a single metadata model as the <em>pivot model</em> — is often used by other libraries.
+        For example Apache Tika uses <cite>Dublin Core</cite> as the pivot metadata model,
+        while Java Image I/O defines its own standard metadata model in its <code>javax.imageio.metadata</code> package.
+        For Apache <abbr>SIS</abbr>, the chosen pivot model is the <cite><abbr>ISO</abbr> 19115-1:2014 — Fundamentals</cite>
+        international standard, completed by <cite><abbr>ISO</abbr> 19115-2 — Extensions for imagery and gridded data</cite>.
+        This model organizes metadata in a tree structure where each information is accessible by a well-defined path,
+        regardless the origin of that information.
+        For example if a data format can provides a geographic bounding box encompassing all data,
+        then that information will always be accessible (regardless the data format) from the root <code>Metadata</code> object
+        under the <code class="OGC">identificationInfo</code> node, <code class="OGC">extent</code> sub-node,
+        <code class="OGC">geographicElement</code> sub-node.
+      </p>
+      <div class="example"><p><b>Example:</b>
+          following code read a metadata file from a Landsat-8 image and prints the declared geographic bounding box:
+        </p>
+
+<pre><code>try (DataStore ds = DataStores.open(new File("LC81230522014071LGN00_MTL.txt"))) {
+    Metadata md = ds.getMetadata();
+
+    // In order to make this example simpler, null values and empty collection checks are omited.
+    Identification   idInfo = md    .getIdentificationInfo().iterator().next();
+    Extent           extent = idInfo.getExtents()           .iterator().next();
+    GeographicExtent bbox   = extent.getGeographicElements().iterator().next();
+
+    System.out.println("The geographic bounding box is:");
+    System.out.println(bbox);
+}</code></pre>
+
+        <p>
+          This example produces the following output (this area is located in Vietnam):
+        </p>
+
+<pre><samp>The geographic bounding box is:
+Geographic Bounding Box
+  ├─West bound longitude…………………………… 108°20′10,464″E
+  ├─East bound longitude…………………………… 110°26′39,66″E
+  ├─South bound latitude…………………………… 10°29′59,604″N
+  └─North bound latitude…………………………… 12°37′25,716″N</samp></pre>
+
+        <p>
+          The Java code in this example extracts metadata elements by Java method invocations like <code class="GeoAPI">getExtents()</code>,
+          but the next chapters will introduce another way using paths given as character strings.
+          That later approach is more convenient when the methods to invoke are not known at compile-time.
+        </p>
+      </div>
 
       <p>
         The <abbr>ISO</abbr> 19115 standard defines hundreds of elements.
