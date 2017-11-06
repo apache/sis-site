@@ -161,73 +161,61 @@ public class MyApp {
         (reason will become clearer soon):
       </p>
 
-      <table class="hidden">
-        <tr>
-          <th>Equation</th>
-          <th>Java code</th>
-        </tr>
-        <tr>
-          <td style="vertical-align:middle; min-width:350px; padding-right:60px">
-            <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
-              <mi>P</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo>
-              <mo>=</mo>
-              <mfenced open="[" close="]">
-                <mtable>
-                  <mtr><mtd><mi>x</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mtd></mtr>
-                  <mtr><mtd><mi>y</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mtd></mtr>
-                </mtable>
-              </mfenced>
-            </math>
-          </td>
-          <td style="vertical-align:middle; min-width:500px; padding-left:60px">
-
+      <div class="row-of-boxes">
+        <div style="min-width:350px; padding-right:60px">
+          <div class="caption">Equation</div>
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
+            <mi>P</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo>
+            <mo>=</mo>
+            <mfenced open="[" close="]">
+              <mtable>
+                <mtr><mtd><mi>x</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mtd></mtr>
+                <mtr><mtd><mi>y</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mtd></mtr>
+              </mtable>
+            </mfenced>
+          </math>
+        </div>
+        <div style="min-width:500px; padding-left:60px">
+          <div class="caption">Java code</div>
 <pre style="margin:0"><code>DirectPosition geographic = new DirectPosition2D(<var>φ</var>, <var>λ</var>);
 DirectPosition projected = <var><b>P</b></var>.transform(geographic, null);
 double <var>x</var> = projected.getOrdinate(0);
 double <var>y</var> = projected.getOrdinate(1);</code></pre>
-
-          </td>
-        </tr>
-      </table>
+        </div>
+      </div>
 
       <p>The map projection partial derivate at this point can be represented by a Jacobian matrix:</p>
 
-      <table class="hidden">
-        <tr>
-          <th>Equation</th>
-          <th>Java code</th>
-        </tr>
-        <tr>
-          <td style="vertical-align:middle; min-width:350px; padding-right:60px">
-            <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
-              <msup><mi>P</mi><mo>′</mo></msup><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo>
-              <mo>=</mo>
-              <msub><mi>JAC</mi><mrow><mi>P</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow></msub>
-              <mo>=</mo>
-              <mfenced open="[" close="]">
-                <mtable>
-                  <mtr>
-                    <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
-                    <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
-                  </mtr>
-                  <mtr>
-                    <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
-                    <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
-                  </mtr>
-                </mtable>
-              </mfenced>
-            </math>
-          </td>
-          <td style="vertical-align:middle; min-width:500px; padding-left:60px">
-
+      <div class="row-of-boxes">
+        <div style="min-width:350px; padding-right:60px">
+          <div class="caption">Equation</div>
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
+            <msup><mi>P</mi><mo>′</mo></msup><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo>
+            <mo>=</mo>
+            <msub><mi>JAC</mi><mrow><mi>P</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow></msub>
+            <mo>=</mo>
+            <mfenced open="[" close="]">
+              <mtable>
+                <mtr>
+                  <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+                  <mtd><mfrac><mrow><mo>∂</mo><mi>x</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
+                </mtr>
+                <mtr>
+                  <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>φ</mi></mrow></mfrac></mtd>
+                  <mtd><mfrac><mrow><mo>∂</mo><mi>y</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo></mrow><mrow><mo>∂</mo><mi>λ</mi></mrow></mfrac></mtd>
+                </mtr>
+              </mtable>
+            </mfenced>
+          </math>
+        </div>
+        <div style="min-width:500px; padding-left:60px">
+          <div class="caption">Java code</div>
 <pre style="margin:0"><code>DirectPosition geographic = new DirectPosition2D(<var>φ</var>, <var>λ</var>);
 Matrix jacobian = <var><b>P</b></var>.derivative(geographic);
 double dx_dλ = jacobian.getElement(0,1);
 double dy_dφ = jacobian.getElement(1,0);</code></pre>
-
-          </td>
-        </tr>
-      </table>
+        </div>
+      </div>
 
       <p>
         Remaining equations in this section will abridge
@@ -247,9 +235,10 @@ double dy_dφ = jacobian.getElement(1,0);</code></pre>
         in the Jacobian matrices.
       </p>
 
-      <table class="hidden"><tr>
-        <td><img style="border: solid 1px" src="../../../content/book/images/Derivatives.png" alt="Example of a map projection derivative"/></td>
-        <td style="padding-left: 30px; vertical-align: middle">
+      <div class="row-of-boxes">
+        <div>
+          <img style="border: solid 1px" src="../../../content/book/images/Derivatives.png" alt="Example of a map projection derivative"/>
+        </div><div>
           <p>where vectors are related to the matrix by:</p>
           <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" alttext="MathML capable browser required">
             <mtable><mtr>
@@ -282,8 +271,8 @@ double dy_dφ = jacobian.getElement(1,0);</code></pre>
               </mtd>
             </mtr></mtable>
           </math>
-        </td>
-      </tr></table>
+        </div>
+      </div>
 
       <p>
         Above figure shows one usage of map projection derivatives:
@@ -296,33 +285,34 @@ double dy_dφ = jacobian.getElement(1,0);</code></pre>
       <p>
         <span style="color: red">TODO</span>
       </p>
-      <table class="hidden">
-        <tr>
-          <th>Envelope before projection</th>
-          <th>Geometric shape after projection</th>
-        </tr>
-        <tr>
-          <td><img style="border: solid 1px; margin-right: 15px" src="../../../content/book/images/GeographicArea.png" alt="Envelope in a geographic CRS"/></td>
-          <td><img style="border: solid 1px; margin-left:  15px" src="../../../content/book/images/ConicArea.png" alt="Shape in a projected CRS"/></td>
-        </tr>
-      </table>
+      <div class="row-of-boxes">
+        <div>
+          <div class="caption">Envelope before projection</div>
+          <img style="border: solid 1px; margin-right: 15px" src="../../../content/book/images/GeographicArea.png" alt="Envelope in a geographic CRS"/>
+        </div><div>
+          <div class="caption">Geometric shape after projection</div>
+          <img style="border: solid 1px; margin-left:  15px" src="../../../content/book/images/ConicArea.png" alt="Shape in a projected CRS"/>
+        </div>
+      </div>
       <p>
         <span style="color: red">TODO</span>
       </p>
-      <table class="hidden"><tr><td>
-        <img src="../../../content/book/images/Approximation.png" alt="Cubic approximation of an envelope bounds"/>
-      </td><td style="padding-left: 60px">
-        Legend:
-        <ul>
-          <li><b>Blue:</b> the geometric shape of the envelope after projection.
-            This is the shape from which to get a new envelope.</li>
-          <li><b>Red</b> (with hash): The
-            <var>y</var> = <var>C</var>₀ + <var>C</var>₁λ + <var>C</var>₂λ² + <var>C</var>₃λ³ approximation.</li>
-          <li><b>Green</b> (dashed line): Position λ<sub>m</sub> of approximation minimum, obtained by resolving
-            0 = <var>C</var>₁ + 2<var>C</var>₂λ<sub>m</sub> + 3<var>C</var>₃λ<sub>m</sub>².
-            The same cubic line can have two minimums.</li>
-        </ul>
-      </td></tr></table>
+      <div class="row-of-boxes">
+        <div>
+          <img src="../../../content/book/images/Approximation.png" alt="Cubic approximation of an envelope bounds"/>
+        </div><div>
+          Legend:
+          <ul>
+            <li><b>Blue:</b> the geometric shape of the envelope after projection.
+              This is the shape from which to get a new envelope.</li>
+            <li><b>Red</b> (with hash): The
+              <var>y</var> = <var>C</var>₀ + <var>C</var>₁λ + <var>C</var>₂λ² + <var>C</var>₃λ³ approximation.</li>
+            <li><b>Green</b> (dashed line): Position λ<sub>m</sub> of approximation minimum, obtained by resolving
+              0 = <var>C</var>₁ + 2<var>C</var>₂λ<sub>m</sub> + 3<var>C</var>₃λ<sub>m</sub>².
+              The same cubic line can have two minimums.</li>
+          </ul>
+        </div>
+      </div>
       <p>
         <span style="color: red">TODO</span>
       </p>
@@ -332,35 +322,35 @@ double dy_dφ = jacobian.getElement(1,0);</code></pre>
       <p>
         <span style="color: red">TODO</span>
       </p>
-      <table class="hidden">
-        <tr>
-          <th style="text-align: left">Source image</th>
-          <th style="text-align: right">Destination image</th>
-        </tr>
-        <tr>
-          <td colspan="2"><img src="../../../content/book/images/RasterProjection.png" alt="Intersection of derivatives"/></td>
-        </tr>
-      </table>
+      <div style="display:flex; flex-direction:column; align-items:center">
+        <div style="display:flex; justify-content:space-between; width:564px">
+          <div class="caption">Source image</div>
+          <div class="caption">Destination image</div>
+        </div>
+        <img src="../../../content/book/images/RasterProjection.png" alt="Raster reprojection"/>
+      </div>
       <p>
         <span style="color: red">TODO</span>
       </p>
-      <table class="hidden"><tr>
-        <td><img src="../../../content/book/images/WarpGrid.png" alt="Intersection of derivatives"/></td>
-        <td style="padding-left: 60px">
-        Legend:
-        <ul>
-          <li><b>Blue dots:</b>  first  iteration (9 points).</li>
-          <li><b>Green dots:</b> second iteration (25 points, including 16 news).</li>
-          <li><b>Red dots:</b>   third  iteration (81 points, including 56 news).</li>
-        </ul>
-        Continuing…
-        <ul>
-          <li>Forth iteration:  289 points, including  208 news.</li>
-          <li>Fifth iteration: 1089 points, including  800 news.</li>
-          <li>Sixth iteration: 4225 points, including 3136 news.</li>
-          <li>…</li>
-        </ul>
-      </td></tr></table>
+      <div class="row-of-boxes">
+        <div>
+          <img src="../../../content/book/images/WarpGrid.png" alt="Warp grid"/>
+        </div><div>
+          Legend:
+          <ul>
+            <li><b>Blue dots:</b>  first  iteration (9 points).</li>
+            <li><b>Green dots:</b> second iteration (25 points, including 16 news).</li>
+            <li><b>Red dots:</b>   third  iteration (81 points, including 56 news).</li>
+          </ul>
+          Continuing…
+          <ul>
+            <li>Forth iteration:  289 points, including  208 news.</li>
+            <li>Fifth iteration: 1089 points, including  800 news.</li>
+            <li>Sixth iteration: 4225 points, including 3136 news.</li>
+            <li>…</li>
+          </ul>
+        </div>
+      </div>
       <p>
         <span style="color: red">TODO</span>
       </p>

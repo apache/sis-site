@@ -739,13 +739,13 @@ Text in gray boxes are for information purpose only and can be ignored.
 It is possible to instantiate data structures programmatically in memory.
 But more often, data are read from files or other kinds of data stores.
 There is different ways to access those data, but an easy way is to use
-the <code class="sis">DataStores​.open(Object)</code> convenience method.
+the <code class="SIS">DataStores​.open(Object)</code> convenience method.
 The method argument can be a path to a data file
 (<code>File</code>, <code>Path</code>, <code>URL</code>, <code>URI</code>), a stream
 (<code>Channel</code>, <code>DataInput</code>, <code>InputStream</code>, <code>Reader</code>),
 a connection to a data base (<code>DataSource</code>, <code>Connection</code>)
 or other kinds of object specific to the data source.
-The <code class="sis">DataStores​.open(Object)</code> method detects data formats
+The <code class="SIS">DataStores​.open(Object)</code> method detects data formats
 and returns a <code class="SIS">DataStore</code> instance for that format.
 </p>
 <p>
@@ -1574,13 +1574,9 @@ The formula below represents the map projection result as a column matrix
 (reason will become clearer soon):
 </p>
 
-<table class="hidden">
-<tr>
-<th>Equation</th>
-<th>Java code</th>
-</tr>
-<tr>
-<td style="vertical-align:middle; min-width:350px; padding-right:60px">
+<div class="row-of-boxes">
+<div style="min-width:350px; padding-right:60px">
+<div class="caption">Equation</div>
 <math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
 <mi>P</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo>
 <mo>=</mo>
@@ -1591,27 +1587,21 @@ The formula below represents the map projection result as a column matrix
 </mtable>
 </mfenced>
 </math>
-</td>
-<td style="vertical-align:middle; min-width:500px; padding-left:60px">
-
+</div>
+<div style="min-width:500px; padding-left:60px">
+<div class="caption">Java code</div>
 <pre style="margin:0"><code><code class="GeoAPI">DirectPosition</code> geographic = <b>new</b> DirectPosition2D(<var>φ</var>, <var>λ</var>);
 <code class="GeoAPI">DirectPosition</code> projected = <var><b>P</b></var>.transform(geographic, <b>null</b>);
 <b>double</b> <var>x</var> = projected.getOrdinate(0);
 <b>double</b> <var>y</var> = projected.getOrdinate(1);</code></pre>
-
-</td>
-</tr>
-</table>
+</div>
+</div>
 
 <p>The map projection partial derivate at this point can be represented by a Jacobian matrix:</p>
 
-<table class="hidden">
-<tr>
-<th>Equation</th>
-<th>Java code</th>
-</tr>
-<tr>
-<td style="vertical-align:middle; min-width:350px; padding-right:60px">
+<div class="row-of-boxes">
+<div style="min-width:350px; padding-right:60px">
+<div class="caption">Equation</div>
 <math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
 <msup><mi>P</mi><mo>′</mo></msup><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo>
 <mo>=</mo>
@@ -1630,17 +1620,15 @@ The formula below represents the map projection result as a column matrix
 </mtable>
 </mfenced>
 </math>
-</td>
-<td style="vertical-align:middle; min-width:500px; padding-left:60px">
-
+</div>
+<div style="min-width:500px; padding-left:60px">
+<div class="caption">Java code</div>
 <pre style="margin:0"><code><code class="GeoAPI">DirectPosition</code> geographic = <b>new</b> DirectPosition2D(<var>φ</var>, <var>λ</var>);
 <code class="GeoAPI">Matrix</code> jacobian = <var><b>P</b></var>.derivative(geographic);
 <b>double</b> dx_dλ = jacobian.getElement(0,1);
 <b>double</b> dy_dφ = jacobian.getElement(1,0);</code></pre>
-
-</td>
-</tr>
-</table>
+</div>
+</div>
 
 <p>
 Remaining equations in this section will abridge
@@ -1660,9 +1648,10 @@ In that figure, vectors <var>U</var> et <var>V</var> stand for the first and sec
 in the Jacobian matrices.
 </p>
 
-<table class="hidden"><tr>
-<td><img alt="Example of a map projection derivative" src="../images/Derivatives.png" style="border: solid 1px"/></td>
-<td style="padding-left: 30px; vertical-align: middle">
+<div class="row-of-boxes">
+<div>
+<img alt="Example of a map projection derivative" src="../images/Derivatives.png" style="border: solid 1px"/>
+</div><div>
 <p>where vectors are related to the matrix by:</p>
 <math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
 <mtable><mtr>
@@ -1695,8 +1684,8 @@ in the Jacobian matrices.
 </mtd>
 </mtr></mtable>
 </math>
-</td>
-</tr></table>
+</div>
+</div>
 
 <p>
 Above figure shows one usage of map projection derivatives:
@@ -1709,22 +1698,22 @@ But the usefulness of map projection derivatives goes further.
 <p>
 <span style="color: red">TODO</span>
 </p>
-<table class="hidden">
-<tr>
-<th>Envelope before projection</th>
-<th>Geometric shape after projection</th>
-</tr>
-<tr>
-<td><img alt="Envelope in a geographic CRS" src="../images/GeographicArea.png" style="border: solid 1px; margin-right: 15px"/></td>
-<td><img alt="Shape in a projected CRS" src="../images/ConicArea.png" style="border: solid 1px; margin-left:  15px"/></td>
-</tr>
-</table>
+<div class="row-of-boxes">
+<div>
+<div class="caption">Envelope before projection</div>
+<img alt="Envelope in a geographic CRS" src="../images/GeographicArea.png" style="border: solid 1px; margin-right: 15px"/>
+</div><div>
+<div class="caption">Geometric shape after projection</div>
+<img alt="Shape in a projected CRS" src="../images/ConicArea.png" style="border: solid 1px; margin-left:  15px"/>
+</div>
+</div>
 <p>
 <span style="color: red">TODO</span>
 </p>
-<table class="hidden"><tr><td>
+<div class="row-of-boxes">
+<div>
 <img alt="Cubic approximation of an envelope bounds" src="../images/Approximation.png"/>
-</td><td style="padding-left: 60px">
+</div><div>
 Legend:
 <ul>
 <li><b>Blue:</b> the geometric shape of the envelope after projection.
@@ -1735,7 +1724,8 @@ This is the shape from which to get a new envelope.</li>
 0 = <var>C</var>₁ + 2<var>C</var>₂λ<sub>m</sub> + 3<var>C</var>₃λ<sub>m</sub>².
 The same cubic line can have two minimums.</li>
 </ul>
-</td></tr></table>
+</div>
+</div>
 <p>
 <span style="color: red">TODO</span>
 </p>
@@ -1745,21 +1735,20 @@ The same cubic line can have two minimums.</li>
 <p>
 <span style="color: red">TODO</span>
 </p>
-<table class="hidden">
-<tr>
-<th style="text-align: left">Source image</th>
-<th style="text-align: right">Destination image</th>
-</tr>
-<tr>
-<td colspan="2"><img alt="Intersection of derivatives" src="../images/RasterProjection.png"/></td>
-</tr>
-</table>
+<div style="display:flex; flex-direction:column; align-items:center">
+<div style="display:flex; justify-content:space-between; width:564px">
+<div class="caption">Source image</div>
+<div class="caption">Destination image</div>
+</div>
+<img alt="Raster reprojection" src="../images/RasterProjection.png"/>
+</div>
 <p>
 <span style="color: red">TODO</span>
 </p>
-<table class="hidden"><tr>
-<td><img alt="Intersection of derivatives" src="../images/WarpGrid.png"/></td>
-<td style="padding-left: 60px">
+<div class="row-of-boxes">
+<div>
+<img alt="Warp grid" src="../images/WarpGrid.png"/>
+</div><div>
 Legend:
 <ul>
 <li><b>Blue dots:</b>  first  iteration (9 points).</li>
@@ -1773,7 +1762,8 @@ Continuing…
 <li>Sixth iteration: 4225 points, including 3136 news.</li>
 <li>…</li>
 </ul>
-</td></tr></table>
+</div>
+</div>
 <p>
 <span style="color: red">TODO</span>
 </p>
@@ -2253,14 +2243,9 @@ In the following example, the part on the left defines an element associated wit
 while the part on the right references this element:
 </p>
 
-<table class="hidden">
-<tr>
-<th>Defining an Identifier</th>
-<th>Using a Defined Identifier</th>
-</tr>
-<tr>
-<td>
-
+<div class="row-of-boxes">
+<div>
+<div class="caption">Defining an identifier</div>
 <pre style="margin-top: 6pt"><samp class="xml">&lt;MD_MetaData&gt;
   &lt;identificationInfo&gt;
     &lt;MD_DataIdentification id=<i>"<b>my_id</b>"</i>&gt;
@@ -2268,16 +2253,14 @@ while the part on the right references this element:
     &lt;/MD_DataIdentification&gt;
   &lt;/identificationInfo&gt;
 &lt;/MD_MetaData&gt;</samp></pre>
-
-</td><td>
-
+</div>
+<div>
+<div class="caption">Using a defined identifier</div>
 <pre style="margin-top: 6pt"><samp class="xml">&lt;MD_MetaData&gt;
   &lt;identificationInfo xlink:href=<i>"<b>#my_id</b>"</i>/&gt;
 &lt;/MD_MetaData&gt;</samp></pre>
-
-</td>
-</tr>
-</table>
+</div>
+</div>
 
 <p>
 The decision of which attribute to use depends on the scope of the referenced item:
@@ -2358,14 +2341,9 @@ But when a <code class="OGC">nilReason</code> is present, the <abbr>SIS</abbr> i
 <code class="SIS">getNilReason()</code> method returns the constant <code class="SIS">UNKNOWN</code>.
 </p>
 
-<table class="hidden">
-<tr>
-<th>Information Included</th>
-<th>Missing Information</th>
-</tr>
-<tr>
-<td>
-
+<div class="row-of-boxes">
+<div>
+<div class="caption">Information included</div>
 <pre style="margin-top: 6pt"><samp class="xml">&lt;CI_Citation&gt;
   &lt;series&gt;
     &lt;CI_Series&gt;
@@ -2373,16 +2351,14 @@ But when a <code class="OGC">nilReason</code> is present, the <abbr>SIS</abbr> i
     &lt;/CI_Series&gt;
   &lt;/series&gt;
 &lt;/CI_Citation&gt;</samp></pre>
-
-</td><td>
-
+</div>
+<div>
+<div class="caption">Missing information</div>
 <pre style="margin-top: 6pt"><samp class="xml">&lt;CI_Citation&gt;
   &lt;series nilReason=<i>"unknown"</i>/&gt;
 &lt;/CI_Citation&gt;</samp></pre>
-
-</td>
-</tr>
-</table>
+</div>
+</div>
 </section>
 </section>
 </section>
@@ -2695,24 +2671,18 @@ where we may assume a direct correspondence.
 Thus, instead of the loop on the left below, international applications must generally use the loop on the right:
 </p>
 
-<table class="hidden">
-<tr>
-<th>Loop to Avoid</th>
-<th>Recommended loop</th>
-<th>Supplementary character examples</th>
-</tr>
-<tr>
-<td>
-
+<div class="row-of-boxes">
+<div>
+<div class="caption">Loop to Avoid</div>
 <pre style="margin-top: 6pt"><code><b>for</b> (<b>int</b> i=0; i&lt;string.length(); i++) {
     <b>char</b> c = string.charAt(i);
     <b>if</b> (Character.isWhitespace(c)) {
         <code class="comment">// A blank space was found.
 </code>    }
 }</code></pre>
-
-</td><td>
-
+</div>
+<div>
+<div class="caption">Recommended loop</div>
 <pre style="margin-top: 6pt"><code><b>for</b> (<b>int</b> i=0; i&lt;string.length();) {
     <b>int</b> c = string.codePointAt(i);
     <b>if</b> (Character.isWhitespace(c)) {
@@ -2720,14 +2690,14 @@ Thus, instead of the loop on the left below, international applications must gen
 </code>    }
     i += Character.charCount(c);
 }</code></pre>
-
-</td><td>
+</div>
+<div>
+<div class="caption">Supplementary character examples</div>
 <center>(rendering depends on browser capabilities)</center>
 <p style="font-size: 40px">&#128649; &#128677; &#128679; &#128683;
 &#128687; &#128696; &#128698; &#128697; &#128708; &#128685;</p>
-</td>
-</tr>
-</table>
+</div>
+</div>
 
 <p>
 <abbr title="Spatial Information System">SIS</abbr> supports supplementary characters by using the loop on the right where necessary,
@@ -3735,13 +3705,18 @@ Note that when affine transform concatenations are written as matrix multiplicat
 <var>A</var>×<var>B</var>×<var>C</var> is equivalent to first applying operation <var>C</var>,
 then operation <var>B</var> and finally operation <var>A</var>.
 </p>
-<table class="hidden"><tr>
-<th>Change 2</th><th/>
-<th>Change 1</th><th/>
-<th>Initial conversion</th><th/>
-<th>Concatenated operation</th>
-</tr><tr>
-<td style="vertical-align: middle">
+<div style="display:table; margin:auto">
+<div style="display:table-row">
+<div class="caption" style="display:table-cell">Change 2</div>
+<div class="caption" style="display:table-cell"> </div>
+<div class="caption" style="display:table-cell">Change 1</div>
+<div class="caption" style="display:table-cell"> </div>
+<div class="caption" style="display:table-cell">Initial conversion</div>
+<div class="caption" style="display:table-cell"> </div>
+<div class="caption" style="display:table-cell">Concatenated operation</div>
+</div>
+<div style="display:table-row">
+<div style="display:table-cell; vertical-align:middle">
 <math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
 <mfenced close="]" open="[">
 <mtable>
@@ -3763,9 +3738,9 @@ then operation <var>B</var> and finally operation <var>A</var>.
 </mtable>
 </mfenced>
 </math>
-</td>
-<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
-<td style="vertical-align: middle">
+</div>
+<div style="display:table-cell; vertical-align:middle; padding-left: 15px; padding-right: 15px">×</div>
+<div style="display:table-cell; vertical-align:middle">
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mfenced close="]" open="[">
 <mtable>
@@ -3787,9 +3762,9 @@ then operation <var>B</var> and finally operation <var>A</var>.
 </mtable>
 </mfenced>
 </math>
-</td>
-<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
-<td style="vertical-align: middle">
+</div>
+<div style="display:table-cell; vertical-align:middle; padding-left: 15px; padding-right: 15px">×</div>
+<div style="display:table-cell; vertical-align:middle">
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mfenced close="]" open="[">
 <mtable>
@@ -3825,9 +3800,9 @@ then operation <var>B</var> and finally operation <var>A</var>.
 </mtable>
 </mfenced>
 </math>
-</td>
-<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">=</td>
-<td style="vertical-align: middle">
+</div>
+<div style="display:table-cell; vertical-align:middle; padding-left: 15px; padding-right: 15px">=</div>
+<div style="display:table-cell; vertical-align:middle">
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mfenced close="]" open="[">
 <mtable>
@@ -3863,8 +3838,9 @@ then operation <var>B</var> and finally operation <var>A</var>.
 </mtable>
 </mfenced>
 </math>
-</td>
-</tr></table>
+</div>
+</div>
+</div>
 <p>
 A key principle is that there is no need to write Java code dedicated to above kinds of axis changes.
 Those operations, and many other, can be handled by matrix algebra.

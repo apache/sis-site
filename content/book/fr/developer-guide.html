@@ -776,14 +776,14 @@ Le lecteur peut ignorer ces boîtes grises sans que cela ne nuise à la compréh
 Bien qu’il soit possible de créer des structures de données programmatiquement en mémoire,
 le plus souvent les données sont lues à partir de fichiers ou autres types d’entrepôts.
 Il y a plusieurs moyens d’accéder à ces données, mais une façon pratique est d’utiliser
-la méthode de commodité <code class="sis">DataStores​.open(Object)</code>.
+la méthode de commodité <code class="SIS">DataStores​.open(Object)</code>.
 L’argument donné à cette méthode peut être un chemin vers un fichier
 (<code>File</code>, <code>Path</code>, <code>URL</code>, <code>URI</code>),
 un flux d’entrée vers un fichier déjà ouvert
 (<code>Channel</code>, <code>DataInput</code>, <code>InputStream</code>, <code>Reader</code>),
 une connexion à une base de données (<code>DataSource</code>, <code>Connection</code>)
 ou d’autres types d’objets spécifiques à la source de données.
-La méthode <code class="sis">DataStores​.open(Object)</code> se charge de détecter le format de données
+La méthode <code class="SIS">DataStores​.open(Object)</code> se charge de détecter le format de données
 et retourne une instance de <code class="SIS">DataStore</code> pouvant le lire.
 </p>
 <p>
@@ -1624,13 +1624,9 @@ Dans l’expression ci-dessous, nous représentons le résultat de la projection
 sous forme d’une matrice colonne (la raison sera plus claire bientôt):
 </p>
 
-<table class="hidden">
-<tr>
-<th>Équation</th>
-<th>Code Java</th>
-</tr>
-<tr>
-<td style="vertical-align:middle; min-width:350px; padding-right:60px">
+<div class="row-of-boxes">
+<div style="min-width:350px; padding-right:60px">
+<div class="caption">Équation</div>
 <math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
 <mi>P</mi><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo>
 <mo>=</mo>
@@ -1641,27 +1637,21 @@ sous forme d’une matrice colonne (la raison sera plus claire bientôt):
 </mtable>
 </mfenced>
 </math>
-</td>
-<td style="vertical-align:middle; min-width:500px; padding-left:60px">
-
+</div>
+<div style="min-width:500px; padding-left:60px">
+<div class="caption">Code Java</div>
 <pre style="margin:0"><code><code class="GeoAPI">DirectPosition</code> geographic = <b>new</b> DirectPosition2D(<var>φ</var>, <var>λ</var>);
 <code class="GeoAPI">DirectPosition</code> projected = <var><b>P</b></var>.transform(geographic, <b>null</b>);
 <b>double</b> <var>x</var> = projected.getOrdinate(0);
 <b>double</b> <var>y</var> = projected.getOrdinate(1);</code></pre>
-
-</td>
-</tr>
-</table>
+</div>
+</div>
 
 <p>La dérivée de la projection cartographique en ce même point peut se représenter par une matrice Jacobienne:</p>
 
-<table class="hidden">
-<tr>
-<th>Équation</th>
-<th>Code Java</th>
-</tr>
-<tr>
-<td style="vertical-align:middle; min-width:350px; padding-right:60px">
+<div class="row-of-boxes">
+<div style="min-width:350px; padding-right:60px">
+<div class="caption">Équation</div>
 <math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
 <msup><mi>P</mi><mo>′</mo></msup><mo>(</mo><mi>φ</mi><mo>,</mo><mi>λ</mi><mo>)</mo>
 <mo>=</mo>
@@ -1680,17 +1670,15 @@ sous forme d’une matrice colonne (la raison sera plus claire bientôt):
 </mtable>
 </mfenced>
 </math>
-</td>
-<td style="vertical-align:middle; min-width:500px; padding-left:60px">
-
+</div>
+<div style="min-width:500px; padding-left:60px">
+<div class="caption">Code Java</div>
 <pre style="margin:0"><code><code class="GeoAPI">DirectPosition</code> geographic = <b>new</b> DirectPosition2D(<var>φ</var>, <var>λ</var>);
 <code class="GeoAPI">Matrix</code> jacobian = <var><b>P</b></var>.derivative(geographic);
 <b>double</b> dx_dλ = jacobian.getElement(0,1);
 <b>double</b> dy_dφ = jacobian.getElement(1,0);</code></pre>
-
-</td>
-</tr>
-</table>
+</div>
+</div>
 
 <p>
 Les équations suivantes dans cette section abrégeront
@@ -1711,9 +1699,10 @@ Dans cette figure, les vecteurs <var>U</var> et <var>V</var> désignent respecti
 la première et deuxième colonne des matrices Jacobiennes.
 </p>
 
-<table class="hidden"><tr>
-<td><img alt="Exemple de dérivées d’une projection cartographique" src="../images/Derivatives.png" style="border: solid 1px"/></td>
-<td style="padding-left: 30px; vertical-align: middle">
+<div class="row-of-boxes">
+<div>
+<img alt="Exemple de dérivées d’une projection cartographique" src="../images/Derivatives.png" style="border: solid 1px"/>
+</div><div>
 <p>où les vecteurs sont reliés à la matrice par:</p>
 <math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
 <mtable><mtr>
@@ -1746,8 +1735,8 @@ la première et deuxième colonne des matrices Jacobiennes.
 </mtd>
 </mtr></mtable>
 </math>
-</td>
-</tr></table>
+</div>
+</div>
 
 <p>
 Cette figure nous montre déjà une utilisation possible des dérivées:
@@ -1767,16 +1756,15 @@ Construire une enveloppe rectangulaire qui engloberait les 4 coins de cette form
 car la surface en bas de la forme est plus basse que les 2 coins du bas.
 Cette surface serait donc en dehors du rectangle.
 </p>
-<table class="hidden">
-<tr>
-<th>Enveloppe avant la projection</th>
-<th>Forme géométrique après la projection</th>
-</tr>
-<tr>
-<td><img alt="Envelope in a geographic CRS" src="../images/GeographicArea.png" style="border: solid 1px; margin-right: 15px"/></td>
-<td><img alt="Shape in a projected CRS" src="../images/ConicArea.png" style="border: solid 1px; margin-left:  15px"/></td>
-</tr>
-</table>
+<div class="row-of-boxes">
+<div>
+<div class="caption">Enveloppe avant la projection</div>
+<img alt="Enveloppe dans un CRS géographique" src="../images/GeographicArea.png" style="border: solid 1px; margin-right: 15px"/>
+</div><div>
+<div class="caption">Forme géométrique après la projection</div>
+<img alt="Forme géométrique dans un CRS projeté" src="../images/ConicArea.png" style="border: solid 1px; margin-left:  15px"/>
+</div>
+</div>
 <p>
 Une façon simple d’atténuer le problème est d’échantillonner un plus grand nombre de points sur chacun des
 bords de la forme géométrique. On trouve ainsi des bibliothèques de <abbr>SIG</abbr> qui vont par exemple
@@ -1805,9 +1793,10 @@ L’avantage est que la position du minimum d’une courbe cubique est facile à
 En supposant que la longitude du minimum de la courbe cubique est proche de la longitude du minimum de la courbe réelle,
 il suffit de calculer la projection cartographique d’un point à cette longitude plutôt que d’échantillonner 40 points sur le bord de l’enveloppe.
 </p>
-<table class="hidden"><tr><td>
+<div class="row-of-boxes">
+<div>
 <img alt="Approximation cubique d’un bord d’une enveloppe" src="../images/Approximation.png"/>
-</td><td style="padding-left: 60px">
+</div><div>
 Légende:
 <ul>
 <li><b>En bleue:</b> la forme géométrique correspondant à la projection de l’enveloppe.
@@ -1818,7 +1807,8 @@ C’est la forme dont on souhaite avoir le rectangle englobant.</li>
 0 = <var>C</var>₁ + 2<var>C</var>₂λ<sub>m</sub> + 3<var>C</var>₃λ<sub>m</sub>².
 Il peut y avoir jusqu’à deux minimums pour une même courbe cubique.</li>
 </ul>
-</td></tr></table>
+</div>
+</div>
 <p>
 Dans la pratique Apache <abbr title="Spatial Information System">SIS</abbr> utilise 8 points, soit les 4 coins plus un point au centre de chaque bord du rectangle à projeter,
 afin de réduire le risque d’erreur qu’induirait une courbe trop tordue entre deux points.
@@ -1850,15 +1840,13 @@ du pixel correspondant dans l’image source en utilisant <em>l’inverse</em> d
 La position obtenue ne sera pas nécessairement au centre du pixel de l’image source, ce qui implique qu’une interpolation de la valeur
 (ou de la couleur dans l’image ci-dessous) peut être nécessaire.
 </p>
-<table class="hidden">
-<tr>
-<th style="text-align: left">Image source</th>
-<th style="text-align: right">Image destination</th>
-</tr>
-<tr>
-<td colspan="2"><img alt="Intersection of derivatives" src="../images/RasterProjection.png"/></td>
-</tr>
-</table>
+<div style="display:flex; flex-direction:column; align-items:center">
+<div style="display:flex; justify-content:space-between; width:564px">
+<div class="caption">Image source</div>
+<div class="caption">Image destination</div>
+</div>
+<img alt="Reprojection d’images" src="../images/RasterProjection.png"/>
+</div>
 <p>
 Toutefois, calculer la projection inverse pour chacun des pixels peut être relativement lent.
 Afin d’accélérer les calculs, on utilise parfois une <cite>grille d’interpolation</cite>
@@ -1873,9 +1861,10 @@ Mais une difficulté de cette approche est de déterminer combien de points il f
 (la différence entre une position interpolée et la position réelle) ne dépasse pas un certain seuil (par exemple ¼ de pixel).
 On peut procéder en commençant par une grille de taille 3×3, puis en augmentant le nombre de points de manière itérative:
 </p>
-<table class="hidden"><tr>
-<td><img alt="Intersection of derivatives" src="../images/WarpGrid.png"/></td>
-<td style="padding-left: 60px">
+<div class="row-of-boxes">
+<div>
+<img alt="Warp grid" src="../images/WarpGrid.png"/>
+</div><div>
 Légende:
 <ul>
 <li><b>Points bleus:</b>  première itération (9 points).</li>
@@ -1889,7 +1878,8 @@ Si l’on continue…
 <li>Sixième itération: 4225 points, dont 3136 nouveaux.</li>
 <li>…</li>
 </ul>
-</td></tr></table>
+</div>
+</div>
 <p>
 L’itération s’arrête lorsque, après avoir calculé de nouveaux points, on a vérifié que la différence entre les
 coordonnées projetées et les coordonnées interpolées de ces nouveaux points est inférieure au seuil qu’on s’est fixé.
@@ -2183,14 +2173,9 @@ Dans l’exemple suivant, la partie gauche définie un élément associé à l�
 alors que la partie droite référence cet élément:
 </p>
 
-<table class="hidden">
-<tr>
-<th>Définir un identifiant</th>
-<th>Utiliser l’identifiant défini</th>
-</tr>
-<tr>
-<td>
-
+<div class="row-of-boxes">
+<div>
+<div class="caption">Définir un identifiant</div>
 <pre style="margin-top: 6pt"><samp class="xml">&lt;MD_MetaData&gt;
   &lt;identificationInfo&gt;
     &lt;MD_DataIdentification id=<i>"<b>mon_id</b>"</i>&gt;
@@ -2198,16 +2183,14 @@ alors que la partie droite référence cet élément:
     &lt;/MD_DataIdentification&gt;
   &lt;/identificationInfo&gt;
 &lt;/MD_MetaData&gt;</samp></pre>
-
-</td><td>
-
+</div>
+<div>
+<div class="caption">Utiliser l’identifiant défini</div>
 <pre style="margin-top: 6pt"><samp class="xml">&lt;MD_MetaData&gt;
   &lt;identificationInfo xlink:href=<i>"<b>#mon_id</b>"</i>/&gt;
 &lt;/MD_MetaData&gt;</samp></pre>
-
-</td>
-</tr>
-</table>
+</div>
+</div>
 
 <p>
 Le choix de l’attribut à utiliser dépend de la portée de l’élément référencé:
@@ -2290,13 +2273,9 @@ de <code class="SIS">getSeries()</code> retournera plutôt un objet implémentan
 et dont la méthode <code class="SIS">getNilReason()</code> retournera la constante <code class="SIS">UNKNOWN</code>.
 </p>
 
-<table class="hidden">
-<tr>
-<th>Information présente</th>
-<th>Information absente</th>
-</tr>
-<tr>
-<td>
+<div class="row-of-boxes">
+<div>
+<div class="caption">Information présente</div>
 <pre style="margin-top: 6pt"><samp class="xml">&lt;CI_Citation&gt;
   &lt;series&gt;
     &lt;CI_Series&gt;
@@ -2304,16 +2283,14 @@ et dont la méthode <code class="SIS">getNilReason()</code> retournera la consta
     &lt;/CI_Series&gt;
   &lt;/series&gt;
 &lt;/CI_Citation&gt;</samp></pre>
-
-</td><td>
-
+</div>
+<div>
+<div class="caption">Information absente</div>
 <pre style="margin-top: 6pt"><samp class="xml">&lt;CI_Citation&gt;
   &lt;series nilReason=<i>"unknown"</i>/&gt;
 &lt;/CI_Citation&gt;</samp></pre>
-
-</td>
-</tr>
-</table>
+</div>
+</div>
 </section>
 </section>
 </section>
@@ -2631,23 +2608,18 @@ Ainsi, au lieu de la boucle de gauche ci-dessous, les applications international
 généralement utiliser la boucle de droite:
 </p>
 
-<table class="hidden">
-<tr>
-<th>Boucle à éviter</th>
-<th>Boucle recommandée</th>
-<th>Exemples de caractères supplémentaires</th>
-</tr>
-<tr>
-<td>
+<div class="row-of-boxes">
+<div>
+<div class="caption">Boucle à éviter</div>
 <pre style="margin-top: 6pt"><code><b>for</b> (<b>int</b> i=0; i&lt;string.length(); i++) {
     <b>char</b> c = string.charAt(i);
     <b>if</b> (Character.isWhitespace(c)) {
         <code class="comment">// Un espace blanc a été trouvé.
 </code>    }
 }</code></pre>
-
-</td><td>
-
+</div>
+<div>
+<div class="caption">Boucle recommandée</div>
 <pre style="margin-top: 6pt"><code><b>for</b> (<b>int</b> i=0; i&lt;string.length();) {
     <b>int</b> c = string.codePointAt(i);
     <b>if</b> (Character.isWhitespace(c)) {
@@ -2655,14 +2627,14 @@ généralement utiliser la boucle de droite:
 </code>    }
     i += Character.charCount(c);
 }</code></pre>
-
-</td><td>
+</div>
+<div>
+<div class="caption">Exemples de caractères supplémentaires</div>
 <center>(l’affichage dépend des capacités du navigateur)</center>
 <p style="font-size: 40px">&#128649; &#128677; &#128679; &#128683;
 &#128687; &#128696; &#128698; &#128697; &#128708; &#128685;</p>
-</td>
-</tr>
-</table>
+</div>
+</div>
 
 <p>
 <abbr title="Spatial Information System">SIS</abbr> supporte les caractères supplémentaires en utilisant la boucle de droite lorsque nécessaire.
@@ -3700,13 +3672,18 @@ se lisent de droite à gauche:
 <var>A</var>×<var>B</var>×<var>C</var> est équivalent à d’abord appliquer l’opération <var>C</var>,
 suivit de l’opération <var>B</var> et finalement l’opération <var>A</var>.
 </p>
-<table class="hidden"><tr>
-<th>Changement 2</th><th/>
-<th>Changement 1</th><th/>
-<th>Conversion initiale</th><th/>
-<th>Opérations combinées</th>
-</tr><tr>
-<td style="vertical-align: middle">
+<div style="display:table; margin:auto">
+<div style="display:table-row">
+<div class="caption" style="display:table-cell">Changement 2</div>
+<div class="caption" style="display:table-cell"> </div>
+<div class="caption" style="display:table-cell">Changement 1</div>
+<div class="caption" style="display:table-cell"> </div>
+<div class="caption" style="display:table-cell">Conversion initiale</div>
+<div class="caption" style="display:table-cell"> </div>
+<div class="caption" style="display:table-cell">Opérations combinées</div>
+</div>
+<div style="display:table-row">
+<div style="display:table-cell; vertical-align:middle">
 <math xmlns="http://www.w3.org/1998/Math/MathML" alttext="MathML capable browser required" display="block">
 <mfenced close="]" open="[">
 <mtable>
@@ -3728,9 +3705,9 @@ suivit de l’opération <var>B</var> et finalement l’opération <var>A</var>.
 </mtable>
 </mfenced>
 </math>
-</td>
-<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
-<td style="vertical-align: middle">
+</div>
+<div style="display:table-cell; vertical-align:middle; padding-left: 15px; padding-right: 15px">×</div>
+<div style="display:table-cell; vertical-align:middle">
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mfenced close="]" open="[">
 <mtable>
@@ -3752,9 +3729,9 @@ suivit de l’opération <var>B</var> et finalement l’opération <var>A</var>.
 </mtable>
 </mfenced>
 </math>
-</td>
-<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">×</td>
-<td style="vertical-align: middle">
+</div>
+<div style="display:table-cell; vertical-align:middle; padding-left: 15px; padding-right: 15px">×</div>
+<div style="display:table-cell; vertical-align:middle">
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mfenced close="]" open="[">
 <mtable>
@@ -3790,9 +3767,9 @@ suivit de l’opération <var>B</var> et finalement l’opération <var>A</var>.
 </mtable>
 </mfenced>
 </math>
-</td>
-<td style="vertical-align: middle; padding-left: 15px; padding-right: 15px">=</td>
-<td style="vertical-align: middle">
+</div>
+<div style="display:table-cell; vertical-align:middle; padding-left: 15px; padding-right: 15px">=</div>
+<div style="display:table-cell; vertical-align:middle">
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
 <mfenced close="]" open="[">
 <mtable>
@@ -3828,8 +3805,9 @@ suivit de l’opération <var>B</var> et finalement l’opération <var>A</var>.
 </mtable>
 </mfenced>
 </math>
-</td>
-</tr></table>
+</div>
+</div>
+</div>
 <p>
 Un principe clé est qu’il n’y a pas besoin d’écrire un code dédié à ce type d’opérations sur les axes.
 Ces opérations, et bien d’autres, sont prises en compte naturellement par l’algèbre matricielle.

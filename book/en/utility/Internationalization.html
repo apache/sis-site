@@ -153,24 +153,18 @@
         Thus, instead of the loop on the left below, international applications must generally use the loop on the right:
       </p>
 
-      <table class="hidden">
-        <tr>
-          <th>Loop to Avoid</th>
-          <th>Recommended loop</th>
-          <th>Supplementary character examples</th>
-        </tr>
-        <tr>
-          <td>
-
+      <div class="row-of-boxes">
+        <div>
+          <div class="caption">Loop to Avoid</div>
 <pre style="margin-top: 6pt"><code>for (int i=0; i&lt;string.length(); i++) {
     char c = string.charAt(i);
     if (Character.isWhitespace(c)) {
         // A blank space was found.
     }
 }</code></pre>
-
-          </td><td>
-
+        </div>
+        <div>
+          <div class="caption">Recommended loop</div>
 <pre style="margin-top: 6pt"><code>for (int i=0; i&lt;string.length();) {
     int c = string.codePointAt(i);
     if (Character.isWhitespace(c)) {
@@ -178,14 +172,14 @@
     }
     i += Character.charCount(c);
 }</code></pre>
-
-          </td><td>
+        </div>
+        <div>
+          <div class="caption">Supplementary character examples</div>
             <center>(rendering depends on browser capabilities)</center>
             <p style="font-size: 40px">&#x1F689; &#x1F6A5; &#x1F6A7; &#x1F6AB;
               &#x1F6AF; &#x1F6B8; &#x1F6BA; &#x1F6B9; &#x1F6C4; &#x1F6AD;</p>
-          </td>
-        </tr>
-      </table>
+        </div>
+      </div>
 
       <p>
         <abbr>SIS</abbr> supports supplementary characters by using the loop on the right where necessary,
