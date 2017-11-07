@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>SIS 0.8 Release notes</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  </head>
+  <body>
+    <table style="border-style: solid; border-width: 1pt; background: lightgray"><tr>
+      <td><a href="0.7.html">Previous release</a></td>
+      <td style="padding-left: 9pt">Next release</td>
+    </tr></table>
+    <h1>SIS 0.8 Release notes</h1>
+
+<h2>Summary</h2>
+<p>An important feature of Apache SIS 0.8 is the replacement of the deprecated JSR-275 dependency by
+  <a href="https://jcp.org/en/jsr/detail?id=363">JSR-363 — Units of Measurement API</a>
+  (this implies an upgrade from GeoAPI 3.0.0 to GeoAPI 3.0.1).
+  Users are encouraged to upgrade to Apache SIS 0.8 for resolving this dependency issue.
+  Some other changes are listed below (non-exhaustive list):
+</p>
+
+<h2>New features</h2>
+<ul>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-128'>SIS-128</a>] - Implement the JSR-363 javax.measure interfaces</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-341'>SIS-341</a>] - Support &quot;crs-compound&quot; in URLs</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-352'>SIS-352</a>] - Support spatial referencing by geographic identifiers (ISO 19112)</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-232'>SIS-232</a>] - Albers Equal Area (EPSG:9822)</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-230'>SIS-230</a>] - Lambert Cylindrical Equal Area (EPSG:9835)</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-231'>SIS-231</a>] - Lambert Cylindrical Equal Area (Spherical) (EPSG:9834)</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-220'>SIS-220</a>] - Transverse Mercator Zoned Grid System (EPSG:9824)</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-354'>SIS-354</a>] - Military Grid Reference System (MGRS)</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-284'>SIS-284</a>] - Geographic2D with Height Offsets (EPSG:9618)</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-343'>SIS-343</a>] - Axis order reversal (EPSG:9843)</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-337'>SIS-337</a>] - Package EPSG Derby DB in ​sis-epsg jar, eliminating the need for external SIS_DATA dir</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-355'>SIS-355</a>] - Provide a &quot;deep copy&quot; operation on ISO 19115 metadata</li>
+</ul>
+
+<h2>Improvements</h2>
+<ul>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-344'>SIS-344</a>] - Update EPSG geodetic dataset to version 9.0</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-353'>SIS-353</a>] - UTM should take in account Norway and Svalbard special cases</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-368'>SIS-368</a>] - When a coordinate operation change the longitude axis range from [-180 … +180]° to [0 … 360]°, the Envelopes.transform(…) result should be normalized accordingly</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-330'>SIS-330</a>] - Missing EPSG identifiers for Molodensky parameters</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-335'>SIS-335</a>] - CRS.findOperation(…) sometime slow</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-327'>SIS-327</a>] - Defer loading of datum shift grid files</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-298'>SIS-298</a>] - Simplification in MetadataTreeFormat output</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-171'>SIS-171</a>] - Upgrade NetCDF to ISO-19115 mapping</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-314'>SIS-314</a>] - NetCDF: read method with subsampling and area parameters</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-367'>SIS-367</a>] - IntegerList: Comodification check / primitive Stream</li>
+</ul>
+
+<h2>Bug fixes</h2>
+<ul>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-328'>SIS-328</a>] - EPSG factory on PostgreSQL fails because of missing cast</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-329'>SIS-329</a>] - Transformation of envelope from UTM to WGS84 sometime wrongly expanded to the ±180° longitude range</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-333'>SIS-333</a>] - In GML, the second defining parameter of spheres should be &lt;gml:isSphere&gt;true&lt;/gml:isSphere&gt;</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-346'>SIS-346</a>] - MetadataStandard.asValueMap(…) / asTreeTable(…) do not work if the argument implements more than one metadata interface</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-347'>SIS-347</a>] - Extents.area(GeographicBoundingBox) returns 0 if the longitude range is 360° large.</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-348'>SIS-348</a>] - CompoundFormat.parse(CharSequence text, ParsePosition pos) javadoc is inconsistent with implementation</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-349'>SIS-349</a>] - Dead-lock between ContextualParameters and WeakHashSet</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-364'>SIS-364</a>] - OperationNotFoundException thrown for some pairs of CRS when the EPSG database is not available</li>
+</ul>
+
+<h2>Tasks</h2>
+<ul>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-334'>SIS-334</a>] - Replace JSR-275 dependency by JSR-363</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-332'>SIS-332</a>] - Upgrade Java platform requirement from JDK6 to JDK7</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-47'>SIS-47</a>]   - Add maven configurations for SIS GUI</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-303'>SIS-303</a>] - Do not allow instantion of CompoudCRS with Geographic2D + ellipsoidal height</li>
+</ul>
+
+  </body>
+</html>
