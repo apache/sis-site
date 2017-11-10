@@ -40,18 +40,19 @@ number of the previous and the new release respectively, and `$RELEASE_CANDIDATE
 the current release attempt. Those versions shall be set on the command line like below (Unix):
 
     :::bash
-    export OLD_VERSION=0.7
-    export NEW_VERSION=0.8
+    export OLD_VERSION=0.8
+    export NEW_VERSION=1.0
     export RELEASE_CANDIDATE=1
     export SIGNING_KEY=<your key ID>
     export BOOTCLASSPATH=<path to the rt.jar file of a JDK7 installation>
 
-The key ID value is an hexadecimal numbers with 8 digits.
+The key ID value is an hexadecimal numbers with 8 or 40 digits.
 It can be found be executing `gpg --list-keys`.
+
 The boot class path value is highly system-dependent. Some examples are:
 
-  * `/usr/lib/jvm/java-6/jre/lib/rt.jar` on some Linux distributions (replace `java-6` by the actual directory name).
-  * `/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar` on MacOS.
+  * `/usr/lib/jvm/java-7/jre/lib/rt.jar` on some Linux distributions (replace `java-7` by the actual directory name).
+  * `/Library/Java/JavaVirtualMachines/jdk1.7.0_79.jdk/Contents/Home/jre/lib/rt.jar` on MacOS.
 
 
 
@@ -85,7 +86,7 @@ Java updates    {#java-update}
 
 While we need a JDK7 installation for the `bootclasspath` option, we do not recommend to use it for generating
 the binaries since JDK7 has reached its end of public updates (but not the end of commercial support).
-We recommend to create the release with JDK8 instead (note however than JDK8 `javadoc` tool seems to have a bug that prevent its use with SIS).
+We recommend to create the release with JDK8 instead (note however that JDK8 `javadoc` tool seems to have a bug that prevent its use with SIS).
 Make sure that the JDK installation to be used for the release has been updated recently, since compilers may receive critical bug fixes.
 For example the `javadoc` tool of older JDK versions was known to generate HTML pages with a vulnerability in them.
 
@@ -97,7 +98,7 @@ Prepare web site and source code    {#prepare-source}
 
 Before to start the release process:
 
-  * Review and update the `README` file on the `trunk` source code repository.
+  * Review and update the `README` and `NOTICE` files on the source code repository.
   * Review the `javac` and `javadoc` warnings reported by Jenkins and fix at least the typos.
   * Ensure that the `trunk` build is successful (including tests) with JDK7 and JDK8.
 
@@ -548,6 +549,21 @@ Execute the following commands in any temporary directory for testing the binary
     bin/sis metadata http://catalog.data.gov/harvest/object/df138a1b-e7cb-4ca4-b7c3-316135e81b16
     bin/sis metadata https://github.com/opengeospatial/geoapi/raw/master/geoapi-netcdf/src/test/resources/org/opengis/wrapper/netcdf/NCEP-SST.nc
     bin/sis crs http://svn.apache.org/repos/asf/sis/trunk/core/sis-referencing/src/test/resources/org/apache/sis/referencing/crs/ProjectedCRS.xml --format WKT
+
+
+
+Prepare OpenOffice add-in    {#openoffice}
+==========================================
+
+The OpenOffice add-in source code can be distributed under Apache 2 license only.
+But the binary may contain non-free resources, notably the EPSG geodetic dataset.
+For now, the release manager should apply the following local modifications before
+to build the add-in:
+
+  * Move to the `application/sis-openoffice` directory.
+  * Replace the `src/main/unopkg/license.txt` file by EPSG terms of use.
+    A copy is found in the `non-free` group of SIS modules.
+  * Run `mvn package --activate-profiles non-free`.
 
 
 
