@@ -72,6 +72,8 @@ in this page shall be adjusted accordingly.
     │  └─ $NEW_VERSION
     │     └─ target
     │        └─ distributions
+    ├─ non-free
+    │  └─ sis-epsg
     ├─ distribution
     │  └─ $NEW_VERSION
     │     └─ RC$RELEASE_CANDIDATE
@@ -107,6 +109,7 @@ Before to start the release process:
 Documentation    {#prepare-documentation}
 -----------------------------------------
 
+We update JIRA and web site first because doing so is sometime a reminder of uncompleted tasks in source code.
 Update [JIRA][JIRA] tasks and prepare release notes as below:
 
   * Ensure that the _Fix Version_ in issues resolved since the last release includes this release version correctly.
@@ -185,7 +188,7 @@ but can be replaced by anything else), then checkout a clean copy of the branch 
 We need to update the Subversion URL and SIS version numbers not only in the `pom.xml` files,
 but also in a few Java files. The following command performs the replacement using Ant.
 Note that this command does *not* yet remove the `-SNAPSHOT` suffix in version numbers
-(this will be done later):
+(this will be done later, at tag creation time):
 
     :::bash
     ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml branch -Dbranch.version=$NEW_VERSION -Dsis.version=$NEW_VERSION
@@ -194,44 +197,19 @@ Open the root `pom.xml` file in an editor and perform the following changes:
 
   * Remove the whole `<pluginRepositories>` block (including comment), since it should not be needed for releases (and is actually not allowed).
 
-Remove the modules that are not yet ready for a release:
+Remove the modules that are not yet ready for a release.
+This may require removing `<module>` elements in the parent `pom.xml` file.
 
     :::bash
     svn remove storage/sis-shapefile
     svn remove application/sis-javafx
 
-Commit the changes on the branch:
+Validate with `svn diff`, ensure that the build is not broken (we will run the tests later),
+then commit the changes on the branch:
 
     :::bash
-    svn commit --message "Prepare the branch for the $NEW_VERSION release."
-
-
-
-Verify content    {#branch-verify}
-----------------------------------
-
-Starts the GPG agent if not already done.
-This is for avoiding to be prompted many time for the passphrase in every modules to be built by Maven.
-
-    :::bash
-    eval $(gpg-agent --daemon)
-
-Try a dry run of the `release:prepare` goal. This goals checks for `SNAPSHOT` dependencies in `pom.xml` files.
-It will not complete the prepare goal until all snapshot dependencies are resolved.
-If anything goes wrong, the directory can be cleaned by running the `release:clean` goal
-before to fix the problem and try again.
-
-    :::bash
-    mvn release:prepare --define releaseVersion=$NEW_VERSION --define tag=$NEW_VERSION --define bootclasspath=$BOOTCLASSPATH \
-        --define autoVersionSubmodules=true --define updateWorkingCopyVersions=false --define dryRun=true
-
-The dry run will not commit any changes back to SVN. Instead, it will create `pom.xml.tag` files containing
-the changes that would have been committed to SVN. We keep those files for verification purpose in the next section.
-
-Verify signature for all files:
-
-    :::bash
-    find . -name "sis-*.asc" -exec gpg --verify '{}' \;
+    mvn install --define skipTests=true --define bootclasspath=$BOOTCLASSPATH
+    svn commit --message "Prepare branch for $NEW_VERSION release."
 
 
 
@@ -251,7 +229,7 @@ First, create the tag:
     :::bash
     svn copy https://svn.apache.org/repos/asf/sis/branches/$NEW_VERSION \
              https://svn.apache.org/repos/asf/sis/tags/$NEW_VERSION \
-             --message "Create the $NEW_VERSION tag for RC$RELEASE_CANDIDATE."
+             --message "Create $NEW_VERSION tag for RC$RELEASE_CANDIDATE."
 
 Checkout:
 
@@ -267,23 +245,50 @@ plus some additional files:
     :::bash
     ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml tag -Dbranch.version=$NEW_VERSION -Dsis.version=$NEW_VERSION
 
-Compare with the modifications done by `mvn release:prepare`. The following command should report no difference,
-ignoring the license or other information that may have been removed by the Maven plugin
-(this has been known to happen if the starting `<project>` tag is not on a single line).
+Validate with `svn diff`, search `SNAPSHOT` in the whole source directory in case we missed some, then commit:
 
     :::bash
-    find . -name "pom.xml" -exec diff '{}' $BRANCH_DIR/'{}'.tag \;
+    svn commit --message "Fix version number to $NEW_VERSION (no -SNAPSHOT) and SVN directory."
 
-Commit:
+
+
+Verify content    {#branch-verify}
+----------------------------------
+
+Starts the GPG agent if not already done.
+This is for avoiding to be prompted many time for the passphrase in every modules to be built by Maven.
 
     :::bash
-    svn commit --message "Fix version number and SVN directory."
+    eval $(gpg-agent --daemon)
 
-Clean the branch, since we will not need it anymore:
+Build the project with extensive tests enabled:
 
     :::bash
-    cd $BRANCH_DIR
-    mvn clean release:clean
+    mvn clean install --activate-profiles apache-release --define org.apache.sis.test.extensive=true --define bootclasspath=$BOOTCLASSPATH
+
+Verify signature for all files:
+
+    :::bash
+    find . -name "sis-*.asc" -exec gpg --verify '{}' \;
+
+
+Build the `non-free` group of modules. Those modules will not be part of the distribution (except on Maven),
+but we nevertheless need to ensure that they work. Before to test, verify that their version numbers and their
+SIS dependencies are `$NEW_VERSION` without `-SNAPSHOT` suffix.
+
+    :::bash
+    cd ../../non-free
+    svn update
+    mvn clean install --define bootclasspath=$BOOTCLASSPATH
+
+Run the integration tests. The project version number in the `pom.xml` file must be set manually to `$NEW_VERSION` first.
+Note that execution of those tests may be slow.
+
+    :::bash
+    cd ../release-test
+    svn update
+    cd maven
+    mvn clean test --define bootclasspath=$BOOTCLASSPATH
 
 
 
