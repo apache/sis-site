@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="fr">
+  <head>
+    <title>Installation de l’extension Apache SIS pour OpenOffice</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="../openoffice.css"/>
+  </head>
+  <body>
+    <h1>Installation de l’extension Apache SIS pour OpenOffice</h1>
+    <section>
+      <h2 id="requirements">Pré-requis</h2>
+      <p>
+        Cette extension requiert OpenOffice ou LibreOffice (au choix), ainsi que Java 7 ou 8.
+        La version actuelle de l’extension a été testée avec LibreOffice 5.3 et Java 8.
+        Cette version ne fonctionne pas encore avec Java 9.
+      </p>
+    </section>
+
+
+    <section>
+      <h2 id="configuration">Configuration</h2>
+      <p>
+        Avant d’installer l’extension, il peut être utile de configurer OpenOffice ou LibreOffice afin que celui-ci sache
+        où se trouve l’environnement d’exécution du Java (JRE). Cette configuration s’effectue en sélectionnant le menu
+        <i>Outils</i> → <i>Options</i> sur Linux, ou <i>Open/LibreOffice</i> → <i>Préférences</i> sur MacOS.
+        Dans la boîte de dialogue qui s’affiche, sélectionnez <i>Java</i> (sous OpenOffice) ou <i>Avancé</i> (sous LibreOffice).
+        Si aucun environnement Java n’apparaît dans la liste, appuyez sur le bouton <i>Ajouter</i> et sélectionnez le répertoire
+        où un environnement Java est installé.
+        Une fois la liste des environnements Java apparue, sélectionnez une version 7 ou 8 du Java.
+      </p>
+    </section>
+
+
+    <section>
+      <h2 id="install">Installation</h2>
+      <p>
+        Téléchargez l’extension Apache SIS pour Open/LibreOffice et sauvegardez le fichier n’importe où sur le disque.
+        Dans Open/LibreOffice, sélectionnez le menu <i>Outils</i> → <i>Gestionnaire des extensions</i>.
+        Appuyez sur le bouton <i>Ajouter…</i> et sélectionnez le fichier <code>apache-sis.oxt</code> qui a été téléchargé.
+        L’installateur vous demandera d’accepter la licence Apache 2 ainsi que les conditions d’utilisation
+        de la <a href="http://www.epsg.org/">base de données géodésiques EPSG</a>.
+        Après installation, il peut être nécessaire de redémarrer Open/LibreOffice pour qu’elle soit prise en compte.
+        Si un icône de démarrage rapide apparaît dans la barre des tâches, il doit être fermé lui aussi avant de relancer Open/LibreOffice.
+      </p><p>
+        L’extension peut être désinstallé à tout moment par ce même menu.
+      </p>
+    </section>
+
+
+    <section>
+      <h2 id="problems">Résolution de problèmes</h2>
+      <p>
+        Si l’exécution des formules fournit par l’extension Apache SIS ne produit que le résultat <code>#VALEUR!</code>,
+        alors il est possible qu’une erreur survienne lors de l’exécution.
+        Plus de détails peuvent être obtenus en ouvrant le fichier <code>jre/lib/logging.properties</code>
+        avec un quelconque éditeur de texte, et en remplaçant la ligne suivante:
+      </p>
+      <blockquote><pre>handlers= java.util.logging.ConsoleHandler</pre></blockquote>
+      <p>par</p>
+      <blockquote><pre>handlers= java.util.logging.ConsoleHandler, java.util.logging.FileHandler</pre></blockquote>
+      <p>
+        Par défaut (il est possible de paramétrer plus finement),
+        un fichier avec l’extension <code>.log</code> sera créé dans le répertoire de l’utilisateur.
+        Ce fichier au format XML contient des informations sur le déroulement de l’exécution du programme.
+        Les événements dans le journal <code>org.apache.sis.openoffice</code> contiennent des informations
+        se rapportant plus spécifiquement au pont Apache SIS ↔ Open/LibreOffice.
+        La section <i>Message</i> contient quelques détails sur la cause de l’erreur.
+        Si vous souhaitez demander de l’aide sur la <a href="../../mail-lists.html">liste des utilisateurs de Apache SIS</a>,
+        les messages enregistrés dans ce journal peuvent être utiles.
+      </p>
+    </section>
+  </body>
+</html>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="fr">
+  <head>
+    <title>Formules ajoutées dans Calc</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="../openoffice.css"/>
+  </head>
+  <body>
+    <h1>Formules ajoutées dans Calc</h1>
+    <p>
+      L’extension Apache SIS pour Open/LibreOffice fournit de nouvelles fonctions réparties dans 2 catégories: <i>Texte</i> et <i>Add-in</i>.
+      Le principe de base des fonctions de la catégorie <i>Add-in</i> est le suivant:
+      chaque système de référence des coordonnées est identifié par un code numérique de la base de données EPSG.
+      Cette base de données recense plus de 6000 systèmes en usage sur la planète,
+      ainsi que des paramètres permettant d’effectuer des transformations d’un système vers un autre.
+      Certaines fonctions permettent d’obtenir des informations sur un système de référence en particulier,
+      par exemple son domaine de validité. Ces fonctions n’attendent qu’un seul code EPSG en paramètre.
+      D’autres fonctions agissent non pas à partir d’un système de référence seul,
+      mais plutôt à partir d’une transformation passant d’un système vers un autre.
+      Ces fonctions attendent deux codes EPSG en paramètres, chacun correspondant à un système de référence différent.
+      Le premier code définit le système source, et le second code définit le système destination.
+      La transformation est définit par l’algorithme permettant de passer des coordonnées du système source vers celles du système destination.
+    </p><p>
+      Les définitions officielles des codes EPSG peuvent être explorées en-ligne avec le <a href="http://epsg-registry.org/">registre EPSG</a>.
+      L’extension d’Apache SIS pour Open/LibreOffice est toutefois livrée avec sa propre copie de la base de données EPSG,
+      dont <a href="http://www.epsg.org/TermsOfUse">l’utilisation est soumise à des conditions</a>.
+      Apache SIS étend cette liste avec quelques codes définis en dehors d’EPSG, notamment par l’OGC.
+      Un sommaire des codes embarqués par Apache SIS est <a href="../../tables/CoordinateReferenceSystems.html">donné ici</a>.
+    </p><p>
+      La plupart des fonctions opérant sur des coordonnées sont des fonctions matricielles.
+      Leurs sorties nécessitent plusieurs colonnes, autant qu’il y a de dimensions dans le système de référence utilisé.
+      Par exemple si une fonction doit retourner une coordonnée à trois dimensions,
+      alors il faut sélectionner trois colonnes avant d’entrer la fonction
+      et valider cette dernière en appuyant sur [Ctrl] + [Shift] + Entrée.
+    </p><p>
+      Bien qu’il soit possible d’utiliser une fonction par ligne
+      et de la recopier sur de nouvelles lignes autant de fois qu’il y a de coordonnées à transformer,
+      il est beaucoup plus efficace de profiter là aussi du caractère matriciel des fonctions.
+      En plus d’avoir sélectionné le nombre de colonnes nécessaires,
+      sélectionnez autant de lignes qu’il y a de coordonnées à transformer.
+      Cela permet à Apache SIS de récupérer les informations associées aux codes EPSG une seule fois pour toutes les lignes de la matrice,
+      plutôt que de recommencer cette opération pour chaque fonction recopiée.
+    </p>
+  </body>
+</html>
