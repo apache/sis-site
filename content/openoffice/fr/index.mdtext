@@ -1,0 +1,125 @@
+Title:  Apache SIS™ add-in for OpenOffice
+Notice: Licensed to the Apache Software Foundation (ASF) under one
+        or more contributor license agreements.  See the NOTICE file
+        distributed with this work for additional information
+        regarding copyright ownership.  The ASF licenses this file
+        to you under the Apache License, Version 2.0 (the
+        "License"); you may not use this file except in compliance
+        with the License.  You may obtain a copy of the License at
+        .
+          http://www.apache.org/licenses/LICENSE-2.0
+        .
+        Unless required by applicable law or agreed to in writing,
+        software distributed under the License is distributed on an
+        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+        KIND, either express or implied.  See the License for the
+        specific language governing permissions and limitations
+        under the License.
+
+
+Apache SIS est une boîte à outils offrant quelques uns des services trouvés dans les systèmes d'informations géographiques.
+Elle est développée comme projet libre sous licence Apache 2 et peut servir de fondations à des projets indépendants.
+L'extension (_add-in_) pour [OpenOffice][OpenOffice] ou [LibreOffice][LibreOffice] proposé ici est un pont permettant
+d'accéder à une partie des fonctionnalités de Apache SIS à partir du tableur Calc.
+Dans un premier temps, seul le module de transformation de coordonnées est ainsi rendu (partiellement) accessible,
+mais nous espérons ajouter des ponts vers d'autres fonctionnalités progressivement.
+
+[TOC]
+
+
+
+Téléchargement et installation de l'extension    {#install}
+===========================================================
+
+Cette extension requiert OpenOffice ou LibreOffice (au choix), ainsi que Java 7 ou 8.
+La version actuelle de l'extension a été testée avec LibreOffice 5.3 et Java 8.
+Cette version ne fonctionne pas encore avec Java 9.
+
+Avant d'installer l'extension, il peut être utile de configurer OpenOffice ou LibreOffice afin que celui-ci sache
+où se trouve l'environnement d'exécution du Java (JRE). Cette configuration s'effectue en sélectionnant le menu
+_Outils_ → _Options_ sur Linux, ou _Open/LibreOffice_ → _Préférences_ sur MacOS.
+Dans la boîte de dialogue qui s'affiche, sélectionnez _Java_ (sous OpenOffice) ou _Avancé_ (sous LibreOffice).
+Si aucun environnement Java n'apparaît dans la liste, appuyez sur le bouton _Ajouter_ et sélectionnez le répertoire
+où un environnement Java est installé.
+Une fois la liste des environnements Java apparue, sélectionnez une version 7 ou 8 du Java.
+
+Téléchargez l'extension Apache SIS pour Open/LibreOffice et sauvegardez le fichier n'importe où sur le disque.
+Dans Open/LibreOffice, sélectionnez le menu _Outils_ → _Gestionnaire des extensions_.
+Appuyez sur le bouton _Ajouter…_ et sélectionnez le fichier `apache-sis.oxt` qui a été téléchargé.
+L'installateur vous demandera d'accepter la licence Apache 2 ainsi que les conditions d'utilisation
+de la [base de données géodésiques EPSG][EPSG].
+Après installation, il peut être nécessaire de redémarrer Open/LibreOffice pour qu'elle soit prise en compte.
+Si un icône de démarrage rapide apparaît dans la barre des tâches, il doit être fermé lui aussi avant de relancer Open/LibreOffice.
+L'extension peut être désinstallé à tout moment par ce même menu.
+
+
+
+Utilisation des fonctions de transformations de coordonnées    {#referencing}
+=============================================================================
+
+L'extension Apache SIS pour Open/LibreOffice fournit de nouvelles fonctions réparties dans 2 catégories: _Texte_ et _Add-in_.
+Le principe de base des fonctions de la catégorie _Add-in_ est le suivant:
+chaque système de référence des coordonnées est identifié par un code numérique de la base de données EPSG.
+Cette base de données recense plus de 6000 systèmes en usage sur la planète,
+ainsi que des paramètres permettant d'effectuer des transformations d'un système vers un autre.
+Certaines fonctions permettent d'obtenir des informations sur un système de référence en particulier,
+par exemple son domaine de validité. Ces fonctions n'attendent qu'un seul code EPSG en paramètre.
+D'autres fonctions agissent non pas à partir d'un système de référence seul,
+mais plutôt à partir d'une transformation passant d'un système vers un autre.
+Ces fonctions attendent deux codes EPSG en paramètres, chacun correspondant à un système de référence différent.
+Le premier code définit le système source, et le second code définit le système destination.
+La transformation est définit par l'algorithme permettant de passer des coordonnées du système source vers celles du système destination.
+
+Les définitions officielles des codes EPSG peuvent être explorées en-ligne avec le [registre EPSG][EPSG-registry].
+L'extension d'Apache SIS pour Open/LibreOffice est toutefois livrée avec sa propre copie de la base de données EPSG,
+dont [l'utilisation est soumise à des conditions][TermsOfUse].
+Apache SIS étend cette liste avec quelques codes définis en dehors d'EPSG, notamment par l'OGC.
+Un sommaire des codes embarqués par Apache SIS est [donné ici][codes-list].
+
+La plupart des fonctions opérant sur des coordonnées sont des fonctions matricielles.
+Leurs sorties nécessitent plusieurs colonnes, autant qu'il y a de dimensions dans le système de référence utilisé.
+Par exemple si une fonction doit retourner une coordonnée à trois dimensions,
+alors il faut sélectionner trois colonnes avant d'entrer la fonction
+et valider cette dernière en appuyant sur [Ctrl] + [Shift] + Entrée.
+
+Bien qu'il soit possible d'utiliser une fonction par ligne
+et de la recopier sur de nouvelles lignes autant de fois qu'il y a de coordonnées à transformer,
+il est beaucoup plus efficace de profiter là aussi du caractère matriciel des fonctions.
+En plus d'avoir sélectionné le nombre de colonnes nécessaires,
+sélectionnez autant de lignes qu'il y a de coordonnées à transformer.
+Cela permet à Apache SIS de récupérer les informations associées aux codes EPSG une seule fois pour toutes les lignes de la matrice,
+plutôt que de recommencer cette opération pour chaque fonction recopiée.
+
+
+
+
+Résolution de problèmes    {#problems}
+======================================
+
+Si l'exécution des formules fournit par l'extension Apache SIS ne produit que le résultat `#VALEUR!`,
+alors il est possible qu'une erreur survienne lors de l'exécution.
+Plus de détails peuvent être obtenus en ouvrant le fichier `jre/lib/logging.properties`
+avec un quelconque éditeur de texte, et en remplaçant la ligne suivante:
+
+    :::text
+    handlers= java.util.logging.ConsoleHandler
+
+par
+
+    :::text
+    handlers= java.util.logging.ConsoleHandler, java.util.logging.FileHandler
+
+Par défaut (il est possible de paramétrer plus finement),
+un fichier avec l'extension `.log` sera créé dans le répertoire de l'utilisateur.
+Ce fichier au format XML contient des informations sur le déroulement de l'exécution du programme.
+Les événements dans le journal `org.apache.sis.openoffice` contiennent des informations
+se rapportant plus spécifiquement au pont Apache SIS ↔ Open/LibreOffice.
+La section _Message_ contient quelques détails sur la cause de l'erreur.
+
+
+[OpenOffice]:    http://www.openoffice.org/
+[LibreOffice]:   http://www.libreoffice.org/
+[EPSG]:          http://www.epsg.org/
+[EPSG-registry]: http://epsg-registry.org/
+[TermsOfUse]:    http://www.epsg.org/TermsOfUse
+[codes-list]:    http://sis.apache.org/tables/CoordinateReferenceSystems.html
