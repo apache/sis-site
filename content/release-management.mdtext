@@ -26,8 +26,8 @@ The intended audiences are SIS release managers.
 
 
 
-Requirements    {#requirements}
-===============================
+Configure    {#configure}
+=========================
 
 Before to perform a release, make sure that the following conditions hold:
 
@@ -46,13 +46,19 @@ the current release attempt. Those versions shall be set on the command line lik
     export SIGNING_KEY=<your key ID>
     export BOOTCLASSPATH=<path to the rt.jar file of a JDK7 installation>
 
-The key ID value is an hexadecimal numbers with 8 or 40 digits.
+The key ID value is an hexadecimal numbers with 8 digits (may be the last 8 digits of a 40 digits number).
 It can be found be executing `gpg --list-keys`.
 
 The boot class path value is highly system-dependent. Some examples are:
 
   * `/usr/lib/jvm/java-7/jre/lib/rt.jar` on some Linux distributions (replace `java-7` by the actual directory name).
   * `/Library/Java/JavaVirtualMachines/jdk1.7.0_79.jdk/Contents/Home/jre/lib/rt.jar` on MacOS.
+
+Starts the GPG agent if not already done.
+This is for avoiding to be prompted many time for the passphrase in every modules to be built by Maven.
+
+    :::bash
+    eval $(gpg-agent --daemon)
 
 
 
@@ -95,21 +101,23 @@ For example the `javadoc` tool of older JDK versions was known to generate HTML 
 
 
 
-Prepare web site and source code    {#prepare-source}
-=====================================================
+Prepare web site and source code before branching    {#prepare-source}
+======================================================================
 
-Before to start the release process:
+Before to start the release process, we need to test more extensively the trunk.
+The tests described below often reveal errors that were unnoticed in daily builds.
+It is better to detect and fix them before to create the branch.
+First:
 
   * Review and update the `README` and `NOTICE` files on the source code repository.
   * Review the `javac` and `javadoc` warnings reported by Jenkins and fix at least the typos.
-  * Ensure that the `trunk` build is successful (including tests) with JDK7 and JDK8.
 
 
 
-Documentation    {#prepare-documentation}
+Prepare release notes    {#release-notes}
 -----------------------------------------
 
-We update JIRA and web site first because doing so is sometime a reminder of uncompleted tasks in source code.
+We update JIRA first because doing so is sometime a reminder of uncompleted tasks in source code.
 Update [JIRA][JIRA] tasks and prepare release notes as below:
 
   * Ensure that the _Fix Version_ in issues resolved since the last release includes this release version correctly.
@@ -145,6 +153,54 @@ Commit:
 
 The new web site will be published in the [staging area](http://sis.staging.apache.org).
 It will not yet be published on `http://sis.apache.org`.
+
+
+
+Test trunk extensively    {#test-trunk}
+---------------------------------------
+
+Build the project with the `apache-release` profile enabled.
+This profile performs the following actions:
+
+  * Enable extensive tests (i.e. it will set the `org.apache.sis.test.extensive` property to `true`).
+  * Generate Javadoc. This may fail if the source code contains invalid Javadoc tags or broken HTML.
+  * Generate additional binary artifacts (`*.pack.gz` and `*.oxt` files).
+    This will fail if duplicated class files or resources are found.
+    Consequently building the `.*pack.gz` file is an additional test worth to do before deployment.
+  * Sign the artifacts.
+
+Each of those additional products may cause a failure that did not happen in normal builds.
+
+    :::bash
+    cd ../trunk
+    mvn clean install --activate-profiles apache-release --define bootclasspath=$BOOTCLASSPATH
+
+Verify signature for all files:
+
+    :::bash
+    find . -name "sis-*.asc" -exec gpg --verify '{}' \;
+
+If the `SIS_DATA` environment variable was set during above build, unset it a try again.
+Ideally the build should be tested in both conditions (`SIS_DATA` set and unset).
+
+Build the `non-free` group of modules. Those modules will not be part of the distribution (except on Maven),
+but we nevertheless need to ensure that they work. Before to test, verify that their version numbers and their
+SIS dependencies are the snapshot tested in this section.
+
+    :::bash
+    cd ../non-free
+    svn update
+    mvn clean install --define bootclasspath=$BOOTCLASSPATH
+
+Run the integration tests. Before to test,
+verify that their version numbers and their SIS dependencies are the snapshot tested in this section.
+Note that execution of those tests may be slow.
+
+    :::bash
+    cd ../release-test
+    svn update
+    cd maven
+    mvn clean test --define bootclasspath=$BOOTCLASSPATH
 
 
 
@@ -208,7 +264,7 @@ Validate with `svn diff`, ensure that the build is not broken (we will run the t
 then commit the changes on the branch:
 
     :::bash
-    mvn install --define skipTests=true --define bootclasspath=$BOOTCLASSPATH
+    mvn clean package --define skipTests=true --define bootclasspath=$BOOTCLASSPATH
     svn commit --message "Prepare branch for $NEW_VERSION release."
 
 
@@ -255,38 +311,29 @@ Validate with `svn diff`, search `SNAPSHOT` in the whole source directory in cas
 Verify content    {#branch-verify}
 ----------------------------------
 
-Starts the GPG agent if not already done.
-This is for avoiding to be prompted many time for the passphrase in every modules to be built by Maven.
+Build and test the project in the same way than we did on trunk.
+In addition to testing, execution of an `install` phase before deployment is required for our custom `sis-build-helper` plugin.
 
     :::bash
-    eval $(gpg-agent --daemon)
-
-Build the project with extensive tests enabled:
-
-    :::bash
-    mvn clean install --activate-profiles apache-release --define org.apache.sis.test.extensive=true --define bootclasspath=$BOOTCLASSPATH
-
-Verify signature for all files:
-
-    :::bash
+    mvn install --activate-profiles apache-release --define bootclasspath=$BOOTCLASSPATH
     find . -name "sis-*.asc" -exec gpg --verify '{}' \;
 
-
-Build the `non-free` group of modules. Those modules will not be part of the distribution (except on Maven),
-but we nevertheless need to ensure that they work. Before to test, verify that their version numbers and their
-SIS dependencies are `$NEW_VERSION` without `-SNAPSHOT` suffix.
+Open the `pom.xml` file of all modules in the `non-free` group.
+Set their version numbers and their SIS dependencies to `$NEW_VERSION` without `-SNAPSHOT` suffix.
+Commit and built:
 
     :::bash
     cd ../../non-free
-    svn update
+    svn commit --message "Set version number and dependencies to $NEW_VERSION."
     mvn clean install --define bootclasspath=$BOOTCLASSPATH
 
-Run the integration tests. The project version number in the `pom.xml` file must be set manually to `$NEW_VERSION` first.
-Note that execution of those tests may be slow.
+Open the `pom.xml` file of integration tests.
+Set its version numbers and its SIS dependencies to `$NEW_VERSION` without `-SNAPSHOT` suffix.
+Commit and built (note that execution may be slow).
 
     :::bash
     cd ../release-test
-    svn update
+    svn commit --message "Set version number and dependencies to $NEW_VERSION."
     cd maven
     mvn clean test --define bootclasspath=$BOOTCLASSPATH
 
@@ -295,17 +342,7 @@ Note that execution of those tests may be slow.
 Deploy Maven artifacts    {#maven-deploy}
 =========================================
 
-Execute an `install` phase first (required for our custom `sis-build-helper` plugin),
-and generate the binary artifact (`pack.gz` file). The later will fail if duplicated
-class files or resources are found. Consequently building the `pack.gz` file is an
-additional test worth to do before deployment.
-
-    :::bash
-    cd $TAG_DIR
-    mvn clean install --define bootclasspath=$BOOTCLASSPATH
-    mvn org.apache.sis.core:sis-build-helper:$NEW_VERSION:dist --non-recursive
-
-If the above succeeded, deploy:
+If above verifications succeeded, deploy:
 
     :::bash
     chmod a-w target/distribution/*.zip
@@ -417,9 +454,7 @@ If JDK8 is *not* used, then omit the `cp` command below.
 
     :::bash
     cd $TAG_DIR
-    cp ../../JDK8/src/main/javadoc/stylesheet.css src/main/javadoc/
     mvn javadoc:aggregate
-    svn revert src/main/javadoc/stylesheet.css
     cd target/site
     zip -9 -r apache-sis-$NEW_VERSION-doc.zip apidocs
     cd ../..
@@ -461,7 +496,7 @@ Move the files generated by Maven to the distribution directory:
     :::bash
     mv $TAG_DIR/target/sis-$NEW_VERSION-* .
     mv $TAG_DIR/target/site/apache-sis-$NEW_VERSION-* .
-    mv $TAG_DIR/target/distribution/apache-sis-$NEW_VERSION.zip .
+    mv $TAG_DIR/application/sis-console/target/distribution/apache-sis-$NEW_VERSION.zip .
 
 Rename the files to something more conform to the convention seen in other Apache projects:
 
@@ -551,7 +586,6 @@ Execute the following commands in any temporary directory for testing the binary
     cd apache-sis-$NEW_VERSION
     unset SIS_DATA
     bin/sis about --verbose
-    bin/sis metadata http://catalog.data.gov/harvest/object/df138a1b-e7cb-4ca4-b7c3-316135e81b16
     bin/sis metadata https://github.com/opengeospatial/geoapi/raw/master/geoapi-netcdf/src/test/resources/org/opengis/wrapper/netcdf/NCEP-SST.nc
     bin/sis crs http://svn.apache.org/repos/asf/sis/trunk/core/sis-referencing/src/test/resources/org/apache/sis/referencing/crs/ProjectedCRS.xml --format WKT
 
