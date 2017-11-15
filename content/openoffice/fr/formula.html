@@ -42,10 +42,10 @@
       mais plutôt à partir d’une transformation passant d’un système vers un autre.
       Ces fonctions attendent deux codes <abbr>EPSG</abbr> en paramètres, chacun correspondant à un système de référence différent.
       Le premier code définit le système source, et le second code définit le système destination.
-      La transformation est définit par l’algorithme permettant de passer des coordonnées du système source vers celles du système destination.
+      L’opération est définie par l’algorithme permettant de passer des coordonnées du système source vers celles du système destination.
     </p><p>
       Les définitions officielles des codes <abbr>EPSG</abbr> peuvent être explorées en-ligne avec le <a href="http://epsg-registry.org/">registre <abbr>EPSG</abbr></a>.
-      L’extension d’Apache <abbr>SIS</abbr> pour Open/LibreOffice est toutefois livrée avec sa propre copie de la base de données <abbr>EPSG</abbr>,
+      Cette extension pour Open/LibreOffice est toutefois livrée avec sa propre copie (dans un format binaire) de la base de données <abbr>EPSG</abbr>,
       dont <a href="http://www.epsg.org/TermsOfUse">l’utilisation est soumise à des conditions</a>.
       Apache <abbr>SIS</abbr> étend cette liste avec quelques codes définis en dehors d’<abbr>EPSG</abbr>, notamment par l’<abbr title="Open Geospatial Consortium">OGC</abbr>.
       Un sommaire des codes embarqués par Apache <abbr>SIS</abbr> est <a href="../../tables/CoordinateReferenceSystems.html">donné ici</a>.
@@ -64,14 +64,14 @@
       Leurs sorties nécessitent plusieurs colonnes, autant qu’il y a de dimensions dans le système de référence utilisé.
       Par exemple si une fonction doit retourner une coordonnée à trois dimensions,
       alors il faut sélectionner trois colonnes avant d’entrer la fonction
-      et valider cette dernière en appuyant sur [Ctrl] + [Shift] + Entrée.
+      et valider cette dernière en appuyant sur [Ctrl] + [Shift] + [Entrée].
     </p><p>
       Bien qu’il soit possible d’utiliser une fonction par ligne
-      et de la recopier sur de nouvelles lignes autant de fois qu’il y a de coordonnées à transformer,
+      et de la recopier sur de nouvelles lignes autant de fois qu’il y a de points à transformer,
       il est beaucoup plus efficace de profiter là aussi du caractère matriciel des fonctions.
-      En plus d’avoir sélectionné le nombre de colonnes nécessaires, sélectionnez autant de lignes qu’il y a de coordonnées à transformer.
-      Cela permet à Apache <abbr>SIS</abbr> de récupérer les informations associées aux codes <abbr>EPSG</abbr> une seule fois pour toutes les lignes de la matrice,
-      plutôt que de recommencer cette opération pour chaque fonction recopiée.
+      En plus d’avoir sélectionné le nombre de colonnes nécessaires, sélectionnez autant de lignes qu’il y a de points à transformer.
+      Cela permet à Apache <abbr>SIS</abbr> de récupérer les informations associées aux codes <abbr>EPSG</abbr> une seule fois
+      pour toutes les lignes de la matrice résultante, plutôt que de recommencer cette opération pour chaque fonction recopiée.
     </p>
 
 
@@ -113,7 +113,7 @@
       </p><p>
         Les symboles °, ′ et ″ n’ont pas besoin d’être tous présents.
         Ils peuvent être complètement omis si un modèle approprié est donné en argument.
-        Par exemple si le modèle est <cite>DDMM</cite>, alors cette fonction traduira le texte 0430 en la valeur 4,5°.
+        Par exemple si le modèle est <cite>DDMM</cite>, alors cette fonction convertira le texte "0430" en la valeur numérique 4,5.
         Excepté pour de tels cas où les symboles différentiateurs de champs sont complètement absents,
         le modèle donné à la fonction <code>VALEUR.ANGLE</code> est plutôt à titre indicatif.
         Cette fonction est assez tolérante et devrait interpréter correctement des chaînes de caractères
@@ -128,7 +128,7 @@
       <p>
         Retourne le nom du système de référence identifié par le code donné.
         Le code du système est l’unique argument attendu par cette fonction.
-        Bien que cette fonction soit conçue pour retourner le nom de systèmes de références spatiaux (SRS),
+        Bien que cette fonction soit conçue pour retourner le nom de systèmes de références spatiaux (<abbr>SRS</abbr>),
         elle peut aussi retourner le nom de d’autres types d’objets à la condition que leur type soit explicité
         (par exemple : <code>"urn:ogc:def:<b>datum</b>:EPSG::6326"</code>).
       </p>
@@ -148,9 +148,8 @@
       <h2><a id="CRS.USAGE">USAGE.SRS</a></h2>
       <p>
         Retourne le domaine d’utilisation du système de référence identifié par le code donné.
-        L’objet est habituellement, mais pas obligatoirement, un Système de Références Spatiales (SRS).
         Le code du système est l’unique argument attendu par cette fonction.
-        Bien que cette fonction soit conçue pour retourner le domaine d’utilisation de systèmes de références spatiaux (SRS),
+        Bien que cette fonction soit conçue pour retourner le domaine d’utilisation de systèmes de références spatiaux (<abbr>SRS</abbr>),
         elle peut aussi retourner le domaine de d’autres types d’objets à la condition que leur type soit explicité
         (par exemple : <code>"urn:ogc:def:<b>datum</b>:EPSG::6326"</code>).
       </p>
@@ -169,7 +168,7 @@
       <p>
         Retourne une description textuelle de la région dans laquelle un objet est valide.
         Cette description comprend habituellement les noms des pays ou provinces pour lesquels le système a été conçu.
-        L’objet donné en argument est souvent, mais pas obligatoirement, un code de Système de Références Spatiales (SRS).
+        L’objet donné en argument est souvent, mais pas obligatoirement, un code de Système de Références Spatiales (<abbr>SRS</abbr>).
       </p>
       <table>
         <caption>Exemples</caption>
@@ -185,11 +184,12 @@
       <h2 id="GEOGRAPHIC.AREA">REGION.GEOGRAPHIQUE</h2>
       <p>
         Retourne sous forme de boîte englobante le domaine d’un objet identifié par le code donné.
-        La boîte est exprimée par une matrice 2×2 avec les latitudes dans la première colonne et les longitudes dans la seconde colonne.
-        Si le code donné identifie un système de référence spatial, alors cette fonction retourne les coordonnées géographiques
-        de la région dans laquelle le système est valide. La sortie contient les coordonnées géographiques
-        (toujours en degrés décimaux de <var>latitude</var>, <var>longitude</var>) du coin supérieur gauche sur la
-        première ligne, et du coin inférieur droit sur la seconde ligne.
+        Si le code donné en argument identifie un système de référence spatial,
+        alors cette fonction retourne les coordonnées géographiques de la région dans laquelle le système est valide.
+        La boîte est exprimée par une matrice 2×2 avec les latitudes dans la première colonne
+        et les longitudes dans la seconde colonne, toujours dans cet ordre et toujours en degrés décimaux.
+        La première ligne donne les coordonnées du coin supérieur gauche
+        et la seconde ligne donne celles du coin inférieur droit.
         En d’autres termes, les valeurs retournées par cette fonction se répartissent comme suit :
       </p>
       <table class="grid">
@@ -235,7 +235,7 @@
       </ul>
       <p>
         L’ordre et le nombre de colonnes dans la plage de coordonnées à transformer dépendent du système de référence source.
-        L’ordre et le nombre de colonnes des coordonnées transformer (la sortie de cette méthode) dépendent du système de référence destination.
+        L’ordre et le nombre de colonnes des coordonnées transformées (la sortie de cette méthode) dépendent du système de référence destination.
         Pour s’y retrouver, il est pratique d’utiliser la fonction <code><a href="#CRS.AXIS">AXE.SRS</a></code> pour le libellé des colonnes.
       </p><p>
         Toutes les transformations de coordonnées n’ont pas la même précision.
@@ -266,20 +266,22 @@
       <h2><a id="TRANSFORM.ACCURACY">PRECISION.TRANSFORM</a></h2>
       <p>
         Retourne une <strong>estimation</strong> de la précision des transformations de coordonnées entre deux systèmes de référence.
-        Cette fonction attend en argument les codes de deux systèmes de référence, habituellement ceux qui seront spécifiés à la fonction
+        Cette fonction attend en argument les codes de deux systèmes de référence, habituellement ceux qui sont spécifiés à la fonction
         <code><a href="#TRANSFORM.POINTS">TRANSFORM.POINTS</a></code>.
         Elle retourne une estimation de l’erreur induite par la transformation de coordonnées, toujours en mètres.
-        Il ne s’agit pas de l’erreur due aux éventuelles imprécisions des algorithmes de Apache <abbr>SIS</abbr>,
+        Il ne s’agit pas de l’erreur due aux limites de l’arithmétique en virgule flottante,
         mais plutôt de l’erreur due à la nature stochastique des paramètres dès qu’un changement de référentiel est impliqué
         (ces paramètres sont déterminés empiriquement à partir d’un ensemble de points exprimés selon les deux systèmes de références).
       </p><p>
         Des incertitudes sur les coordonnées calculées surviennent dès qu’il y a eu changement de référentiel,
-        auquel cas on parle de <cite>transformation de coordonnées</cite> selon la terminologie de la norme ISO 19111.
+        auquel cas on parle de <cite>transformation de coordonnées</cite> selon la terminologie de la norme
+        <abbr title="Organisation internationale de normalisation">ISO</abbr> 19111.
         Lorsque le calcul consiste par exemple à appliquer une projection cartographique sans changer de référentiel,
-        on parle alors de <cite>conversion de coordonnées</cite> (toujours selon la terminologie de la norme ISO).
+        on parle alors de <cite>conversion de coordonnées</cite> (toujours selon la terminologie de la norme <abbr>ISO</abbr>).
         Dans ce dernier cas, la fonction <code>TRANSFORM.ACCURACY</code> peut retourner 0,
-        ce qui signifie en fait que les changements de coordonnées se feront aux erreurs d’arrondissements près
-        et selon les limites de la précision des algorithmes de Apache <abbr>SIS</abbr>.
+        ce qui signifie l’opération a une précision infinie en théorie.
+        En pratique, Apache <abbr>SIS</abbr> est limitée par la précision des calculs à virgules flottantes
+        ainsi que par les approximations utilisées pour certaines formules non-linéaires.
         L’erreur ne sera donc <em>pas réellement</em> nulle, mais devrait être faible.
       </p>
     </section>
