@@ -16,7 +16,7 @@
 <link href="../book.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-<p style="margin-top: 30pt"><span style="font-size: 30pt; font-weight: 900">Introduction à Apache SIS®</span></p>
+<p style="margin-top: 30pt"><span style="font-size: 30pt; font-weight: 900">Introduction à Apache SIS™</span></p>
 <p style="margin-bottom: 20pt">(<a href="../en/developer-guide.html">English</a> | Français)</p>
 <p><i>Martin Desruisseaux</i><br/>
 <i>Christina Hough</i> (pour la traduction anglaise)</p>
@@ -31,7 +31,7 @@
 <li><a href="#GeoAPI">Des modèles conceptuels vers des interfaces Java: GeoAPI</a><ul>
 <li><a href="#GeoAPI-implementation">Implémentations fournies par Apache SIS</a></li></ul></li>
 <li><a href="#AboutBook">Conventions utilisées dans ce guide</a><ul>
-<li><a href="#CodeColors">Code de couleurs</a></li></ul></li></ul></li>
+<li><a href="#ChosenTerms">Choix des termes</a></li></ul></li></ul></li>
 <li><a href="#DataAccess">Accès aux données géospatiales</a></li>
 <li><a href="#Coverage">Couvertures de données (Coverages)</a></li>
 <li><a href="#Geometry">Géométries</a><ul>
@@ -121,7 +121,7 @@
 <li><a href="#GeoAPI">Des modèles conceptuels vers des interfaces Java: GeoAPI</a><ul>
 <li><a href="#GeoAPI-implementation">Implémentations fournies par Apache SIS</a></li></ul></li>
 <li><a href="#AboutBook">Conventions utilisées dans ce guide</a><ul>
-<li><a href="#CodeColors">Code de couleurs</a></li></ul></li></ul></nav>
+<li><a href="#ChosenTerms">Choix des termes</a></li></ul></li></ul></nav>
 <p>
 Une communauté d’informations géospatiales est un ensemble de systèmes ou d’individus capables d’échanger
 leurs données géospatiales grâce à des définitions et des standards communs ainsi qu’une reconnaissance réciproque.
@@ -156,7 +156,7 @@ Mais les efforts en ce sens sont plus récents et leurs intégrations dans les l
 sont incomplètes et pas toujours cohérentes.
 Au moment d’écrire ces lignes, aucun produit de notre connaissance n’implémente la totalité des spécifications.
 Mais on trouve de nombreuses implémentations couvrant un spectre plus ou moins large.
-La bibliothèque Apache <abbr>SIS</abbr>® décrite dans ce document en est une.
+La bibliothèque Apache <abbr>SIS</abbr>™ décrite dans ce document en est une.
 </p><p>
 Apache <abbr title="Spatial Information System">SIS</abbr> se caractérise par un effort soutenu de respect des standards.
 De manière générale, le respect des standards exige un effort plus grand que ce qu’aurait requis un développement isolé,
@@ -681,8 +681,8 @@ Les deux approches attendent les mêmes arguments (omis dans cet exemple).
 </div>
 <p>
 Dans la configuration par défaut de Apache SIS,
-utiliser <code class="GeoAPI">CRSFactory​.createXXX(…)</code> ou <code>new DefaultXXX(…)</code> revient presque au même
-excepté que les <code class="GeoAPI">Factory</code> peuvent retourner des instances existantes
+utiliser <code>FooFactory​.createXXX(…)</code> ou <code>new DefaultXXX(…)</code> revient presque au même
+excepté que les <code>FooFactory</code> peuvent retourner des instances existantes
 plutôt que de créer systématiquement de nouvelles instances,
 et que les exceptions en cas d’arguments invalides sont de types différents.
 Dans des configurations plus avancées, l’usage des <code class="GeoAPI">Factory</code> permet de
@@ -691,8 +691,8 @@ et de permettre une inversion de contrôle.
 </p><p>
 Le préfix « <code>General</code> » est parfois utilisé à la place de « <code>Default</code> »
 afin de signaler que des implémentations alternatives existent pour des cas spécifiques.
-Par exemple l’interface <code>Envelope</code> est implémentée par au moins deux classes de Apache SIS:
-<code class="SIS">GeneralEnvelope</code> et <code>Envelope2D</code>.
+Par exemple l’interface <code class="GeoAPI">Envelope</code> est implémentée par au moins deux classes de Apache SIS:
+<code class="SIS">GeneralEnvelope</code> et <code class="SIS">Envelope2D</code>.
 La première implémentation peut représenter des enveloppes de n’importe quelle dimension
 alors que la seconde implémentation est spécialisée pour les enveloppes à deux dimensions.
 </p><p>
@@ -712,27 +712,6 @@ lorsqu’il n’est vraiment pas possible de déterminer le sous-type exact.
 <header>
 <h2 id="AboutBook"><span class="section-number">1.3.</span> Conventions utilisées dans ce guide</h2>
 </header>
-<p>
-Les standards privilégient parfois l’application de certains termes génériques à des contextes particuliers,
-qui peuvent différer du contexte dans lequel d’autres communautés emploient ces termes.
-Par exemple les termes <i>domain</i> et <i>range</i> peuvent s’appliquer à des fonctions arbitraires
-pour désigner l’ensemble des valeurs possibles en entrés et en sorties respectivement.
-Mais les fonctions auxquelles certains standards <abbr title="International Organization for Standardization">ISO</abbr>
-les appliquent ne sont pas les mêmes que les fonctions auxquelles d’autres bibliothèques les appliquent.
-Par exemple <abbr>ISO</abbr> 19123 applique ces termes aux objets <code class="OGC">CV_Coverage</code>,
-vus comme des fonctions dont le domaine est l’ensemble des coordonnées spatio-temporelles de la couverture de données
-et le <i>range</i> l’ensemble des valeurs de la couverture.
-Mais la bibliothèque <abbr title="Network Common Data Form">netCDF</abbr> de l’<abbr title="University Corporation for Atmospheric Research">UCAR</abbr>
-applique plutôt ces termes à la fonction convertissant les indices de pixels (son domaine) vers les coordonnées spatio-temporelles (son <i>range</i>).
-Ainsi, un <i>range</i> de la bibliothèque de l’<abbr>UCAR</abbr> peut être le domaine de <abbr>ISO</abbr> 19123.
-</p><p>
-La bibliothèque Apache <abbr title="Spatial Information System">SIS</abbr> privilégie autant que possible l’utilisation des termes dans le sens des normes <abbr title="Open Geospatial Consortium">OGC</abbr> et <abbr>ISO</abbr>.
-Mais un soin particulier doit être apporté aux interfaces entre <abbr>SIS</abbr> et certaines bibliothèques externes, afin de réduire les risques de confusions.
-</p>
-
-
-
-<h3 id="CodeColors"><span class="section-number">1.3.1.</span> Code de couleurs</h3>
 <p>
 Les éléments définis dans un langage informatique, tels que les classes ou méthodes en Java
 ainsi que les éléments dans un fichier <abbr>XML</abbr>, apparaissent avec une police de caractères mono-espacée.
@@ -761,6 +740,27 @@ Exemple: <code>String</code>.
 <p>
 Des compléments d’information apparaissent dans des boîtes grises.
 Le lecteur peut ignorer ces boîtes grises sans que cela ne nuise à la compréhension du texte.
+</p>
+
+
+
+<h3 id="ChosenTerms"><span class="section-number">1.3.1.</span> Choix des termes</h3>
+<p>
+Les standards privilégient parfois l’application de certains termes génériques à des contextes particuliers,
+qui peuvent différer du contexte dans lequel d’autres communautés emploient ces termes.
+Par exemple les termes <i>domain</i> et <i>range</i> peuvent s’appliquer à des fonctions arbitraires
+pour désigner l’ensemble des valeurs possibles en entrés et en sorties respectivement.
+Mais les fonctions auxquelles certains standards <abbr title="International Organization for Standardization">ISO</abbr>
+les appliquent ne sont pas les mêmes que les fonctions auxquelles d’autres bibliothèques les appliquent.
+Par exemple <abbr>ISO</abbr> 19123 applique ces termes aux objets <code class="OGC">CV_Coverage</code>,
+vus comme des fonctions dont le domaine est l’ensemble des coordonnées spatio-temporelles de la couverture de données
+et le <i>range</i> l’ensemble des valeurs de la couverture.
+Mais la bibliothèque <abbr title="Network Common Data Form">netCDF</abbr> de l’<abbr title="University Corporation for Atmospheric Research">UCAR</abbr>
+applique plutôt ces termes à la fonction convertissant les indices de pixels (son domaine) vers les coordonnées spatio-temporelles (son <i>range</i>).
+Ainsi, un <i>range</i> de la bibliothèque de l’<abbr>UCAR</abbr> peut être le domaine de <abbr>ISO</abbr> 19123.
+</p><p>
+La bibliothèque Apache <abbr title="Spatial Information System">SIS</abbr> privilégie autant que possible l’utilisation des termes dans le sens des normes <abbr title="Open Geospatial Consortium">OGC</abbr> et <abbr>ISO</abbr>.
+Mais un soin particulier doit être apporté aux interfaces entre <abbr>SIS</abbr> et certaines bibliothèques externes, afin de réduire les risques de confusions.
 </p>
 </section>
 </section>
@@ -805,8 +805,8 @@ Cette approche, consistant à choisir un seul modèle de méta-données comme <e
 Par exemple Apache Tika utilise le standard <cite>Dublin Core</cite> comme modèle pivot,
 alors que Java Image I/O définit son propre modèle standard dans le paquet <code>javax.imageio.metadata</code>.
 Pour Apache <abbr>SIS</abbr>, le modèle pivot choisi est le standard international de méta-données en information géographique
-<cite><abbr title="International Organization for Standardization">ISO</abbr> 19115-1:2014 — principes de base</cite>, complété par
-<cite><abbr>ISO</abbr> 19115-2 — extensions pour l’acquisition et le traitement</cite>.
+<abbr title="International Organization for Standardization">ISO</abbr> 19115-1:2014 — <cite>principes de base</cite>, complété par
+<abbr>ISO</abbr> 19115-2 — <cite>extensions pour l’acquisition et le traitement</cite>.
 Ce modèle organise les méta-données dans une arborescence où chaque information est accessible via un chemin bien défini,
 peu importe l’origine de cette information.
 Par exemple si un format de données peut nous fournir les coordonnées géographiques d’une boîte englobant toutes les données,
