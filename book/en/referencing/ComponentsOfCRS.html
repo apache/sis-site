@@ -84,6 +84,21 @@
         This modification aimed to take in account the average state height above mean sea level.</p>
       </div>
 
+      <p>
+        The main properties that we can get from an ellipsoid are given below.
+        The semi-major axis length is sometime called <cite>equatorial radius</cite> and
+        the semi-minor axis length the <cite>polar radius</cite>.
+        The inverse flattening factor is apparently superfluous since it can be derived from other quantities,
+        but many ellipsoid definitions provide this factor instead of semi-minor axis length.
+      </p>
+
+<pre><code>Unit&lt;Length&gt; units = ellipsoid.<code class="GeoAPI">getAxisUnit()</code>;
+double semiMajor   = ellipsoid.<code class="GeoAPI">getSemiMajorAxis()</code>;          // In units of measurement given above.
+double semiMinor   = ellipsoid.<code class="GeoAPI">getSemiMinorAxis()</code>;          // In units of measurement given above.
+double ivf         = ellipsoid.<code class="GeoAPI">getInverseFlattening()</code>;      // = semiMajor / (semiMajor - semiMinor).
+</code></pre>
+
+
       <h3 id="GeodeticDatum">Geodetic datum</h3>
       <p>
         For defining a geodetic system in a country, a national authority selects an ellipsoid matching closely the country surface.
@@ -124,10 +139,54 @@
         Furthermore many borders were legally defined in legacy datums, for example <abbr>NAD27</abbr> in <abbr>USA</abbr>.
         Updating data to the new datum would imply transforming some straight lines or simple geometric shapes
         into more irregular shapes, if the shapes are large enough.
+      </p><p>
+        Contrarily to other kinds of objects introduced in this section,
+        there is not many useful information that we can get from a <code>Datum</code> instance except its name.
+        It is difficult to translate in programming language how a datum is related to the Earth.
+        Often, the most we can do is to consider that having two datums with different names implies that the same location on Earth
+        has different coordinate values when using those different datums, even if the ellipsoid is identical in both cases.
+        Coordinate transformations between datums require some kind of database.
       </p>
 
       <h3 id="CoordinateSystem">Coordinate systems</h3>
-      <p style="color: red">TODO</p>
+      <p>
+        A Coordinate System (<abbr>CS</abbr>) defines the set of axes that spans a given coordinate space.
+        Each axis defines an approximative direction (north, south, east, west, up, down, port, starboard, past, future, <i>etc.</i>),
+        units of measurement, minimal and maximal values, and what happen after reaching those extremum.
+        For example in longitude case, after +180° the coordinate values continue at −180°.
+        But such loops may also exist in time axis. For example in climatological data defining normal temperatures,
+        after December the data sequence restarts to January; those months are associated to no particular year.
+        Axes having such behavior are associated to the <code>RangeMeaning.WRAPAROUND</code> code.
+      </p><p>
+        Some properties that we can get from a coordinate system and its axes are shown below.
+        Axes are numbered from 0 to <code>cs.getDimension()-1</code> inclusive.
+      </p>
+
+<pre><code>CoordinateSystem cs = crs.getCoordinateSystem();
+CoordinateSystemAxis secondAxis = cs.getAxis(1);                 // For a geographic CRS, this is usually geodetic longitude.
+String        abbreviation = secondAxis.getAbbreviation();       // For a longitude axis, this is usually "λ", "L" or "lon".
+AxisDirection direction    = secondAxis.getDirection();          // For a longitude axis, this is usually EAST. Another occasional value is WEST.
+Unit&lt;?&gt;       units        = secondAxis.getUnit();               // For a longitude axis, this is usually Units.DEGREE.
+double        minimum      = secondAxis.getMinimumValue();       // For a longitude axis, this is usually −180°. Another common value is 0°.
+double        maximum      = secondAxis.getMaximumValue();       // For a longitude axis, this is usually +180°. Another common value is 360°.
+RangeMeaning  atEnds       = secondAxis.getRangeMeaning();       // For a longitude axis, this is WRAPAROUND.
+</code></pre>
+      <p>
+
+        In addition to axis definitions, another important coordinate system characteristic is their type
+        (<code>CartesianCS</code>, <code>SphericalCS</code>, <i>etc.</i>).
+        The <abbr>CS</abbr> type implies the set of mathematical rules for calculating geometric quantities like angles, distances and surfaces.
+        Usually the various <abbr>CS</abbr> subtypes do not define any new Java methods compared to the parent type,
+        but are nevertheless important for type safety.
+        For example many calculations or associations are legal only when all axes are perpendicular to each other.
+        In such case the coordinate system type is restricted to <code>CartesianCS</code> in method signatures.
+      </p><p>
+        Coordinate systems are mathematical concepts; they do <strong>not</strong> contain any information
+        about where on Earth is located the system origin.
+        Consequently coordinate systems alone are not sufficient for describing a location;
+        they must be combined with a <cite>datum</cite> (or <cite>reference frame</cite>).
+        Those combinations form the <cite>coordinate reference systems</cite> described in next sections.
+      </p>
 
       <h4 id="AxisOrder">Axis order</h4>
       <p>

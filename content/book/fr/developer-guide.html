@@ -956,9 +956,11 @@ elles peuvent être le nom de la propriété (<code>"foo"</code>), le nom de la 
 ou le nom utilisé dans les diagrammes <abbr title="Unified Modeling Language">UML</abbr> de la norme <abbr title="International Organization for Standardization">ISO</abbr> 19115
 (assez proche du nom de la propriété mais pas toujours identique).
 Les différences entre majuscules et minuscules sont ignorées si elles ne causent pas d’ambiguïtés.
+Pour plus d’information sur ce mécanisme de vues sur les méta-données, voir la Javadoc du paquet
+<a href="../../apidocs/org/apache/sis/metadata/package-summary.html#package.description"><code class="SIS">org.apache.sis.metadata</code></a>.
 </p><p>
-Parmi les éléments de méta-données présentés dans ce chapitre,
-il en est un qui fera l’objet d’un chapitre dédié: <code class="OGC">referenceSystemInfo</code>.
+Parmi les éléments de méta-données présentés dans ce chapitre, il en est un qui fera l’objet
+d’un <a href="#Referencing">chapitre dédié</a>: <code class="OGC">referenceSystemInfo</code>.
 Son contenu est essentiel pour positionner précisément les données.
 Sans lui, même les positions exprimées sous forme de latitudes et longitudes sont ambigües.
 Les systèmes de références ont plusieurs caractéristiques qui les différencient des autres méta-données:
@@ -976,6 +978,10 @@ et sont associés à un mécanisme permettant de transformer des coordonnées d�
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#DataAccess">Chapitre précédent</a></div><div class="next-chapter"><a href="#Geometry">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 <nav>Dans ce chapitre:<ul class="toc"/></nav>
+<p style="color:red; font-size:larger; font-weight:bold; text-align:center">
+Ce chapitre est une ébauche. Apache <abbr title="Spatial Information System">SIS</abbr> 0.8 n’offre pas encore de support des couvertures de données.
+L’ajout de ce support est en cours et sera disponible dans une version future.
+</p>
 <p>
 Les images, souvent nommées <i>rasters</i> en anglais, sont des cas particuliers
 d’une structure de données appelée <i>coverages</i>.
@@ -990,7 +996,7 @@ Un <i>coverage</i> est une fonction qui, à partir d’une coordonnée spécifi�
 retourne une valeur d’attribut. L’ensemble des valeurs pouvant être données en entrée est appelé le domaine
 (<i>domain</i> en anglais), alors que l’ensemble des valeurs pouvant être retournées est appelé <i>range</i> en anglais.
 Le domaine est souvent l’espace spatio-temporel couvert par les données,
-mais rien dans <abbr title="Spatial Information System">SIS</abbr> n’empêche les couvertures de s’étendre à d’autres dimensions.
+mais rien dans <abbr>SIS</abbr> n’empêche les couvertures de s’étendre à d’autres dimensions.
 Par exemple les études en thermodynamique utilisent souvent un espace dont les dimensions sont la température et la pression.
 </p>
 <div class="example"><p><b>Exemple:</b>
@@ -1422,6 +1428,21 @@ Par exemple au début du XX<sup>e</sup> siècle aux États-Unis, l’état du Mi
 sur l’ellipsoïde « Clarke 1866 » mais auquel la longueur des axes a été allongée de 800 pieds.
 Cette modification visait à tenir compte du niveau moyen de l’état au dessus du niveau de la mer.</p>
 </div>
+<p>
+Les principales propriétés que l’on peut obtenir d’un ellipsoïde sont montrées ci-dessous.
+La longueur de l’axe semi-majeur est parfois appelée <cite>rayon équatorial</cite>
+et la longueur de l’axe semi-mineur <cite>rayon polaire</cite>.
+Le facteur d’aplatissement inverse (<cite>inverse flattening factor</cite> en anglais)
+peut sembler superflu puisqu’il se calcule à partir des autres propriétés,
+mais plusieurs définitions d’ellipsoïdes fournissent ce facteur plutôt que la longueur de l’axe semi-mineur.
+</p>
+
+<pre><code>Unit&lt;Length&gt; units = ellipsoid.<code class="GeoAPI">getAxisUnit()</code>;
+<b>double</b> semiMajor   = ellipsoid.<code class="GeoAPI">getSemiMajorAxis()</code>;          <code class="comment">// In units of measurement given above.
+</code><b>double</b> semiMinor   = ellipsoid.<code class="GeoAPI">getSemiMinorAxis()</code>;          <code class="comment">// In units of measurement given above.
+</code><b>double</b> ivf         = ellipsoid.<code class="GeoAPI">getInverseFlattening()</code>;      <code class="comment">// = semiMajor / (semiMajor - semiMinor).
+</code></code></pre>
+
 
 <h3 id="GeodeticDatum"><span class="section-number">5.1.2.</span> Référentiel géodésique</h3>
 <p>
@@ -1464,10 +1485,54 @@ Ainsi il existe aujourd’hui au moins six versions de <abbr>WGS84</abbr>.
 En outre beaucoups de bordures ont été définies légalement dans des référentiels plus anciens, par exemple <abbr>NAD27</abbr> aux États-Unis.
 Mettre à jour dans un nouveau référentiel peut obliger à transformer des lignes droites ou des formes géométriques simples en des formes plus irrégulières
 si on ne veut pas que des parcelles de terrain changent de propriétaire.
+</p><p>
+Contrairement aux autres types d’objets introduits dans cette section,
+il n’y a pas beaucoup d’information utile que l’on peut extraire d’une instance de <code class="GeoAPI">Datum</code> à part son nom.
+Traduire en langage de programmation comment un référentiel est lié à la Terre est difficile.
+On se contente en général de considérer que si deux référentiels ont des noms différents,
+alors la même position sur la Terre aura des coordonnées différentes selon ces deux référentiels (même si l’ellipsoïde est identique)
+et la transformation des coordonnées d’un référentiel à l’autre nécessitera l’utilisation d’une base de données.
 </p>
 
 <h3 id="CoordinateSystem"><span class="section-number">5.1.3.</span> Systèmes de coordonnées</h3>
-<p style="color: red">TODO</p>
+<p>
+Un système de coordonnées (<abbr title="Coordinate System">CS</abbr>) définit l’ensemble des axes couvrant un espace de coordonnées.
+Chaque axe définit sa direction approximative (nord, sud, est, ouest, haut, bas, bâbord, tribord, passé, futur, <i>etc.</i>),
+ses unités de mesures, les valeurs minimales et maximales permises et ce qui se passe lorsqu’on atteint ces extremums.
+Par exemple dans le cas de la longitude, après +180° on revient à −180°.
+Mais de telles boucles peuvent aussi exister dans l’axe du temps.
+Par exemple dans des données climatologiques de la température normale,
+après le mois de décembre on revient au mois de janvier. Ces mois ne sont associés à aucune année en particulier.
+Les axes ayant ce genre de comportement sont reconnaissables à la propriété <code class="GeoAPI">RangeMeaning.WRAPAROUND</code>.
+</p><p>
+Les principales propriétés que l’on peut obtenir d’un système de coordonnées sont montrées ci-dessous.
+Les axes sont numérotés de 0 à <code>cs.getDimension()-1</code> inclusivement:
+</p>
+
+<pre><code><code class="GeoAPI">CoordinateSystem</code> cs = crs.getCoordinateSystem();
+<code class="GeoAPI">CoordinateSystemAxis</code> secondAxe = cs.getAxis(1);                 <code class="comment">// Pour un système géographique, c’est habituellement la longitude géodétique.
+</code>String        abbreviation = secondAxe.getAbbreviation();       <code class="comment">// Pour l’axe des longitudes, c’est habituellement "λ", "L" ou "lon".
+</code><code class="GeoAPI">AxisDirection</code> direction    = secondAxe.getDirection();          <code class="comment">// Pour l’axe des longitudes, c’est habituellement EAST. On trouve aussi parfois WEST.
+</code>Unit&lt;?&gt;       unités       = secondAxe.getUnit();               <code class="comment">// Pour l’axe des longitudes, c’est habituellement Units.DEGREE.
+</code><b>double</b>        minimum      = secondAxe.getMinimumValue();       <code class="comment">// Pour l’axe des longitudes, c’est habituellement −180°. Une autre valeur courante est 0°.
+</code><b>double</b>        maximum      = secondAxe.getMaximumValue();       <code class="comment">// Pour l’axe des longitudes, c’est habituellement +180°. Une autre valeur courante est 360°.
+</code><code class="GeoAPI">RangeMeaning</code>  auxBouts     = secondAxe.getRangeMeaning();       <code class="comment">// Pour l’axe des longitudes, c’est WRAPAROUND.
+</code></code></pre>
+<p>
+En plus de la définition des axes, une autre caractéristique importante des systèmes de coordonnées est leur type
+(<code class="GeoAPI">CartesianCS</code>, <code class="GeoAPI">SphericalCS</code>, <i>etc.</i>). Ce type implique un ensemble de règles mathématiques
+pour calculer des quantités géométriques telles que les angles, distances et surfaces.
+Les divers sous-types de <abbr>CS</abbr> ne définissent habituellement pas de nouvelle méthodes Java comparativement au type parent,
+mais sont néanmoins importants.
+Par exemple plusieurs calculs ou associations ne sont valides qu’avec des axes perpendiculaires entre eux.
+Dans ce cas, le système de coordonnées sera restreint au type <code class="GeoAPI">CartesianCS</code> dans la signature des méthodes.
+</p><p>
+Les systèmes de coordonnées sont des concepts mathématiques;
+ils ne contiennent aucune information indiquant où sur la Terre se trouve leur origine.
+En conséquence, les systèmes de coordonnées seuls ne permettent pas de décrire une position terrestre;
+ils doivent être combinés avec un <cite>référentiel</cite>.
+Ces combinaisons forment les <cite>systèmes de références des coordonnées</cite> décrits dans les sections suivantes.
+</p>
 
 <h4 id="AxisOrder"><span class="section-number">5.1.3.1.</span> Ordre des axes</h4>
 <p>
@@ -3300,7 +3365,7 @@ au gré des besoins.
 </p>
 <p>
 Le modèle conceptuel représenté par les interfaces est complexe. Mais cette complexité peut être réduite en combinant certaines interfaces.
-Par exemple plusieurs bibliothèques, même réputées, ne font pas la distinction entre <cite>Système de coordonnées</cite> (<abbr>CS</abbr>)
+Par exemple plusieurs bibliothèques, même réputées, ne font pas la distinction entre <cite>Système de coordonnées</cite> (<abbr title="Coordinate System">CS</abbr>)
 et <cite>Système de <u>référence</u> des coordonnées</cite> (<abbr title="Coordinate Reference System">CRS</abbr>).
 Un développeur qui lui non-plus ne souhaite pas faire cette distinction peut implémenter ces deux interfaces par la même classe.
 Il peut en résulter une implémentation dont la hiérarchie de classes est plus simple que la hiérarchie des interfaces de GeoAPI.

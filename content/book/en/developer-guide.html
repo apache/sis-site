@@ -911,9 +911,12 @@ keys may be property names (<code>"foo"</code>), method names (<code>"getFoo"</c
 or names used in <abbr title="International Organization for Standardization">ISO</abbr> 19115 standard <abbr title="Unified Modeling Language">UML</abbr> diagrams
 (similar to property names but not always identical).
 Differences in upper cases and lower cases are ignored when this tolerance does not introduce ambiguities.
+For more information on metadata views, see
+<a href="../../apidocs/org/apache/sis/metadata/package-summary.html#package.description"><code class="SIS">org.apache.sis.metadata</code></a>
+package javadoc.
 </p><p>
-Among metadata elements introduced in this chapter,
-there is one which will be the topic of a dedicated chapter: <code class="OGC">referenceSystemInfo</code>.
+Among metadata elements introduced in this chapter, there is one which will be the topic of
+a <a href="#Referencing">dedicated chapter</a>: <code class="OGC">referenceSystemInfo</code>.
 Its content is essential for accurate data positioning;
 without this element, even positions given by latitudes and longitudes are ambiguous.
 Reference systems have many characteristics that make them apart from other metadata:
@@ -931,6 +934,10 @@ performing coordinate transformation from one reference system to an other.
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#DataAccess">Previous chapter</a></div><div class="next-chapter"><a href="#Geometry">Next chapter</a> ➡</div></div></nav>
 </header>
 <nav>In this chapter:<ul class="toc"/></nav>
+<p style="color:red; font-size:larger; font-weight:bold; text-align:center">
+This chapter is a draft. Apache <abbr title="Spatial Information System">SIS</abbr> 0.8 does not yet provide coverage support.
+This support is work in progress and will be available in a future version.
+</p>
 <p>
 Images, or <i>rasters</i>, are a particular case of a data structure called a <i>coverage</i>.
 We could think of this as a “coverage of data.”
@@ -943,7 +950,7 @@ nicely summarizes the two essential elements of coverages:
 A coverage is a function which returns an attribute value from an entered coordinate.
 The set of values that may be entered is called the domain, while the set of values that may be returned is called the range.
 The domain is often the spatio-temporal area covered by the data,
-but nothing in <abbr title="Spatial Information System">SIS</abbr> prevents coverages from extending to other dimensions.
+but nothing in <abbr>SIS</abbr> prevents coverages from extending to other dimensions.
 For example, thermodynamic studies often use an area where the dimensions are temperature and pressure.
 </p>
 <div class="example"><p><b>Example:</b>
@@ -1373,6 +1380,21 @@ the Michigan state used an ellipsoid based on the “Clarke 1866” ellipsoid bu
 This modification aimed to take in account the average state height above mean sea level.</p>
 </div>
 
+<p>
+The main properties that we can get from an ellipsoid are given below.
+The semi-major axis length is sometime called <cite>equatorial radius</cite> and
+the semi-minor axis length the <cite>polar radius</cite>.
+The inverse flattening factor is apparently superfluous since it can be derived from other quantities,
+but many ellipsoid definitions provide this factor instead of semi-minor axis length.
+</p>
+
+<pre><code>Unit&lt;Length&gt; units = ellipsoid.<code class="GeoAPI">getAxisUnit()</code>;
+<b>double</b> semiMajor   = ellipsoid.<code class="GeoAPI">getSemiMajorAxis()</code>;          <code class="comment">// In units of measurement given above.
+</code><b>double</b> semiMinor   = ellipsoid.<code class="GeoAPI">getSemiMinorAxis()</code>;          <code class="comment">// In units of measurement given above.
+</code><b>double</b> ivf         = ellipsoid.<code class="GeoAPI">getInverseFlattening()</code>;      <code class="comment">// = semiMajor / (semiMajor - semiMinor).
+</code></code></pre>
+
+
 <h3 id="GeodeticDatum"><span class="section-number">5.1.2.</span> Geodetic datum</h3>
 <p>
 For defining a geodetic system in a country, a national authority selects an ellipsoid matching closely the country surface.
@@ -1413,10 +1435,54 @@ Today, at least six <abbr>WGS84</abbr> versions exist.
 Furthermore many borders were legally defined in legacy datums, for example <abbr>NAD27</abbr> in <abbr>USA</abbr>.
 Updating data to the new datum would imply transforming some straight lines or simple geometric shapes
 into more irregular shapes, if the shapes are large enough.
+</p><p>
+Contrarily to other kinds of objects introduced in this section,
+there is not many useful information that we can get from a <code class="GeoAPI">Datum</code> instance except its name.
+It is difficult to translate in programming language how a datum is related to the Earth.
+Often, the most we can do is to consider that having two datums with different names implies that the same location on Earth
+has different coordinate values when using those different datums, even if the ellipsoid is identical in both cases.
+Coordinate transformations between datums require some kind of database.
 </p>
 
 <h3 id="CoordinateSystem"><span class="section-number">5.1.3.</span> Coordinate systems</h3>
-<p style="color: red">TODO</p>
+<p>
+A Coordinate System (<abbr>CS</abbr>) defines the set of axes that spans a given coordinate space.
+Each axis defines an approximative direction (north, south, east, west, up, down, port, starboard, past, future, <i>etc.</i>),
+units of measurement, minimal and maximal values, and what happen after reaching those extremum.
+For example in longitude case, after +180° the coordinate values continue at −180°.
+But such loops may also exist in time axis. For example in climatological data defining normal temperatures,
+after December the data sequence restarts to January; those months are associated to no particular year.
+Axes having such behavior are associated to the <code class="GeoAPI">RangeMeaning.WRAPAROUND</code> code.
+</p><p>
+Some properties that we can get from a coordinate system and its axes are shown below.
+Axes are numbered from 0 to <code>cs.getDimension()-1</code> inclusive.
+</p>
+
+<pre><code><code class="GeoAPI">CoordinateSystem</code> cs = crs.getCoordinateSystem();
+<code class="GeoAPI">CoordinateSystemAxis</code> secondAxis = cs.getAxis(1);                 <code class="comment">// For a geographic CRS, this is usually geodetic longitude.
+</code>String        abbreviation = secondAxis.getAbbreviation();       <code class="comment">// For a longitude axis, this is usually "λ", "L" or "lon".
+</code><code class="GeoAPI">AxisDirection</code> direction    = secondAxis.getDirection();          <code class="comment">// For a longitude axis, this is usually EAST. Another occasional value is WEST.
+</code>Unit&lt;?&gt;       units        = secondAxis.getUnit();               <code class="comment">// For a longitude axis, this is usually Units.DEGREE.
+</code><b>double</b>        minimum      = secondAxis.getMinimumValue();       <code class="comment">// For a longitude axis, this is usually −180°. Another common value is 0°.
+</code><b>double</b>        maximum      = secondAxis.getMaximumValue();       <code class="comment">// For a longitude axis, this is usually +180°. Another common value is 360°.
+</code><code class="GeoAPI">RangeMeaning</code>  atEnds       = secondAxis.getRangeMeaning();       <code class="comment">// For a longitude axis, this is WRAPAROUND.
+</code></code></pre>
+<p>
+
+In addition to axis definitions, another important coordinate system characteristic is their type
+(<code class="GeoAPI">CartesianCS</code>, <code class="GeoAPI">SphericalCS</code>, <i>etc.</i>).
+The <abbr>CS</abbr> type implies the set of mathematical rules for calculating geometric quantities like angles, distances and surfaces.
+Usually the various <abbr>CS</abbr> subtypes do not define any new Java methods compared to the parent type,
+but are nevertheless important for type safety.
+For example many calculations or associations are legal only when all axes are perpendicular to each other.
+In such case the coordinate system type is restricted to <code class="GeoAPI">CartesianCS</code> in method signatures.
+</p><p>
+Coordinate systems are mathematical concepts; they do <strong>not</strong> contain any information
+about where on Earth is located the system origin.
+Consequently coordinate systems alone are not sufficient for describing a location;
+they must be combined with a <cite>datum</cite> (or <cite>reference frame</cite>).
+Those combinations form the <cite>coordinate reference systems</cite> described in next sections.
+</p>
 
 <h4 id="AxisOrder"><span class="section-number">5.1.3.1.</span> Axis order</h4>
 <p>

@@ -84,6 +84,21 @@
         sur l’ellipsoïde « Clarke 1866 » mais auquel la longueur des axes a été allongée de 800 pieds.
         Cette modification visait à tenir compte du niveau moyen de l’état au dessus du niveau de la mer.</p>
       </div>
+      <p>
+        Les principales propriétés que l’on peut obtenir d’un ellipsoïde sont montrées ci-dessous.
+        La longueur de l’axe semi-majeur est parfois appelée <cite>rayon équatorial</cite>
+        et la longueur de l’axe semi-mineur <cite>rayon polaire</cite>.
+        Le facteur d’aplatissement inverse (<cite>inverse flattening factor</cite> en anglais)
+        peut sembler superflu puisqu’il se calcule à partir des autres propriétés,
+        mais plusieurs définitions d’ellipsoïdes fournissent ce facteur plutôt que la longueur de l’axe semi-mineur.
+      </p>
+
+<pre><code>Unit&lt;Length&gt; units = ellipsoid.<code class="GeoAPI">getAxisUnit()</code>;
+double semiMajor   = ellipsoid.<code class="GeoAPI">getSemiMajorAxis()</code>;          // In units of measurement given above.
+double semiMinor   = ellipsoid.<code class="GeoAPI">getSemiMinorAxis()</code>;          // In units of measurement given above.
+double ivf         = ellipsoid.<code class="GeoAPI">getInverseFlattening()</code>;      // = semiMajor / (semiMajor - semiMinor).
+</code></pre>
+
 
       <h3 id="GeodeticDatum">Référentiel géodésique</h3>
       <p>
@@ -126,10 +141,54 @@
         En outre beaucoups de bordures ont été définies légalement dans des référentiels plus anciens, par exemple <abbr>NAD27</abbr> aux États-Unis.
         Mettre à jour dans un nouveau référentiel peut obliger à transformer des lignes droites ou des formes géométriques simples en des formes plus irrégulières
         si on ne veut pas que des parcelles de terrain changent de propriétaire.
+      </p><p>
+        Contrairement aux autres types d’objets introduits dans cette section,
+        il n’y a pas beaucoup d’information utile que l’on peut extraire d’une instance de <code>Datum</code> à part son nom.
+        Traduire en langage de programmation comment un référentiel est lié à la Terre est difficile.
+        On se contente en général de considérer que si deux référentiels ont des noms différents,
+        alors la même position sur la Terre aura des coordonnées différentes selon ces deux référentiels (même si l’ellipsoïde est identique)
+        et la transformation des coordonnées d’un référentiel à l’autre nécessitera l’utilisation d’une base de données.
       </p>
 
       <h3 id="CoordinateSystem">Systèmes de coordonnées</h3>
-      <p style="color: red">TODO</p>
+      <p>
+        Un système de coordonnées (<abbr title="Coordinate System">CS</abbr>) définit l’ensemble des axes couvrant un espace de coordonnées.
+        Chaque axe définit sa direction approximative (nord, sud, est, ouest, haut, bas, bâbord, tribord, passé, futur, <i>etc.</i>),
+        ses unités de mesures, les valeurs minimales et maximales permises et ce qui se passe lorsqu’on atteint ces extremums.
+        Par exemple dans le cas de la longitude, après +180° on revient à −180°.
+        Mais de telles boucles peuvent aussi exister dans l’axe du temps.
+        Par exemple dans des données climatologiques de la température normale,
+        après le mois de décembre on revient au mois de janvier. Ces mois ne sont associés à aucune année en particulier.
+        Les axes ayant ce genre de comportement sont reconnaissables à la propriété <code>RangeMeaning.WRAPAROUND</code>.
+      </p><p>
+        Les principales propriétés que l’on peut obtenir d’un système de coordonnées sont montrées ci-dessous.
+        Les axes sont numérotés de 0 à <code>cs.getDimension()-1</code> inclusivement:
+      </p>
+
+<pre><code>CoordinateSystem cs = crs.getCoordinateSystem();
+CoordinateSystemAxis secondAxe = cs.getAxis(1);                 // Pour un système géographique, c’est habituellement la longitude géodétique.
+String        abbreviation = secondAxe.getAbbreviation();       // Pour l’axe des longitudes, c’est habituellement "λ", "L" ou "lon".
+AxisDirection direction    = secondAxe.getDirection();          // Pour l’axe des longitudes, c’est habituellement EAST. On trouve aussi parfois WEST.
+Unit&lt;?&gt;       unités       = secondAxe.getUnit();               // Pour l’axe des longitudes, c’est habituellement Units.DEGREE.
+double        minimum      = secondAxe.getMinimumValue();       // Pour l’axe des longitudes, c’est habituellement −180°. Une autre valeur courante est 0°.
+double        maximum      = secondAxe.getMaximumValue();       // Pour l’axe des longitudes, c’est habituellement +180°. Une autre valeur courante est 360°.
+RangeMeaning  auxBouts     = secondAxe.getRangeMeaning();       // Pour l’axe des longitudes, c’est WRAPAROUND.
+</code></pre>
+      <p>
+        En plus de la définition des axes, une autre caractéristique importante des systèmes de coordonnées est leur type
+        (<code>CartesianCS</code>, <code>SphericalCS</code>, <i>etc.</i>). Ce type implique un ensemble de règles mathématiques
+        pour calculer des quantités géométriques telles que les angles, distances et surfaces.
+        Les divers sous-types de <abbr>CS</abbr> ne définissent habituellement pas de nouvelle méthodes Java comparativement au type parent,
+        mais sont néanmoins importants.
+        Par exemple plusieurs calculs ou associations ne sont valides qu’avec des axes perpendiculaires entre eux.
+        Dans ce cas, le système de coordonnées sera restreint au type <code>CartesianCS</code> dans la signature des méthodes.
+      </p><p>
+        Les systèmes de coordonnées sont des concepts mathématiques;
+        ils ne contiennent aucune information indiquant où sur la Terre se trouve leur origine.
+        En conséquence, les systèmes de coordonnées seuls ne permettent pas de décrire une position terrestre;
+        ils doivent être combinés avec un <cite>référentiel</cite>.
+        Ces combinaisons forment les <cite>systèmes de références des coordonnées</cite> décrits dans les sections suivantes.
+      </p>
 
       <h4 id="AxisOrder">Ordre des axes</h4>
       <p>
