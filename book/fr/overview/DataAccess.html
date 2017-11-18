@@ -82,12 +82,12 @@
         </p>
 
 <pre><code>try (DataStore ds = DataStores.open(new File("LC81230522014071LGN00_MTL.txt"))) {
-    Metadata md = ds.getMetadata();
+    Metadata md = ds.<code class="SIS">getMetadata()</code>;
 
     // Afin de simplifier cet exemple, nous omettons les vérifications de valeurs nulles ou de collections vides.
-    Identification   idInfo = md    .getIdentificationInfo().iterator().next();
-    Extent           extent = idInfo.getExtents()           .iterator().next();
-    GeographicExtent bbox   = extent.getGeographicElements().iterator().next();
+    Identification   idInfo = md    .<code class="GeoAPI">getIdentificationInfo()</code>.iterator().next();
+    Extent           extent = idInfo.<code class="GeoAPI">getExtents()</code>           .iterator().next();
+    GeographicExtent bbox   = extent.<code class="GeoAPI">getGeographicElements()</code>.iterator().next();
 
     System.out.println("La région géographique des données est:");
     System.out.println(bbox);
