@@ -32,7 +32,8 @@ Partially translated by <i>Christina Hough</i></p>
 <li><a href="#GeoAPI-implementation">Implementations provided by Apache SIS</a></li></ul></li>
 <li><a href="#AboutBook">Conventions used in this guide</a><ul>
 <li><a href="#ChosenTerms">Chosen terms</a></li></ul></li></ul></li>
-<li><a href="#DataAccess">Geospatial data access</a></li>
+<li><a href="#DataAccess">Geospatial data access</a><ul>
+<li><a href="#GetMetadataElement">Navigating in metadata elements</a></li></ul></li>
 <li><a href="#Coverage">Data coverages</a></li>
 <li><a href="#Geometry">Geometries</a><ul>
 <li><a href="#GeometryBase">Base classes</a><ul>
@@ -734,7 +735,8 @@ in order to reduce the risk of confusion.
 <h1 id="DataAccess"><span class="section-number">2.</span> Geospatial data access</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Standards">Previous chapter</a></div><div class="next-chapter"><a href="#Coverage">Next chapter</a> ➡</div></div></nav>
 </header>
-<nav>In this chapter:<ul class="toc"/></nav>
+<nav>In this chapter:<ul class="toc">
+<li><a href="#GetMetadataElement">Navigating in metadata elements</a></li></ul></nav>
 <p>
 It is possible to instantiate data structures programmatically in memory.
 But more often, data are read from files or other kinds of data stores.
@@ -824,7 +826,7 @@ For example the <code class="OGC">extent</code> node may contain many geographic
 <tr><td>  ├─Reference system info</td>              <td>Description of the spatial and temporal reference systems used in the dataset.</td></tr>
 <tr><td>  ├─Identification info</td>                <td>Basic information about the resource(s) to which the metadata applies.</td></tr>
 <tr><td>  │   ├─Citation</td>                       <td>Name by which the cited resource is known, reference dates, presentation form, <i>etc.</i></td></tr>
-<tr><td>  │   │   └─Cited responsible party</td>    <td>Role, name, contact and position information for individuals or organisations that are responsible for the resource.</td></tr>
+<tr><td>  │   │   └─Cited responsible party</td>    <td>Role, name, contact and position information for individuals or organizations that are responsible for the resource.</td></tr>
 <tr><td>  │   ├─Topic category</td>                 <td>Main theme(s) of the resource (e.g. farming, climatology, environment, economy, health, transportation, <i>etc.</i>).</td></tr>
 <tr><td>  │   ├─Descriptive keywords</td>           <td>Category keywords, their type, and reference source.</td></tr>
 <tr><td>  │   ├─Spatial resolution</td>             <td>Factor which provides a general understanding of the density of spatial data in the resource.</td></tr>
@@ -833,7 +835,7 @@ For example the <code class="OGC">extent</code> node may contain many geographic
 <tr><td>  │   ├─Resource format</td>                <td>Description of the format of the resource(s).</td></tr>
 <tr><td>  │   ├─Resource maintenance</td>           <td>Information about the frequency of resource updates, and the scope of those updates.</td></tr>
 <tr><td>  │   └─Resource constraints</td>           <td>Information about constraints (legal or security) which apply to the resource(s).</td></tr>
-<tr><td>  ├─Content info</td>                       <td>Information about the feature catalogue and describes the coverage and image data characteristics.</td></tr>
+<tr><td>  ├─Content info</td>                       <td>Information about the feature catalog and describes the coverage and image data characteristics.</td></tr>
 <tr><td>  │   ├─Imaging condition</td>              <td>Conditions which affected the image (e.g. blurred image, fog, semi darkness, <i>etc.</i>).</td></tr>
 <tr><td>  │   ├─Cloud cover percentage</td>         <td>Area of the dataset obscured by clouds, expressed as a percentage of the spatial extent.</td></tr>
 <tr><td>  │   └─Attribute group</td>                <td>Information on attribute groups of the resource.</td></tr>
@@ -856,6 +858,70 @@ For example the <code class="OGC">extent</code> node may contain many geographic
 <tr><td>      ├─Source</td>                         <td>Information about the source data used in creating the data specified by the scope.</td></tr>
 <tr><td>      └─Process step</td>                   <td>Information about events in the life of a resource specified by the scope.</td></tr>
 </table>
+
+
+
+<section>
+<header>
+<h2 id="GetMetadataElement"><span class="section-number">2.1.</span> Navigating in metadata elements</h2>
+</header>
+<p>
+Methods like <code class="GeoAPI">getExtents()</code> are efficient when looking for a particular element known at compile-time.
+But those elements may be deep in the tree structure and may require traversal of many optional elements and collection members,
+which is sometime tedious. For a few frequently-used elements, some convenience methods are provided.
+Those conveniences are generally defined as static methods in classes having a name in plural form.
+For example the <code class="SIS">Extents</code> class defines static methods for fetching more easily some information from <code class="GeoAPI">Extent</code> metadata elements.
+For example the following method navigates through different branches where North, South, East and West data bounds may be found:
+</p>
+<pre><code><code class="GeoAPI">GeographicBoundingBox</code> bbox = <code class="SIS">Extents</code>.getGeographicBoundingBox(extent);</code></pre>
+<p>
+Those conveniences are defined as static methods in order to allow their use with different metadata implementations.
+Even in Apache <abbr title="Spatial Information System">SIS</abbr> library, the <code class="SIS">DefaultExtent</code> class is not the only implementation of <code class="GeoAPI">Extent</code> interface.
+There is also implementations fetching information on-demand in a database, or implementations for particular data formats.
+Some other classes providing static methods for specific interfaces are
+<code class="SIS">Citations</code>, <code class="SIS">Envelopes</code>, <code class="SIS">Matrices</code> and <code class="SIS">MathTransforms</code>.
+</p><p>
+Those static methods explore fragments of metadata tree in search for requested information,
+but the searches are still targeted to elements whose types and at least part of their paths are known at compile-time.
+Sometime the element to search is known only at runtime, or sometime there is a need to iterate over all elements.
+In such cases, one can view the metadata as a <code>java.util.Map</code> like below:
+</p>
+
+<pre><code>Map&lt;String,Object&gt; elements = MetadataStandard.ISO_19115.asValueMap(
+        metadata,                           <code class="comment">// Any instance from the org.opengis.metadata package or a sub-package.
+</code>        <b>null</b>,                               <code class="comment">// Used for resolving ambiguities. We can ignore for this example.
+</code>        KeyNamePolicy.JAVABEANS_PROPERTY,   <code class="comment">// Keys in the map will be getter method names without "get" prefix.
+</code>        ValueExistencePolicy.NON_EMPTY);    <code class="comment">// Entries with null or empty values will be omitted.
+</code><code class="comment">/*
+ * Print the names of all root metadata elements having a value.
+ * This loop does not iterate recursively in children.
+ */</code>
+<b>for</b> (String name : elements.keySet()) {
+    System.out.println(name);
+}</code></pre>
+
+<p>
+The <code>Map</code> object returned by <code class="SIS">asValueMap(…)</code> is live:
+any change in the <code>metadata</code> instance will be immediately reflected in the view.
+Actually, each <code>map.get("foo")</code> call is forwarded to the corresponding <code>metadata​.getFoo()</code> method.
+Conversely, any <code>map.put("foo", …)</code> or <code>map.remove("foo")</code> operation applied on the view
+will be forwarded to the corresponding <code>metadata​.setFoo(…)</code> method, if that method exists.
+The view is lenient regarding keys given in arguments to <code>Map</code> methods:
+keys may be property names (<code>"foo"</code>), method names (<code>"getFoo"</code>),
+or names used in <abbr title="International Organization for Standardization">ISO</abbr> 19115 standard <abbr title="Unified Modeling Language">UML</abbr> diagrams
+(similar to property names but not always identical).
+Differences in upper cases and lower cases are ignored when this tolerance does not introduce ambiguities.
+</p><p>
+Among metadata elements introduced in this chapter,
+there is one which will be the topic of a dedicated chapter: <code class="OGC">referenceSystemInfo</code>.
+Its content is essential for accurate data positioning;
+without this element, even positions given by latitudes and longitudes are ambiguous.
+Reference systems have many characteristics that make them apart from other metadata:
+they are immutable, can not be handled by <code class="SIS">MetadataStandard.ISO_19115​.asValueMap(…)</code>,
+have a particular text representation and are associated to an engine
+performing coordinate transformation from one reference system to an other.
+</p>
+</section>
 </section>
 
 
@@ -1789,7 +1855,7 @@ Example:</p>
 <pre><code>@Override
 <b>public</b> <code class="GeoAPI">Matrix</code> derivative(<code class="GeoAPI">DirectPosition</code> p) <b>throws</b> <code class="GeoAPI">TransformException</code> {
     <code class="GeoAPI">Matrix</code> jac = inverse().derivative(transform(p));
-    <b>return</b> Matrices.inverse(jac);
+    <b>return</b> <code class="SIS">Matrices</code>.inverse(jac);
 }</code></pre>
 
 

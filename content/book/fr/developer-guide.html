@@ -32,7 +32,8 @@
 <li><a href="#GeoAPI-implementation">Implémentations fournies par Apache SIS</a></li></ul></li>
 <li><a href="#AboutBook">Conventions utilisées dans ce guide</a><ul>
 <li><a href="#ChosenTerms">Choix des termes</a></li></ul></li></ul></li>
-<li><a href="#DataAccess">Accès aux données géospatiales</a></li>
+<li><a href="#DataAccess">Accès aux données géospatiales</a><ul>
+<li><a href="#GetMetadataElement">Parcourir les méta-données</a></li></ul></li>
 <li><a href="#Coverage">Couvertures de données (Coverages)</a></li>
 <li><a href="#Geometry">Géométries</a><ul>
 <li><a href="#GeometryBase">Classes de base</a><ul>
@@ -771,7 +772,8 @@ Mais un soin particulier doit être apporté aux interfaces entre <abbr>SIS</abb
 <h1 id="DataAccess"><span class="section-number">2.</span> Accès aux données géospatiales</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Standards">Chapitre précédent</a></div><div class="next-chapter"><a href="#Coverage">Chapitre suivant</a> ➡</div></div></nav>
 </header>
-<nav>Dans ce chapitre:<ul class="toc"/></nav>
+<nav>Dans ce chapitre:<ul class="toc">
+<li><a href="#GetMetadataElement">Parcourir les méta-données</a></li></ul></nav>
 <p>
 Bien qu’il soit possible de créer des structures de données programmatiquement en mémoire,
 le plus souvent les données sont lues à partir de fichiers ou autres types d’entrepôts.
@@ -895,6 +897,76 @@ Par exemple il peut y avoir plusieurs zones géographiques décrites sous le noe
 <tr><td>      ├─Source</td>                         <td>Information sur les données sources utilisées pour créer les données décrites par les méta-données.</td></tr>
 <tr><td>      └─Process step</td>                   <td>Historique des événements survenues dans la productions des données.</td></tr>
 </table>
+
+
+
+<section>
+<header>
+<h2 id="GetMetadataElement"><span class="section-number">2.1.</span> Parcourir les méta-données</h2>
+</header>
+<p>
+L’utilisation de méthodes telles que <code class="GeoAPI">getExtents()</code>
+est efficace lorsque l’on cherche un élément bien précis, connu au moment de la compilation.
+Mais le fait que l’élément recherché peut être assez loin dans l’arborescence et
+que beaucoup d’éléments soient optionnels ou membres de collections rend parfois le parcourt laborieux.
+Pour quelques éléments fréquemment demandés, des méthodes de commodité existent.
+Elles sont généralement définies sous forme de méthodes statiques dans une classe dont le nom est au pluriel.
+Par exemple la classe <code class="SIS">Extents</code> définie des méthodes statiques pour extraire plus facilement
+certaines informations à partir de l’élément de méta-donnée <code class="GeoAPI">Extent</code>.
+Ainsi la ligne suivante prendra en charge le travail un peu fastidieux de parcourir les différentes branches possible
+pouvant aboutir aux limites nord, sud, est et ouest de la donnée:
+</p>
+<pre><code><code class="GeoAPI">GeographicBoundingBox</code> bbox = <code class="SIS">Extents</code>.getGeographicBoundingBox(extent);</code></pre>
+<p>
+Ces méthodes de commodité sont définies sous forme de méthodes statiques
+afin de permettre leur utilisation avec différentes implémentations des éléments de méta-données.
+Même dans Apache <abbr title="Spatial Information System">SIS</abbr>, la classe <code class="SIS">DefaultExtent</code> n’est pas la seule implémentation de l’interface <code class="GeoAPI">Extent</code>.
+Il y a aussi d’autres implémentations qui puiseront leur information à la demande dans une base de données,
+ou des implémentations conçues spécifiquement pour des formats de données particuliers.
+D’autres exemples de classes fournissant des méthodes statiques dédiées à une interface sont
+<code class="SIS">Citations</code>, <code class="SIS">Envelopes</code>, <code class="SIS">Matrices</code> et <code class="SIS">MathTransforms</code>.
+</p><p>
+Ces méthodes statiques parcourent une plus grande portion de l’arbre de méta-données afin de trouver ou dériver l’élément demandé,
+mais ce dernier reste un élément dont le type et au moins une partie du chemin sont connus au moment de la compilation.
+Il arrive que l’on veuille plutôt accéder à des éléments qui ne sont connus qu’au moment de l’exécution, ou encore parcourir tous les éléments.
+Dans ces cas, on peut utiliser une vue sous forme de <code>java.util.Map</code> comme dans l’exemple suivant:
+</p>
+
+<pre><code>Map&lt;String,Object&gt; elements = MetadataStandard.ISO_19115.asValueMap(
+        metadata,                           <code class="comment">// N’importe quelle instance du paquet org.opengis.metadata ou d’un sous-paquet.
+</code>        <b>null</b>,                               <code class="comment">// Utilisé pour résoudre des ambiguïtés. Peut être ignoré pour cet exemple.
+</code>        KeyNamePolicy.JAVABEANS_PROPERTY,   <code class="comment">// Les clés seront les noms des méthodes mais sans le prefix « get ».
+</code>        ValueExistencePolicy.NON_EMPTY);    <code class="comment">// Les entrés dont la valeur est nulle ou vide seront omises.
+</code><code class="comment">/*
+ * Affiche les noms de tous les éléments à la racine de la méta-données qui ont une valeur.
+ * Cette bouche ne va pas descendre dans les enfants (pas de récursivité).
+ */</code>
+<b>for</b> (String name : elements.keySet()) {
+    System.out.println(name);
+}</code></pre>
+
+<p>
+Le <code>Map</code> retourné par <code class="SIS">asValueMap(…)</code> est une vue « vivante »:
+tout changement dans l’instance <code>metadata</code> se reflétera immédiatement dans la vue.
+En fait, chaque appel à <code>map.get("foo")</code> se traduit par un appel à la méthode <code>metadata​.getFoo()</code> correspondante.
+Réciproquement, toute opération <code>map.put("foo", …)</code> ou <code>map.remove("foo")</code> effectuée sur la vue
+sera traduite en appel à la méthode <code>metadata​.setFoo(…)</code> correspondante si cette dernière existe.
+Cette vue est assez souple sur les clés données en argument aux méthodes de <code>Map</code>:
+elles peuvent être le nom de la propriété (<code>"foo"</code>), le nom de la méthode (<code>"getFoo"</code>),
+ou le nom utilisé dans les diagrammes <abbr title="Unified Modeling Language">UML</abbr> de la norme <abbr title="International Organization for Standardization">ISO</abbr> 19115
+(assez proche du nom de la propriété mais pas toujours identique).
+Les différences entre majuscules et minuscules sont ignorées si elles ne causent pas d’ambiguïtés.
+</p><p>
+Parmi les éléments de méta-données présentés dans ce chapitre,
+il en est un qui fera l’objet d’un chapitre dédié: <code class="OGC">referenceSystemInfo</code>.
+Son contenu est essentiel pour positionner précisément les données.
+Sans lui, même les positions exprimées sous forme de latitudes et longitudes sont ambigües.
+Les systèmes de références ont plusieurs caractéristiques qui les différencient des autres méta-données:
+ils sont immuables, ne peuvent pas être parcourus par <code class="SIS">MetadataStandard.ISO_19115​.asValueMap(…)</code>,
+ont une représentation sous forme de texte particulière,
+et sont associés à un mécanisme permettant de transformer des coordonnées d’un référentiel vers un autre.
+</p>
+</section>
 </section>
 
 
@@ -1939,7 +2011,7 @@ Une fonction inverse peut donc implémenter le calcul de sa dérivée comme suit
 <pre><code>@Override
 <b>public</b> <code class="GeoAPI">Matrix</code> derivative(<code class="GeoAPI">DirectPosition</code> p) <b>throws</b> <code class="GeoAPI">TransformException</code> {
     <code class="GeoAPI">Matrix</code> jac = inverse().derivative(transform(p));
-    <b>return</b> Matrices.inverse(jac);
+    <b>return</b> <code class="SIS">Matrices</code>.inverse(jac);
 }</code></pre>
 
 </section>
@@ -2547,7 +2619,7 @@ Les <abbr title="Application Programming Interface">API</abbr> définit par <abb
 <code class="GeoAPI">InternationalString</code> là où une valeur de type <code>String</code> serait susceptible d’être localisée.
 Cette approche permet de différer le processus d’internationalisation au moment d’obtenir
 une chaîne de caractères plutôt qu’au moment de construire l’objet qui les contient.
-C’est particulièrement utile pour les classes immutables qui serviront à créer des instances uniques
+C’est particulièrement utile pour les classes immuables qui serviront à créer des instances uniques
 indépendamment des conventions locales.
 </p>
 <div class="example"><p><b>Exemple:</b>

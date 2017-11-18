@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>GetMetadataElement</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="../../../content/book/book.css"/>
+  </head>
+  <body>
+    <!--
+      Content below this point is copied in "../../content/book/en/developer-guide.html"
+      by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
+    -->
+    <section>
+      <header>
+        <h2 id="GetMetadataElement">Navigating in metadata elements</h2>
+      </header>
+      <p>
+        Methods like <code class="GeoAPI">getExtents()</code> are efficient when looking for a particular element known at compile-time.
+        But those elements may be deep in the tree structure and may require traversal of many optional elements and collection members,
+        which is sometime tedious. For a few frequently-used elements, some convenience methods are provided.
+        Those conveniences are generally defined as static methods in classes having a name in plural form.
+        For example the <code>Extents</code> class defines static methods for fetching more easily some information from <code>Extent</code> metadata elements.
+        For example the following method navigates through different branches where North, South, East and West data bounds may be found:
+      </p>
+      <pre><code>GeographicBoundingBox bbox = Extents.getGeographicBoundingBox(extent);</code></pre>
+      <p>
+        Those conveniences are defined as static methods in order to allow their use with different metadata implementations.
+        Even in Apache <abbr>SIS</abbr> library, the <code>DefaultExtent</code> class is not the only implementation of <code>Extent</code> interface.
+        There is also implementations fetching information on-demand in a database, or implementations for particular data formats.
+        Some other classes providing static methods for specific interfaces are
+        <code>Citations</code>, <code>Envelopes</code>, <code>Matrices</code> and <code>MathTransforms</code>.
+      </p><p>
+        Those static methods explore fragments of metadata tree in search for requested information,
+        but the searches are still targeted to elements whose types and at least part of their paths are known at compile-time.
+        Sometime the element to search is known only at runtime, or sometime there is a need to iterate over all elements.
+        In such cases, one can view the metadata as a <code>java.util.Map</code> like below:
+      </p>
+
+<pre><code>Map&lt;String,Object&gt; elements = MetadataStandard.ISO_19115.asValueMap(
+        metadata,                           // Any instance from the org.opengis.metadata package or a sub-package.
+        null,                               // Used for resolving ambiguities. We can ignore for this example.
+        KeyNamePolicy.JAVABEANS_PROPERTY,   // Keys in the map will be getter method names without "get" prefix.
+        ValueExistencePolicy.NON_EMPTY);    // Entries with null or empty values will be omitted.
+/*
+ * Print the names of all root metadata elements having a value.
+ * This loop does not iterate recursively in children.
+ */
+for (String name : elements.keySet()) {
+    System.out.println(name);
+}</code></pre>
+
+      <p>
+        The <code>Map</code> object returned by <code class="SIS">asValueMap(…)</code> is live:
+        any change in the <code>metadata</code> instance will be immediately reflected in the view.
+        Actually, each <code>map.get("foo")</code> call is forwarded to the corresponding <code>metadata.getFoo()</code> method.
+        Conversely, any <code>map.put("foo", …)</code> or <code>map.remove("foo")</code> operation applied on the view
+        will be forwarded to the corresponding <code>metadata.setFoo(…)</code> method, if that method exists.
+        The view is lenient regarding keys given in arguments to <code>Map</code> methods:
+        keys may be property names (<code>"foo"</code>), method names (<code>"getFoo"</code>),
+        or names used in <abbr>ISO</abbr> 19115 standard <abbr>UML</abbr> diagrams
+        (similar to property names but not always identical).
+        Differences in upper cases and lower cases are ignored when this tolerance does not introduce ambiguities.
+      </p><p>
+        Among metadata elements introduced in this chapter,
+        there is one which will be the topic of a dedicated chapter: <code class="OGC">referenceSystemInfo</code>.
+        Its content is essential for accurate data positioning;
+        without this element, even positions given by latitudes and longitudes are ambiguous.
+        Reference systems have many characteristics that make them apart from other metadata:
+        they are immutable, can not be handled by <code class="SIS">MetadataStandard.ISO_19115.asValueMap(…)</code>,
+        have a particular text representation and are associated to an engine
+        performing coordinate transformation from one reference system to an other.
+      </p>
+    </section>
+  </body>
+</html>
