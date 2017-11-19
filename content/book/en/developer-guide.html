@@ -16,15 +16,8 @@
 <link href="../book.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-<p style="margin-top: 30pt"><span style="font-size: 30pt; font-weight: 900">Introduction to Apache SIS™</span></p>
-<p style="margin-bottom: 20pt">(English | <a href="../fr/developer-guide.html">Français</a>)</p>
-<p><i>Martin Desruisseaux</i><br/>
-Partially translated by <i>Christina Hough</i></p>
-<p>This work is licensed under the Apache 2 license.</p>
-<hr/>
-
-<p><b style="font-size: 20pt">Table of content</b></p>
-<nav>
+<nav class="toc">
+<p>Table of content</p>
 <ul class="toc">
 <li><a href="#Standards">Standards and norms</a><ul>
 <li><a href="#ConceptualModels">Sources of conceptual models used by Apache SIS</a></li>
@@ -101,6 +94,12 @@ Partially translated by <i>Christina Hough</i></p>
 </nav>
 
 <main>
+<p style="margin-top: 30pt"><span style="font-size: 30pt; font-weight: 900">Introduction to Apache SIS™</span></p>
+<p style="margin-bottom: 20pt">(English | <a href="../fr/developer-guide.html">Français</a>)</p>
+<p><i>Martin Desruisseaux</i><br/>
+Partially translated by <i>Christina Hough</i></p>
+<p>This work is licensed under the Apache 2 license.</p>
+
 
 
 
@@ -118,7 +117,7 @@ Partially translated by <i>Christina Hough</i></p>
 <h1 id="Standards"><span class="section-number">1.</span> Standards and norms</h1>
 <nav><div class="chapter-links"><div class="next-chapter"><a href="#DataAccess">Next chapter</a> ➡</div></div></nav>
 </header>
-<nav>In this chapter:<ul class="toc">
+<nav><p>In this chapter:</p><ul class="toc">
 <li><a href="#ConceptualModels">Sources of conceptual models used by Apache SIS</a></li>
 <li><a href="#GeoAPI">From conceptual models to Java interfaces: GeoAPI</a><ul>
 <li><a href="#GeoAPI-implementation">Implementations provided by Apache SIS</a></li></ul></li>
@@ -736,7 +735,7 @@ in order to reduce the risk of confusion.
 <h1 id="DataAccess"><span class="section-number">2.</span> Geospatial data access</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Standards">Previous chapter</a></div><div class="next-chapter"><a href="#Coverage">Next chapter</a> ➡</div></div></nav>
 </header>
-<nav>In this chapter:<ul class="toc">
+<nav><p>In this chapter:</p><ul class="toc">
 <li><a href="#GetMetadataElement">Navigating in metadata elements</a></li></ul></nav>
 <p>
 It is possible to instantiate data structures programmatically in memory.
@@ -934,7 +933,7 @@ performing coordinate transformation from one reference system to an other.
 <h1 id="Coverage"><span class="section-number">3.</span> Data coverages</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#DataAccess">Previous chapter</a></div><div class="next-chapter"><a href="#Geometry">Next chapter</a> ➡</div></div></nav>
 </header>
-<nav>In this chapter:<ul class="toc"/></nav>
+<nav><p>In this chapter:</p><ul class="toc"/></nav>
 <p style="color:red; font-size:larger; font-weight:bold; text-align:center">
 This chapter is a draft. Apache <abbr title="Spatial Information System">SIS</abbr> 0.8 does not yet provide coverage support.
 This support is work in progress and will be available in a future version.
@@ -1011,7 +1010,7 @@ as well as other information such as <i>transfer function</i> (described later).
 <h1 id="Geometry"><span class="section-number">4.</span> Geometries</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Coverage">Previous chapter</a></div><div class="next-chapter"><a href="#Referencing">Next chapter</a> ➡</div></div></nav>
 </header>
-<nav>In this chapter:<ul class="toc">
+<nav><p>In this chapter:</p><ul class="toc">
 <li><a href="#GeometryBase">Base classes</a><ul>
 <li><a href="#DirectPosition">Direct points and positions</a></li>
 <li><a href="#Envelope">Envelopes</a><ul>
@@ -1201,7 +1200,7 @@ then it is guaranteed that the envelope is empty.
 <h1 id="Referencing"><span class="section-number">5.</span> Spatial reference systems</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Geometry">Previous chapter</a></div><div class="next-chapter"><a href="#Utilities">Next chapter</a> ➡</div></div></nav>
 </header>
-<nav>In this chapter:<ul class="toc">
+<nav><p>In this chapter:</p><ul class="toc">
 <li><a href="#ComponentsOfCRS">Components of a reference system by coordinates</a><ul>
 <li><a href="#Ellipsoid">Geoid et ellipsoid</a></li>
 <li><a href="#GeodeticDatum">Geodetic datum</a></li>
@@ -1460,13 +1459,13 @@ Axes are numbered from 0 to <code>cs.getDimension()-1</code> inclusive.
 </p>
 
 <pre><code><code class="GeoAPI">CoordinateSystem</code> cs = crs.getCoordinateSystem();
-<code class="GeoAPI">CoordinateSystemAxis</code> secondAxis = cs.getAxis(1);                 <code class="comment">// For a geographic CRS, this is usually geodetic longitude.</code>
-String        abbreviation = secondAxis.getAbbreviation();       <code class="comment">// For a longitude axis, this is usually "λ", "L" or "lon".</code>
-<code class="GeoAPI">AxisDirection</code> direction    = secondAxis.getDirection();          <code class="comment">// For a longitude axis, this is usually EAST. Another occasional value is WEST.</code>
-Unit&lt;?&gt;       units        = secondAxis.getUnit();               <code class="comment">// For a longitude axis, this is usually Units.DEGREE.</code>
-<b>double</b>        minimum      = secondAxis.getMinimumValue();       <code class="comment">// For a longitude axis, this is usually −180°. Another common value is 0°.</code>
-<b>double</b>        maximum      = secondAxis.getMaximumValue();       <code class="comment">// For a longitude axis, this is usually +180°. Another common value is 360°.</code>
-<code class="GeoAPI">RangeMeaning</code>  atEnds       = secondAxis.getRangeMeaning();       <code class="comment">// For a longitude axis, this is WRAPAROUND.</code>
+<code class="GeoAPI">CoordinateSystemAxis</code> secondAxis = cs.getAxis(1);            <code class="comment">// For a geographic CRS, this is usually geodetic longitude.</code>
+String        abbreviation = secondAxis.getAbbreviation();  <code class="comment">// For a longitude axis, this is usually "λ", "L" or "lon".</code>
+<code class="GeoAPI">AxisDirection</code> direction    = secondAxis.getDirection();     <code class="comment">// For a longitude axis, this is usually EAST. Another occasional value is WEST.</code>
+Unit&lt;?&gt;       units        = secondAxis.getUnit();          <code class="comment">// For a longitude axis, this is usually Units.DEGREE.</code>
+<b>double</b>        minimum      = secondAxis.getMinimumValue();  <code class="comment">// For a longitude axis, this is usually −180°. Another common value is 0°.</code>
+<b>double</b>        maximum      = secondAxis.getMaximumValue();  <code class="comment">// For a longitude axis, this is usually +180°. Another common value is 360°.</code>
+<code class="GeoAPI">RangeMeaning</code>  atEnds       = secondAxis.getRangeMeaning();  <code class="comment">// For a longitude axis, this is WRAPAROUND.</code>
 </code></pre>
 <p>
 
@@ -2502,7 +2501,7 @@ But when a <code class="OGC">nilReason</code> is present, the <abbr>SIS</abbr> i
 <h1 id="Utilities"><span class="section-number">6.</span> Utility classes and methods</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Referencing">Previous chapter</a></div><div class="next-chapter"><a href="#GeoAPI-details">Next chapter</a> ➡</div></div></nav>
 </header>
-<nav>In this chapter:<ul class="toc">
+<nav><p>In this chapter:</p><ul class="toc">
 <li><a href="#ComparisonModes">Comparison modes of objects</a></li>
 <li><a href="#ObjectConverters">Object converters</a></li>
 <li><a href="#Internationalization">Internationalization</a><ul>
@@ -2880,7 +2879,7 @@ or the use of <code>isWhitespace(…)</code> in nearly all the rest of the <abbr
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Utilities">Previous chapter</a></div><div class="next-chapter"><a href="#Tests">Next chapter</a> ➡</div></div></nav>
 </header>
 
-<nav>In this chapter:<ul class="toc">
+<nav><p>In this chapter:</p><ul class="toc">
 <li><a href="#GeoAPI-modules">GeoAPI modules</a></li>
 <li><a href="#SpecificationToInterfaces">From OGC specifications to Java interfaces</a><ul>
 <li><a href="#UML-annotation">Explicit mapping given by @UML annotations</a></li>
@@ -3490,7 +3489,7 @@ while retaining the ability to switch easily to another library if desired.
 <h1 id="Tests"><span class="section-number">8.</span> Test suites</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#GeoAPI-details">Previous chapter</a></div><div class="next-chapter"><a href="#DesignNotes">Next chapter</a> ➡</div></div></nav>
 </header>
-<nav>In this chapter:<ul class="toc">
+<nav><p>In this chapter:</p><ul class="toc">
 <li><a href="#GeoAPI-conformance">GeoAPI conformance</a><ul>
 <li><a href="#GeoAPI-validators">Instance validations</a></li>
 <li><a href="#GeoAPI-tests">Executing pre-defined tests</a></li></ul></li></ul></nav>
@@ -3673,7 +3672,7 @@ However, this example adds a supplemental verification, annotated with <code>@Af
 <h1 id="DesignNotes"><span class="section-number">9.</span> Design notes</h1>
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Tests">Previous chapter</a></div></div></nav>
 </header>
-<nav>In this chapter:<ul class="toc">
+<nav><p>In this chapter:</p><ul class="toc">
 <li><a href="#AffineTransform">Affine transform</a><ul>
 <li><a href="#AffineTransformAPI">Integration with graphical libraries</a></li></ul></li>
 <li><a href="#MatrixLibrary">Specificities of a matrix library for GIS</a><ul>

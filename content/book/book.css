@@ -16,31 +16,119 @@
  */
 
 /*
- * Table of content
+ * Table of content, to be shown on the left side.
+ * main{left} should be at least equal to nav.toc{width}.
+ * We use <p> element for the "Table of content" title instead than <h1>
+ * because we don't want those textes to be inserted in the auto-generated TOC.
+ */
+nav {
+  font-family: sans-serif;
+  line-height: 100%;
+  color:       #006699;
+}
+
+nav.toc {
+  background-color: #f7f8f9;
+  position:  absolute;
+  overflow:  auto;
+  top:       0;
+  bottom:    0;
+  left:      0;
+  max-width: 80%;
+  width:     20em;
+}
+
+main {
+  left:     20em;
+  right:    0;
+  top:      0;
+  bottom:   0;
+  position: fixed;
+  overflow: auto;
+}
+
+nav a {
+  text-decoration: none;
+  font-family: sans-serif;
+  font-size: small;
+  color: #006699;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+nav p {
+  font-size:   large;
+  font-weight:  bold;
+  margin-top:    9px;
+  margin-bottom: 6px;
+  margin-left:   6px;
+}
+
+/*
+ * Table of content items. Note that fragments of TOC are repeated at the beginning
+ * of each chapter in the main body. Those fragments have a slightly different layout.
  */
 ul.toc {
   list-style-type: square;
-  margin-bottom: 30px;
+  margin-bottom:   30px;
+  padding-left:    21px;
 }
 
 ul.toc ul {
-  list-style-type: disc;
-  padding-left: 21px;
+  list-style-type: square;
+  padding-left:    21px;
+}
+
+nav.toc ul.toc li {
+  margin-top:    3px;
+  margin-bottom: 3px;
 }
 
 /*
- * Other kind of lists
+ * For the main body, we put a margin for almost everything except the elements to be centered.
+ */
+section > header > h2,
+section > h3,
+section > h4,
+section > p, nav > p,
+section > pre,
+section > div.example,
+section > details {
+  margin-left:  42px;
+  margin-right: 30px;
+}
+
+li > p {
+  margin-right: 30px;
+}
+
+section > div.example,
+section > article,
+section > aside {
+  margin-left:  80px;
+  margin-right: 68px;
+}
+
+li > div.example,
+dd > div.example {
+  margin-left:  30px;
+  margin-right: 60px;
+}
+
+main nav ul.toc,
+section > ul,
+section > dl {
+  margin-left: 42px;
+}
+
+/*
+ * Lists.
  */
 ul.verbose li {
-  margin-top: 4px;
+  margin-top:    4px;
   margin-bottom: 4px;
-}
-
-/*
- * Definition list
- */
-dl {
-  padding-left: 21px;
 }
 
 /*
@@ -89,7 +177,7 @@ section > header > h1 {
   margin-bottom:       0px;
 }
 
-section > h2 {
+section > header > h2 {
   font-family:         sans-serif;
   margin-top:          60px;
   border-bottom-style: solid;
@@ -110,7 +198,7 @@ span.section-number {
   margin-right: 9px;
 }
 
-p {
+section p {
   text-align: justify;
 }
 
@@ -119,9 +207,7 @@ summary:hover {
 }
 
 div.example {
-  margin-left:  21px;
-  margin-right: 24px;
-  font-size:    smaller;
+  font-size: smaller;
 }
 
 article div.example {
@@ -129,8 +215,6 @@ article div.example {
 }
 
 article, aside {
-  margin-left:      60px;
-  margin-right:     60px;
   margin-top:       21px;
   margin-bottom:    21px;
   padding-left:     21px;
@@ -223,12 +307,10 @@ div.row-of-boxes > div {
 }
 
 pre {
-  margin-left:   30px;
-  margin-right:  30px;
   margin-top:    21px;
   margin-bottom: 21px;
   padding:       12px;
-  border: 2px solid Gray;
+  border: 2px solid silver;
   background: #F8F8F8
 }
 
@@ -252,4 +334,5 @@ code.SIS {
 
 code.comment {
   color: Gray;
+  font-family: serif;
 }
