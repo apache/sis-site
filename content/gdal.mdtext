@@ -23,13 +23,16 @@ It may be for using map projection methods not yet supported by Apache SIS, or f
 results than Proj.4. The two libraries can coexist and can be used through the same API,
 provided that following prerequisites are meet.
 
+[TOC]
+
 
 Prerequisites    {#prerequisites}
 =================================
 Proj.4 needs to be pre-installed; there is no copy embedded in Apache SIS.
 Proj.4 can be installed by package managers on most Linux distributions,
-or with tools like MacPorts on MacOS.
-In addition, the `sis-gdal` module must be on the classpath.
+or with tools like MacPorts on MacOS
+(Windows is not yet supported – see [limitations](#limitations)).
+In addition, the `sis-gdal` module must be present on the classpath.
 Maven projects can use the following dependency in their `pom.xml` file:
 
     :::xml
@@ -41,9 +44,6 @@ Maven projects can use the following dependency in their `pom.xml` file:
       </dependency>
     </dependencies>
 
-Current Apache SIS version supports only Linux and MacOS platforms.
-A future version will add Windows support.
-
 
 Usage    {#usage}
 =================
@@ -52,8 +52,8 @@ For instantiating a coordinate reference system (CRS) backed by Proj.4:
     :::java
     CoordinateReferenceSystem crs = CRS.forCode("Proj4::+init=epsg:4326");
 
-Everything after "PROJ4::" is forwarded as-is to the Proj.4 library.
-Note that despite the "epsg" part in above definition string, CRS created by above method call is **not**
+Everything after `"PROJ4::"` is forwarded as-is to the Proj.4 library.
+Note that despite the `"epsg"` part in above definition string, CRS created by above method call is **not**
 conform to EPSG:4326 authoritative definition. It should rather be understood as a Proj.4-specific code.
 Proj.4 definitions may differ from authoritative definitions in axis order, axis directions or units of measurement.
 To get the authoritative definition, use `CRS.forCode("EPSG::4326")` instead.
@@ -89,3 +89,6 @@ Limitations    {#limitations}
 Current Apache SIS version can create CRS backed by Proj.4 only when SIS can map Proj.4 parameters to EPSG parameters.
 For example the Proj.4 `+x_0=` parameter is often (but not always) mapped to EPSG _False easting_ parameter.
 Future SIS versions may relax the requirement for such mapping.
+
+Current Apache SIS version supports only Linux and MacOS platforms.
+A future version will add Windows support.
