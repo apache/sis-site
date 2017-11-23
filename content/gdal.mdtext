@@ -19,9 +19,10 @@ Notice: Licensed to the Apache Software Foundation (ASF) under one
 
 
 While Apache SIS provides its own map projection engine, some applications may want to also use the Proj.4 library.
-It may be for using map projection methods not yet supported by Apache SIS, or for getting the exact same numerical
-results than Proj.4. The two libraries can coexist and can be used through the same API,
-provided that following prerequisites are meet.
+One reason may be to use map projection methods not yet supported by Apache SIS,
+or for getting the exact same numerical results than Proj.4.
+The two libraries can coexist and can be used through the same API,
+provided that prerequisites are meet.
 
 [TOC]
 
@@ -53,8 +54,8 @@ For instantiating a coordinate reference system (CRS) backed by Proj.4:
     CoordinateReferenceSystem crs = CRS.forCode("Proj4::+init=epsg:4326");
 
 Everything after `"PROJ4::"` is forwarded as-is to the Proj.4 library.
-Note that despite the `"epsg"` part in above definition string, CRS created by above method call is **not**
-conform to EPSG:4326 authoritative definition. It should rather be understood as a Proj.4-specific code.
+Note that despite the `"epsg"` part in above definition string, the CRS created by above method call is **not**
+conform to EPSG:4326 authoritative definition. The string should rather be understood as a Proj.4-specific code.
 Proj.4 definitions may differ from authoritative definitions in axis order, axis directions or units of measurement.
 To get the authoritative definition, use `CRS.forCode("EPSG::4326")` instead.
 
@@ -62,6 +63,7 @@ For creating a coordinate operation backed by Proj.4, there is nothing special t
 we can invoke the same method regardless if the CRS are backed by Proj.4 or Apache SIS.
 The following code will create a transform backed by Proj.4 if *both* `sourceCRS` and `targetCRS`
 were created with `CRS.forCode("Proj4::…")` calls.
+Note however that `CoordinateOperation` backed by Proj.4 does not provide metadata about accuracy or domain of validity.
 
     :::java
     CoordinateOperation  op = CRS.findOperation(sourceCRS, targetCRS, null);
