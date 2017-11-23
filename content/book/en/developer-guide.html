@@ -51,6 +51,7 @@
 <li><a href="#CRSFactory">Constructing programmatically</a></li>
 <li><a href="#CRS_UserCode">Adding new CRS definitions</a></li></ul></li>
 <li><a href="#CoordinateOperations">Coordinate operations</a><ul>
+<li><a href="#CRS.findOperation">Getting a coordinate operation</a></li>
 <li><a href="#MathTransform">Executing an operation on coordinate values</a></li>
 <li><a href="#TransformDerivative">Partial derivatives of coordinate operations</a><ul>
 <li><a href="#DerivativeAndEnvelope">Transform derivatives applied to envelopes</a></li>
@@ -94,11 +95,17 @@
 </nav>
 
 <main>
-<p style="margin-top: 30pt"><span style="font-size: 30pt; font-weight: 900">Introduction to Apache SIS™</span></p>
-<p style="margin-bottom: 20pt">(English | <a href="../fr/developer-guide.html">Français</a>)</p>
-<p><i>Martin Desruisseaux</i><br/>
-Partially translated by <i>Christina Hough</i></p>
-<p>This work is licensed under the Apache 2 license.</p>
+<p style="margin-top:30pt; font-size:30pt; font-weight:900; text-align:center">
+Introduction to Apache SIS™
+</p>
+<p style="margin-bottom:20pt; text-align:center">
+(English | <a href="../fr/developer-guide.html">Français</a>)
+</p>
+<p style="text-align:right; margin-right:30px">
+<i>Martin Desruisseaux</i><br/>
+Partially translated by <i>Christina Hough</i>
+</p>
+<p style="text-align:right; margin-right:30px">This work is licensed under the Apache 2 license</p>
 
 
 
@@ -1218,6 +1225,7 @@ then it is guaranteed that the envelope is empty.
 <li><a href="#CRSFactory">Constructing programmatically</a></li>
 <li><a href="#CRS_UserCode">Adding new CRS definitions</a></li></ul></li>
 <li><a href="#CoordinateOperations">Coordinate operations</a><ul>
+<li><a href="#CRS.findOperation">Getting a coordinate operation</a></li>
 <li><a href="#MathTransform">Executing an operation on coordinate values</a></li>
 <li><a href="#TransformDerivative">Partial derivatives of coordinate operations</a><ul>
 <li><a href="#DerivativeAndEnvelope">Transform derivatives applied to envelopes</a></li>
@@ -1269,7 +1277,7 @@ from <var>A</var> to <abbr>WGS84</abbr>, then from <abbr>WGS84</abbr> to <var>B<
 With such approach, a coordinate transformations library would only need to associate each
 <code class="GeoAPI">GeodeticDatum</code> instance with the transformation parameters from that datum to <abbr>WGS84</abbr>.
 This approach was encouraged in version 1 of <abbr>WKT</abbr> format, since that format specified a
-<code>TOWGS84[…]</code> element (removed in <abbr>WKT</abbr> version 2) precisely for that purpose.
+<code class="OGC">TOWGS84[…]</code> element (removed in <abbr>WKT</abbr> version 2) precisely for that purpose.
 This approach is known in <abbr>EPSG</abbr> guidance notes as “early binding” implementations
 since information about coordinate transformations are associated early in geodetic object definitions,
 usually right at <code class="GeoAPI">GeographicCRS</code> creation time.
@@ -1292,8 +1300,8 @@ In an early binding approach, the same geographic <abbr>CRS</abbr> (namely “<a
 format would need to be defined with a <code>TOWGS84[-8, 160, 176]</code> element for coordinates in <abbr>USA</abbr>
 or with a <code>TOWGS84[-10, 158, 187]</code> element for coordinates in Canada.
 Different parameter values exist for other regions like Cuba, so it is not possible to represent such diversity
-with a single <code>TOWGS84[…]</code> element associated to a <abbr>CRS</abbr>.
-But even when restricting <abbr>CRS</abbr> usage to the domain of validity of its single <code>TOWGS84[…]</code> element,
+with a single <code class="OGC">TOWGS84[…]</code> element associated to a <abbr>CRS</abbr>.
+But even when restricting <abbr>CRS</abbr> usage to the domain of validity of its single <code class="OGC">TOWGS84[…]</code> element,
 those transformations are still approximative with a 10 metres accuracy in the <abbr>USA</abbr> case.
 More accurate transformations exist in the form of <abbr>NADCON</abbr> grid shift files,
 but those transformations are from <abbr>NAD27</abbr> to <abbr>NAD83</abbr> (which move together on the same continental plate),
@@ -1511,11 +1519,11 @@ crs = <code class="SIS">AbstractCRS</code>.<code class="SIS">castOrCopy</code>(c
 <p>
 Among the legacy <abbr>OGC</abbr> standards that used the non-conform axis order,
 an influent one is version 1 of the <cite>Well Known Text</cite> (<abbr>WKT</abbr>) format specification.
-According that widely-used format, <abbr>WKT</abbr> 1 definitions without explicit <code>AXIS[…]</code> elements
+According that widely-used format, <abbr>WKT</abbr> 1 definitions without explicit <code class="OGC">AXIS[…]</code> elements
 shall default to (<var>longitude</var>, <var>latitude</var>) or (<var>x</var>, <var>y</var>) axis order.
-In version 2 of <abbr>WKT</abbr> format, <code>AXIS[…]</code> elements are no longer optional
-and should contain an explicit <code>ORDER[…]</code> sub-element for making the intended order yet more obvious.
-But if <code>AXIS[…]</code> elements are nevertheless missing in a <abbr>WKT</abbr> 2 definition,
+In version 2 of <abbr>WKT</abbr> format, <code class="OGC">AXIS[…]</code> elements are no longer optional
+and should contain an explicit <code class="OGC">ORDER[…]</code> sub-element for making the intended order yet more obvious.
+But if <code class="OGC">AXIS[…]</code> elements are nevertheless missing in a <abbr>WKT</abbr> 2 definition,
 Apache <abbr>SIS</abbr> defaults to (<var>latitude</var>, <var>longitude</var>) order.
 So in summary:
 </p>
@@ -1525,12 +1533,22 @@ So in summary:
 but this is <abbr>SIS</abbr>-specific as <abbr title="International Organization for Standardization">ISO</abbr> 19162 does not mention default axis order.</li>
 </ul>
 <p>
-To avoid ambiguities, users are encouraged to always provide explicit <code>AXIS[…]</code> elements in their <abbr>WKT</abbr>.
+To avoid ambiguities, users are encouraged to always provide explicit <code class="OGC">AXIS[…]</code> elements in their <abbr>WKT</abbr>.
 The <abbr>WKT</abbr> format will be presented in more details in the next sections.
 </p>
 
 <h3 id="GeographicCRS"><span class="section-number">5.1.4.</span> Geographic reference systems</h3>
-<p style="color: red">TODO</p>
+<p>
+There is many kinds of latitudes and longitudes. Two common kinds supported by Apache <abbr title="Spatial Information System">SIS</abbr>
+are <cite>geodetic</cite> and <cite>geocentric</cite> latitudes.
+Those two angles differ slightly in the way they intersect the ellipsoid surface.
+On Earth surface, the difference between those two kinds of latitude varies between 0 and about 20 km.
+</p><p>
+When peoples talk about latitudes and longitudes, they usually mean <em>geodetic</em> latitudes and longitudes.
+A coordinate reference systems using such latitudes and longitudes is said <cite>geographic</cite>
+and is represented by the <code class="GeoAPI">GeographicCRS</code> interface.
+Systems using the other kinds of latitude are represented by other <abbr>CRS</abbr> interfaces.
+</p>
 
 <h4 id="GeographicWKT"><span class="section-number">5.1.4.1.</span> <i>Well-Known Text</i> format</h4>
 <p style="color: red">TODO</p>
@@ -1604,6 +1622,9 @@ then Apache <abbr>SIS</abbr> defaults on the coordinate operation which is valid
 In this example, the “largest area” criterion results in the selection of a coordinate operation valid for Canada,
 not <abbr>USA</abbr>.</p>
 </div>
+
+
+<h3 id="CRS.findOperation"><span class="section-number">5.3.1.</span> Getting a coordinate operation</h3>
 <p>
 The easiest way to obtain a coordinate operation from above-cited information
 is to use the <code class="SIS">org.apache.sis.referencing.CRS</code> convenience class:
@@ -1637,12 +1658,12 @@ are in this category.
 </ul>
 <p>
 If the coordinate operation is an instance of <code class="GeoAPI">Transformation</code>,
-then the instance selected by <abbr>SIS</abbr> may be one among many possibilities depending on the area of interest.
+then the instance selected by <abbr title="Spatial Information System">SIS</abbr> may be one among many possibilities depending on the area of interest.
 Furthermore its accuracy is certainly less than the centimetric accuracy that we can expect from a <code class="GeoAPI">Conversion</code>.
 Consequently verifying the domain of validity and the positional accuracy declared in the transformation metadata is of particular importance.
 </p>
 
-<h3 id="MathTransform"><span class="section-number">5.3.1.</span> Executing an operation on coordinate values</h3>
+<h3 id="MathTransform"><span class="section-number">5.3.2.</span> Executing an operation on coordinate values</h3>
 <p>
 The <code class="GeoAPI">CoordinateOperation</code> object introduced in above section provides high-level informations
 (source and target <abbr>CRS</abbr>, domain of validity, positional accuracy, operation parameters, <i>etc</i>).
@@ -1693,7 +1714,7 @@ Note that all geographic coordinates below express latitude before longitude.
 }</code></pre>
 
 
-<h3 id="TransformDerivative"><span class="section-number">5.3.2.</span> Partial derivatives of coordinate operations</h3>
+<h3 id="TransformDerivative"><span class="section-number">5.3.3.</span> Partial derivatives of coordinate operations</h3>
 <p>
 Previous section shows how to project a coordinate from one reference system to another one.
 There is another, less known, operation which does not compute the projected coordinates of a given point,
@@ -1826,7 +1847,7 @@ One can use that information for determining if axes have been swapped or their 
 But the usefulness of map projection derivatives goes further.
 </p>
 
-<h4 id="DerivativeAndEnvelope"><span class="section-number">5.3.2.1.</span> Transform derivatives applied to envelopes</h4>
+<h4 id="DerivativeAndEnvelope"><span class="section-number">5.3.3.1.</span> Transform derivatives applied to envelopes</h4>
 <p>
 <span style="color: red">TODO</span>
 </p>
@@ -1863,7 +1884,7 @@ The same cubic line can have two minimums.</li>
 </p>
 
 
-<h4 id="DerivativeAndRaster"><span class="section-number">5.3.2.2.</span> Transform derivatives applied to rasters</h4>
+<h4 id="DerivativeAndRaster"><span class="section-number">5.3.3.2.</span> Transform derivatives applied to rasters</h4>
 <p>
 <span style="color: red">TODO</span>
 </p>
@@ -1904,7 +1925,7 @@ Continuing…
 <span style="color: red">TODO</span>
 </p>
 
-<h4 id="GetDerivative"><span class="section-number">5.3.2.3.</span> Getting the derivative at a point</h4>
+<h4 id="GetDerivative"><span class="section-number">5.3.3.3.</span> Getting the derivative at a point</h4>
 <p>
 <span style="color: red">TODO</span>
 Example:</p>
@@ -1925,7 +1946,7 @@ Example:</p>
 }</code></pre>
 
 
-<h3 id="CoordinateOperationSteps"><span class="section-number">5.3.3.</span> Conceptual versus real chain of coordinate operations</h3>
+<h3 id="CoordinateOperationSteps"><span class="section-number">5.3.4.</span> Conceptual versus real chain of coordinate operations</h3>
 <p>
 Coordinate operations may include many steps, each with their own set of parameters.
 For example transformations from one datum (e.g. <abbr title="North American Datum 1927">NAD27</abbr>) to another datum (e.g. <abbr title="World Geodetic System 1984">WGS84</abbr>)

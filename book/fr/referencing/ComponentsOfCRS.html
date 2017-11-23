@@ -94,8 +94,8 @@
       </p>
 
 <pre><code>Unit&lt;Length&gt; units = ellipsoid.<code class="GeoAPI">getAxisUnit()</code>;
-double semiMajor   = ellipsoid.<code class="GeoAPI">getSemiMajorAxis()</code>;          // In units of measurement given above.
-double semiMinor   = ellipsoid.<code class="GeoAPI">getSemiMinorAxis()</code>;          // In units of measurement given above.
+double semiMajor   = ellipsoid.<code class="GeoAPI">getSemiMajorAxis()</code>;          // Avec les unités de mesures ci-haut.
+double semiMinor   = ellipsoid.<code class="GeoAPI">getSemiMinorAxis()</code>;          // Avec les unités de mesures ci-haut.
 double ivf         = ellipsoid.<code class="GeoAPI">getInverseFlattening()</code>;      // = semiMajor / (semiMajor - semiMinor).
 </code></pre>
 
@@ -240,7 +240,17 @@ crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)</co
       </p>
 
       <h3 id="GeographicCRS">Systèmes géographiques</h3>
-      <p style="color: red">TODO</p>
+      <p>
+        Il y a plusieurs sortes de latitudes et de longitudes.
+        Deux sortes courantes que supporte Apache <abbr>SIS</abbr> sont les latitudes <cite>géodésiques</cite> et <cite>géocentriques</cite>.
+        Ces deux types d’angles diffèrent légèrement dans la façon dont ils interceptent la surface de l’ellipsoïde.
+        Sur la surface de la Terre, la différence entre ces deux types de latitudes varient de 0 à environ 20 km.
+      </p><p>
+        Lorsque les gens parlent de latitudes et de longitudes, ils sous-entendent généralement des latitudes <em>géodésiques</em>.
+        Un système de référence des coordonnées utilisant de telles latitudes et longitudes est dit <cite>géographique</cite>
+        et est représenté par l’interface <code>GeographicCRS</code>.
+        Les systèmes utilisant les autres sortes de latitudes sont représentés par d’autres interfaces <abbr>CRS</abbr>.
+      </p>
 
       <h4 id="GeographicWKT">Format <i>Well-Known Text</i></h4>
       <p style="color: red">TODO</p>

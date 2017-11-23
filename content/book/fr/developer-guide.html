@@ -51,6 +51,7 @@
 <li><a href="#CRSFactory">Construction programmatique explicite</a></li>
 <li><a href="#CRS_UserCode">Ajout de définitions</a></li></ul></li>
 <li><a href="#CoordinateOperations">Opérations sur les coordonnées</a><ul>
+<li><a href="#CRS.findOperation">Obtention d’une opération sur les coordonnées</a></li>
 <li><a href="#MathTransform">Exécution de opérations</a></li>
 <li><a href="#TransformDerivative">Dérivées partielles des opérations</a><ul>
 <li><a href="#DerivativeAndEnvelope">Utilité des dérivées pour la reprojection d’enveloppes</a></li>
@@ -93,11 +94,17 @@
 </nav>
 
 <main>
-<p style="margin-top: 30pt"><span style="font-size: 30pt; font-weight: 900">Introduction à Apache SIS™</span></p>
-<p style="margin-bottom: 20pt">(<a href="../en/developer-guide.html">English</a> | Français)</p>
-<p><i>Martin Desruisseaux</i><br/>
-<i>Christina Hough</i> (pour la traduction anglaise)</p>
-<p>Ce document est distribué sous licence Apache 2.</p>
+<p style="margin-top:30pt; font-size:30pt; font-weight:900; text-align:center">
+Introduction à Apache SIS™
+</p>
+<p style="margin-bottom:20pt; text-align:center">
+(<a href="../en/developer-guide.html">English</a> | Français)
+</p>
+<p style="text-align:right; margin-right:30px">
+<i>Martin Desruisseaux</i><br/>
+<i>Christina Hough</i> (pour la traduction anglaise)
+</p>
+<p style="text-align:right; margin-right:30px">Ce document est distribué sous licence Apache 2</p>
 
 
 
@@ -1268,6 +1275,7 @@ est vrai, alors il est garanti que l’enveloppe est vide.
 <li><a href="#CRSFactory">Construction programmatique explicite</a></li>
 <li><a href="#CRS_UserCode">Ajout de définitions</a></li></ul></li>
 <li><a href="#CoordinateOperations">Opérations sur les coordonnées</a><ul>
+<li><a href="#CRS.findOperation">Obtention d’une opération sur les coordonnées</a></li>
 <li><a href="#MathTransform">Exécution de opérations</a></li>
 <li><a href="#TransformDerivative">Dérivées partielles des opérations</a><ul>
 <li><a href="#DerivativeAndEnvelope">Utilité des dérivées pour la reprojection d’enveloppes</a></li>
@@ -1288,7 +1296,7 @@ le choix de la forme géométrique (géoïde, ellipsoïde, <i>etc.</i>) utilisé
 le choix des propriétés géométriques (angles, distances, <i>etc.</i>) à préserver lors de la représentation d’une carte sur une surface plane, et
 les pertes de précision lorsque l’on doit transformer des coordonnées vers des systèmes utilisant un <a href="#GeodeticDatum">référentiel</a> différent.
 </p><p>
-Une fausse croyance très répandue est que l’on peut éviter cette complexité en choisissant un seul système de référence des coordonnées
+Une fausse croyance très répandue dit que l’on peut éviter cette complexité en choisissant un seul système de référence des coordonnées
 (typiquement <abbr title="World Geodetic System 1984">WGS84</abbr>) comme système universel pour toutes les données.
 Les chapitres suivants expliqueront pourquoi la réalité n’est pas si simple.
 Qu’un système universel réponde ou non aux besoins d’une application dépend de la précision désirée,
@@ -1315,7 +1323,7 @@ afin de simplifier l’implémentation d’une bibliothèque de transformation d
 La transformation d’une coordonnée d’un référentiel <var>A</var> vers un référentiel <var>B</var>
 pourrait se faire en transformant d’abord de <var>A</var> vers <abbr>WGS84</abbr>, puis de <abbr>WGS84</abbr> vers <var>B</var>.
 Il suffirait ainsi de stocker dans chaque objet <code class="GeoAPI">GeodeticDatum</code> les informations nécessaires à la transformation vers <abbr>WGS84</abbr>.
-Cette approche était encouragée dans la version 1 du format <abbr>WKT</abbr>, qui définissait un élément <code>TOWGS84[…]</code> remplissant ce rôle.
+Cette approche était encouragée dans la version 1 du format <abbr>WKT</abbr>, qui définissait un élément <code class="OGC">TOWGS84[…]</code> remplissant ce rôle.
 Cette approche est désignée par <abbr>EPSG</abbr> sous le nom de « early binding »
 car elle associe des informations sur la transformations de coordonnées très tôt dans la définition des objets géodésiques,
 souvent directement au moment de la construction d’un object <code class="GeoAPI">GeographicCRS</code>.
@@ -1337,8 +1345,8 @@ Dans une approche de type « early binding », le même système de référenc
 aurait besoin d’être défini avec un élément <code>TOWGS84[-8, 160, 176]</code> pour des coordonnées aux États-Unis,
 ou avec un élément <code>TOWGS84[-10, 158, 187]</code> pour coordonnées aux Canada.
 Différents paramètres existent aussi pour d’autres régions telles que Cuba.
-Il n’est donc pas possible de représenter une telle diversité en associant un seul élément <code>TOWGS84[…]</code> à un système de référence des coordonnées.
-Même en restreignant l’usage d’un référenciel au domaine de validité de son élément <code>TOWGS84[…]</code>,
+Il n’est donc pas possible de représenter une telle diversité en associant un seul élément <code class="OGC">TOWGS84[…]</code> à un système de référence des coordonnées.
+Même en restreignant l’usage d’un référenciel au domaine de validité de son élément <code class="OGC">TOWGS84[…]</code>,
 ces transformations resteraient approximatives avec une précision de 10 mètres dans le cas des États-Unis.
 Des transformations plus précises existent sous la forme des grilles de changements de référentiel <abbr>NADCON</abbr>,
 mais ces grilles sont pour des transformations de <abbr>NAD27</abbr> vers <abbr>NAD83</abbr>
@@ -1437,8 +1445,8 @@ mais plusieurs définitions d’ellipsoïdes fournissent ce facteur plutôt que 
 </p>
 
 <pre><code>Unit&lt;Length&gt; units = ellipsoid.<code class="GeoAPI">getAxisUnit()</code>;
-<b>double</b> semiMajor   = ellipsoid.<code class="GeoAPI">getSemiMajorAxis()</code>;          <code class="comment">// In units of measurement given above.</code>
-<b>double</b> semiMinor   = ellipsoid.<code class="GeoAPI">getSemiMinorAxis()</code>;          <code class="comment">// In units of measurement given above.</code>
+<b>double</b> semiMajor   = ellipsoid.<code class="GeoAPI">getSemiMajorAxis()</code>;          <code class="comment">// Avec les unités de mesures ci-haut.</code>
+<b>double</b> semiMinor   = ellipsoid.<code class="GeoAPI">getSemiMinorAxis()</code>;          <code class="comment">// Avec les unités de mesures ci-haut.</code>
 <b>double</b> ivf         = ellipsoid.<code class="GeoAPI">getInverseFlattening()</code>;      <code class="comment">// = semiMajor / (semiMajor - semiMinor).</code>
 </code></pre>
 
@@ -1510,12 +1518,12 @@ Les axes sont numérotés de 0 à <code>cs.getDimension()-1</code> inclusivement
 
 <pre><code><code class="GeoAPI">CoordinateSystem</code> cs = crs.getCoordinateSystem();
 <code class="GeoAPI">CoordinateSystemAxis</code> secondAxe = cs.getAxis(1);            <code class="comment">// Pour un système géographique, c’est habituellement la longitude géodétique.</code>
-String        abbreviation = secondAxe.getAbbreviation();  <code class="comment">// Pour l’axe des longitudes, c’est habituellement "λ", "L" ou "lon".</code>
-<code class="GeoAPI">AxisDirection</code> direction    = secondAxe.getDirection();     <code class="comment">// Pour l’axe des longitudes, c’est habituellement EAST ou parfois WEST.</code>
-Unit&lt;?&gt;       unités       = secondAxe.getUnit();          <code class="comment">// Pour l’axe des longitudes, c’est habituellement Units.DEGREE.</code>
-<b>double</b>        minimum      = secondAxe.getMinimumValue();  <code class="comment">// Pour l’axe des longitudes, c’est habituellement −180° ou parfois 0°.</code>
-<b>double</b>        maximum      = secondAxe.getMaximumValue();  <code class="comment">// Pour l’axe des longitudes, c’est habituellement +180° ou parfois 360°.</code>
-<code class="GeoAPI">RangeMeaning</code>  auxBouts     = secondAxe.getRangeMeaning();  <code class="comment">// Pour l’axe des longitudes, c’est WRAPAROUND.</code>
+String        abréviation = secondAxe.getAbbreviation();  <code class="comment">// Pour l’axe des longitudes, c’est habituellement "λ", "L" ou "lon".</code>
+<code class="GeoAPI">AxisDirection</code> direction   = secondAxe.getDirection();     <code class="comment">// Pour l’axe des longitudes, c’est habituellement EAST ou parfois WEST.</code>
+Unit&lt;?&gt;       unités      = secondAxe.getUnit();          <code class="comment">// Pour l’axe des longitudes, c’est habituellement Units.DEGREE.</code>
+<b>double</b>        minimum     = secondAxe.getMinimumValue();  <code class="comment">// Pour l’axe des longitudes, c’est habituellement −180° ou parfois 0°.</code>
+<b>double</b>        maximum     = secondAxe.getMaximumValue();  <code class="comment">// Pour l’axe des longitudes, c’est habituellement +180° ou parfois 360°.</code>
+<code class="GeoAPI">RangeMeaning</code>  auxBouts    = secondAxe.getRangeMeaning();  <code class="comment">// Pour l’axe des longitudes, c’est WRAPAROUND.</code>
 </code></pre>
 <p>
 En plus de la définition des axes, une autre caractéristique importante des systèmes de coordonnées est leur type
@@ -1564,11 +1572,11 @@ crs = <code class="SIS">AbstractCRS</code>.<code class="SIS">castOrCopy</code>(c
 <p>
 Parmi les anciens standards de l’<abbr>OGC</abbr> qui utilisaient un ordre des axes non-conforme,
 un standard influent était la version 1 du format <cite>Well Known Text</cite> (<abbr>WKT</abbr>).
-D’après ce format largement utilisé, les définitions <abbr>WKT</abbr> 1 sans éléments <code>AXIS[…]</code> explicites
+D’après ce format largement utilisé, les définitions <abbr>WKT</abbr> 1 sans éléments <code class="OGC">AXIS[…]</code> explicites
 doivent être interprétés comme ayant ses axes dans l’ordre (<var>longitude</var>, <var>latitude</var>) ou (<var>x</var>, <var>y</var>).
-Dans la version 2 du format <abbr>WKT</abbr>, les éléments <code>AXIS[…]</code> ne sont plus optionnel
-et devrait contenir explicitement un sous-élément <code>ORDER[…]</code> pour rendre l’ordre voulu encore plus évident.
-Mais si les éléments <code>AXIS[…]</code> sont malgré tout omis dans une définition <abbr>WKT</abbr> 2,
+Dans la version 2 du format <abbr>WKT</abbr>, les éléments <code class="OGC">AXIS[…]</code> ne sont plus optionnel
+et devrait contenir explicitement un sous-élément <code class="OGC">ORDER[…]</code> pour rendre l’ordre voulu encore plus évident.
+Mais si les éléments <code class="OGC">AXIS[…]</code> sont malgré tout omis dans une définition <abbr>WKT</abbr> 2,
 alors Apache <abbr>SIS</abbr> utilise l’ordre (<var>latitude</var>, <var>longitude</var>) par défaut.
 Pour résumer:
 </p>
@@ -1578,12 +1586,22 @@ Pour résumer:
 vu que la norme <abbr title="International Organization for Standardization">ISO</abbr> 19162 ne mentionne pas de comportement par défaut.</li>
 </ul>
 <p>
-Pour éviter des ambiguïtés, les utilisateurs sont encouragés à toujours fournir explicitement les éléments <code>AXIS[…]</code> dans leurs <abbr>WKT</abbr>.
+Pour éviter des ambiguïtés, les utilisateurs sont encouragés à toujours fournir explicitement les éléments <code class="OGC">AXIS[…]</code> dans leurs <abbr>WKT</abbr>.
 Le format <abbr>WKT</abbr> sera présenté plus en détails dans les sections suivantes.
 </p>
 
 <h3 id="GeographicCRS"><span class="section-number">5.1.4.</span> Systèmes géographiques</h3>
-<p style="color: red">TODO</p>
+<p>
+Il y a plusieurs sortes de latitudes et de longitudes.
+Deux sortes courantes que supporte Apache <abbr title="Spatial Information System">SIS</abbr> sont les latitudes <cite>géodésiques</cite> et <cite>géocentriques</cite>.
+Ces deux types d’angles diffèrent légèrement dans la façon dont ils interceptent la surface de l’ellipsoïde.
+Sur la surface de la Terre, la différence entre ces deux types de latitudes varient de 0 à environ 20 km.
+</p><p>
+Lorsque les gens parlent de latitudes et de longitudes, ils sous-entendent généralement des latitudes <em>géodésiques</em>.
+Un système de référence des coordonnées utilisant de telles latitudes et longitudes est dit <cite>géographique</cite>
+et est représenté par l’interface <code class="GeoAPI">GeographicCRS</code>.
+Les systèmes utilisant les autres sortes de latitudes sont représentés par d’autres interfaces <abbr>CRS</abbr>.
+</p>
 
 <h4 id="GeographicWKT"><span class="section-number">5.1.4.1.</span> Format <i>Well-Known Text</i></h4>
 <p style="color: red">TODO</p>
@@ -1656,6 +1674,9 @@ Si l’utilisateur ne spécifie pas la région géographique qui l’intéresse,
 alors le comportement par défaut de Apache <abbr>SIS</abbr> est de sélectionner l’opération valide dans la plus grande région géographique.
 Dans cet exemple, ce critère entraîne la sélection d’une opération valide pour le Canada, mais qui n’est pas valide pour les États-Unis.</p>
 </div>
+
+
+<h3 id="CRS.findOperation"><span class="section-number">5.3.1.</span> Obtention d’une opération sur les coordonnées</h3>
 <p>
 La façon la plus facile d’obtenir une opération sur les coordonnées à partir des informations présentées ci-dessus
 est d’utiliser la classe de commodité <code class="SIS">org.apache.sis.referencing.CRS</code>:
@@ -1691,12 +1712,12 @@ Les changements de référentiels tel que le passage de la
 </ul>
 <p>
 Lorsque l’opération sur les coordonnées est une instance de <code class="GeoAPI">Transformation</code>,
-il est possible que l’instance choisie par <abbr>SIS</abbr> ne soit qu’une parmi plusieurs possibilités en fonction de la région d’intérêt.
+il est possible que l’instance choisie par <abbr title="Spatial Information System">SIS</abbr> ne soit qu’une parmi plusieurs possibilités en fonction de la région d’intérêt.
 En outre, sa précision sera certainement moindre que la précision centimétrique que l’on peut attendre d’une <code class="GeoAPI">Conversion</code>.
 Vérifier la zone de validité ainsi que la précision déclarées dans les méta-données de la transformation prend alors une importance particulière.
 </p>
 
-<h3 id="MathTransform"><span class="section-number">5.3.1.</span> Exécution de opérations</h3>
+<h3 id="MathTransform"><span class="section-number">5.3.2.</span> Exécution de opérations</h3>
 <p>
 L’objet <code class="GeoAPI">CoordinateOperation</code> introduit dans la section précédente fournit des informations de haut-niveau
 (<abbr>CRS</abbr> source et destination, zone de validité, précision, paramètres de l’opération, <i>etc</i>).
@@ -1747,7 +1768,7 @@ Notons que toutes les coordonnées géographiques dans ce code ont la latitude a
 }</code></pre>
 
 
-<h3 id="TransformDerivative"><span class="section-number">5.3.2.</span> Dérivées partielles des opérations</h3>
+<h3 id="TransformDerivative"><span class="section-number">5.3.3.</span> Dérivées partielles des opérations</h3>
 <p>
 La section précédente indiquait comment projeter les coordonnées d’un système de référence vers un autre.
 Mais il existe une autre opération moins connue, qui consiste à calculer non pas la coordonnée projetée d’un point,
@@ -1881,7 +1902,7 @@ Par extension, on peut aussi s’en servir pour déterminer si des axes sont int
 ou si la direction d’un axe est renversée. Mais l’intérêt des dérivées ne s’arrête pas là.
 </p>
 
-<h4 id="DerivativeAndEnvelope"><span class="section-number">5.3.2.1.</span> Utilité des dérivées pour la reprojection d’enveloppes</h4>
+<h4 id="DerivativeAndEnvelope"><span class="section-number">5.3.3.1.</span> Utilité des dérivées pour la reprojection d’enveloppes</h4>
 <p>
 Les systèmes d’information géographiques ont très fréquemment besoin de projeter une enveloppe.
 Mais l’approche naïve, qui consisterait à projeter chacun des 4 coins du rectangle, ne suffit pas.
@@ -1968,7 +1989,7 @@ ce qui empêche la méthode <code class="SIS">Envelopes​.transform(…)</code>
 </p>
 
 
-<h4 id="DerivativeAndRaster"><span class="section-number">5.3.2.2.</span> Utilité des dérivées pour la reprojection d’images</h4>
+<h4 id="DerivativeAndRaster"><span class="section-number">5.3.3.2.</span> Utilité des dérivées pour la reprojection d’images</h4>
 <p>
 La projection cartographique d’une image s’effectue en préparant une image initialement vide qui contiendra le résultat de l’opération,
 puis à remplir cette image en itérant sur tous les pixels. Pour chaque pixel de l’image <em>destination</em>, on obtient la coordonnées
@@ -2042,7 +2063,7 @@ On s’évite ainsi des projections cartographiques, en apparence une seule dans
 mais en fait beaucoup plus dans une grille de transformation d’image (3× la somme des itérations précédentes).
 </p>
 
-<h4 id="GetDerivative"><span class="section-number">5.3.2.3.</span> Obtention de la dérivée en un point</h4>
+<h4 id="GetDerivative"><span class="section-number">5.3.3.3.</span> Obtention de la dérivée en un point</h4>
 <p>
 Cette discussion n’aurait pas un grand intérêt si le coût du calcul des dérivées des projections cartographiques
 était élevé par rapport aux coût de la projection des points. Mais lorsque l’on dérive analytiquement les équations
