@@ -50,7 +50,7 @@ Note that all geographic coordinates below express latitude *before* longitude.
     public class MyApp {
         public static void main(String[] args) throws FactoryException, TransformException {
             CoordinateReferenceSystem sourceCRS = CommonCRS.WGS84.geographic();
-            CoordinateReferenceSystem targetCRS = CommonCRS.WGS84.UTM(40, 14);  // Get whatever zone is valid for 14°E.
+            CoordinateReferenceSystem targetCRS = CommonCRS.WGS84.universal(40, 14);  // Get whatever zone is valid for 14°E.
             CoordinateOperation operation = CRS.findOperation(sourceCRS, targetCRS, null);
 
             // The above lines are costly and should be performed only once before to project many points.
