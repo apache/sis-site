@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
+  <head>
+    <title>Apache SIS add-in installation on OpenOffice / LibreOffice</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="../openoffice.css"/>
+  </head>
+  <body>
+    <h1>Apache <abbr>SIS</abbr> add-in installation on OpenOffice / LibreOffice</h1>
+    <section>
+      <h2 id="requirements">Requirements</h2>
+      <p>
+        This add-in requires OpenOffice or LibreOffice, together with Java 7 or 8.
+        Current add-in version has been tested on LibreOffice 5.3 with Java 8.
+        This version does not work yet with Java 9.
+      </p>
+    </section>
+
+
+    <section>
+      <h2 id="configuration">Configuration</h2>
+      <p>
+        Before installation, it may be useful to specify the Java Runtime Environment (<abbr>JRE</abbr>) location
+        to OpenOffice or LibreOffice. This configuration can be done by selecting the <i>Tools</i> → <i>Options</i>
+        menu on Linux, or <i>Open/LibreOffice</i> → <i>Preferences</i> on MacOS.
+        In the dialog box, select <i>Java</i> (on OpenOffice) or <i>Advanced</i> (on LibreOffice).
+        If no Java runtime environment is proposed, push the <i>Add</i> button and select a directory
+        where a Java Runtime Environment is installed.
+        When a list of <abbr>JRE</abbr> is available, select a Java version 7 or 8.
+      </p>
+    </section>
+
+
+    <section>
+      <h2 id="install">Installation</h2>
+      <p>
+        Download the Apache <abbr title="Spatial Information System">SIS</abbr> add-in for Open/LibreOffice
+        and save the file in any directory.
+        In Open/LibreOffice menus, select <i>Tools</i> → <i>Extensions manager</i>.
+        Push the <i>Add…</i> button and select the downloaded <code>apache-sis.oxt</code> file.
+        The installer will ask user to accept Apache 2 license and the <a href="http://www.epsg.org/"><abbr>EPSG</abbr> terms of use</a>.
+        After installation, in may be necessary to restart Open/LibreOffice before the changes become effective.
+        If a quick-start icon is present in the tasks bar, it should be closed before to restart Open/LibreOffice.
+      </p><p>
+        The add-in can be uninstalled at any time through the same menu.
+      </p>
+    </section>
+
+
+    <section>
+      <h2 id="problems">Problems resolution</h2>
+      <p>
+        If Apache <abbr>SIS</abbr> formulas produce only <code>#VALUE!</code> results,
+        if is possible that an error occurred during execution.
+        More details can be provided by opening the <code>jre/lib/logging.properties</code> file
+        with a text editor, and replace the following line:
+      </p>
+      <blockquote><pre>handlers= java.util.logging.ConsoleHandler</pre></blockquote>
+      <p>by</p>
+      <blockquote><pre>handlers= java.util.logging.ConsoleHandler, java.util.logging.FileHandler</pre></blockquote>
+      <p>
+        By default (it is possible to configure), a file with <code>.log</code> extension will be created in user’s home directory.
+        This <abbr>XML</abbr> file contains information about Java program execution.
+        Records in the <code>org.apache.sis.openoffice</code> logger contain information
+        more specifically about Apache <abbr>SIS</abbr> ↔ Open/LibreOffice bridge.
+        The <i>Message</i> element contains some details about the error cause.
+        If you wish to ask for help on <a href="../../mail-lists.html">Apache <abbr>SIS</abbr> user mailing list</a>,
+        providing the messages recorded in this logger may be useful.
+      </p>
+    </section>
+  </body>
+</html>

@@ -23,13 +23,13 @@
               <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">About<b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a href="mail-lists.html">Mailing Lists</a></li>
-                  <li><a href="license.html">Project License</a></li>
+                  <li><a href="http://www.apache.org/licenses/">Project License</a></li>
                   <li><a href="team-list.html">Project Team</a></li>
                 </ul>
               </li>
               <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">Project Documentation<b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="book/en/developer-guide.html">Developer guide</a></li>
+                  <li><a href="book/index.html">Developer guide</a></li>
                   <li><a href="apidocs/index.html">Online Javadoc</a></li>
                   <li><a href="downloads.html">Downloads</a></li>
                   <li><a href="source.html">Source Code</a></li>
@@ -60,10 +60,10 @@
             <ul class="nav nav-list">
               <li class="active"><a href="index.html">Home</a></li>
               <li><a href="mail-lists.html">Mailing Lists</a></li>
-              <li><a href="license.html">Project License</a></li>
+              <li><a href="http://www.apache.org/licenses/">Project License</a></li>
               <li><a href="team-list.html">Project Team</a></li>
               <li class="nav-header">Project Documentation</li>
-              <li><a href="book/en/developer-guide.html">Developer guide</a></li>
+              <li><a href="book/index.html">Developer guide</a></li>
               <li><a href="apidocs/index.html">Online Javadoc</a></li>
               <li><a href="downloads.html">Downloads</a></li>
               <li><a href="source.html">Source Code</a></li>
@@ -99,20 +99,21 @@ The instructions on this page provide a summary suitable to SIS releases, togeth
 The intended audiences are SIS release managers.</p>
 <div class="toc">
 <ul>
-<li><a href="#requirements">Requirements</a><ul>
+<li><a href="#configure">Configure</a><ul>
 <li><a href="#directory-layout">Directory layout</a></li>
-<li><a href="#java-update">Java updates</a></li>
+<li><a href="#java-version">Java versions</a></li>
 </ul>
 </li>
-<li><a href="#prepare-source">Prepare web site and source code</a><ul>
-<li><a href="#prepare-documentation">Documentation</a></li>
+<li><a href="#prepare-source">Prepare web site and source code before branching</a><ul>
+<li><a href="#release-notes">Prepare release notes</a></li>
 <li><a href="#prepare-website">Web site</a></li>
+<li><a href="#test-trunk">Test trunk extensively</a></li>
 <li><a href="#prepare-code">Source code</a></li>
 </ul>
 </li>
 <li><a href="#branch">Create branch and tag</a><ul>
-<li><a href="#branch-verify">Verify content</a></li>
 <li><a href="#tag">Tag the branch</a></li>
+<li><a href="#branch-verify">Verify content</a></li>
 </ul>
 </li>
 <li><a href="#maven-deploy">Deploy Maven artifacts</a><ul>
@@ -128,6 +129,7 @@ The intended audiences are SIS release managers.</p>
 <li><a href="#test">Test the release</a></li>
 </ul>
 </li>
+<li><a href="#openoffice">Prepare OpenOffice add-in</a></li>
 <li><a href="#vote">Put the release candidate up for a vote</a><ul>
 <li><a href="#veto">Recovering from a vetoed release</a></li>
 </ul>
@@ -143,7 +145,7 @@ The intended audiences are SIS release managers.</p>
 </li>
 </ul>
 </div>
-<h1 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h1>
+<h1 id="configure">Configure<a class="headerlink" href="#configure" title="Permanent link">&para;</a></h1>
 <p>Before to perform a release, make sure that the following conditions hold:</p>
 <ul>
 <li>Commands will be executed in a Unix shell.</li>
@@ -153,21 +155,27 @@ The intended audiences are SIS release managers.</p>
 <p>For all instructions in this page, <code>$OLD_VERSION</code> and <code>$NEW_VERSION</code> stand for the version
 number of the previous and the new release respectively, and <code>$RELEASE_CANDIDATE</code> stands for
 the current release attempt. Those versions shall be set on the command line like below (Unix):</p>
-<div class="codehilite"><pre><span class="nb">export </span><span class="nv">OLD_VERSION</span><span class="o">=</span>0.7
-<span class="nb">export </span><span class="nv">NEW_VERSION</span><span class="o">=</span>0.8
+<div class="codehilite"><pre><span class="nb">export </span><span class="nv">OLD_VERSION</span><span class="o">=</span>0.8
+<span class="nb">export </span><span class="nv">NEW_VERSION</span><span class="o">=</span>1.0
 <span class="nb">export </span><span class="nv">RELEASE_CANDIDATE</span><span class="o">=</span>1
 <span class="nb">export </span><span class="nv">SIGNING_KEY</span><span class="o">=</span>&lt;your key ID&gt;
 <span class="nb">export </span><span class="nv">BOOTCLASSPATH</span><span class="o">=</span>&lt;path to the rt.jar file of a JDK7 installation&gt;
 </pre></div>
 
 
-<p>The key ID value is an hexadecimal numbers with 8 digits.
-It can be found be executing <code>gpg --list-keys</code>.
-The boot class path value is highly system-dependent. Some examples are:</p>
+<p>The key ID value is an hexadecimal numbers with 8 digits (may be the last 8 digits of a 40 digits number).
+It can be found be executing <code>gpg --list-keys</code>.</p>
+<p>The boot class path value is highly system-dependent. Some examples are:</p>
 <ul>
-<li><code>/usr/lib/jvm/java-6/jre/lib/rt.jar</code> on some Linux distributions (replace <code>java-6</code> by the actual directory name).</li>
-<li><code>/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar</code> on MacOS.</li>
+<li><code>/usr/lib/jvm/java-7/jre/lib/rt.jar</code> on some Linux distributions (replace <code>java-7</code> by the actual directory name).</li>
+<li><code>/Library/Java/JavaVirtualMachines/jdk1.7.0_79.jdk/Contents/Home/jre/lib/rt.jar</code> on MacOS.</li>
 </ul>
+<p>Starts the GPG agent if not already done.
+This is for avoiding to be prompted many time for the passphrase in every modules to be built by Maven.</p>
+<div class="codehilite"><pre><span class="nb">eval</span> <span class="k">$(</span>gpg-agent --daemon<span class="k">)</span>
+</pre></div>
+
+
 <h2 id="directory-layout">Directory layout<a class="headerlink" href="#directory-layout" title="Permanent link">&para;</a></h2>
 <p>The steps described in this page assume the following directory layout (some directories will be created as
 a result of the steps). Any other layout can be used. However if the layout differs, then the relative paths
@@ -180,6 +188,8 @@ in this page shall be adjusted accordingly.</p>
 │  └─ $NEW_VERSION
 │     └─ target
 │        └─ distributions
+├─ non-free
+│  └─ sis-epsg
 ├─ distribution
 │  └─ $NEW_VERSION
 │     └─ RC$RELEASE_CANDIDATE
@@ -189,21 +199,24 @@ in this page shall be adjusted accordingly.</p>
 </pre></div>
 
 
-<h2 id="java-update">Java updates<a class="headerlink" href="#java-update" title="Permanent link">&para;</a></h2>
+<h2 id="java-version">Java versions<a class="headerlink" href="#java-version" title="Permanent link">&para;</a></h2>
 <p>While we need a JDK7 installation for the <code>bootclasspath</code> option, we do not recommend to use it for generating
 the binaries since JDK7 has reached its end of public updates (but not the end of commercial support).
-We recommend to create the release with JDK8 instead (note however than JDK8 <code>javadoc</code> tool seems to have a bug that prevent its use with SIS).
+We recommend to create the release with JDK8 instead (note however that JDK8 <code>javadoc</code> tool seems to have a bug that prevent its use with SIS).
 Make sure that the JDK installation to be used for the release has been updated recently, since compilers may receive critical bug fixes.
 For example the <code>javadoc</code> tool of older JDK versions was known to generate HTML pages with a vulnerability in them.</p>
-<h1 id="prepare-source">Prepare web site and source code<a class="headerlink" href="#prepare-source" title="Permanent link">&para;</a></h1>
-<p>Before to start the release process:</p>
+<h1 id="prepare-source">Prepare web site and source code before branching<a class="headerlink" href="#prepare-source" title="Permanent link">&para;</a></h1>
+<p>Before to start the release process, we need to test more extensively the trunk.
+The tests described below often reveal errors that were unnoticed in daily builds.
+It is better to detect and fix them before to create the branch.
+First:</p>
 <ul>
-<li>Review and update the <code>README</code> file on the <code>trunk</code> source code repository.</li>
+<li>Review and update the <code>README</code> and <code>NOTICE</code> files on the source code repository.</li>
 <li>Review the <code>javac</code> and <code>javadoc</code> warnings reported by Jenkins and fix at least the typos.</li>
-<li>Ensure that the <code>trunk</code> build is successful (including tests) with JDK7 and JDK8.</li>
 </ul>
-<h2 id="prepare-documentation">Documentation<a class="headerlink" href="#prepare-documentation" title="Permanent link">&para;</a></h2>
-<p>Update <a href="http://issues.apache.org/jira/browse/SIS">JIRA</a> tasks and prepare release notes as below:</p>
+<h2 id="release-notes">Prepare release notes<a class="headerlink" href="#release-notes" title="Permanent link">&para;</a></h2>
+<p>We update JIRA first because doing so is sometime a reminder of uncompleted tasks in source code.
+Update <a href="http://issues.apache.org/jira/browse/SIS">JIRA</a> tasks and prepare release notes as below:</p>
 <ul>
 <li>Ensure that the <em>Fix Version</em> in issues resolved since the last release includes this release version correctly.</li>
 <li>Ensure that all open issues are resolved or closed before proceeding further.</li>
@@ -221,6 +234,7 @@ Add a new <code>&lt;release&gt;</code> block for the new release with the estima
 <p>Update the version numbers from the old one to <code>$NEW_VERSION</code> in the following files.</p>
 <ul>
 <li><code>content/index.mdtext</code></li>
+<li><code>content/gdal.mdtext</code></li>
 <li><code>content/downloads.mdtext</code> (need also to update <code>$NEW_VERSION-SNAPSHOT</code> to the next snapshot version)</li>
 <li><code>content/command-line.mdtext</code></li>
 <li><code>content/epsg.mdtext</code> (be aware that the version number may sometime be behind the SIS version number)</li>
@@ -233,11 +247,55 @@ svn commit --message <span class="s2">&quot;Prepare documentation for the $NEW_V
 
 <p>The new web site will be published in the <a href="http://sis.staging.apache.org">staging area</a>.
 It will not yet be published on <code>http://sis.apache.org</code>.</p>
+<h2 id="test-trunk">Test trunk extensively<a class="headerlink" href="#test-trunk" title="Permanent link">&para;</a></h2>
+<p>Build the project with the <code>apache-release</code> profile enabled.
+This profile performs the following actions:</p>
+<ul>
+<li>Enable extensive tests (i.e. it will set the <code>org.apache.sis.test.extensive</code> property to <code>true</code>).</li>
+<li>Generate Javadoc. This may fail if the source code contains invalid Javadoc tags or broken HTML.</li>
+<li>Generate additional binary artifacts (<code>*.pack.gz</code> and <code>*.oxt</code> files).
+    This will fail if duplicated class files or resources are found.
+    Consequently building the <code>.*pack.gz</code> file is an additional test worth to do before deployment.</li>
+<li>Sign the artifacts.</li>
+</ul>
+<p>Each of those additional products may cause a failure that did not happen in normal builds.</p>
+<div class="codehilite"><pre><span class="nb">cd</span> ../trunk
+mvn clean install --activate-profiles apache-release --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
+</pre></div>
+
+
+<p>Verify signature for all files:</p>
+<div class="codehilite"><pre>find . -name <span class="s2">&quot;sis-*.asc&quot;</span> -exec gpg --verify <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
+</pre></div>
+
+
+<p>If the <code>SIS_DATA</code> environment variable was set during above build, unset it a try again.
+Ideally the build should be tested in both conditions (<code>SIS_DATA</code> set and unset).</p>
+<p>Build the <code>non-free</code> group of modules. Those modules will not be part of the distribution (except on Maven),
+but we nevertheless need to ensure that they work. Before to test, verify that their version numbers and their
+SIS dependencies are the snapshot tested in this section.</p>
+<div class="codehilite"><pre><span class="nb">cd</span> ../non-free
+svn update
+mvn clean install --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
+</pre></div>
+
+
+<p>Run the integration tests. Before to test,
+verify that their version numbers and their SIS dependencies are the snapshot tested in this section.
+Note that execution of those tests may be slow.</p>
+<div class="codehilite"><pre><span class="nb">cd</span> ../release-test
+svn update
+<span class="nb">cd </span>maven
+mvn clean <span class="nb">test</span> --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
+</pre></div>
+
+
 <h2 id="prepare-code">Source code<a class="headerlink" href="#prepare-code" title="Permanent link">&para;</a></h2>
 <p>Replace the <code>$OLD_VERSION</code> number by <code>$NEW_VERSION</code> in the following literals.
 Those changes need to be applied on the development branch and merged with all other branches and trunk.</p>
 <ul>
 <li><code>DOWNLOAD_URL</code> in <code>application/sis-console/src/main/java/org/apache/sis/console/ResourcesDownloader.java</code> file.</li>
+<li><code>&lt;sis.non-free.version&gt;</code> in root <code>pom.xml</code> file.</li>
 </ul>
 <p>Commit and merge to other branches and to trunk.</p>
 <div class="codehilite"><pre>svn commit --message <span class="s2">&quot;Set the EPSG geodetic dataset URL to its expected location after release.&quot;</span>
@@ -267,7 +325,7 @@ svn checkout https://svn.apache.org/repos/asf/sis/branches/<span class="nv">$NEW
 <p>We need to update the Subversion URL and SIS version numbers not only in the <code>pom.xml</code> files,
 but also in a few Java files. The following command performs the replacement using Ant.
 Note that this command does <em>not</em> yet remove the <code>-SNAPSHOT</code> suffix in version numbers
-(this will be done later):</p>
+(this will be done later, at tag creation time):</p>
 <div class="codehilite"><pre>ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml branch -Dbranch.version<span class="o">=</span><span class="nv">$NEW_VERSION</span> -Dsis.version<span class="o">=</span><span class="nv">$NEW_VERSION</span>
 </pre></div>
 
@@ -276,38 +334,17 @@ Note that this command does <em>not</em> yet remove the <code>-SNAPSHOT</code> s
 <ul>
 <li>Remove the whole <code>&lt;pluginRepositories&gt;</code> block (including comment), since it should not be needed for releases (and is actually not allowed).</li>
 </ul>
-<p>Remove the modules that are not yet ready for a release:</p>
+<p>Remove the modules that are not yet ready for a release.
+This may require removing <code>&lt;module&gt;</code> elements in the parent <code>pom.xml</code> file.</p>
 <div class="codehilite"><pre>svn remove storage/sis-shapefile
 svn remove application/sis-javafx
 </pre></div>
 
 
-<p>Commit the changes on the branch:</p>
-<div class="codehilite"><pre>svn commit --message <span class="s2">&quot;Prepare the branch for the $NEW_VERSION release.&quot;</span>
-</pre></div>
-
-
-<h2 id="branch-verify">Verify content<a class="headerlink" href="#branch-verify" title="Permanent link">&para;</a></h2>
-<p>Starts the GPG agent if not already done.
-This is for avoiding to be prompted many time for the passphrase in every modules to be built by Maven.
-Note that MacOS users can skip this step if their passphrase is stored in the OS keychain,</p>
-<div class="codehilite"><pre><span class="nb">eval</span> <span class="k">$(</span>gpg-agent --daemon<span class="k">)</span>
-</pre></div>
-
-
-<p>Try a dry run of the <code>release:prepare</code> goal. This goals checks for <code>SNAPSHOT</code> dependencies in <code>pom.xml</code> files.
-It will not complete the prepare goal until all snapshot dependencies are resolved.
-If anything goes wrong, the directory can be cleaned by running the <code>release:clean</code> goal
-before to fix the problem and try again.</p>
-<div class="codehilite"><pre>mvn release:prepare --define <span class="nv">releaseVersion</span><span class="o">=</span><span class="nv">$NEW_VERSION</span> --define <span class="nv">tag</span><span class="o">=</span><span class="nv">$NEW_VERSION</span> --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span> <span class="se">\</span>
-    --define <span class="nv">autoVersionSubmodules</span><span class="o">=</span><span class="nb">true</span> --define <span class="nv">updateWorkingCopyVersions</span><span class="o">=</span><span class="nb">false</span> --define <span class="nv">dryRun</span><span class="o">=</span><span class="nb">true</span>
-</pre></div>
-
-
-<p>The dry run will not commit any changes back to SVN. Instead, it will create <code>pom.xml.tag</code> files containing
-the changes that would have been committed to SVN. We keep those files for verification purpose in the next section.</p>
-<p>Verify signature for all files:</p>
-<div class="codehilite"><pre>find . -name <span class="s2">&quot;sis-*.asc&quot;</span> -exec gpg --verify <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
+<p>Validate with <code>svn diff</code>, ensure that the build is not broken (we will run the tests later),
+then commit the changes on the branch:</p>
+<div class="codehilite"><pre>mvn clean package --define <span class="nv">skipTests</span><span class="o">=</span><span class="nb">true</span> --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
+svn commit --message <span class="s2">&quot;Prepare branch for $NEW_VERSION release.&quot;</span>
 </pre></div>
 
 
@@ -323,7 +360,7 @@ However we perform those steps manually rather than relying on Maven for the fol
 <p>First, create the tag:</p>
 <div class="codehilite"><pre>svn copy https://svn.apache.org/repos/asf/sis/branches/<span class="nv">$NEW_VERSION</span> <span class="se">\</span>
          https://svn.apache.org/repos/asf/sis/tags/<span class="nv">$NEW_VERSION</span> <span class="se">\</span>
-         --message <span class="s2">&quot;Create the $NEW_VERSION tag for RC$RELEASE_CANDIDATE.&quot;</span>
+         --message <span class="s2">&quot;Create $NEW_VERSION tag for RC$RELEASE_CANDIDATE.&quot;</span>
 </pre></div>
 
 
@@ -341,36 +378,40 @@ plus some additional files:</p>
 </pre></div>
 
 
-<p>Compare with the modifications done by <code>mvn release:prepare</code>. The following command should report no difference,
-ignoring the license or other information that may have been removed by the Maven plugin
-(this has been known to happen if the starting <code>&lt;project&gt;</code> tag is not on a single line).</p>
-<div class="codehilite"><pre>find . -name <span class="s2">&quot;pom.xml&quot;</span> -exec diff <span class="s1">&#39;{}&#39;</span> <span class="nv">$BRANCH_DIR</span>/<span class="s1">&#39;{}&#39;</span>.tag <span class="se">\;</span>
+<p>Validate with <code>svn diff</code>, search <code>SNAPSHOT</code> in the whole source directory in case we missed some, then commit:</p>
+<div class="codehilite"><pre>svn commit --message <span class="s2">&quot;Fix version number to $NEW_VERSION (no -SNAPSHOT) and SVN directory.&quot;</span>
 </pre></div>
 
 
-<p>Commit:</p>
-<div class="codehilite"><pre>svn commit --message <span class="s2">&quot;Fix version number and SVN directory.&quot;</span>
+<h2 id="branch-verify">Verify content<a class="headerlink" href="#branch-verify" title="Permanent link">&para;</a></h2>
+<p>Build and test the project in the same way than we did on trunk.
+In addition to testing, execution of an <code>install</code> phase before deployment is required for our custom <code>sis-build-helper</code> plugin.</p>
+<div class="codehilite"><pre>mvn install --activate-profiles apache-release --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
+find . -name <span class="s2">&quot;sis-*.asc&quot;</span> -exec gpg --verify <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
 </pre></div>
 
 
-<p>Clean the branch, since we will not need it anymore:</p>
-<div class="codehilite"><pre><span class="nb">cd</span> <span class="nv">$BRANCH_DIR</span>
-mvn clean release:clean
+<p>Open the <code>pom.xml</code> file of all modules in the <code>non-free</code> group.
+Set their version numbers and their SIS dependencies to <code>$NEW_VERSION</code> without <code>-SNAPSHOT</code> suffix.
+Commit and built:</p>
+<div class="codehilite"><pre><span class="nb">cd</span> ../../non-free
+svn commit --message <span class="s2">&quot;Set version number and dependencies to $NEW_VERSION.&quot;</span>
+mvn clean install --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
+</pre></div>
+
+
+<p>Open the <code>pom.xml</code> file of integration tests.
+Set its version numbers and its SIS dependencies to <code>$NEW_VERSION</code> without <code>-SNAPSHOT</code> suffix.
+Commit and built (note that execution may be slow).</p>
+<div class="codehilite"><pre><span class="nb">cd</span> ../release-test
+svn commit --message <span class="s2">&quot;Set version number and dependencies to $NEW_VERSION.&quot;</span>
+<span class="nb">cd </span>maven
+mvn clean <span class="nb">test</span> --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
 </pre></div>
 
 
 <h1 id="maven-deploy">Deploy Maven artifacts<a class="headerlink" href="#maven-deploy" title="Permanent link">&para;</a></h1>
-<p>Execute an <code>install</code> phase first (required for our custom <code>sis-build-helper</code> plugin),
-and generate the binary artifact (<code>pack.gz</code> file). The later will fail if duplicated
-class files or resources are found. Consequently building the <code>pack.gz</code> file is an
-additional test worth to do before deployment.</p>
-<div class="codehilite"><pre><span class="nb">cd</span> <span class="nv">$TAG_DIR</span>
-mvn clean install --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
-mvn org.apache.sis.core:sis-build-helper:<span class="nv">$NEW_VERSION</span>:dist --non-recursive
-</pre></div>
-
-
-<p>If the above succeeded, deploy:</p>
+<p>If above verifications succeeded, deploy:</p>
 <div class="codehilite"><pre>chmod a-w target/distribution/*.zip
 mvn deploy --activate-profiles apache-release --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
 </pre></div>
@@ -460,9 +501,7 @@ avoiding the security vulnerability discovered in the Javadoc tools of older JDK
 and keeping the <code>diff</code> smaller on the SVN repository of SIS web site.
 If JDK8 is <em>not</em> used, then omit the <code>cp</code> command below.</p>
 <div class="codehilite"><pre><span class="nb">cd</span> <span class="nv">$TAG_DIR</span>
-cp ../../JDK8/src/main/javadoc/stylesheet.css src/main/javadoc/
 mvn javadoc:aggregate
-svn revert src/main/javadoc/stylesheet.css
 <span class="nb">cd </span>target/site
 zip -9 -r apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip apidocs
 <span class="nb">cd</span> ../..
@@ -500,7 +539,7 @@ Update the file content if necessary.</p>
 <p>Move the files generated by Maven to the distribution directory:</p>
 <div class="codehilite"><pre>mv <span class="nv">$TAG_DIR</span>/target/sis-<span class="nv">$NEW_VERSION</span>-* .
 mv <span class="nv">$TAG_DIR</span>/target/site/apache-sis-<span class="nv">$NEW_VERSION</span>-* .
-mv <span class="nv">$TAG_DIR</span>/target/distribution/apache-sis-<span class="nv">$NEW_VERSION</span>.zip .
+mv <span class="nv">$TAG_DIR</span>/application/sis-console/target/distribution/apache-sis-<span class="nv">$NEW_VERSION</span>.zip .
 </pre></div>
 
 
@@ -577,12 +616,22 @@ unzip apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip
 <span class="nb">cd </span>apache-sis-<span class="nv">$NEW_VERSION</span>
 <span class="nb">unset </span>SIS_DATA
 bin/sis about --verbose
-bin/sis metadata http://catalog.data.gov/harvest/object/df138a1b-e7cb-4ca4-b7c3-316135e81b16
 bin/sis metadata https://github.com/opengeospatial/geoapi/raw/master/geoapi-netcdf/src/test/resources/org/opengis/wrapper/netcdf/NCEP-SST.nc
 bin/sis crs http://svn.apache.org/repos/asf/sis/trunk/core/sis-referencing/src/test/resources/org/apache/sis/referencing/crs/ProjectedCRS.xml --format WKT
 </pre></div>
 
 
+<h1 id="openoffice">Prepare OpenOffice add-in<a class="headerlink" href="#openoffice" title="Permanent link">&para;</a></h1>
+<p>The OpenOffice add-in source code can be distributed under Apache 2 license only.
+But the binary may contain non-free resources, notably the EPSG geodetic dataset.
+For now, the release manager should apply the following local modifications before
+to build the add-in:</p>
+<ul>
+<li>Move to the <code>application/sis-openoffice</code> directory.</li>
+<li>Replace the <code>src/main/unopkg/license.txt</code> file by EPSG terms of use.
+    A copy is found in the <code>non-free</code> group of SIS modules.</li>
+<li>Run <code>mvn package --activate-profiles non-free</code>.</li>
+</ul>
 <h1 id="vote">Put the release candidate up for a vote<a class="headerlink" href="#vote" title="Permanent link">&para;</a></h1>
 <ul>
 <li>Create a VOTE email thread on <code>dev@</code> to record votes as replies.
@@ -661,7 +710,7 @@ svn delete https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERS
 </ul>
 </li>
 <li>Make an announcement about the release on the <code>dev@</code>, <code>users@</code>, and <code>announce@</code> mailing lists.
-    A template is available <a href="templates/release-announce.txt">here</a>.
+    A template is available <a href="templates/release-announce.html">here</a>.
     The email needs to be sent from an <code>@apache.org</code> email address.</li>
 </ul>
 <p>Delete the prior version:</p>
@@ -697,7 +746,7 @@ all directories starting with the old version number. The sub-directories need t
 
   <footer class="footer">
     <div class="container">
-      <p>Copyright &copy; 2013-2016 The Apache Software Foundation, Licensed under the
+      <p>Copyright &copy; 2013-2017 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
           Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
     </div>

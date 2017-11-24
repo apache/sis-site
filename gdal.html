@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Bridge with GDAL</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="http://www.apache.org/css/code.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/sis.css">
+
+    
+
+    
+    <!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.  See the NOTICE file distributed with this work for additional information regarding copyright ownership.  The ASF licenses this file to you under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use this file except in compliance with the License.  You may obtain a copy of the License at . http://www.apache.org/licenses/LICENSE-2.0 . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the License for the specific language governing permissions and limitations under the License. -->
+  </head>
+
+  <body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="/index.html"> Apache SIS&trade; </a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">About<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="mail-lists.html">Mailing Lists</a></li>
+                  <li><a href="http://www.apache.org/licenses/">Project License</a></li>
+                  <li><a href="team-list.html">Project Team</a></li>
+                </ul>
+              </li>
+              <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">Project Documentation<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="book/index.html">Developer guide</a></li>
+                  <li><a href="apidocs/index.html">Online Javadoc</a></li>
+                  <li><a href="downloads.html">Downloads</a></li>
+                  <li><a href="source.html">Source Code</a></li>
+                  <li><a href="code-patterns.html">Code patterns</a></li>
+                  <li><a href="faq.html">FAQ</a></li>
+                  <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+                </ul>
+              </li>
+              <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">ASF <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="http://www.apache.org">The Foundation</a></li>
+                  <li><a href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
+                  <li><a href="http://www.apache.org/foundation/sponsorship.html">Become a Sponsor</a></li>
+                  <li><a href="http://www.apache.org/security/">Security</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div> <!-- /.nav-collapse -->
+        </div><!-- /.container -->
+      </div><!-- /.navbar-inner -->
+    </div>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span2">
+          <img src="img/logo.png"/>
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              <li class="active"><a href="index.html">Home</a></li>
+              <li><a href="mail-lists.html">Mailing Lists</a></li>
+              <li><a href="http://www.apache.org/licenses/">Project License</a></li>
+              <li><a href="team-list.html">Project Team</a></li>
+              <li class="nav-header">Project Documentation</li>
+              <li><a href="book/index.html">Developer guide</a></li>
+              <li><a href="apidocs/index.html">Online Javadoc</a></li>
+              <li><a href="downloads.html">Downloads</a></li>
+              <li><a href="source.html">Source Code</a></li>
+              <li><a href="code-patterns.html">Code patterns</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+              <li class="nav-header">ASF</li>
+              <li><a href="http://www.apache.org">The Foundation</a></li>
+              <li><a href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
+              <li><a href="http://www.apache.org/foundation/sponsorship.html">Become a Sponsor</a></li>
+              <li><a href="http://www.apache.org/security/">Security</a></li>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+        <div class="span10">
+          <section id="content" class="row">
+            <article class="span12">
+              <p class="page-title">Bridge with GDAL</p>
+              <style type="text/css">
+/* The following code is added by mdx_elementid.py
+   It was originally lifted from http://subversion.apache.org/style/site.css */
+/*
+ * Hide class="elementid-permalink", except when an enclosing heading
+ * has the :hover property.
+ */
+.headerlink, .elementid-permalink {
+  visibility: hidden;
+}
+h2:hover > .headerlink, h3:hover > .headerlink, h1:hover > .headerlink, h6:hover > .headerlink, h4:hover > .headerlink, h5:hover > .headerlink, dt:hover > .elementid-permalink { visibility: visible }</style>
+<p>While Apache SIS provides its own map projection engine, some applications may want to also use the Proj.4 library.
+One reason may be to use map projection methods not yet supported by Apache SIS,
+or for getting the exact same numerical results than Proj.4.
+The two libraries can coexist and can be used through the same API,
+provided that prerequisites are meet.</p>
+<div class="toc">
+<ul>
+<li><a href="#prerequisites">Prerequisites</a></li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#limitations">Limitations</a></li>
+</ul>
+</div>
+<h1 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h1>
+<p>Proj.4 needs to be pre-installed; there is no copy embedded in Apache SIS.
+Proj.4 can be installed by package managers on most Linux distributions,
+or with tools like MacPorts on MacOS
+(Windows is not yet supported – see <a href="#limitations">limitations</a>).
+In addition, the <code>sis-gdal</code> module must be present on the classpath.
+Maven projects can use the following dependency in their <code>pom.xml</code> file:</p>
+<div class="codehilite"><pre><span class="nt">&lt;dependencies&gt;</span>
+  <span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.sis.storage<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>sis-gdal<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>0.8<span class="nt">&lt;/version&gt;</span>
+  <span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;/dependencies&gt;</span>
+</pre></div>
+
+
+<h1 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h1>
+<p>For instantiating a coordinate reference system (CRS) backed by Proj.4:</p>
+<div class="codehilite"><pre><span class="n">CoordinateReferenceSystem</span> <span class="n">crs</span> <span class="o">=</span> <span class="n">CRS</span><span class="o">.</span><span class="na">forCode</span><span class="o">(</span><span class="s">&quot;Proj4::+init=epsg:4326&quot;</span><span class="o">);</span>
+</pre></div>
+
+
+<p>Everything after <code>"PROJ4::"</code> is forwarded as-is to the Proj.4 library.
+Note that despite the <code>"epsg"</code> part in above definition string, the CRS created by above method call is <strong>not</strong>
+conform to EPSG:4326 authoritative definition. The string should rather be understood as a Proj.4-specific code.
+Proj.4 definitions may differ from authoritative definitions in axis order, axis directions or units of measurement.
+To get the authoritative definition, use <code>CRS.forCode("EPSG::4326")</code> instead.</p>
+<p>For creating a coordinate operation backed by Proj.4, there is nothing special to do;
+we can invoke the same method regardless if the CRS are backed by Proj.4 or Apache SIS.
+The following code will create a transform backed by Proj.4 if <em>both</em> <code>sourceCRS</code> and <code>targetCRS</code>
+were created with <code>CRS.forCode("Proj4::…")</code> calls.
+Note however that <code>CoordinateOperation</code> backed by Proj.4 does not provide metadata about accuracy or domain of validity.</p>
+<div class="codehilite"><pre><span class="n">CoordinateOperation</span>  <span class="n">op</span> <span class="o">=</span> <span class="n">CRS</span><span class="o">.</span><span class="na">findOperation</span><span class="o">(</span><span class="n">sourceCRS</span><span class="o">,</span> <span class="n">targetCRS</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+<span class="n">MathTransform</span>        <span class="n">mt</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="na">getMathTransform</span><span class="o">();</span>
+<span class="n">DirectPosition</span> <span class="n">sourcePt</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DirectPosition2D</span><span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">);</span>
+<span class="n">DirectPosition</span> <span class="n">targetPt</span> <span class="o">=</span> <span class="n">mt</span><span class="o">.</span><span class="na">transform</span><span class="o">(</span><span class="n">sourcePt</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</pre></div>
+
+
+<p>To verify if a <code>MathTransform</code> instance is implemented by Proj.4 or by Apache SIS,
+one can look at the <em>Well Known Text</em> (WKT) representation as given by <code>System.out.println(mt)</code>.
+If the transform is backed by Apache SIS, the output may show any of the parameters listed
+in the <a href="tables/CoordinateOperationMethods.html">coordinate operation methods table</a>.
+But if the transform is backed by Proj.4, then the transform will always be described
+by the <code>"pj_transform"</code> method with exactly two parameters: <code>"srcdefn"</code> and <code>"dstdefn"</code>:</p>
+<div class="codehilite"><pre>PARAM_MT[&quot;pj_transform&quot;,
+  PARAMETER[&quot;srcdefn&quot;, &quot;+proj=…&quot;],
+  PARAMETER[&quot;dstdefn&quot;, &quot;+proj=…&quot;]]
+</pre></div>
+
+
+<p>See the <a href="apidocs/org/apache/sis/storage/gdal/package-summary.html">Javadoc</a> for more information.</p>
+<h1 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">&para;</a></h1>
+<p>Current Apache SIS version can create CRS backed by Proj.4 only when SIS can map Proj.4 parameters to EPSG parameters.
+For example the Proj.4 <code>+x_0=</code> parameter is often (but not always) mapped to EPSG <em>False easting</em> parameter.
+Future SIS versions may relax the requirement for such mapping.</p>
+<p>Current Apache SIS version supports only Linux and MacOS platforms.
+A future version will add Windows support.</p>
+            </article>
+          </section>
+        </div><!--/span-->
+      </div><!--/row-fluid-->
+    </div><!--/container-fluid-->
+
+  <footer class="footer">
+    <div class="container">
+      <p>Copyright &copy; 2013-2017 The Apache Software Foundation, Licensed under the
+        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
+          Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+    </div>
+  </footer>
+
+  <script src="js/jquery-1.9.1.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+
+</body>
+</html>

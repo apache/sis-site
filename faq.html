@@ -23,13 +23,13 @@
               <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">About<b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a href="mail-lists.html">Mailing Lists</a></li>
-                  <li><a href="license.html">Project License</a></li>
+                  <li><a href="http://www.apache.org/licenses/">Project License</a></li>
                   <li><a href="team-list.html">Project Team</a></li>
                 </ul>
               </li>
               <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">Project Documentation<b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="book/en/developer-guide.html">Developer guide</a></li>
+                  <li><a href="book/index.html">Developer guide</a></li>
                   <li><a href="apidocs/index.html">Online Javadoc</a></li>
                   <li><a href="downloads.html">Downloads</a></li>
                   <li><a href="source.html">Source Code</a></li>
@@ -60,10 +60,10 @@
             <ul class="nav nav-list">
               <li class="active"><a href="index.html">Home</a></li>
               <li><a href="mail-lists.html">Mailing Lists</a></li>
-              <li><a href="license.html">Project License</a></li>
+              <li><a href="http://www.apache.org/licenses/">Project License</a></li>
               <li><a href="team-list.html">Project Team</a></li>
               <li class="nav-header">Project Documentation</li>
-              <li><a href="book/en/developer-guide.html">Developer guide</a></li>
+              <li><a href="book/index.html">Developer guide</a></li>
               <li><a href="apidocs/index.html">Online Javadoc</a></li>
               <li><a href="downloads.html">Downloads</a></li>
               <li><a href="source.html">Source Code</a></li>
@@ -93,7 +93,8 @@
   visibility: hidden;
 }
 h2:hover > .headerlink, h3:hover > .headerlink, h1:hover > .headerlink, h6:hover > .headerlink, h4:hover > .headerlink, h5:hover > .headerlink, dt:hover > .elementid-permalink { visibility: visible }</style>
-<p>This page lists some Frequently Asked Questions (FAQ) when using Apache SIS.</p>
+<p>This page lists some Frequently Asked Questions (FAQ) when using Apache SIS.
+This FAQ is also <a href="faq_fr.html">available in French</a>.</p>
 <div class="toc">
 <ul>
 <li><a href="#referencing">Referencing</a><ul>
@@ -154,7 +155,7 @@ Note that all geographic coordinates below express latitude <em>before</em> long
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyApp</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">FactoryException</span><span class="o">,</span> <span class="n">TransformException</span> <span class="o">{</span>
         <span class="n">CoordinateReferenceSystem</span> <span class="n">sourceCRS</span> <span class="o">=</span> <span class="n">CommonCRS</span><span class="o">.</span><span class="na">WGS84</span><span class="o">.</span><span class="na">geographic</span><span class="o">();</span>
-        <span class="n">CoordinateReferenceSystem</span> <span class="n">targetCRS</span> <span class="o">=</span> <span class="n">CommonCRS</span><span class="o">.</span><span class="na">WGS84</span><span class="o">.</span><span class="na">UTM</span><span class="o">(</span><span class="mi">40</span><span class="o">,</span> <span class="mi">14</span><span class="o">);</span>  <span class="c1">// Get whatever zone is valid for 14°E.</span>
+        <span class="n">CoordinateReferenceSystem</span> <span class="n">targetCRS</span> <span class="o">=</span> <span class="n">CommonCRS</span><span class="o">.</span><span class="na">WGS84</span><span class="o">.</span><span class="na">universal</span><span class="o">(</span><span class="mi">40</span><span class="o">,</span> <span class="mi">14</span><span class="o">);</span>  <span class="c1">// Get whatever zone is valid for 14°E.</span>
         <span class="n">CoordinateOperation</span> <span class="n">operation</span> <span class="o">=</span> <span class="n">CRS</span><span class="o">.</span><span class="na">findOperation</span><span class="o">(</span><span class="n">sourceCRS</span><span class="o">,</span> <span class="n">targetCRS</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
 
         <span class="c1">// The above lines are costly and should be performed only once before to project many points.</span>
@@ -205,7 +206,7 @@ According that widely-used format, WKT definitions without explicit <code>AXIS[�
 shall default to (<em>longitude</em>, <em>latitude</em>) or (<em>x</em>, <em>y</em>) axis order.
 In version 2 of the WKT format, <code>AXIS[…]</code> elements are no longer optional
 and should contain an explicit <code>ORDER[…]</code> sub-element for making the intended order yet more obvious.</p>
-<p>Many softwares still use the old (<em>x</em>, <em>y</em>) axis order, sometime because it is easier to implement.
+<p>Many software products still use the old (<em>x</em>, <em>y</em>) axis order, sometime because it is easier to implement.
 But Apache SIS rather defaults to axis order <em>as defined by the authority</em> (except when parsing a WKT 1 definition),
 but allows changing axis order to the (<em>x</em>, <em>y</em>) order after <abbr title="Coordinate Reference System">CRS</abbr> creation.
 This change can be done with the following code:</p>
@@ -216,7 +217,7 @@ This change can be done with the following code:</p>
 
 <h2 id="crs">Coordinate Reference Systems<a class="headerlink" href="#crs" title="Permanent link">&para;</a></h2>
 <h3 id="UTM">How do I instantiate a Universal Transverse Mercator (UTM) projection?<a class="headerlink" href="#UTM" title="Permanent link">&para;</a></h3>
-<p>If the UTM zone is unknown, an easy way is to invoke the <code>UTM(…)</code> method on one of the <code>CommonCRS</code> pre-defined constants.
+<p>If the UTM zone is unknown, an easy way is to invoke the <code>universal(…)</code> method on one of the <code>CommonCRS</code> pre-defined constants.
 That method receives in argument a geographic coordinate in (<em>latitude</em>, <em>longitude</em>) order and computes the UTM zone from it.
 See the <a href="#transform-point">above Java code example</a>.</p>
 <p>If the UTM zone is know, one way is to use the "EPSG" or "AUTO" authority factory.
@@ -243,7 +244,7 @@ but actually ignores the ellipsoidal nature of that datum and uses the simpler s
 Since version 6.15 of EPSG geodetic dataset, the preferred way to get that projection is to invoke <code>CRS.forCode("EPSG:3857")</code>.
 Note that the use of that projection is <strong>not</strong> recommended, unless needed for compatibility with other data.</p>
 <p>The EPSG:3857 definition uses a map projection method named <em>"Popular Visualisation Pseudo Mercator"</em>.
-The EPSG geodetic dataset provides also some other map projections that use spherical formulas despite the ellipsoidal nature of the ellipsoid.
+The EPSG geodetic dataset provides also some other map projections that use spherical formulas.
 Those methods have "(Spherical)" in their name, for example <em>"Mercator (Spherical)"</em>
 (which differs from <em>"Popular Visualisation Pseudo Mercator"</em> by the use of a more appropriate sphere radius).
 Those projection methods can be used in Well Known Text (WKT) definitions.</p>
@@ -303,7 +304,7 @@ between the supplied <abbr title="Coordinate Reference System">CRS</abbr> and th
 <h3 id="equalsIgnoreMetadata">How can I determine if two <abbr title="Coordinate Reference System">CRS</abbr> are "functionally" equal?<a class="headerlink" href="#equalsIgnoreMetadata" title="Permanent link">&para;</a></h3>
 <p>Two Coordinate Reference Systems may not be considered equal if they are associated to different metadata
 (name, identifiers, scope, domain of validity, remarks), even though they represent the same logical <abbr title="Coordinate Reference System">CRS</abbr>.
-In order to test if two <abbr title="Coordinate Reference System">CRS</abbr> are functionally equivalent, use <code>Utilities.equalsIgnoreMetadata(myFirstCRS, mySecondCRS)</code>.</p>
+In order to test if two <abbr title="Coordinate Reference System">CRS</abbr> are functionally equivalent, use <code>Utilities​.equalsIgnoreMetadata(myFirstCRS, mySecondCRS)</code>.</p>
 <h3 id="crsHashCode">Are <abbr title="Coordinate Reference System">CRS</abbr> objects safe for use as keys in HashMap?<a class="headerlink" href="#crsHashCode" title="Permanent link">&para;</a></h3>
 <p>Yes, every classes defined in the <code>org.apache.sis.referencing.crs</code>, <code>cs</code> and <code>datum</code> packages
 define properly their <code>equals(Object)</code> and <code>hashCode()</code> methods.
@@ -442,7 +443,7 @@ The attribute values will be wrapped automatically as needed by JAXB adapters.</
 
   <footer class="footer">
     <div class="container">
-      <p>Copyright &copy; 2013-2016 The Apache Software Foundation, Licensed under the
+      <p>Copyright &copy; 2013-2017 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
           Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
     </div>
