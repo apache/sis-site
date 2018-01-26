@@ -17,7 +17,7 @@ Notice: Licensed to the Apache Software Foundation (ASF) under one
         under the License.
 
 
-The [source code repository](source.html) contains JDK7 and JDK8 branches together with the trunk.
+The [source code repository](source.html) contains JDK8 and JDK9 branches together with the trunk.
 The Apache SIS releases are created from the code on the trunk only.
 However the actual development often occur on a branch before to be merged to the trunk.
 Those branches exist in order to experiment early the new technologies — since it may impact
@@ -37,50 +37,30 @@ Developers are encouraged to select the first branch listed below, in that order
 
 
 
-branches/JDK8    {#jdk8}
+branches/JDK8    {#jdk9}
 ------------------------
 
 The JDK8 branch is the recommended development branch for developers who can use a JDK8 environment.
-This branch implements the interfaces defined in the [GeoAPI snapshot][geoapi-snapshot] milestones
-and uses some JDK8 or JDK7-specific features like:
-
-  * Syntax enhancements, mostly in exception handling (_try-with-resources_, _multi-catches_)
-    but also on other aspects like _diamond operator_.
-  * Leveraging of new API (_suppressed exceptions_, _file systems_, _fork join_).
-  * Functional interfaces and lambda expressions.
+This branch implements the interfaces defined in the [GeoAPI snapshot][geoapi-snapshot] milestones.
 
 
 
-branches/JDK7    {#jdk7}
+branches/JDK8    {#jdk8}
 ------------------------
 
-The JDK7 branch is a merge of the JDK8 branch ported to the JDK7 platform.
-The JDK7 branch implements the same GeoAPI interfaces than the JDK8 branch;
+The JDK8 branch is a merge of the JDK9 branch ported to the JDK8 platform.
+The JDK8 branch implements the same GeoAPI interfaces than the JDK9 branch;
 the only differences (apart version number) are the modifications necessary
-for building and running on a JDK7 platform:
-
-  * _Lambda expressions_ replaced by anonymous classes.
-  * New methods on collection interfaces replaced by calls to static methods.
-  * `java.util.function` and `java.time` API replaced by internal placeholder classes.
-
-
-### Behavioral differences    {#behavior-jdk7}
-
-The JDK7 branch should behaves in a way close to identical to the JDK8 branch,
-with possible variations in the following aspects:
-
-  * Usage of `java.time.format.DateTimeFormatter` for parsing and formatting ISO 8601 dates
-    are simulated by usage of `java.text.SimpleDateFormat`. Those two formatters may not have
-    the same tolerance to inputs that deviate from the standard.
+for building and running on a JDK8 platform.
 
 
 
 trunk    {#trunk}
 -----------------
 
-The trunk is a merge of the JDK7 branch ported to the interfaces defined by the [GeoAPI stable release][geoapi-stable].
+The trunk is a merge of the JDK8 branch ported to the interfaces defined by the [GeoAPI stable release][geoapi-stable].
 This is the code which is built by the continuous integration system and deployed on the Maven repository.
-The main differences (apart version number) compared to the JDK7 branch are the modifications
+The main differences (apart version number) compared to the JDK8 branch are the modifications
 necessary for implementing an older version of the GeoAPI interfaces:
 
   * Usages of non-existent GeoAPI interfaces are replaced by direct usages of the
@@ -147,10 +127,10 @@ conflicts with the platform-dependent import statements. Example:
 Substitution for non-existent classes    {#substitutions}
 ---------------------------------------------------------
 
-When using a JDK8 class that does not exist on JDK7, define a class of the same name in a
+When using a JDK9 class that does not exist on JDK8, define a class of the same name in a
 `org.apache.sis.internal` sub-package with the minimal amount of needed functionalities,
-provided that it can be done with reasonable effort. Otherwise just delete the JDK8-dependent
-code from the JDK7 branch.
+provided that it can be done with reasonable effort. Otherwise just delete the JDK9-dependent
+code from the JDK8 branch.
 
 
 
@@ -169,23 +149,23 @@ Merging changes between two branches    {#merge-two-branches}
 The branches and trunk checkout directories can be located anywhere on the developer machine.
 The following example assumes that the current directory contains the following sub-directories:
 
-  * `JDK7` as a checkout of `http://svn.apache.org/repos/asf/sis/branches/JDK7`.
   * `JDK8` as a checkout of `http://svn.apache.org/repos/asf/sis/branches/JDK8`.
+  * `JDK9` as a checkout of `http://svn.apache.org/repos/asf/sis/branches/JDK9`.
 
 However the instructions below can be adapted to different directory locations by changing
 the paths given in argument to the `cd` and `svn merge` commands.
 
-Assuming that the developer wants to merge the changes _from_ the JDK8 directory _to_ the JDK7 directory,
+Assuming that the developer wants to merge the changes _from_ the JDK9 directory _to_ the JDK8 directory,
 then the following commands can be executed.
 Do **not** specify any revision number to the `svn merge` command.
 Instead, let Subversion infers the proper revisions range from the `svn:mergeinfo` property.
 
     :::bash
-    cd JDK8
+    cd JDK9
     svn update
-    cd ../JDK7
+    cd ../JDK8
     svn update
-    svn merge ../JDK8
+    svn merge ../JDK9
 
 If Subversion reports any conflicts (flagged by the `C` letter before the file names),
 then edit the conflicted files in any IDE and mark them as resolved:
@@ -207,31 +187,31 @@ If any of those commands fail, edit the files at cause and re-try from the comma
 After a successful build, commit:
 
     :::bash
-    svn commit --message "Merge from the JDK8 branch."
+    svn commit --message "Merge from the JDK9 branch."
 
 
 
 Declaring that some changes shall not be merged    {#merge-record-only}
 -----------------------------------------------------------------------
 
-If a developers wants to apply some changes specific to the JDK8 platform and tells
-Subversion to not propagate those changes to the JDK7 branch, then the following
+If a developers wants to apply some changes specific to the JDK9 platform and tells
+Subversion to not propagate those changes to the JDK8 branch, then the following
 procedure shall be applied:
 
-  * Before to apply JDK8-specific changes, merge any pending changes to the JDK7 branch.
-  * Apply the JDK8-specific changes and commit.
+  * Before to apply JDK9-specific changes, merge any pending changes to the JDK8 branch.
+  * Apply the JDK9-specific changes and commit.
   * Run the following commands (edit the path arguments if the directory layout is different
     than the example from the previous section):
 
 Commands:
 
     :::bash
-    cd JDK8
+    cd JDK9
     svn update
-    cd ../JDK7
+    cd ../JDK8
     svn update
-    svn merge --record-only ../JDK8
-    svn commit --message "Skip JDK8-specific changes."
+    svn merge --record-only ../JDK9
+    svn commit --message "Skip JDK9-specific changes."
 
 
 [geoapi-stable]:   http://www.geoapi.org/3.0/index.html
