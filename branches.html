@@ -108,7 +108,7 @@ for making merges easier, then provides the steps to follow for performing the m
 <div class="toc">
 <ul>
 <li><a href="#development">The development branches</a><ul>
-<li><a href="#jdk9">branches/JDK8</a></li>
+<li><a href="#jdk9">branches/JDK9</a></li>
 <li><a href="#jdk8">branches/JDK8</a></li>
 <li><a href="#trunk">trunk</a><ul>
 <li><a href="#behavior">Behavioral differences</a></li>
@@ -130,15 +130,16 @@ for making merges easier, then provides the steps to follow for performing the m
 </ul>
 </div>
 <h1 id="development">The development branches<a class="headerlink" href="#development" title="Permanent link">&para;</a></h1>
-<p>Developers are encouraged to select the first branch listed below, in that order, which meet their needs.</p>
-<h2 id="jdk9">branches/JDK8<a class="headerlink" href="#jdk9" title="Permanent link">&para;</a></h2>
-<p>The JDK8 branch is the recommended development branch for developers who can use a JDK8 environment.
-This branch implements the interfaces defined in the <a href="http://www.geoapi.org/snapshot/index.html">GeoAPI snapshot</a> milestones.</p>
+<p>Users who want stability are encouraged to build from the trunk.
+Developers who want to contribute to Apache SIS are encouraged to use the JDK8 branch for now.
+We plan to switch SIS development to the JDK9 branch later, but the schedule is not yet determined.</p>
+<h2 id="jdk9">branches/JDK9<a class="headerlink" href="#jdk9" title="Permanent link">&para;</a></h2>
+<p>The JDK9 branch is an experimental branch for migration to Jigsaw modules.
+It may become the main SIS development branch later, but the schedule is not yet determined.</p>
 <h2 id="jdk8">branches/JDK8<a class="headerlink" href="#jdk8" title="Permanent link">&para;</a></h2>
-<p>The JDK8 branch is a merge of the JDK9 branch ported to the JDK8 platform.
-The JDK8 branch implements the same GeoAPI interfaces than the JDK9 branch;
-the only differences (apart version number) are the modifications necessary
-for building and running on a JDK8 platform.</p>
+<p>The JDK8 branch is the recommended development branch for now.
+This branch implements the interfaces defined in the <a href="http://www.geoapi.org/snapshot/index.html">GeoAPI snapshot</a> milestones.
+The JDK8 branch implements the same GeoAPI interfaces than the JDK9 branch.</p>
 <h2 id="trunk">trunk<a class="headerlink" href="#trunk" title="Permanent link">&para;</a></h2>
 <p>The trunk is a merge of the JDK8 branch ported to the interfaces defined by the <a href="http://www.geoapi.org/3.0/index.html">GeoAPI stable release</a>.
 This is the code which is built by the continuous integration system and deployed on the Maven repository.
@@ -184,10 +185,10 @@ This separation allows any branch to re-arrange the common import statements wit
 conflicts with the platform-dependent import statements. Example:</p>
 <div class="codehilite"><pre><span class="kn">import</span> <span class="nn">java.io.File</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.apache.sis.util.ArgumentChecks</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.opengis.metadata.Metadata</span><span class="o">;</span>
 
 <span class="c1">// Branch-specific imports</span>
-<span class="kn">import</span> <span class="nn">java.util.stream.Stream</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.opengis.feature.Feature</span><span class="o">;</span>
 </pre></div>
 
 
