@@ -17,14 +17,13 @@ Notice: Licensed to the Apache Software Foundation (ASF) under one
         under the License.
 
 
-The [source code repository](source.html) contains JDK8 and JDK9 branches together with the trunk.
-The Apache SIS releases are created from the code on the trunk only.
-However the actual development often occur on a branch before to be merged to the trunk.
-Those branches exist in order to experiment early the new technologies — since it may impact
-the library design — while keeping the releases compatible with more common environments.
-
-This page lists the Apache SIS development branches, provides some coding recommendations
-for making merges easier, then provides the steps to follow for performing the merges.
+The [source code repository](source.html) contains `"geoapi-3.1"` and `"geoapi-4.0"` branches in addition of `master`.
+The Apache SIS releases are created from the code on `master` only.
+However the actual development occurs on the `"geoapi-4.0"` branch before to be merged to `master`.
+Those branches exist in order to experiment early new API and technologies — since it may impact
+the library design — while keeping the releases compatible with officially released environments.
+This page describes the Apache SIS development branches and provides some coding recommendations
+for making merges easier.
 
 [TOC]
 
@@ -33,45 +32,52 @@ for making merges easier, then provides the steps to follow for performing the m
 The development branches    {#development}
 ==========================================
 
-Users who want stability are encouraged to build from the trunk.
-Developers who want to contribute to Apache SIS are encouraged to use the JDK8 branch for now.
-We plan to switch SIS development to the JDK9 branch later, but the schedule is not yet determined.
+Users who want stability are encouraged to build from the `master`.
+The master depends on GeoAPI 3.0.1,
+which is the [latest GeoAPI][geoapi-stable] released by the Open Geospatial Consortium (OGC).
+Developers who want to contribute to Apache SIS are encouraged to use the `geoapi-4.0` branch for now.
 
 
 
-branches/JDK9    {#jdk9}
-------------------------
+GeoAPI 4.0 branch    {#geoapi-4.0}
+----------------------------------
 
-The JDK9 branch is an experimental branch for migration to Jigsaw modules.
-It may become the main SIS development branch later, but the schedule is not yet determined.
-
-
-
-branches/JDK8    {#jdk8}
-------------------------
-
-The JDK8 branch is the recommended development branch for now.
-This branch implements the interfaces defined in the [GeoAPI snapshot][geoapi-snapshot] milestones.
-The JDK8 branch implements the same GeoAPI interfaces than the JDK9 branch.
+The `geoapi-4.0` branch is the recommended development branch for now.
+This branch implements the interfaces defined in GeoAPI 4.0 snapshot milestones.
+This branch uses new interfaces introduced in GeoAPI 4.0-SNAPSHOT and contains upgrades for changes in existing GeoAPI interfaces.
+Some changes in GeoAPI 4.0-SNAPSHOT interfaces are incompatible with GeoAPI 3.0.1 interfaces.
+They are caused by changes in the underlying international standards, or by evolution of Java technology.
+The content of this branch may be fully merged to `master` in the future, depending on new GeoAPI releases from OGC.
 
 
 
-trunk    {#trunk}
------------------
+GeoAPI 3.1 branch    {#geoapi-3.1}
+----------------------------------
 
-The trunk is a merge of the JDK8 branch ported to the interfaces defined by the [GeoAPI stable release][geoapi-stable].
+The `geoapi-3.1` branch implements the interfaces defined in [GeoAPI 3.1 snapshot][geoapi-snapshot] milestones.
+It has the same content that the `geoapi-4.0` branch, excluding changes that are incompatible with GeoAPI 3.0.
+Developments happen on `geoapi-4.0` and are periodically merged to `geoapi-3.1` with the necessary modifications.
+This branch is used merely as an intermediate step between the `geoapi-4.0` branch and `master`.
+Its content may be fully merged to `master` in the future, after new GeoAPI releases from OGC.
+
+
+
+master    {#master}
+-------------------
+
+The master is a merge of `geoapi-3.1` branch ported to the interfaces defined by the [GeoAPI stable release][geoapi-stable].
 This is the code which is built by the continuous integration system and deployed on the Maven repository.
-The main differences (apart version number) compared to the JDK8 branch are the modifications
+The main differences (apart version number) compared to above-cited branches are the modifications
 necessary for implementing an older version of the GeoAPI interfaces:
 
   * Usages of non-existent GeoAPI interfaces are replaced by direct usages of the
     corresponding Apache SIS implementation.
 
   * When a new revision of a standard is available,
-    the trunk still uses the old version since the new revision is not available in GeoAPI 3.0.
+    the master still uses the old version since the new revision is not available in GeoAPI 3.0.
     Sometime it results in usage of methods that are deprecated on the SIS development branches.
 
-For security reasons and for avoiding misleading information, the following functionalities are disabled on trunk
+For security reasons and for avoiding misleading information, the following functionalities are disabled on master
 (but are still enabled on branches as experimental features). In particular the `Supervisor.ENABLED` flag controls
 whether the MBeans documented in the `org.apache.sis.console` package are enabled or not.
 
@@ -86,7 +92,7 @@ Above flag values may change in future SIS releases.
 Because of changes between GeoAPI 3.0 and GeoAPI 4.0-SNAPSHOT, the following aspects need special care:
 
   * If `op` is an instance of `PassThroughOperation`, then the `if (op instanceof SingleOperation)` expression
-    evaluates to `true` on trunk but to `false` on SIS development branches.
+    evaluates to `true` on master but to `false` on SIS development branches.
 
 
 
@@ -132,87 +138,6 @@ When using a JDK9 class that does not exist on JDK8, define a class of the same 
 `org.apache.sis.internal` sub-package with the minimal amount of needed functionalities,
 provided that it can be done with reasonable effort. Otherwise just delete the JDK9-dependent
 code from the JDK8 branch.
-
-
-
-Performing the merges    {#merges}
-==================================
-
-Subversion 1.5 and later maintain a `svn:mergeinfo` property which make merge operations much easier.
-In order to get those merge information properly maintained, no merge operation shall be performed
-with older Subversion tools.
-
-
-
-Merging changes between two branches    {#merge-two-branches}
--------------------------------------------------------------
-
-The branches and trunk checkout directories can be located anywhere on the developer machine.
-The following example assumes that the current directory contains the following sub-directories:
-
-  * `JDK8` as a checkout of `http://svn.apache.org/repos/asf/sis/branches/JDK8`.
-  * `JDK9` as a checkout of `http://svn.apache.org/repos/asf/sis/branches/JDK9`.
-
-However the instructions below can be adapted to different directory locations by changing
-the paths given in argument to the `cd` and `svn merge` commands.
-
-Assuming that the developer wants to merge the changes _from_ the JDK9 directory _to_ the JDK8 directory,
-then the following commands can be executed.
-Do **not** specify any revision number to the `svn merge` command.
-Instead, let Subversion infers the proper revisions range from the `svn:mergeinfo` property.
-
-    :::bash
-    cd JDK9
-    svn update
-    cd ../JDK8
-    svn update
-    svn merge ../JDK9
-
-If Subversion reports any conflicts (flagged by the `C` letter before the file names),
-then edit the conflicted files in any IDE and mark them as resolved:
-
-    :::bash
-    svn resolved path/to/the/resolved/file
-
-Clean the workspace and test the build. We suggest to execute the Maven commands in the following order,
-since `mvn compile` will find compilation problems much faster than `mvn install`.
-If any of those commands fail, edit the files at cause and re-try from the command that failed
-(there is usually no need to run `mvn clean` again).
-
-    :::bash
-    mvn clean
-    mvn compile
-    mvn test-compile
-    mvn install
-
-After a successful build, commit:
-
-    :::bash
-    svn commit --message "Merge from the JDK9 branch."
-
-
-
-Declaring that some changes shall not be merged    {#merge-record-only}
------------------------------------------------------------------------
-
-If a developers wants to apply some changes specific to the JDK9 platform and tells
-Subversion to not propagate those changes to the JDK8 branch, then the following
-procedure shall be applied:
-
-  * Before to apply JDK9-specific changes, merge any pending changes to the JDK8 branch.
-  * Apply the JDK9-specific changes and commit.
-  * Run the following commands (edit the path arguments if the directory layout is different
-    than the example from the previous section):
-
-Commands:
-
-    :::bash
-    cd JDK9
-    svn update
-    cd ../JDK8
-    svn update
-    svn merge --record-only ../JDK9
-    svn commit --message "Skip JDK9-specific changes."
 
 
 [geoapi-stable]:   http://www.geoapi.org/3.0/index.html
