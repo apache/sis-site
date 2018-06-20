@@ -71,7 +71,7 @@ in this page shall be adjusted accordingly.
 
     :::text
     <any root directory for SIS>
-    ├─ trunk
+    ├─ master
     ├─ branches
     │  └─ $NEW_VERSION
     ├─ tags
@@ -104,7 +104,7 @@ For example the `javadoc` tool of older JDK versions was known to generate HTML 
 Prepare web site and source code before branching    {#prepare-source}
 ======================================================================
 
-Before to start the release process, we need to test more extensively the trunk.
+Before to start the release process, we need to test more extensively the master.
 The tests described below often reveal errors that were unnoticed in daily builds.
 It is better to detect and fix them before to create the branch.
 First:
@@ -157,8 +157,8 @@ It will not yet be published on `http://sis.apache.org`.
 
 
 
-Test trunk extensively    {#test-trunk}
----------------------------------------
+Test master extensively    {#test-master}
+-----------------------------------------
 
 Build the project with the `apache-release` profile enabled.
 This profile performs the following actions:
@@ -173,7 +173,7 @@ This profile performs the following actions:
 Each of those additional products may cause a failure that did not happen in normal builds.
 
     :::bash
-    cd ../trunk
+    cd ../master
     mvn clean install --activate-profiles apache-release --define bootclasspath=$BOOTCLASSPATH
 
 Verify signature for all files:
@@ -209,18 +209,18 @@ Source code    {#prepare-code}
 ------------------------------
 
 Replace the `$OLD_VERSION` number by `$NEW_VERSION` in the following literals.
-Those changes need to be applied on the development branch and merged with all other branches and trunk.
+Those changes need to be applied on the development branch and merged with all other branches and master.
 
   * `DOWNLOAD_URL` in `application/sis-console/src/main/java/org/apache/sis/console/ResourcesDownloader.java` file.
   * `<sis.non-free.version>` in root `pom.xml` file.
 
-Commit and merge to other branches and to trunk.
+Commit and merge to other branches and to master.
 
     :::bash
-    svn commit --message "Set the EPSG geodetic dataset URL to its expected location after release."
-    cd ../JDK7
-    svn merge ../JDK8
-    # Repeat the above commit and the merge commands for other branches until the changes are merged to trunk.
+    git commit --message "Set the EPSG geodetic dataset URL to its expected location after release."
+    git checkout geoapi-3.1
+    git merge
+    # Repeat the above commit and the merge commands for other branches until the changes are merged to master.
 
 
 
@@ -230,20 +230,15 @@ Create branch and tag    {#branch}
 Execute the following command:
 
     :::bash
-    svn copy https://svn.apache.org/repos/asf/sis/trunk \
-             https://svn.apache.org/repos/asf/sis/branches/$NEW_VERSION \
-             --message "Create the $NEW_VERSION branch."
+    git checkout -b $NEW_VERSION
 
-Move to a directory containing the project branches (presumed to be `../branches` in the following command,
-but can be replaced by anything else), then checkout a clean copy of the branch to release:
+It is okay to checkout the branch in a separated directory if desired.
+The `BRANCH_DIR` environment variable will specify that directory.
 
     :::bash
-    cd ../branches
-    svn checkout https://svn.apache.org/repos/asf/sis/branches/$NEW_VERSION
-    cd $NEW_VERSION
     export BRANCH_DIR=`pwd`
 
-We need to update the Subversion URL and SIS version numbers not only in the `pom.xml` files,
+We need to update the SIS version numbers not only in the `pom.xml` files,
 but also in a few Java files. The following command performs the replacement using Ant.
 Note that this command does *not* yet remove the `-SNAPSHOT` suffix in version numbers
 (this will be done later, at tag creation time):
@@ -259,15 +254,15 @@ Remove the modules that are not yet ready for a release.
 This may require removing `<module>` elements in the parent `pom.xml` file.
 
     :::bash
-    svn remove storage/sis-shapefile
-    svn remove application/sis-javafx
+    git rm storage/sis-shapefile
+    git rm application/sis-javafx
 
-Validate with `svn diff`, ensure that the build is not broken (we will run the tests later),
+Validate with `git diff`, ensure that the build is not broken (we will run the tests later),
 then commit the changes on the branch:
 
     :::bash
     mvn clean package --define skipTests=true --define bootclasspath=$BOOTCLASSPATH
-    svn commit --message "Prepare branch for $NEW_VERSION release."
+    git commit --message "Prepare branch for $NEW_VERSION release."
 
 
 
@@ -278,23 +273,18 @@ In theory, the next commands would be a real (non-dry) run of `mvn release:prepa
 However we perform those steps manually rather than relying on Maven for the following reasons:
 
   * Perform some additional changes on the tag.
-  * Reduce the amount of commits on SVN (avoid a rollback in branch directory).
   * Give more opportunities to take action before commit in case of problems.
   * We need a separated `install` phase first, for proper installation of `sis-build-helper` plugin.
 
 First, create the tag:
 
     :::bash
-    svn copy https://svn.apache.org/repos/asf/sis/branches/$NEW_VERSION \
-             https://svn.apache.org/repos/asf/sis/tags/$NEW_VERSION \
-             --message "Create $NEW_VERSION tag for RC$RELEASE_CANDIDATE."
+    git tag $NEW_VERSION
 
-Checkout:
+It is okay to checkout the tag in a separated directory if desired.
+The `TAG_DIR` environment variable will specify that directory.
 
     :::bash
-    cd ../../tags
-    svn checkout https://svn.apache.org/repos/asf/sis/tags/$NEW_VERSION
-    cd $NEW_VERSION
     export TAG_DIR=`pwd`
 
 Update versions number in `pom.xml` files (like what `mvn release:prepare` would have done),
@@ -303,17 +293,17 @@ plus some additional files:
     :::bash
     ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml tag -Dbranch.version=$NEW_VERSION -Dsis.version=$NEW_VERSION
 
-Validate with `svn diff`, search `SNAPSHOT` in the whole source directory in case we missed some, then commit:
+Validate with `git diff`, search `SNAPSHOT` in the whole source directory in case we missed some, then commit:
 
     :::bash
-    svn commit --message "Fix version number to $NEW_VERSION (no -SNAPSHOT) and SVN directory."
+    git commit --message "Fix version number to $NEW_VERSION (no -SNAPSHOT)."
 
 
 
 Verify content    {#branch-verify}
 ----------------------------------
 
-Build and test the project in the same way than we did on trunk.
+Build and test the project in the same way than we did on master.
 In addition to testing, execution of an `install` phase before deployment is required for our custom `sis-build-helper` plugin.
 
     :::bash
@@ -709,17 +699,17 @@ Delete the prior version:
 
 
 
-Update trunk for the next development cycle    {#next-release}
-==============================================================
+Update master for the next development cycle    {#next-release}
+===============================================================
 
 On the development branch (usually JDK8),
-update the version numbers in the `pom.xml` files on trunk with the following command:
+update the version numbers in the `pom.xml` files on master with the following command:
 
     :::bash
     mvn clean
     mvn release:update-versions --define autoVersionSubmodules=true
 
-This change will need to be merged manually on the JDK7 branch and on the trunk.
+This change will need to be merged manually on the JDK7 branch and on the master.
 Then on the development branch:
 
   * Edit the version number in the `application/sis-console/src/main/artifact/README` file.

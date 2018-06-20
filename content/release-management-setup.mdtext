@@ -29,12 +29,12 @@ Directory layout    {#directory-layout}
 =======================================
 
 The steps described in the _release management_ page assume the following directory layout.
-Some directories are SVN checkout, other are ordinary directories. Any other layout can be used.
+Some directories are Git checkout, other are ordinary directories. Any other layout can be used.
 However in the later case, all relative paths in the _release management_ page will need to be adjusted accordingly.
 
     :::text
     <any root directory for SIS>
-    ├─ trunk
+    ├─ master
     ├─ branches
     ├─ tags
     ├─ non-free
@@ -48,7 +48,7 @@ However in the later case, all relative paths in the _release management_ page w
 Create the above directory structure as below:
 
     :::bash
-    svn checkout https://svn.apache.org/repos/asf/sis/trunk
+    git clone    https://gitbox.apache.org/repos/asf/sis.git master
     svn checkout https://svn.apache.org/repos/asf/sis/data/non-free
     svn checkout https://svn.apache.org/repos/asf/sis/release-test
     svn checkout https://svn.apache.org/repos/asf/sis/site/trunk site
@@ -150,7 +150,7 @@ The other commiter should verify that the `gpg --fingerprint` command output mat
     gpg --send-key <key_id>
 
 The above-cited _Release Signing_ page provides more instructions.
-Then, the signed public key shall be appended to the `KEYS` file on the [SIS source code repository][svn],
+Then, the signed public key shall be appended to the `KEYS` file on the [SIS source code repository][source],
 then copied to the [SIS distribution directory][dist].
 
 
@@ -220,6 +220,6 @@ Notes:
 [PGP]:     http://www.apache.org/dev/openpgp.html
 [signing]: http://www.apache.org/dev/release-signing.html
 [maven]:   http://www.apache.org/dev/publishing-maven-artifacts.html
-[svn]:     https://svn.apache.org/repos/asf/sis/trunk/
+[source]:  https://gitbox.apache.org/repos/asf?p=sis.git
 [dist]:    http://dist.apache.org/repos/dist/release/sis/
 [MIT]:     http://pgp.mit.edu
