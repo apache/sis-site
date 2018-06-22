@@ -18,21 +18,23 @@ Notice: Licensed to the Apache Software Foundation (ASF) under one
 
 
 Apache SIS source code is maintained using [Git][git] version control.
-For fetching the source code, use the following commands:
+Additional data not included in SIS releases but recommended for leveraging full SIS capabilities
+are maintained separately using [Subversion][subversion] version control.
+For fetching the source code and those additional data, use the following commands:
 
     :::bash
     git clone https://gitbox.apache.org/repos/asf/sis
+    svn checkout https://svn.apache.org/repos/asf/sis/data/non-free/
 
-The above Git repository is mirrored on GitHub at [https://github.com/apache/sis](https://github.com/apache/sis).
-Note that the git repository does not include the non-free data, in particular the [EPSG geodetic dataset](epsg.html).
-Those data are currently provided only on Subversion repository.
+The above Git repository is [mirrored on GitHub][github-sis].
+The non-free data can be [browsed online][viewvc-non-free].
+Those data include in particular the [EPSG geodetic dataset](epsg.html).
 
 The source code repository contains `geoapi-3.1` and `geoapi-4.0` branches in addition of `master`.
 The Apache SIS releases are created from the code on `master` only.
 However the actual development occurs on the `geoapi-4.0` branch before to be merged to `master`.
 Those branches exist in order to experiment early new API and technologies — since it may impact
 the library design — while keeping the releases compatible with officially released environments.
-
 The remaining of this page gives some guidelines about the way SIS source code is organized.
 
 [TOC]
@@ -103,6 +105,16 @@ Because of changes between GeoAPI 3.0 and GeoAPI 4.0-SNAPSHOT, the following asp
 
   * If `op` is an instance of `PassThroughOperation`, then the `if (op instanceof SingleOperation)` expression
     evaluates to `true` on master but to `false` on SIS development branches.
+
+
+
+History    {#history}
+---------------------
+
+All developments and tags prior Apache SIS 1.0 were done on a [Subversion][subversion] repository
+and can be [browsed online][viewvc].
+Tags for Apache SIS versions 0.1 to 0.8 should be fetched from the [SVN repository][svn-sis-tags].
+The development branches on that repository were named `JDK8`, `JDK7`, `JDK6` and `trunk`.
 
 
 
@@ -404,8 +416,11 @@ Note that a [JavaScript display engine][mathml-mathjax] is available for all bro
 *[OGC]: Open Geospatial Consortium
 
 [viewvc]:           http://svn.apache.org/viewvc/sis/
+[viewvc-non-free]:  http://svn.apache.org/viewvc/sis/data/non-free/
 [subversion]:       http://subversion.apache.org
 [git]:              http://git-scm.com
+[github-sis]:       https://github.com/apache/sis
+[svn-sis-tags]:     https://svn.apache.org/repos/asf/sis/tags/
 [srcheaders]:       http://www.apache.org/legal/src-headers.html
 [JLS-order]:        http://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.1
 [mathml-wolfram]:   http://reference.wolfram.com/mathematica/XML/tutorial/MathML.html
