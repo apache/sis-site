@@ -62,20 +62,20 @@ Its content may be fully merged to `master` in the future, after new GeoAPI rele
 
 
 
-master    {#master}
+Master    {#master}
 -------------------
 
 The master is a merge of `geoapi-3.1` branch ported to the interfaces defined by the [GeoAPI stable release][geoapi-stable].
 This is the code which is built by the continuous integration system and deployed on the Maven repository.
-The main differences (apart version number) compared to above-cited branches are the modifications
-necessary for implementing an older version of the GeoAPI interfaces:
+**Git `push --force` are not allowed on this branch. Commits on `master` can not be removed.**
+Commits should be pushed on the development branch first, so they can be rearranged if needed before merge to `master`.
 
-  * Usages of non-existent GeoAPI interfaces are replaced by direct usages of the
-    corresponding Apache SIS implementation.
 
-  * When a new revision of a standard is available,
-    the master still uses the old version since the new revision is not available in GeoAPI 3.0.
-    Sometime it results in usage of methods that are deprecated on the SIS development branches.
+### Code differences    {#differences}
+
+The main differences (apart version number) between `master` and `geoapi` branches
+are the modifications necessary for implementing an older version of the GeoAPI interfaces.
+In particular, usages of non-released GeoAPI interfaces may be replaced by direct usages of the corresponding Apache SIS implementation.
 
 For security reasons and for avoiding misleading information, the following functionalities are disabled on master
 (but are still enabled on branches as experimental features). In particular the `Supervisor.ENABLED` flag controls
