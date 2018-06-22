@@ -21,11 +21,17 @@ Apache SIS source code is maintained using [Git][git] version control.
 For fetching the source code, use the following commands:
 
     :::bash
-    git clone https://gitbox.apache.org/repos/asf/sis.git
+    git clone https://gitbox.apache.org/repos/asf/sis
 
 The above Git repository is mirrored on GitHub at [https://github.com/apache/sis](https://github.com/apache/sis).
-Note that the git repository does not include the non-free data (in particular the [EPSG geodetic dataset](epsg.html)).
+Note that the git repository does not include the non-free data, in particular the [EPSG geodetic dataset](epsg.html).
 Those data are currently provided only on Subversion repository.
+
+The source code repository contains `geoapi-3.1` and `geoapi-4.0` branches in addition of `master`.
+The Apache SIS releases are created from the code on `master` only.
+However the actual development occurs on the `geoapi-4.0` branch before to be merged to `master`.
+Those branches exist in order to experiment early new API and technologies — since it may impact
+the library design — while keeping the releases compatible with officially released environments.
 
 The remaining of this page gives some guidelines about the way SIS source code is organized.
 
@@ -33,11 +39,78 @@ The remaining of this page gives some guidelines about the way SIS source code i
 
 
 
+Development branches    {#development}
+======================================
+
+Users who want stability are encouraged to build from the `master`.
+The master depends on GeoAPI 3.0.1,
+which is the [latest GeoAPI][geoapi-stable] released by the Open Geospatial Consortium (OGC).
+Developers who want to contribute to Apache SIS are encouraged to use the `geoapi-4.0` branch for now.
+
+
+
+GeoAPI 4.0 branch    {#geoapi-4.0}
+----------------------------------
+
+The `geoapi-4.0` branch is the recommended development branch for now.
+This branch implements the interfaces defined in GeoAPI 4.0 snapshot milestones.
+This branch uses new interfaces introduced in GeoAPI 4.0-SNAPSHOT and contains upgrades for changes in existing GeoAPI interfaces.
+Some changes in GeoAPI 4.0-SNAPSHOT interfaces are incompatible with GeoAPI 3.0.1 interfaces.
+They are caused by changes in the underlying international standards, or by evolution of Java technology.
+The content of this branch may be fully merged to `master` in the future, depending on new GeoAPI releases from OGC.
+
+
+
+GeoAPI 3.1 branch    {#geoapi-3.1}
+----------------------------------
+
+The `geoapi-3.1` branch implements the interfaces defined in [GeoAPI 3.1 snapshot][geoapi-snapshot] milestones.
+It has the same content that the `geoapi-4.0` branch, excluding changes that are incompatible with GeoAPI 3.0.1.
+Developments happen on `geoapi-4.0` and are periodically merged to `geoapi-3.1` with the necessary modifications.
+This branch is used merely as an intermediate step between the development branch (`geoapi-4.0`) and `master`.
+Its content may be fully merged to `master` in the future, after new GeoAPI releases from OGC.
+
+
+
+Master    {#master}
+-------------------
+
+The master is a merge of `geoapi-3.1` branch ported to the interfaces defined by the [GeoAPI stable release][geoapi-stable].
+This is the code which is built by the continuous integration system and deployed on the Maven repository.
+**Commits on master can not be removed, since `git push --force` are not allowed on this branch.**
+Commits should be pushed on above-cited development branch first,
+so they can be rearranged if needed before merge to `master`.
+
+
+### Code differences    {#differences}
+
+The main differences (apart version number) between `master` and `geoapi-3.1/4.0` branches
+are the modifications necessary for implementing an older version of GeoAPI interfaces.
+In particular, usages of non-released GeoAPI interfaces may be replaced
+by direct usages of the corresponding Apache SIS implementation classes.
+
+For security reasons and for avoiding misleading information, the following functionalities are disabled on master for now
+(but are still enabled on branches as experimental features). In particular the `Supervisor.ENABLED` flag controls
+whether the MBeans documented in the `org.apache.sis.console` package are enabled or not.
+
+  * In `core/sis-utility/src/main/java/org/apache/sis/internal/system/Supervisor.java`, the `ENABLED` flag is set to `false`.
+  * In `core/sis-utility/src/main/java/org/apache/sis/internal/util/TemporalUtilities.java`, the `REPORT_MISSING_MODULE` flag is set to `false`.
+
+
+### Behavioral differences    {#behavior}
+
+Because of changes between GeoAPI 3.0 and GeoAPI 4.0-SNAPSHOT, the following aspects need special care:
+
+  * If `op` is an instance of `PassThroughOperation`, then the `if (op instanceof SingleOperation)` expression
+    evaluates to `true` on master but to `false` on SIS development branches.
+
+
+
 Opening Apache SIS in an IDE    {#ide}
 ======================================
 
 Different SIS branches are available depending on the GeoAPI versions.
-The alternatives are listed in the [branches page](branches.html).
+The alternatives are listed in [above section](#development).
 One thing to take in consideration can be summarized as below:
 
    * There is no need to build GeoAPI prior working on SIS master.
@@ -110,15 +183,35 @@ as below:
 Naming convention    {#naming}
 ==============================
 
-Implementations of GeoAPI interfaces usually (but not always) begin with `Abstract`, `Default`, `Simple` or `General` prefixes.
+Classes that do not implement an interface are usually not prefixed, even if abstract.
+Classes implementing GeoAPI interfaces usually (but not always) begin with `Abstract`, `Default`, `Simple` or `General` prefix.
 
   * The `Abstract` prefix is used when a class is abstract according ISO specifications — it may or may not be be abstract in the Java sense.
   * The `General` prefix is used when an implementation is designed for use in the general case,
     as opposed to other implementations specialized for a fixed number of dimensions or other conditions.
   * Implementations specialized for a fixed number of dimensions are suffixed with `1D`, `2D`, `3D` or `4D` rather than being prefixed.
 
-Classes that do not implement an interface are usually not prefixed, even if abstract.
+Example: `GeneralEnvelope` class is an implementation of `Envelope` interface for the multi-dimensional case.
+`Envelope2D` is another implementation of the same interface specialized for the two-dimensional case.
 
+
+
+Internal packages    {#internal}
+--------------------------------
+
+All classes in `org.apache.sis.internal` sub-packages are for SIS usage only and may change without warning in any future release.
+Those classes are excluded from Javadoc and will not be exported by SIS Jigsaw modules.
+Those packages may be renamed after SIS upgraded to JDK 9.
+
+
+
+Substitution for non-existent classes    {#substitutions}
+---------------------------------------------------------
+
+When using a JDK 9 class that does not exist on JDK 8, define a class of the same name in a
+`org.apache.sis.internal` sub-package with the minimal amount of needed functionalities,
+provided that it can be done with reasonable effort.
+Otherwise just delete the JDK9-dependent code from the development branch.
 
 
 
@@ -128,6 +221,29 @@ Code formatting    {#formatting}
 Apache SIS uses the standard Java conventions, except for the 80 characters line length restriction.
 The conventions listed below are guidelines. Some exceptions to those conventions can occur but should
 be rare (see [exceptions to coding conventions](#tabular-formatting)).
+
+For making merges between branches easier, refrain from doing massive code reformatting unless:
+
+  * the modified files do not yet exist on the other branches;
+  * or the modified lines are known to be identical on all active branches (merges work well in such cases);
+  * or the committer is willing to resolve the merge conflicts.
+
+
+
+Import statements    {#imports}
+-------------------------------
+
+Isolate at the end of the imports section any import statements that are specific to a platform.
+This separation allows any branch to re-arrange the common import statements without generating
+conflicts with the platform-dependent import statements. Example:
+
+    :::java
+    import java.io.File;
+    import java.util.List;
+    import org.opengis.metadata.Metadata;
+
+    // Branch-specific imports
+    import org.opengis.feature.Feature;
 
 
 
@@ -297,3 +413,5 @@ Note that a [JavaScript display engine][mathml-mathjax] is available for all bro
 [mathml-fonts]:     http://developer.mozilla.org/en-US/docs/Mozilla/MathML_Project/Fonts
 [mathml-plugin-ie]: http://www.dessci.com/en/products/mathplayer/download.htm
 [mathml-mathjax]:   http://www.mathjax.org/
+[geoapi-stable]:    http://www.geoapi.org/3.0/index.html
+[geoapi-snapshot]:  http://www.geoapi.org/snapshot/index.html
