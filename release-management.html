@@ -112,7 +112,7 @@ The intended audiences are SIS release managers.</p>
 <li><a href="#prepare-source">Prepare web site and source code before branching</a><ul>
 <li><a href="#release-notes">Prepare release notes</a></li>
 <li><a href="#prepare-website">Web site</a></li>
-<li><a href="#test-trunk">Test trunk extensively</a></li>
+<li><a href="#test-master">Test master extensively</a></li>
 <li><a href="#prepare-code">Source code</a></li>
 </ul>
 </li>
@@ -144,7 +144,7 @@ The intended audiences are SIS release managers.</p>
 <li><a href="#announce">Announce the release</a></li>
 </ul>
 </li>
-<li><a href="#next-release">Update trunk for the next development cycle</a><ul>
+<li><a href="#next-release">Update master for the next development cycle</a><ul>
 <li><a href="#nexus-clean">Delete old artifacts on Maven snapshot repository</a></li>
 </ul>
 </li>
@@ -186,7 +186,7 @@ This is for avoiding to be prompted many time for the passphrase in every module
 a result of the steps). Any other layout can be used. However if the layout differs, then the relative paths
 in this page shall be adjusted accordingly.</p>
 <div class="codehilite"><pre>&lt;any root directory for SIS&gt;
-├─ trunk
+├─ master
 ├─ branches
 │  └─ $NEW_VERSION
 ├─ tags
@@ -211,7 +211,7 @@ We recommend to create the release with JDK8 instead (note however that JDK8 <co
 Make sure that the JDK installation to be used for the release has been updated recently, since compilers may receive critical bug fixes.
 For example the <code>javadoc</code> tool of older JDK versions was known to generate HTML pages with a vulnerability in them.</p>
 <h1 id="prepare-source">Prepare web site and source code before branching<a class="headerlink" href="#prepare-source" title="Permanent link">&para;</a></h1>
-<p>Before to start the release process, we need to test more extensively the trunk.
+<p>Before to start the release process, we need to test more extensively the master.
 The tests described below often reveal errors that were unnoticed in daily builds.
 It is better to detect and fix them before to create the branch.
 First:</p>
@@ -252,7 +252,7 @@ svn commit --message <span class="s2">&quot;Prepare documentation for the $NEW_V
 
 <p>The new web site will be published in the <a href="http://sis.staging.apache.org">staging area</a>.
 It will not yet be published on <code>http://sis.apache.org</code>.</p>
-<h2 id="test-trunk">Test trunk extensively<a class="headerlink" href="#test-trunk" title="Permanent link">&para;</a></h2>
+<h2 id="test-master">Test master extensively<a class="headerlink" href="#test-master" title="Permanent link">&para;</a></h2>
 <p>Build the project with the <code>apache-release</code> profile enabled.
 This profile performs the following actions:</p>
 <ul>
@@ -264,7 +264,7 @@ This profile performs the following actions:</p>
 <li>Sign the artifacts.</li>
 </ul>
 <p>Each of those additional products may cause a failure that did not happen in normal builds.</p>
-<div class="codehilite"><pre><span class="nb">cd</span> ../trunk
+<div class="codehilite"><pre><span class="nb">cd</span> ../master
 mvn clean install --activate-profiles apache-release --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
 </pre></div>
 
@@ -297,37 +297,32 @@ mvn clean <span class="nb">test</span> --define <span class="nv">bootclasspath</
 
 <h2 id="prepare-code">Source code<a class="headerlink" href="#prepare-code" title="Permanent link">&para;</a></h2>
 <p>Replace the <code>$OLD_VERSION</code> number by <code>$NEW_VERSION</code> in the following literals.
-Those changes need to be applied on the development branch and merged with all other branches and trunk.</p>
+Those changes need to be applied on the development branch and merged with all other branches and master.</p>
 <ul>
 <li><code>DOWNLOAD_URL</code> in <code>application/sis-console/src/main/java/org/apache/sis/console/ResourcesDownloader.java</code> file.</li>
 <li><code>&lt;sis.non-free.version&gt;</code> in root <code>pom.xml</code> file.</li>
 </ul>
-<p>Commit and merge to other branches and to trunk.</p>
-<div class="codehilite"><pre>svn commit --message <span class="s2">&quot;Set the EPSG geodetic dataset URL to its expected location after release.&quot;</span>
-<span class="nb">cd</span> ../JDK7
-svn merge ../JDK8
-<span class="c"># Repeat the above commit and the merge commands for other branches until the changes are merged to trunk.</span>
+<p>Commit and merge to other branches and to master.</p>
+<div class="codehilite"><pre>git commit --message <span class="s2">&quot;Set the EPSG geodetic dataset URL to its expected location after release.&quot;</span>
+git checkout geoapi-3.1
+git merge
+<span class="c"># Repeat the above commit and the merge commands for other branches until the changes are merged to master.</span>
 </pre></div>
 
 
 <h1 id="branch">Create branch and tag<a class="headerlink" href="#branch" title="Permanent link">&para;</a></h1>
 <p>Execute the following command:</p>
-<div class="codehilite"><pre>svn copy https://svn.apache.org/repos/asf/sis/trunk <span class="se">\</span>
-         https://svn.apache.org/repos/asf/sis/branches/<span class="nv">$NEW_VERSION</span> <span class="se">\</span>
-         --message <span class="s2">&quot;Create the $NEW_VERSION branch.&quot;</span>
+<div class="codehilite"><pre>git checkout -b <span class="nv">$NEW_VERSION</span>
 </pre></div>
 
 
-<p>Move to a directory containing the project branches (presumed to be <code>../branches</code> in the following command,
-but can be replaced by anything else), then checkout a clean copy of the branch to release:</p>
-<div class="codehilite"><pre><span class="nb">cd</span> ../branches
-svn checkout https://svn.apache.org/repos/asf/sis/branches/<span class="nv">$NEW_VERSION</span>
-<span class="nb">cd</span> <span class="nv">$NEW_VERSION</span>
-<span class="nb">export </span><span class="nv">BRANCH_DIR</span><span class="o">=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>
+<p>It is okay to checkout the branch in a separated directory if desired.
+The <code>BRANCH_DIR</code> environment variable will specify that directory.</p>
+<div class="codehilite"><pre><span class="nb">export </span><span class="nv">BRANCH_DIR</span><span class="o">=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>
 </pre></div>
 
 
-<p>We need to update the Subversion URL and SIS version numbers not only in the <code>pom.xml</code> files,
+<p>We need to update the SIS version numbers not only in the <code>pom.xml</code> files,
 but also in a few Java files. The following command performs the replacement using Ant.
 Note that this command does <em>not</em> yet remove the <code>-SNAPSHOT</code> suffix in version numbers
 (this will be done later, at tag creation time):</p>
@@ -341,15 +336,15 @@ Note that this command does <em>not</em> yet remove the <code>-SNAPSHOT</code> s
 </ul>
 <p>Remove the modules that are not yet ready for a release.
 This may require removing <code>&lt;module&gt;</code> elements in the parent <code>pom.xml</code> file.</p>
-<div class="codehilite"><pre>svn remove storage/sis-shapefile
-svn remove application/sis-javafx
+<div class="codehilite"><pre>git rm storage/sis-shapefile
+git rm application/sis-javafx
 </pre></div>
 
 
-<p>Validate with <code>svn diff</code>, ensure that the build is not broken (we will run the tests later),
+<p>Validate with <code>git diff</code>, ensure that the build is not broken (we will run the tests later),
 then commit the changes on the branch:</p>
 <div class="codehilite"><pre>mvn clean package --define <span class="nv">skipTests</span><span class="o">=</span><span class="nb">true</span> --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
-svn commit --message <span class="s2">&quot;Prepare branch for $NEW_VERSION release.&quot;</span>
+git commit --message <span class="s2">&quot;Prepare branch for $NEW_VERSION release.&quot;</span>
 </pre></div>
 
 
@@ -358,22 +353,17 @@ svn commit --message <span class="s2">&quot;Prepare branch for $NEW_VERSION rele
 However we perform those steps manually rather than relying on Maven for the following reasons:</p>
 <ul>
 <li>Perform some additional changes on the tag.</li>
-<li>Reduce the amount of commits on SVN (avoid a rollback in branch directory).</li>
 <li>Give more opportunities to take action before commit in case of problems.</li>
 <li>We need a separated <code>install</code> phase first, for proper installation of <code>sis-build-helper</code> plugin.</li>
 </ul>
 <p>First, create the tag:</p>
-<div class="codehilite"><pre>svn copy https://svn.apache.org/repos/asf/sis/branches/<span class="nv">$NEW_VERSION</span> <span class="se">\</span>
-         https://svn.apache.org/repos/asf/sis/tags/<span class="nv">$NEW_VERSION</span> <span class="se">\</span>
-         --message <span class="s2">&quot;Create $NEW_VERSION tag for RC$RELEASE_CANDIDATE.&quot;</span>
+<div class="codehilite"><pre>git tag <span class="nv">$NEW_VERSION</span>
 </pre></div>
 
 
-<p>Checkout:</p>
-<div class="codehilite"><pre><span class="nb">cd</span> ../../tags
-svn checkout https://svn.apache.org/repos/asf/sis/tags/<span class="nv">$NEW_VERSION</span>
-<span class="nb">cd</span> <span class="nv">$NEW_VERSION</span>
-<span class="nb">export </span><span class="nv">TAG_DIR</span><span class="o">=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>
+<p>It is okay to checkout the tag in a separated directory if desired.
+The <code>TAG_DIR</code> environment variable will specify that directory.</p>
+<div class="codehilite"><pre><span class="nb">export </span><span class="nv">TAG_DIR</span><span class="o">=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>
 </pre></div>
 
 
@@ -383,13 +373,13 @@ plus some additional files:</p>
 </pre></div>
 
 
-<p>Validate with <code>svn diff</code>, search <code>SNAPSHOT</code> in the whole source directory in case we missed some, then commit:</p>
-<div class="codehilite"><pre>svn commit --message <span class="s2">&quot;Fix version number to $NEW_VERSION (no -SNAPSHOT) and SVN directory.&quot;</span>
+<p>Validate with <code>git diff</code>, search <code>SNAPSHOT</code> in the whole source directory in case we missed some, then commit:</p>
+<div class="codehilite"><pre>git commit --message <span class="s2">&quot;Fix version number to $NEW_VERSION (no -SNAPSHOT).&quot;</span>
 </pre></div>
 
 
 <h2 id="branch-verify">Verify content<a class="headerlink" href="#branch-verify" title="Permanent link">&para;</a></h2>
-<p>Build and test the project in the same way than we did on trunk.
+<p>Build and test the project in the same way than we did on master.
 In addition to testing, execution of an <code>install</code> phase before deployment is required for our custom <code>sis-build-helper</code> plugin.</p>
 <div class="codehilite"><pre>mvn install --activate-profiles apache-release --define <span class="nv">bootclasspath</span><span class="o">=</span><span class="nv">$BOOTCLASSPATH</span>
 find . -name <span class="s2">&quot;sis-*.asc&quot;</span> -exec gpg --verify <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
@@ -724,15 +714,15 @@ svn delete https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERS
 </pre></div>
 
 
-<h1 id="next-release">Update trunk for the next development cycle<a class="headerlink" href="#next-release" title="Permanent link">&para;</a></h1>
+<h1 id="next-release">Update master for the next development cycle<a class="headerlink" href="#next-release" title="Permanent link">&para;</a></h1>
 <p>On the development branch (usually JDK8),
-update the version numbers in the <code>pom.xml</code> files on trunk with the following command:</p>
+update the version numbers in the <code>pom.xml</code> files on master with the following command:</p>
 <div class="codehilite"><pre>mvn clean
 mvn release:update-versions --define <span class="nv">autoVersionSubmodules</span><span class="o">=</span><span class="nb">true</span>
 </pre></div>
 
 
-<p>This change will need to be merged manually on the JDK7 branch and on the trunk.
+<p>This change will need to be merged manually on the JDK7 branch and on the master.
 Then on the development branch:</p>
 <ul>
 <li>Edit the version number in the <code>application/sis-console/src/main/artifact/README</code> file.</li>

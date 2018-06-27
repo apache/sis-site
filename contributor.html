@@ -116,11 +116,6 @@ effective computer programming.</p>
 <li><a href="#modules">The SIS library modules</a></li>
 </ul>
 </li>
-<li><a href="#source">Fetching and editing source code</a></li>
-<li><a href="#commit">Committing changes</a><ul>
-<li><a href="#svn-config">Configuring Subversion properties</a></li>
-</ul>
-</li>
 </ul>
 </div>
 <h1 id="knowledge">Background Knowledge<a class="headerlink" href="#knowledge" title="Permanent link">&para;</a></h1>
@@ -184,83 +179,6 @@ by Apache SIS.</p>
 <h2 id="modules">The SIS library modules<a class="headerlink" href="#modules" title="Permanent link">&para;</a></h2>
 <p>Contributors should gain a basic understanding of the core library including the separation into modules,
 the functionality available in the base module, and the functioning of the modules of interest.</p>
-<h1 id="source">Fetching and editing source code<a class="headerlink" href="#source" title="Permanent link">&para;</a></h1>
-<p>Different SIS <a href="branches.html">branches</a> are available depending on the target platforms.
-Unless working on a SIS port (e.g. the Android platform), contributors are encouraged
-to work on the SIS branch targeting the most recent JDK platform (currently JDK8):</p>
-<div class="codehilite"><pre>svn checkout https://svn.apache.org/repos/asf/sis/branches/JDK8 sis
-<span class="nb">cd </span>sis
-mvn install
-</pre></div>
-
-
-<p>The <a href="source.html">Source code</a> page provides tips for opening the files in an IDE,
-and guidelines about the way SIS source code is organized.</p>
-<h1 id="commit">Committing changes<a class="headerlink" href="#commit" title="Permanent link">&para;</a></h1>
-<p>Copies or displacements of files shall be done with the <code>svn copy</code> or <code>svn move</code> command, respectively.
-Be aware that not all IDE or graphical tools perform this action appropriately.
-<strong>Always verify on the command-line</strong>, at least the first times that a new tools is used, by executing <code>svn status</code>.
-Files that have been moved or copied shall have a <code>+</code> symbol in the left margin, like below:</p>
-<div class="codehilite"><pre>D       my-directory/the-old-filename
-A  +    my-directory/the-new-filename
-</pre></div>
-
-
-<p>Using the proper SVN command is necessary for preserving the history, preserving the <a href="#svn-config">SVN properties</a>,
-and consuming less space on the Apache server hosting the source code repository.</p>
-<h2 id="svn-config">Configuring Subversion properties<a class="headerlink" href="#svn-config" title="Permanent link">&para;</a></h2>
-<p>Subversion can associate properties to each tracked files. Those properties tell to Subversion
-how to handle platform-specific aspects like end-of-line characters, and how to serve the files
-to web browsers (MIME type, encoding, <i>etc.</i>).
-Those properties are typically set when a new file is added, not during modifications.
-Developers can specify default properties for all their Subversion working copies as below:</p>
-<ul>
-<li>Open <code>~/.subversion/config</code> in an editor, where <code>~</code> is the user home directory.</li>
-<li>Set the <code>enable-auto-props</code> value to <code>yes</code>.</li>
-<li>Scroll down to the <code>[auto-props]</code> section and make sure to assign the appropriate
-    (usually <code>native</code>) value to the End Of Line (EOL) style of the files to be edited.</li>
-</ul>
-<p>Below is an example of a portion of Subversion configuration file
-(real configuration files are typically larger):</p>
-<div class="codehilite"><pre><span class="k">[miscellany]</span>
-<span class="c"># Whitespace-delimited globs which Subversion will ignore in its &#39;status&#39; output.</span>
-<span class="na">global-ignores</span> <span class="o">=</span> <span class="s">*.class *.jar .* *~</span>
-
-<span class="c"># Enables automatic properties (defined below) for &#39;svn add&#39; and &#39;svn import&#39;.</span>
-<span class="na">enable-auto-props</span> <span class="o">=</span> <span class="s">yes</span>
-
-<span class="c"># Section for configuring automatic properties.</span>
-<span class="c"># The file-name-pattern can contain wildcards such as &#39;*&#39; and &#39;?&#39;.</span>
-<span class="c"># All entries which match will be applied to the file.</span>
-<span class="k">[auto-props]</span>
-<span class="na">*.java</span>       <span class="o">=</span> <span class="s">svn:mime-type=text/plain;svn:eol-style=native</span>
-<span class="na">*.sql</span>        <span class="o">=</span> <span class="s">svn:mime-type=text/plain;svn:eol-style=native</span>
-<span class="na">*.txt</span>        <span class="o">=</span> <span class="s">svn:mime-type=text/plain;svn:eol-style=native</span>
-<span class="na">*.properties</span> <span class="o">=</span> <span class="s">svn:mime-type=text/plain;svn:eol-style=native</span>
-<span class="na">*.xml</span>        <span class="o">=</span> <span class="s">svn:mime-type=text/xml;svn:eol-style=native</span>
-<span class="na">*.xsd</span>        <span class="o">=</span> <span class="s">svn:mime-type=text/xml;svn:eol-style=native</span>
-<span class="na">*.sld</span>        <span class="o">=</span> <span class="s">svn:mime-type=text/xml;svn:eol-style=native</span>
-<span class="na">*.gml</span>        <span class="o">=</span> <span class="s">svn:mime-type=text/xml;svn:eol-style=native</span>
-<span class="na">*.xsl</span>        <span class="o">=</span> <span class="s">svn:mime-type=text/xsl;svn:eol-style=native</span>
-<span class="na">*.html</span>       <span class="o">=</span> <span class="s">svn:mime-type=text/html;svn:eol-style=native</span>
-<span class="na">*.xhtml</span>      <span class="o">=</span> <span class="s">svn:mime-type=text/html;svn:eol-style=native</span>
-<span class="na">*.css</span>        <span class="o">=</span> <span class="s">svn:mime-type=text/css;svn:eol-style=native</span>
-<span class="na">*.bat</span>        <span class="o">=</span> <span class="s">svn:eol-style=CRLF</span>
-<span class="na">*.sh</span>         <span class="o">=</span> <span class="s">svn:eol-style=native;svn:executable</span>
-<span class="na">*.bmp</span>        <span class="o">=</span> <span class="s">svn:mime-type=image/bmp</span>
-<span class="na">*.png</span>        <span class="o">=</span> <span class="s">svn:mime-type=image/png</span>
-<span class="na">*.jpg</span>        <span class="o">=</span> <span class="s">svn:mime-type=image/jpeg</span>
-<span class="na">*.jpeg</span>       <span class="o">=</span> <span class="s">svn:mime-type=image/jpeg</span>
-<span class="na">*.gif</span>        <span class="o">=</span> <span class="s">svn:mime-type=image/gif</span>
-<span class="na">*.tif</span>        <span class="o">=</span> <span class="s">svn:mime-type=image/tiff</span>
-<span class="na">*.tiff</span>       <span class="o">=</span> <span class="s">svn:mime-type=image/tiff</span>
-<span class="na">*.zip</span>        <span class="o">=</span> <span class="s">svn:mime-type=application/zip</span>
-<span class="na">*.utf</span>        <span class="o">=</span> <span class="s">svn:mime-type=application/octet-stream</span>
-<span class="na">*.shp</span>        <span class="o">=</span> <span class="s">svn:mime-type=application/octet-stream</span>
-<span class="na">*.shx</span>        <span class="o">=</span> <span class="s">svn:mime-type=application/octet-stream</span>
-<span class="na">*.dbf</span>        <span class="o">=</span> <span class="s">svn:mime-type=application/octet-stream</span>
-<span class="na">README</span>       <span class="o">=</span> <span class="s">svn:mime-type=text/plain;svn:eol-style=native</span>
-</pre></div>
             </article>
           </section>
         </div><!--/span-->

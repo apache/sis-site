@@ -114,10 +114,10 @@ If those steps have already been done, jump directly to the <a href="release-man
 </div>
 <h1 id="directory-layout">Directory layout<a class="headerlink" href="#directory-layout" title="Permanent link">&para;</a></h1>
 <p>The steps described in the <em>release management</em> page assume the following directory layout.
-Some directories are SVN checkout, other are ordinary directories. Any other layout can be used.
+Some directories are Git checkout, other are ordinary directories. Any other layout can be used.
 However in the later case, all relative paths in the <em>release management</em> page will need to be adjusted accordingly.</p>
 <div class="codehilite"><pre>&lt;any root directory for SIS&gt;
-├─ trunk
+├─ master
 ├─ branches
 ├─ tags
 ├─ non-free
@@ -131,7 +131,7 @@ However in the later case, all relative paths in the <em>release management</em>
 
 
 <p>Create the above directory structure as below:</p>
-<div class="codehilite"><pre>svn checkout https://svn.apache.org/repos/asf/sis/trunk
+<div class="codehilite"><pre>git clone    https://gitbox.apache.org/repos/asf/sis.git master
 svn checkout https://svn.apache.org/repos/asf/sis/data/non-free
 svn checkout https://svn.apache.org/repos/asf/sis/release-test
 svn checkout https://svn.apache.org/repos/asf/sis/site/trunk site
@@ -222,7 +222,7 @@ gpg --send-key &lt;key_id&gt;
 
 
 <p>The above-cited <em>Release Signing</em> page provides more instructions.
-Then, the signed public key shall be appended to the <code>KEYS</code> file on the <a href="https://svn.apache.org/repos/asf/sis/trunk/">SIS source code repository</a>,
+Then, the signed public key shall be appended to the <code>KEYS</code> file on the <a href="https://gitbox.apache.org/repos/asf?p=sis.git">SIS source code repository</a>,
 then copied to the <a href="http://dist.apache.org/repos/dist/release/sis/">SIS distribution directory</a>.</p>
 <h1 id="maven">Maven Configuration &amp; Nexus Setup<a class="headerlink" href="#maven" title="Permanent link">&para;</a></h1>
 <p>Detailed instructions are at <a href="http://www.apache.org/dev/publishing-maven-artifacts.html">Publishing Maven Artifacts</a>.
