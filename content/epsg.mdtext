@@ -65,6 +65,10 @@ try adding a `derby-<version>.jar` file (download lib-distribution from [Derby p
 This is normally not needed with Oracle JDK6, JDK7 or JDK8 because Apache SIS tries to use the JavaDB embedded
 in those distributions, but may be necessary with other distributions or in security-constrained environments.
 
+
+Use the local copy in other applications    {#use-local}
+--------------------------------------------------------
+
 For using the installed EPSG geodetic dataset in your own application, apply *one* of the following choices:
 
   * Set the `SIS_DATA` environment variable to the path of `apache-sis-0.8/data` directory _(preferred choice)_.
@@ -125,7 +129,7 @@ if that database is specified by JNDI):
       <dependency>
         <groupId>org.apache.derby</groupId>
         <artifactId>derby</artifactId>
-        <version>10.13.1.1</version>
+        <version>10.14.2.0</version>
         <scope>runtime</scope>
       </dependency>
     </dependencies>
@@ -138,11 +142,17 @@ As embedded database     {#maven-embedded}
 ------------------------------------------
 
 With `sis-embedded-data` artifact on the classpath, there is no need to setup environment variable, Java property or JNDI.
-However this simplicity come with the following inconvenient: a larger download, no option for choosing which data to use
-(and consequently which license to accept), no possibility to choose the database engine (i.e. the database software is
-fixed to Derby), and no possibility to add user data (i.e. the database is read-only).
+However this simplicity come with the following inconvenient:
+
+  * a larger download,
+  * no option for choosing which data to use (and consequently which license to accept),
+  * no possibility to choose the database engine (i.e. the database software is fixed to Derby),
+  * no possibility to add user data (i.e. the database is read-only),
+  * slower execution of `CRS.forCode(…)` and `CRS.findCoordinateOperation(…)`, unless the JAR file is uncompressed.
+
 This dependency can be declared as below
-(note that `sis-epsg` and `sis-embedded-data` should not be specified in the same project; only one is needed):
+(see the [download](downloads.html#epsg) page for more information about Maven dependency declaration).
+Note that `sis-epsg` and `sis-embedded-data` should not be specified in the same project; only one is needed:
 
     :::xml
     <dependencies>
@@ -154,7 +164,13 @@ This dependency can be declared as below
       </dependency>
     </dependencies>
 
-See the [download](downloads.html#epsg) page for more information about Maven dependency declaration.
+The performance issue can be avoided if the JAR file is uncompressed.
+But uncompressed `sis-embedded-data.jar` file is more than 5 times larger than the compressed file.
+Given that `CRS.forCode(…)` and `CRS.findCoordinateOperation(…)` should not be invoked too often,
+and that performance degradation does not apply to the `CoordinateOperation` instances created by those method calls,
+the JAR file is distributed on the Maven repository in its compressed form.
+If desired, better performance can be achieved by using one of the other configurations described in this page,
+or by uncompressing `sis-embedded-data.jar` locally.
 
 
 
