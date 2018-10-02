@@ -123,7 +123,10 @@ are incompatible with Apache license. The following items are quoted from those 
 <p>In order to use the EPSG geodetic dataset with Apache SIS, apply <em>one</em> of the following choices:</p>
 <div class="toc">
 <ul>
-<li><a href="#command-line">Install a local copy with command-line tool</a></li>
+<li><a href="#command-line">Install a local copy with command-line tool</a><ul>
+<li><a href="#use-local">Use the local copy in other applications</a></li>
+</ul>
+</li>
 <li><a href="#maven">Add a Maven dependency</a><ul>
 <li><a href="#maven-epsg">As database installer</a></li>
 <li><a href="#maven-embedded">As embedded database</a></li>
@@ -150,6 +153,7 @@ copy of the EPSG geodetic dataset will be created and stored in the <code>apache
 try adding a <code>derby-&lt;version&gt;.jar</code> file (download lib-distribution from <a href="http://db.apache.org/derby/derby_downloads.html">Derby project</a>) in the <code>apache-sis-0.8/lib</code> sub-directory.
 This is normally not needed with Oracle JDK6, JDK7 or JDK8 because Apache SIS tries to use the JavaDB embedded
 in those distributions, but may be necessary with other distributions or in security-constrained environments.</p>
+<h2 id="use-local">Use the local copy in other applications<a class="headerlink" href="#use-local" title="Permanent link">&para;</a></h2>
 <p>For using the installed EPSG geodetic dataset in your own application, apply <em>one</em> of the following choices:</p>
 <ul>
 <li>Set the <code>SIS_DATA</code> environment variable to the path of <code>apache-sis-0.8/data</code> directory <em>(preferred choice)</em>.</li>
@@ -200,7 +204,7 @@ if that database is specified by JNDI):</p>
   <span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>org.apache.derby<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>derby<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>10.13.1.1<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>10.14.2.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
   <span class="nt">&lt;/dependency&gt;</span>
 <span class="nt">&lt;/dependencies&gt;</span>
@@ -210,11 +214,17 @@ if that database is specified by JNDI):</p>
 <p>See the <a href="downloads.html#epsg">download</a> page for more information about Maven dependency declaration.</p>
 <h2 id="maven-embedded">As embedded database<a class="headerlink" href="#maven-embedded" title="Permanent link">&para;</a></h2>
 <p>With <code>sis-embedded-data</code> artifact on the classpath, there is no need to setup environment variable, Java property or JNDI.
-However this simplicity come with the following inconvenient: a larger download, no option for choosing which data to use
-(and consequently which license to accept), no possibility to choose the database engine (i.e. the database software is
-fixed to Derby), and no possibility to add user data (i.e. the database is read-only).
-This dependency can be declared as below
-(note that <code>sis-epsg</code> and <code>sis-embedded-data</code> should not be specified in the same project; only one is needed):</p>
+However this simplicity come with the following inconvenient:</p>
+<ul>
+<li>a larger download,</li>
+<li>no option for choosing which data to use (and consequently which license to accept),</li>
+<li>no possibility to choose the database engine (i.e. the database software is fixed to Derby),</li>
+<li>no possibility to add user data (i.e. the database is read-only),</li>
+<li>slower execution of <code>CRS.forCode(…)</code> and <code>CRS.findCoordinateOperation(…)</code> methods, unless the JAR file is uncompressed.</li>
+</ul>
+<p>This dependency can be declared as below
+(see the <a href="downloads.html#epsg">download</a> page for more information about Maven dependency declaration).
+Note that <code>sis-epsg</code> and <code>sis-embedded-data</code> should not be specified in the same project; only one is needed:</p>
 <div class="codehilite"><pre><span class="nt">&lt;dependencies&gt;</span>
   <span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>org.apache.sis.non-free<span class="nt">&lt;/groupId&gt;</span>
@@ -226,7 +236,13 @@ This dependency can be declared as below
 </pre></div>
 
 
-<p>See the <a href="downloads.html#epsg">download</a> page for more information about Maven dependency declaration.</p>
+<p>The performance issue can be avoided if the JAR file is uncompressed.
+But uncompressed <code>sis-embedded-data.jar</code> file is more than 5 times larger than the compressed file.
+Given that <code>CRS​.forCode(…)</code> and <code>CRS​.findCoordinateOperation(…)</code> should not be invoked too often,
+and that performance degradation does not apply to the <code>CoordinateOperation</code> instances created by those method calls,
+the JAR file is distributed on the Maven repository in its compressed form.
+If desired, better performance can be achieved by using one of the other configurations described in this page,
+or by uncompressing the <code>sis-embedded-data.jar</code> file locally.</p>
 <h1 id="jndi">Use Java Naming and Directory Interface<a class="headerlink" href="#jndi" title="Permanent link">&para;</a></h1>
 <p>While Apache SIS uses Apache Derby by default, it is also possible to use another database software like HSQL or PostgreSQL.
 For using an arbitrary database, register a <code>javax.sql.DataSource</code> instance through the Java Naming and Directory Interface (JNDI).
