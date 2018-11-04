@@ -38,10 +38,10 @@ The remaining of this page provides more advanced tips for SIS developers.
 
 
 
-Distribution file and Pack200 bundle   {#dist}
-==============================================
+Distribution file   {#dist}
+===========================
 
-The Pack200 bundle is a file with the `.pack.gz` extension containing most SIS modules except `sis-webapp`
+The distribution archive is a file with the `.zip` extension containing most SIS modules except `sis-webapp`
 (because Web applications use an other packaging) together with their dependencies.
 Pack200 files are uncompressed by the `unpack200` command provided in JDK/JRE installation.
 However for users convenience, we provide a shell script for uncompressing and launching the SIS
@@ -62,25 +62,6 @@ To test, uncompress in any directory and execute `apache-sis-<version>/bin/sis`.
 The Pack200 file will be automatically uncompressed when first needed.
 
 
-Generating the Pack200 file alone   {#pack200}
-----------------------------------------------
-
-If only the Pack200 file is desired, without the distribution ZIP file, one can use the following command
-(do not forget the `--non-recursive` option, otherwise the Mojo will waste CPU by executing itself many time):
-
-    :::bash
-    mvn org.apache.sis.core:sis-build-helper:pack --non-recursive
-
-The above command should create a `target/distribution/apache-sis-<version>.pack.gz` file.
-To uncompress that file, use the following command:
-
-    :::bash
-    unpack200 --remove-pack-file apache-sis-<version>.pack.gz sis.jar
-
-The Pack200 bundle does not include the `sis-webapp` module because the later can be downloaded
-as a `WAR` file from the Maven repository.
-
-
 
 Known limitations   {#limitations}
 ----------------------------------
@@ -88,7 +69,6 @@ Known limitations   {#limitations}
 The current plugin implementation has some hard-coded values, especially:
 
    * The ZIP file content is copied from the `application/sis-console/src/main/artifact` directory.
-   * The Pack200 file path inside the ZIP file is hard-coded to `lib/sis.pack.gz`.
    * The final filename is hard-coded to `apache-sis-<version>.zip`.
 
 
