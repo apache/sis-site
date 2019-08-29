@@ -19,11 +19,11 @@ Notice: Licensed to the Apache Software Foundation (ASF) under one
 
 Apache SIS source code is maintained using [Git][git] version control,
 completed by optional data maintained using [Subversion][subversion] version control.
-Optional data include in particular the [EPSG geodetic dataset][epsg-install]
-and are subject to different licensing terms.
+Optional data include in particular the [EPSG geodetic dataset][epsg-install],
+which is subject to licensing terms different than Apache ones.
 This page describes two ways to checkout Apache SIS source code:
 
-  * A basic checkout with only the main repository, the most stable branch, and no configuration required.
+  * A basic checkout with only the main repository, the most stable branch, and no configuration requirement.
   * A more advanced configuration for active SIS developments, using uncommitted (for now) API
     and including optional data for more extensive tests.
 
@@ -40,28 +40,31 @@ Basic installation    {#basic}
 Create an empty directory for the Apache SIS project.
 We use `ApacheSIS` directory name in this page, but that name can be anything;
 replace that name in the shell commands below if another name is used.
-The Apache SIS source code will be cloned in that directory:
+The Apache SIS source code can be cloned in that directory as below
+(lines starting with `#` are comments and can be ignored):
 
     :::bash
     mkdir ApacheSIS
     cd ApacheSIS
     git clone https://gitbox.apache.org/repos/asf/sis
-
-(note: [GitHub URL][github-sis] can be substituted to above Apache GitBox URL if desired.)
-
-At this stage, the `ApacheSIS` directory is redundant with the `sis` subdirectory.
-But we recommend to create that parent directory anyway in anticipation
-for more subdirectories to be created later, when desired.
+    # Alternatively, GitHub mirror can also be used:
+    # git clone https://github.com/apache/sis
 
 That is all. Apache SIS can be built by running `mvn install` in the `sis` subdirectory.
-The remaining of this page describes optional configurations for more advanced developments.
+At this stage, the `ApacheSIS` parent directory is redundant with the `sis` subdirectory,
+but we recommend to create that parent directory anyway in anticipation
+for more subdirectories to be created later, when desired.
+The remaining of this page describes those optional configurations for more advanced developments.
 
 
 
 Advanced installation    {#advanced}
 ====================================
 
-All sub-sections below are optional.
+This section assumes that above-described basic checkout has been done.
+All subsections below are optional. It is not mandatory to execute all of them,
+but we recommend to at least create the data directory described below
+because some other optional services depend on it.
 
 
 Create data directory    {#data}
@@ -69,12 +72,18 @@ Create data directory    {#data}
 
 Apache SIS needs a directory where to store database, datum shift files and other optional data.
 That directory is specified by the `SIS_DATA` environment variable and can be located anywhere.
-A convenient location is in a subdirectory of the `ApacheSIS` directory created in above section.
+A convenient location is a subdirectory of the `ApacheSIS` directory created in the "basic checkout" section.
 For example (with `ApacheSIS` as the current directory):
 
     :::bash
     mkdir Data
     export SIS_DATA=$PWD/Data
+    #
+    # For making that environment variable available in future shell sessions,
+    # the output of following command can be added to .bash_profile or .bashrc
+    # file in user home directory.
+    #
+    echo export SIS_DATA=$SIS_DATA
 
 
 Checkout non-free data    {#non-free}
@@ -109,43 +118,52 @@ This is sufficient for allowing Apache SIS to create the geodetic database
 without the need for `sis-epsg` or `sis-embedded-data` module on the classpath.
 This setting is not done automatically because Apache projects can not introduce
 non-free dependencies without explicit action from user.
-If this action is not taken, some JUnit tests requiring EPSG data may be ignored
-(they will not cause the build to fail however).
-If any EPSG file is updated, deleting the `$SIS_DATA/Databases/SpatialMetadata` directory
+If this action is not taken, some JUnit tests requiring EPSG data may be skipped.
+If any EPSG file is updated, deleting the `$SIS_DATA/​Databases/​SpatialMetadata` directory
 is sufficient for causing Apache SIS to recreate the Derby database with new data.
 
 
 Configure PostgreSQL    {#postgres}
 -----------------------------------
 
+Apache SIS is tested with Derby, HSQL and PostgreSQL databases.
+Derby and HSQL are tested automatically using temporary databases in memory.
+But testing on PostgreSQL requires the creation of a dedicated database on the developer platform.
+The requirements are:
 
-Switch to GeoAPI 4.0 branch    {#geoapi-4.0}
---------------------------------------------
+  * PostgreSQL server is running and listening to `localhost` on default port (5432).
+  * An empty database named `"SpatialMetadataTest"` exists (Apache SIS will not create it itself).
+  * A role having the same name than Unix user name exists
+  * Above-cited role can connect to `"SpatialMetadataTest"` without password.
 
-The source code repository contains `geoapi-3.1` and `geoapi-4.0` branches in addition of `master`.
-Apache SIS releases are created from code on `master` only, which depends on GeoAPI 3.0.1
-(the [latest GeoAPI release][geoapi-stable] from Open Geospatial Consortium).
-However the actual development occurs on the `geoapi-4.0` branch before to be merged to `master`.
+The last point may require the following line in the `pg_hba.conf` file
+(location of this file is system-dependent; try `/var/​lib/​pgsql/​data`):
+
+    ::text
+    host    all    my_unix_user_name    127.0.0.1/32    trust
+
+
+Switch to development branch    {#branches}
+-------------------------------------------
+
+The source code repository contains `master`, `geoapi-3.1` and `geoapi-4.0` branches.
+Apache SIS releases are created from `master`, which depends on the latest GeoAPI version
+released by the Open Geospatial Consortium (OGC), currently [GeoAPI 3.0.1][geoapi-stable].
+However daily developments occur on the `geoapi-4.0` branch before to be merged (indirectly) to `master`.
 Those branches exist in order to experiment early new API and technologies — since it may impact
 the library design — while keeping the releases compatible with officially released environments.
+In summary:
 
-  * The `geoapi-4.0` branch implements interfaces defined in GeoAPI 4.0 snapshot milestones.
-    Some changes in GeoAPI 4.0-SNAPSHOT interfaces are incompatible with GeoAPI 3.0.1 interfaces.
-    They are caused by changes in the underlying international standards, or by evolution of Java technology.
+  * The `geoapi-4.0` branch implements interfaces defined in GeoAPI 4.0 snapshots.
+  * The `geoapi-3.1` branch implements interfaces defined in [GeoAPI 3.1 snapshots][geoapi-snapshot].
+  * The `master` implements interfaces defined by the [GeoAPI 3.0.1 stable release][geoapi-stable].
 
-  * The `geoapi-3.1` branch implements interfaces defined in [GeoAPI 3.1 snapshot][geoapi-snapshot] milestones.
-    It has the same content that the `geoapi-4.0` branch, excluding changes that are incompatible with GeoAPI 3.0.1.
-    This branch is used merely as an intermediate step between the development branch (`geoapi-4.0`) and `master`.
+Developments on `geoapi-4.0` branch are merged to `geoapi-3.1` branch, which is then merged to `master`.
+Note that commits on master can not be removed, since `git push --force` is not allowed on that branch.
+If some commits need to be rearranged, it should be done on other branches before merge to `master`.
 
-  * The `master` branch is a merge of `geoapi-3.1` branch ported to the interfaces defined by the [GeoAPI stable release][geoapi-stable].
-    This is the code which is built by the continuous integration system and deployed on the Maven repository.
-    **Commits on master can not be removed, since `git push --force` are not allowed on this branch.**
-    Commits should be pushed on above-cited development branch first,
-    so they can be rearranged if needed before merge to `master`.
-
-
-The `geoapi` branches will hopefully be fully merged to `master` in the future, depending on new GeoAPI releases from OGC.
-In the meantime, developer can switch to the most active development branch as below:
+Developers can switch to the current development branch as below.
+Note that those `geoapi-xxx` branches may disappear after OGC released the corresponding GeoAPI versions.
 
     :::bash
     cd sis
@@ -226,7 +244,6 @@ then execute the following steps:
 
 [subversion]:       http://subversion.apache.org
 [git]:              http://git-scm.com
-[github-sis]:       https://github.com/apache/sis
 [viewvc]:           http://svn.apache.org/viewvc/sis/
 [epsg-install]:     epsg.html
 [EPSG-ToU]:         http://www.epsg.org/TermsOfUse.aspx
