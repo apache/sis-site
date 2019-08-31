@@ -91,10 +91,28 @@ Below are examples of declarations in a `pom.xml` file for building a project wi
       </dependency>
     </dependencies>
 
+    <!-- The following dependency can be omitted on Java 8, or
+         on Java 9 and 10 if the --add-modules option is used. -->
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>2.3.2</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- Above dependency can be replaced by the following dependency
+         if no XML (un)marshalling is wanted. This dependency is lighter. -->
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <version>2.3.2</version>
+      <scope>runtime</scope>
+    </dependency>
 
 
-Include non-Apache resources    {#non-free}
--------------------------------------------
+
+Include non-free resources    {#non-free}
+-----------------------------------------
 
 The [EPSG geodetic dataset][EPSG] is optional but strongly recommended.
 The EPSG dataset is a de-facto standard providing
