@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>SIS 1.0 Release notes</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  </head>
+  <body>
+    <table style="border-style: solid; border-width: 1pt; background: lightgray"><tr>
+      <td><a href="0.8.html">Previous release</a></td>
+      <td style="padding-left: 9pt">Next release</td>
+    </tr></table>
+    <h1>SIS 1.0 Release notes</h1>
+
+<h2>Summary</h2>
+<p>Apache SIS 1.0 can marshal and unmarshal metadata in XML documents using the new ISO 19115-3 standard.
+  The previous ISO 19139 standard is still supported and automatically recognized at unmarshalling time.
+  This release contains also improvements in reading netCDF files
+  and a beginning of raster support.</p>
+
+<h2>Incompatible changes</h2>
+<p>The following changes in Apache SIS 1.0 are incompatible with SIS 0.8:</p>
+<ul>
+  <li><b><code>DirectPosition1D.ordinate</code></b> — the field has been renamed <code><u>co</u>ordinate</code>
+    for consistency with terminology used in ISO 19111 international standard.</li>
+  <li><b><code>DataStore.getOpenParameters()</code></b> — return type has been changed from <code>ParameterValueGroup</code> to <code>Optional&lt;ParameterValueGroup&gt;</code>.</li>
+  <li><b><code>DataSet.getEnvelope()</code></b> — return type has been changed from <code>Envelope</code> to <code>Optional&lt;Envelope&gt;</code>.</li>
+  <li><b><code>TransformSeparator</code></b> — behavior change: if the desired source dimensions were not explicitly specified,
+    then the source dimensions that are not required for producing the desired target dimensions are automatically trimmed.</li>
+</ul>
+<p>Changes are listed below (non-exhaustive list):</p>
+
+<h2>New features</h2>
+<ul>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-221'>SIS-221</a>] - Hotine Oblique Mercator (EPSG:9812, 9815)</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-227'>SIS-227</a>] - American Polyconic (EPSG:9818)</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-426'>SIS-426</a>] - Mollweide projection</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-450'>SIS-450</a>] - Sinusoidal projection</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-408'>SIS-408</a>] - Add SpecializableTransform</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-410'>SIS-410</a>] - More stable MathTransform.Inverse serialization</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-412'>SIS-412</a>] - Add a CRS.findOperations(sourceCRS, targetCRS, …) method</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-413'>SIS-413</a>] - Units.PSU should have a scale value of 1/1000</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-424'>SIS-424</a>] - Create Feature instances from a SQL database</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-425'>SIS-425</a>] - Drop package prefixes in table created in &quot;metadata&quot; schema</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-307'>SIS-307</a>] - GSoC: Create the foundation of a module for remote sensing data</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-444'>SIS-444</a>] - GridCoverageResource interface for raster data</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-443'>SIS-443</a>] - Give access to netCDF raster data as GridCoverage</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-454'>SIS-454</a>] - Approximate geodesic path by Bézier curve</li>
+</ul>
+
+<h2>Improvements</h2>
+<ul>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-422'>SIS-422</a>] - Migrate from SVN to Git as the main SIS code repository</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-396'>SIS-396</a>] - Update EPSG geodetic dataset to version 9.4</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-468'>SIS-468</a>] - Update EPSG geodetic dataset to version 9.7</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-395'>SIS-395</a>] - Need a public way to get connection to &quot;SpatialMetadata&quot; database</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-338'>SIS-338</a>] - Stores pre-defined metadata in the SpatialMetadata database</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-81'>SIS-81</a>] -   Replace ModifiableMetadata.isModifiable() by an enum</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-345'>SIS-345</a>] - Upgrade JAXB binding to ISO 19115-3</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-126'>SIS-126</a>] - Replace the NamespacePrefixMapper hack by NamespaceContext</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-399'>SIS-399</a>] - When renaming &quot;xsi:type&quot; value, may need to declare a new namespace</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-404'>SIS-404</a>] - Allow profiles to extend legacy metadata schema</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-455'>SIS-455</a>] - Compute length of cubic Bézier curve</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-458'>SIS-458</a>] - TransformSeparator should omit unused source dimensions, unless requested otherwise</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-315'>SIS-315</a>] - NetCDF: convention interface and parsing utilities</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-316'>SIS-316</a>] - NetCDF: build CRS and GridToCRS Transform from netcdf variables and attributes</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-446'>SIS-446</a>] - NetCDF store should be robust to non-linear localization grid</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-445'>SIS-445</a>] - NetCDF store should be robust to localization grid crossing anti-meridian</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-448'>SIS-448</a>] - Extension to CF-conventions for localization grid smaller than data in netCDF</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-449'>SIS-449</a>] - Extension to CF-conventions for bands in a netCDF variable</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-429'>SIS-429</a>] - Arithmetic operation on quantities on values converted to system units</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-421'>SIS-421</a>] - Retrofit WarningListener in a more generic EventListener</li>
+</ul>
+
+<h2>Bug fixes</h2>
+<ul>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-377'>SIS-377</a>] - Latitude of natural origin = -90 wrongly rejected for Transverse Mercator</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-376'>SIS-376</a>] - Geographic/geocentric conversion fails if the geographic CRS is two-dimensional</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-378'>SIS-378</a>] - Too aggressive simplification of some units of measurement</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-382'>SIS-382</a>] - SI multiples not recognized when applied on kilogram</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-414'>SIS-414</a>] - Multiplication symbol should be omitted when the unit is Units.UNITY</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-385'>SIS-385</a>] - Inaccurate formulas in DistanceUtils</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-386'>SIS-386</a>] - Replace DefaultEllipsoid.orthodromicDistance(…) method</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-431'>SIS-431</a>] - Need MD_ReferenceSystem adapter</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-407'>SIS-407</a>] - OutOfMemoryError when reading Sentinel 1 image with GeoTIFF reader</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-432'>SIS-432</a>] - Using BETA2007.gsb grid throws IllegalArgumentException</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-439'>SIS-439</a>] - NetCDF reader does not support unlimited dimension</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-441'>SIS-441</a>] - UnconvertibleObjectException when reading code list value from PostgreSQL</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-461'>SIS-461</a>] - Replace &quot;ordinate&quot; by &quot;coordinate&quot;</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-464'>SIS-464</a>] - DataSet.getEnvelope() should return Optional&lt;Envelope&gt;</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-402'>SIS-402</a>] - Missing @XmlElement on DefaultMetadata.getCharacterSets()</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-114'>SIS-114</a>] - Sidebar on the left side always have the &quot;home&quot; menu item active</li>
+</ul>
+
+<h2>Tasks</h2>
+<ul>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-456'>SIS-456</a>] - New numbering scheme for development branches</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-438'>SIS-438</a>] - Make SIS compatible with latest Java versions</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-388'>SIS-388</a>] - Upgrade Java platform requirement from JDK7 to JDK8</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-383'>SIS-383</a>] - Upgrade Derby dependency and reduce dependency on JavaDB</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-405'>SIS-405</a>] - Upgrade or remove JAXB annotations of ImmutableIdentifier</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-64'>SIS-64</a>]   - Remove duplicated profile in sis-build-helper after MNG-3328 get fixed</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-415'>SIS-415</a>] - Remove links to remotesensing.org</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-430'>SIS-430</a>] - Remove PACK200 usage</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-463'>SIS-463</a>] - Move WKT support from sis-metadata to sis-referencing</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-406'>SIS-406</a>] - Move XML support from sis-utility module to sis-metadata</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-331'>SIS-331</a>] - Verify the mapping from ISO 19115:2003 to ISO 19115:2014</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-375'>SIS-375</a>] - Cache: override default Map methods</li>
+<li>[<a href='https://issues.apache.org/jira/browse/SIS-440'>SIS-440</a>] - ComparisonMode.APPROXIMATIVE should be APPROXIMATE</li>
+</ul>
+
+  </body>
+</html>
