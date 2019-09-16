@@ -32,7 +32,7 @@ Configure    {#configure}
 Before to perform a release, make sure that the following conditions hold:
 
   * Commands will be executed in a Unix shell.
-  * Subversion, GNU GPG, ZIP, Maven, Ant, Java and the Java compiler are available on the path.
+  * Git, Subversion, GNU GPG, ZIP, Maven, Ant, Java and the Java compiler are available on the path.
   * The [release management setup](release-management-setup.html) steps have been executed once.
 
 For all instructions in this page, `$OLD_VERSION` and `$NEW_VERSION` stand for the version
@@ -44,15 +44,10 @@ the current release attempt. Those versions shall be set on the command line lik
     export NEW_VERSION=1.0
     export RELEASE_CANDIDATE=1
     export SIGNING_KEY=<your key ID>
-    export BOOTCLASSPATH=<path to the rt.jar file of a JDK7 installation>
+    unset PATH_TO_FX
 
 The key ID value is an hexadecimal numbers with 8 digits (may be the last 8 digits of a 40 digits number).
 It can be found be executing `gpg --list-keys`.
-
-The boot class path value is highly system-dependent. Some examples are:
-
-  * `/usr/lib/jvm/java-7/jre/lib/rt.jar` on some Linux distributions (replace `java-7` by the actual directory name).
-  * `/Library/Java/JavaVirtualMachines/jdk1.7.0_79.jdk/Contents/Home/jre/lib/rt.jar` on MacOS.
 
 Starts the GPG agent if not already done.
 This is for avoiding to be prompted many time for the passphrase in every modules to be built by Maven.
@@ -72,12 +67,6 @@ in this page shall be adjusted accordingly.
     :::text
     <any root directory for SIS>
     ├─ master
-    ├─ branches
-    │  └─ $NEW_VERSION
-    ├─ tags
-    │  └─ $NEW_VERSION
-    │     └─ target
-    │        └─ distributions
     ├─ non-free
     │  └─ sis-epsg
     ├─ distribution
@@ -89,20 +78,8 @@ in this page shall be adjusted accordingly.
 
 
 
-Java versions    {#java-version}
---------------------------------
-
-While we need a JDK7 installation for the `bootclasspath` option, we do not recommend to use it for generating
-the binaries since JDK7 has reached its end of public updates (but not the end of commercial support).
-We recommend to create the release with JDK8 instead (note however that JDK8 `javadoc` tool seems to have a bug that prevent its use with SIS).
-Make sure that the JDK installation to be used for the release has been updated recently, since compilers may receive critical bug fixes.
-For example the `javadoc` tool of older JDK versions was known to generate HTML pages with a vulnerability in them.
-
-
-
-
-Prepare web site and source code before branching    {#prepare-source}
-======================================================================
+Review project status before branching    {#prepare-source}
+===========================================================
 
 Before to start the release process, we need to test more extensively the master.
 The tests described below often reveal errors that were unnoticed in daily builds.
@@ -111,49 +88,35 @@ First:
 
   * Review and update the `README` and `NOTICE` files on the source code repository.
   * Review the `javac` and `javadoc` warnings reported by Jenkins and fix at least the typos.
+  * Tests the following commands:
+
+    :::bash
+    mvn clean install --define org.apache.sis.test.extensive=true
+    mvn javadoc::aggregate
 
 
 
 Prepare release notes    {#release-notes}
 -----------------------------------------
 
-We update JIRA first because doing so is sometime a reminder of uncompleted tasks in source code.
+We update JIRA soon because doing so is sometime a reminder of uncompleted tasks in source code.
 Update [JIRA][JIRA] tasks and prepare release notes as below:
 
   * Ensure that the _Fix Version_ in issues resolved since the last release includes this release version correctly.
   * Ensure that all open issues are resolved or closed before proceeding further.
   * On the `site` source code repository, create a `content/release-notes/$NEW_VERSION.html` file with all the features added.
   * Use `content/release-notes/$OLD_VERSION.html` as a template, omitting everything between the `<body>` and `</body>` tags.
-  * The release notes can be obtained from JIRA, by clicking on the _Roadmap_ tab → the version number → _Release notes_
+  * The release notes can be obtained from JIRA, by clicking on the _Versions_ tab → the version number → _Release notes_
     and then configuring the release notes to display HTML format and copying it.
     A suggested approach would be to reorganize the release notes as
     _New Features_, then _Improvements_, then _Bug Fixes_, then _Tests_ and finally _Tasks_.
     The _Sub Tasks_ can be classified according the category of their parent issue.
 
-
-
-Web site    {#prepare-website}
-------------------------------
-
-Review and update the `content/DOAP.rdf` file on the `site` source code repository.
-Add a new `<release>` block for the new release with the estimated release date.
-
-Update the version numbers from the old one to `$NEW_VERSION` in the following files.
-
-  * `content/index.mdtext`
-  * `content/gdal.mdtext`
-  * `content/downloads.mdtext` (need also to update `$NEW_VERSION-SNAPSHOT` to the next snapshot version)
-  * `content/command-line.mdtext`
-  * `content/epsg.mdtext` (be aware that the version number may sometime be behind the SIS version number)
-
-Commit:
+Commit to staging area (not published immediately):
 
     :::bash
     svn add content/release-notes/$NEW_VERSION.html
-    svn commit --message "Prepare documentation for the $NEW_VERSION release."
-
-The new web site will be published in the [staging area](http://sis.staging.apache.org).
-It will not yet be published on `http://sis.apache.org`.
+    svn commit --message "Release notes for Apache SIS $NEW_VERSION."
 
 
 
@@ -173,8 +136,7 @@ This profile performs the following actions:
 Each of those additional products may cause a failure that did not happen in normal builds.
 
     :::bash
-    cd ../master
-    mvn clean install --activate-profiles apache-release --define bootclasspath=$BOOTCLASSPATH
+    mvn clean install --activate-profiles apache-release
 
 Verify signature for all files:
 
@@ -191,7 +153,7 @@ SIS dependencies are the snapshot tested in this section.
     :::bash
     cd ../non-free
     svn update
-    mvn clean install --define bootclasspath=$BOOTCLASSPATH
+    mvn clean install
 
 Run the integration tests. Before to test,
 verify that their version numbers and their SIS dependencies are the snapshot tested in this section.
@@ -201,7 +163,7 @@ Note that execution of those tests may be slow.
     cd ../release-test
     svn update
     cd maven
-    mvn clean test --define bootclasspath=$BOOTCLASSPATH
+    mvn clean test
 
 
 
@@ -261,7 +223,7 @@ Validate with `git diff`, ensure that the build is not broken (we will run the t
 then commit the changes on the branch:
 
     :::bash
-    mvn clean package --define skipTests=true --define bootclasspath=$BOOTCLASSPATH
+    mvn clean package --define skipTests=true
     git commit --message "Prepare branch for $NEW_VERSION release."
 
 
@@ -307,7 +269,7 @@ Build and test the project in the same way than we did on master.
 In addition to testing, execution of an `install` phase before deployment is required for our custom `sis-build-helper` plugin.
 
     :::bash
-    mvn install --activate-profiles apache-release --define bootclasspath=$BOOTCLASSPATH
+    mvn install --activate-profiles apache-release
     find . -name "sis-*.asc" -exec gpg --verify '{}' \;
 
 Open the `pom.xml` file of all modules in the `non-free` group.
@@ -319,7 +281,7 @@ Commit and built:
     :::bash
     cd ../../non-free
     svn commit --message "Set version number and dependencies to $NEW_VERSION."
-    mvn clean install --define bootclasspath=$BOOTCLASSPATH
+    mvn clean install
 
 Open the `pom.xml` file of integration tests.
 Set its version numbers and its SIS dependencies to `$NEW_VERSION` without `-SNAPSHOT` suffix.
@@ -329,7 +291,7 @@ Commit and built (note that execution may be slow).
     cd ../release-test
     svn commit --message "Set version number and dependencies to $NEW_VERSION."
     cd maven
-    mvn clean test --define bootclasspath=$BOOTCLASSPATH
+    mvn clean test
 
 
 
@@ -340,7 +302,7 @@ If above verifications succeeded, deploy:
 
     :::bash
     chmod a-w target/distribution/*.zip
-    mvn deploy --activate-profiles apache-release --define bootclasspath=$BOOTCLASSPATH
+    mvn deploy --activate-profiles apache-release
 
 
 
@@ -391,7 +353,7 @@ Replace occurrences of `<version>$OLD_VERSION</version>` by `<version>$NEW_VERSI
 Deploy:
 
     :::bash
-    mvn deploy --activate-profiles apache-release --define bootclasspath=$BOOTCLASSPATH
+    mvn deploy --activate-profiles apache-release
 
 In Nexus:
 
@@ -597,6 +559,30 @@ to build the add-in:
   * Replace the `src/main/unopkg/license.txt` file by EPSG terms of use.
     A copy is found in the `non-free` group of SIS modules.
   * Run `mvn package --activate-profiles non-free`.
+
+
+
+Prepare Web site    {#prepare-website}
+======================================
+
+Review and update the `content/DOAP.rdf` file on the `site` source code repository.
+Add a new `<release>` block for the new release with the estimated release date.
+
+Update the version numbers from the old one to `$NEW_VERSION` in the following files.
+
+  * `content/index.mdtext`
+  * `content/gdal.mdtext`
+  * `content/downloads.mdtext` (need also to update `$NEW_VERSION-SNAPSHOT` to the next snapshot version)
+  * `content/command-line.mdtext`
+  * `content/epsg.mdtext` (be aware that the version number may sometime be behind the SIS version number)
+
+Commit:
+
+    :::bash
+    svn commit --message "Prepare documentation for the $NEW_VERSION release."
+
+The new web site will be published in the [staging area](http://sis.staging.apache.org).
+It will not yet be published on `http://sis.apache.org`.
 
 
 
