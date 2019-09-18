@@ -40,14 +40,12 @@ number of the previous and the new release respectively, and `$RELEASE_CANDIDATE
 the current release attempt. Those versions shall be set on the command line like below (Unix):
 
     :::bash
+    gpg --list-keys                     # For getting the value to put in <your key ID>
+    unset PATH_TO_FX
     export OLD_VERSION=0.8
     export NEW_VERSION=1.0
     export RELEASE_CANDIDATE=1
-    export SIGNING_KEY=<your key ID>
-    unset PATH_TO_FX
-
-The key ID value is an hexadecimal numbers with 8 digits (may be the last 8 digits of a 40 digits number).
-It can be found be executing `gpg --list-keys`.
+    export SIGNING_KEY=<your key ID>    # hexadecimal number with 8 or 40 digits.
 
 
 
@@ -80,6 +78,7 @@ Those changes need to be applied on the development branch and merged with all o
 
   * `DOWNLOAD_URL` in `application/sis-console/src/main/java/org/apache/sis/console/ResourcesDownloader.java` file.
   * `<sis.non-free.version>` in root `pom.xml` file.
+  * Also review the `README` and `NOTICE` files in root directory.
 
 Commit and merge with other branches up to master.
 
@@ -90,10 +89,12 @@ Commit and merge with other branches up to master.
 Before to start the release process, we need to test more extensively the master.
 The tests described below often reveal errors that were unnoticed in daily builds.
 It is better to detect and fix them before to create the release branch.
-First review and update the `README` and `NOTICE` files on the source code repository.
+First, ensure that a PostgreSQL server is running and listening to the default port on local host
+(optional but recommended for more exhaustive testing).
 Then execute the following commands and fix as much warnings as practical:
 
     :::bash
+    systemctl start postgresql.service        # Optional — exact command depends on Linux distribution.
     mvn clean install --define org.apache.sis.test.extensive=true
     mvn javadoc:aggregate
 
@@ -106,6 +107,28 @@ the variable value in the shell performing the release.
     unset SIS_DATA
     echo $SIS_DATA
     mvn test
+
+
+
+Update the list of supported CRS    {#update-crs-list}
+------------------------------------------------------
+
+The following steps should have been done after SIS upgraded EPSG data,
+but it is useful to execute them again in case they have been forgotten,
+and also because failure to execute them may reveal problems.
+
+First, open the `CoordinateOperationMethods` Java class and executes its `main` method, for example from an IDE.
+If successful, a `CoordinateOperationMethods.html` file will have been generated in the current directory.
+Open that file in a browser and verify that information are okay, in particular the version number in the first paragraph.
+If okay, move that file to the site checkout in the `content/tables/` directory.
+
+Next, open the `CoordinateReferenceSystems` class. Before to execute, we need to perform a temporary hack:
+open the `AuthorityCodes` class, search `DEPRECATED=0` (it appears in a SQL fragment) and replace by `(DEPRECATED=0 OR TRUE)`.
+Do not commit! The intent of this hack is to include deprecated codes in the CRS list to be generated.
+Those codes will appear with strike for making clear that they are deprecated.
+Next execute the `CoordinateReferenceSystems` main method,
+move the generated `CoordinateReferenceSystems.html` page to the `content/tables/` directory of the site,
+and finally revert the hack in `AuthorityCodes` class.
 
 
 
@@ -349,11 +372,7 @@ Verify that the EPSG dataset has been created, then cleanup:
 Stage the source, binary and javadoc artifacts    {#stage}
 ==========================================================
 
-Generate the Javadoc. While not mandatory, we suggest to use JDK 8 or above for getting the new look and feel,
-getting the Javadoc enhancements expected in future JDK releases (more dynamic pages),
-avoiding the security vulnerability discovered in the Javadoc tools of older JDK releases,
-and keeping the `diff` smaller on the SVN repository of SIS web site.
-If JDK8 is *not* used, then omit the `cp` command below.
+Generate the Javadoc:
 
     :::bash
     cd $SIS_RC_DIR
@@ -361,16 +380,6 @@ If JDK8 is *not* used, then omit the `cp` command below.
     cd target/site
     zip -9 -r apache-sis-$NEW_VERSION-doc.zip apidocs
     cd ../..
-
-Note: if Javadoc fails because of [JDK-8061305](https://bugs.openjdk.java.net/browse/JDK-8061305) bug,
-a workaround is to temporarily copy the OpenGIS annotations into the `sis-metadata` module
-(only the time needed for building the javadoc):
-
-    :::bash
-    mkdir core/sis-metadata/src/main/java/org/opengis
-    cd core/sis-metadata/src/main/java/org/opengis
-    ln -s <path to GeoAPI project>/geoapi/src/main/java/org/opengis/annotation
-    cd -
 
 
 
