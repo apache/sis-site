@@ -19,7 +19,7 @@ Notice: Licensed to the Apache Software Foundation (ASF) under one
 
 This page describes how to create and deploy the SIS Maven artifacts, binary bundle, javadoc and list of API changes.
 The [Release FAQ][release-faq] page describes the foundation wide policies.
-The instructions on this page provide a summary suitable to SIS releases, together with SIS-specific steps.
+Instructions on this page describe the steps specific to SIS (we do not use the `mvn release` command).
 The intended audiences are SIS release managers.
 
 [TOC]
@@ -49,12 +49,6 @@ the current release attempt. Those versions shall be set on the command line lik
 The key ID value is an hexadecimal numbers with 8 digits (may be the last 8 digits of a 40 digits number).
 It can be found be executing `gpg --list-keys`.
 
-Starts the GPG agent if not already done.
-This is for avoiding to be prompted many time for the passphrase in every modules to be built by Maven.
-
-    :::bash
-    eval $(gpg-agent --daemon)
-
 
 
 Directory layout    {#directory-layout}
@@ -81,18 +75,37 @@ in this page shall be adjusted accordingly.
 Review project status before branching    {#prepare-source}
 ===========================================================
 
+Replace the `$OLD_VERSION` number by `$NEW_VERSION` in the following literals.
+Those changes need to be applied on the development branch and merged with all other branches and master.
+
+  * `DOWNLOAD_URL` in `application/sis-console/src/main/java/org/apache/sis/console/ResourcesDownloader.java` file.
+  * `<sis.non-free.version>` in root `pom.xml` file.
+
+Commit and merge with other branches up to master.
+
+    :::bash
+    git commit --message="Set the EPSG geodetic dataset URL to its expected location after release."
+    # merge with master
+
 Before to start the release process, we need to test more extensively the master.
 The tests described below often reveal errors that were unnoticed in daily builds.
-It is better to detect and fix them before to create the branch.
-First:
-
-  * Review and update the `README` and `NOTICE` files on the source code repository.
-  * Review the `javac` and `javadoc` warnings reported by Jenkins and fix at least the typos.
-  * Tests the following commands:
+It is better to detect and fix them before to create the release branch.
+First review and update the `README` and `NOTICE` files on the source code repository.
+Then execute the following commands and fix as much warnings as practical:
 
     :::bash
     mvn clean install --define org.apache.sis.test.extensive=true
-    mvn javadoc::aggregate
+    mvn javadoc:aggregate
+
+If the `SIS_DATA` environment variable was set during above build, unset it a try again.
+Ideally the build should be tested in both conditions (`SIS_DATA` set and unset).
+That test may be done in a separated shell (console window) in order to preserve
+the variable value in the shell performing the release.
+
+    :::bash
+    unset SIS_DATA
+    echo $SIS_DATA
+    mvn test
 
 
 
@@ -120,7 +133,63 @@ Commit to staging area (not published immediately):
 
 
 
-Test master extensively    {#test-master}
+Create release branch    {#branch}
+==================================
+
+Execute the following command:
+
+    :::bash
+    git checkout -b $NEW_VERSION-RC
+
+It is okay to checkout the branch in a separated directory if desired.
+The `SIS_RC_DIR` environment variable will specify that directory.
+
+    :::bash
+    export SIS_RC_DIR=`pwd`
+
+Remove the modules that are not yet ready for a release.
+This may require removing `<module>` elements in the parent `pom.xml` file.
+
+    :::bash
+    git rm core/sis-cql
+    git rm core/sis-portrayal
+    git rm storage/sis-shapefile
+    git rm application/sis-javafx
+    git rm application/sis-webapp
+    git rm storage/sis-storage/src/main/java/org/apache/sis/storage/WritableGridCoverageResource.java
+    git add --update    # for the removal of <module> elements in pom.xml files.
+    git commit --message="Remove the modules to be excluded from $NEW_VERSION release."
+
+Open the root `pom.xml` file in an editor and perform the following changes:
+
+  * Remove the whole `<pluginRepositories>` block (including comment),
+    since it should not be needed for releases (and is actually not allowed).
+  * Remove the `jetty` dependency since the module that used it has been removed.
+
+We need to update the SIS version numbers not only in the `pom.xml` files, but also in a few Java files.
+The following command performs the replacement using Ant.
+
+    :::bash
+    ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml branch -Dsis.version=$NEW_VERSION
+
+Validate with `git diff`, search `SNAPSHOT` in the whole source directory in case we missed some, then commit:
+
+    git add --update
+    mvn clean install
+    git commit --message="Set version number to $NEW_VERSION."
+
+Maybe apply the following hacks on the release branch only (do not apply them on master).
+Check first if those hacks are still needed for the next release (they were needed for 1.0):
+
+  * Remove all use of `javax.annotation.Generated` annotation.
+    This removal should not have any effect on compilation result.
+  * In the root `pom.xml` under `maven-javadoc-plugin` configuration, add the following elements:
+    * `<link>http://sis.apache.org/apidocs</link>` inside `<links>` block.
+    * `<additionalOption>-Xdoclint:all,-reference</additionalOption>` inside `<additionalOptions>` block.
+
+
+
+Test branch extensively    {#test-branch}
 -----------------------------------------
 
 Build the project with the `apache-release` profile enabled.
@@ -143,166 +212,65 @@ Verify signature for all files:
     :::bash
     find . -name "sis-*.asc" -exec gpg --verify '{}' \;
 
-If the `SIS_DATA` environment variable was set during above build, unset it a try again.
-Ideally the build should be tested in both conditions (`SIS_DATA` set and unset).
 
-Build the `non-free` group of modules. Those modules will not be part of the distribution (except on Maven),
-but we nevertheless need to ensure that they work. Before to test, verify that their version numbers and their
-SIS dependencies are the snapshot tested in this section.
+
+Prepare non-free resources    {#maven-nonfree}
+----------------------------------------------
+
+Go to the directory that contains a checkout of `https://svn.apache.org/repos/asf/sis/data/non-free/sis-epsg`.
+Those modules will not be part of the distribution (except on Maven), but we nevertheless need to ensure that they work.
+Replace occurrences of `<version>$OLD_VERSION</version>` by `<version>$NEW_VERSION</version>` in the `pom.xml` files.
 
     :::bash
     cd ../non-free
     svn update
     mvn clean install
+    svn commit --message "Set version number and dependencies to $NEW_VERSION."
 
-Run the integration tests. Before to test,
-verify that their version numbers and their SIS dependencies are the snapshot tested in this section.
-Note that execution of those tests may be slow.
+We deploy the non-free resources in a Nexus repository separated from the rest of Apache SIS for allowing tests later.
+If there is any issue with this deployment, the staging repository can easily be dropped and recreated.
+
+    :::bash
+    mvn deploy --activate-profiles apache-release
+
+Note the URL printed by Maven to the console during the deployment phase.
+They will be needed for the next step.
+
+
+
+Integration test    {#integration-tests}
+----------------------------------------
+
+Open the root `pom.xml` file of integration tests.
+Set version numbers to `$NEW_VERSION` without `-SNAPSHOT` suffix.
+Then go to the `<url>` declaration of the first `<repository>` and replace value by the URL
+of the temporary Maven repository created by Nexus, as noted during deployment in above step.
+Usually, only the 3 last digits need to be updated.
+Verify the configuration and version of Maven plugins.
+Then test and commit (note that execution may be slow).
 
     :::bash
     cd ../release-test
     svn update
     cd maven
     mvn clean test
-
-
-
-Source code    {#prepare-code}
-------------------------------
-
-Replace the `$OLD_VERSION` number by `$NEW_VERSION` in the following literals.
-Those changes need to be applied on the development branch and merged with all other branches and master.
-
-  * `DOWNLOAD_URL` in `application/sis-console/src/main/java/org/apache/sis/console/ResourcesDownloader.java` file.
-  * `<sis.non-free.version>` in root `pom.xml` file.
-
-Commit and merge to other branches and to master.
-
-    :::bash
-    git commit --message "Set the EPSG geodetic dataset URL to its expected location after release."
-    git checkout geoapi-3.1
-    git merge
-    # Repeat the above commit and the merge commands for other branches until the changes are merged to master.
-
-
-
-Create branch and tag    {#branch}
-==================================
-
-Execute the following command:
-
-    :::bash
-    git checkout -b $NEW_VERSION
-
-It is okay to checkout the branch in a separated directory if desired.
-The `BRANCH_DIR` environment variable will specify that directory.
-
-    :::bash
-    export BRANCH_DIR=`pwd`
-
-We need to update the SIS version numbers not only in the `pom.xml` files,
-but also in a few Java files. The following command performs the replacement using Ant.
-Note that this command does *not* yet remove the `-SNAPSHOT` suffix in version numbers
-(this will be done later, at tag creation time):
-
-    :::bash
-    ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml branch -Dbranch.version=$NEW_VERSION -Dsis.version=$NEW_VERSION
-
-Open the root `pom.xml` file in an editor and perform the following changes:
-
-  * Remove the whole `<pluginRepositories>` block (including comment), since it should not be needed for releases (and is actually not allowed).
-
-Remove the modules that are not yet ready for a release.
-This may require removing `<module>` elements in the parent `pom.xml` file.
-
-    :::bash
-    git rm storage/sis-shapefile
-    git rm application/sis-javafx
-
-Validate with `git diff`, ensure that the build is not broken (we will run the tests later),
-then commit the changes on the branch:
-
-    :::bash
-    mvn clean package --define skipTests=true
-    git commit --message "Prepare branch for $NEW_VERSION release."
-
-
-
-Tag the branch    {#tag}
-------------------------
-
-In theory, the next commands would be a real (non-dry) run of `mvn release:prepare`, followed by `mvn release:perform`.
-However we perform those steps manually rather than relying on Maven for the following reasons:
-
-  * Perform some additional changes on the tag.
-  * Give more opportunities to take action before commit in case of problems.
-  * We need a separated `install` phase first, for proper installation of `sis-build-helper` plugin.
-
-First, create the tag:
-
-    :::bash
-    git tag $NEW_VERSION
-
-It is okay to checkout the tag in a separated directory if desired.
-The `TAG_DIR` environment variable will specify that directory.
-
-    :::bash
-    export TAG_DIR=`pwd`
-
-Update versions number in `pom.xml` files (like what `mvn release:prepare` would have done),
-plus some additional files:
-
-    :::bash
-    ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml tag -Dbranch.version=$NEW_VERSION -Dsis.version=$NEW_VERSION
-
-Validate with `git diff`, search `SNAPSHOT` in the whole source directory in case we missed some, then commit:
-
-    :::bash
-    git commit --message "Fix version number to $NEW_VERSION (no -SNAPSHOT)."
-
-
-
-Verify content    {#branch-verify}
-----------------------------------
-
-Build and test the project in the same way than we did on master.
-In addition to testing, execution of an `install` phase before deployment is required for our custom `sis-build-helper` plugin.
-
-    :::bash
-    mvn install --activate-profiles apache-release
-    find . -name "sis-*.asc" -exec gpg --verify '{}' \;
-
-Open the `pom.xml` file of all modules in the `non-free` group.
-Set their version numbers and their SIS dependencies to `$NEW_VERSION` without `-SNAPSHOT` suffix.
-In the root `pom.xml` file, remove the `<scope>provider</scope>` line.
-Create tags and trunk directories.
-Commit and built:
-
-    :::bash
-    cd ../../non-free
     svn commit --message "Set version number and dependencies to $NEW_VERSION."
-    mvn clean install
-
-Open the `pom.xml` file of integration tests.
-Set its version numbers and its SIS dependencies to `$NEW_VERSION` without `-SNAPSHOT` suffix.
-Commit and built (note that execution may be slow).
-
-    :::bash
-    cd ../release-test
-    svn commit --message "Set version number and dependencies to $NEW_VERSION."
-    cd maven
-    mvn clean test
 
 
 
 Deploy Maven artifacts    {#maven-deploy}
 =========================================
 
-If above verifications succeeded, deploy:
+If above verifications succeeded, performs the following _temporary_ changes
+(to be discarded after the deployment to Maven repository):
+
+  * Remove temporarily the `sis-openoffice` module from `application/pom.xml`.
+  * Remove the `test-jar` goal from `maven-jar-plugin` in the root `pom.xml`.
+
+Then deploy SIS. Deploy also the non-free modules:
 
     :::bash
-    chmod a-w target/distribution/*.zip
-    mvn deploy --activate-profiles apache-release
+    mvn clean deploy --activate-profiles apache-release
 
 
 
@@ -312,12 +280,6 @@ Verify and close the Nexus release artifacts    {#nexus-close}
 Verify the staged artifacts in the [Nexus repository][repository].
 The artifacts can be found under _Build Promotion_ → _Staging repositories_, and searching for `org.apache.sis` in the _Repository_ column.
 Navigate through the artifact tree and make sure that all javadoc, source, test and jar files have `.asc` (GPG signature) and `.md5` files.
-
-Additional references about signatures:
-
-   * [Maven repository PGP signature checker FAQ](http://people.apache.org/~henkp/repo/faq.html)
-   * [Release signing][release-signing] (cited in the [Release setup](release-management-setup.html) page)
-
 Select any `*-javadoc.jar` file and click on the <cite>Archive Browser</cite> tab on the right side.
 Select any `*.html` file which is known to use some of the custom taglets defined in the `sis-build-helper` module.
 Click on that file and verify that the custom elements are rendered properly.
@@ -340,22 +302,7 @@ Close the Nexus staging repository:
 We will announce later (in the <cite>Put the release candidate up for a vote</cite> section) on the `dev@` mailing list
 the availability of this temporary repository for testing purpose.
 
-
-
-Deploy non-free resources to Nexus    {#maven-nonfree}
-------------------------------------------------------
-
-We deploy the non-free resources in a separated Nexus repository for allowing deployment of those resources to Maven Central
-before deployment of the rest of Apache SIS. This allows to test that the URL to those resources in Apache SIS are correct.
-
-Go to the directory that contains a checkout of `https://svn.apache.org/repos/asf/sis/data/non-free/sis-epsg`.
-Replace occurrences of `<version>$OLD_VERSION</version>` by `<version>$NEW_VERSION</version>` in the root `pom.xml`.
-Deploy:
-
-    :::bash
-    mvn deploy --activate-profiles apache-release
-
-In Nexus:
+In the Nexus repository used for non-free resources:
 
   * Delete all `*-source-release.zip.*` files since they duplicate the `*-source.zip.*` files.
   * In the `sis-epsg-$NEW_VERSION.jar` file, verify that `META-INF/LICENSE` contain the EPSG terms of use.
@@ -409,7 +356,7 @@ and keeping the `diff` smaller on the SVN repository of SIS web site.
 If JDK8 is *not* used, then omit the `cp` command below.
 
     :::bash
-    cd $TAG_DIR
+    cd $SIS_RC_DIR
     mvn javadoc:aggregate
     cd target/site
     zip -9 -r apache-sis-$NEW_VERSION-doc.zip apidocs
@@ -450,9 +397,9 @@ Update the file content if necessary.
 Move the files generated by Maven to the distribution directory:
 
     :::bash
-    mv $TAG_DIR/target/sis-$NEW_VERSION-* .
-    mv $TAG_DIR/target/site/apache-sis-$NEW_VERSION-* .
-    mv $TAG_DIR/application/sis-console/target/distribution/apache-sis-$NEW_VERSION.zip .
+    mv $SIS_RC_DIR/target/sis-$NEW_VERSION-* .
+    mv $SIS_RC_DIR/target/site/apache-sis-$NEW_VERSION-* .
+    mv $SIS_RC_DIR/application/sis-console/target/distribution/apache-sis-$NEW_VERSION.zip .
 
 Rename the files to something more conform to the convention seen in other Apache projects:
 
@@ -719,4 +666,3 @@ all directories starting with the old version number. The sub-directories need t
 [JIRA]:             http://issues.apache.org/jira/browse/SIS
 [cms-admin]:        https://cms.apache.org/sis/
 [repository]:       https://repository.apache.org/index.html
-[release-signing]:  http://www.apache.org/dev/release-signing.html
