@@ -73,24 +73,31 @@ in this page shall be adjusted accordingly.
 Review project status before branching    {#prepare-source}
 ===========================================================
 
-Replace the `$OLD_VERSION` number by `$NEW_VERSION` in the following literals.
-Those changes need to be applied on the development branch and merged with all other branches and master.
+Replace the `$OLD_VERSION` number by `$NEW_VERSION` in the values of following properties on the development branch:
 
   * `DOWNLOAD_URL` in `application/sis-console/src/main/java/org/apache/sis/console/ResourcesDownloader.java` file.
   * `<sis.non-free.version>` in root `pom.xml` file.
   * Also review the `README` and `NOTICE` files in root directory.
 
+If not already done, build the C/C++ code of `sis-gdal` module:
+
+    :::bash
+    storage/sis-gdal/src/main/c
+    make
+    cd -
+
 Commit and merge with other branches up to master.
 
     :::bash
-    git commit --message="Set the EPSG geodetic dataset URL to its expected location after release."
+    git commit --message="Set version number and the EPSG geodetic dataset URL to expected values after release."
     # merge with master
 
 Before to start the release process, we need to test more extensively the master.
 The tests described below often reveal errors that were unnoticed in daily builds.
 It is better to detect and fix them before to create the release branch.
 First, ensure that a PostgreSQL server is running and listening to the default port on local host
-(optional but recommended for more exhaustive testing).
+(optional but recommended for more exhaustive testing —
+see [PostgreSQL testing configuration](./source.html#postgres) for more details).
 Then execute the following commands and fix as much warnings as practical:
 
     :::bash
@@ -113,22 +120,22 @@ the variable value in the shell performing the release.
 Update the list of supported CRS    {#update-crs-list}
 ------------------------------------------------------
 
-The following steps should have been done after SIS upgraded EPSG data,
-but it is useful to execute them again in case they have been forgotten,
-and also because failure to execute them may reveal problems.
+The following steps regenerate
+the [CoordinateOperationMethods](./tables/CoordinateOperationMethods.html)
+and [CoordinateReferenceSystems](./tables/CoordinateReferenceSystems.html) pages.
+Those steps are also useful as additional tests, since failure to generate those pages may reveal problems.
 
-First, open the `CoordinateOperationMethods` Java class and executes its `main` method, for example from an IDE.
-If successful, a `CoordinateOperationMethods.html` file will have been generated in the current directory.
-Open that file in a browser and verify that information are okay, in particular the version number in the first paragraph.
-If okay, move that file to the site checkout in the `content/tables/` directory.
-
-Next, open the `CoordinateReferenceSystems` class. Before to execute, we need to perform a temporary hack:
-open the `AuthorityCodes` class, search `DEPRECATED=0` (it appears in a SQL fragment) and replace by `(DEPRECATED=0 OR TRUE)`.
-Do not commit! The intent of this hack is to include deprecated codes in the CRS list to be generated.
-Those codes will appear with strike for making clear that they are deprecated.
-Next execute the `CoordinateReferenceSystems` main method,
-move the generated `CoordinateReferenceSystems.html` page to the `content/tables/` directory of the site,
-and finally revert the hack in `AuthorityCodes` class.
+  1. Open the `AuthorityCodes` class, search `DEPRECATED=0` (it appears in a SQL fragment) and replace by `(DEPRECATED=0 OR TRUE)`.
+     **Do not commit!** This is a temporary hack for including deprecated codes in the CRS list to be generated.
+     Those codes will appear with strike for making clear that they are deprecated.
+  2. Open the `CoordinateOperationMethods` Java class and execute its `main` method, for example in an IDE.
+  3. Open the `CoordinateReferenceSystems` Java class and execute its `main` method.
+  4. If successful, HTML files will be generated in the current directory.
+     Open those files in a web browser and verify that information are okay,
+     in particular the SIS and EPSG version numbers in the first paragraph.
+  5. If okay, move those two HTML files to the `../site/content/tables/` directory, overwriting previous files.
+  6. Revert the hack in `AuthorityCodes` class.
+  7. Commit: `svn commit --message="Update the list CRS and operation methods supported by Apache SIS $NEW_VERSION."`
 
 
 
@@ -159,15 +166,13 @@ Commit to staging area (not published immediately):
 Create release branch    {#branch}
 ==================================
 
-Execute the following command:
-
-    :::bash
-    git checkout -b $NEW_VERSION-RC
-
+Execute the following commands.
 It is okay to checkout the branch in a separated directory if desired.
 The `SIS_RC_DIR` environment variable will specify that directory.
 
     :::bash
+    git checkout -b $NEW_VERSION-RC
+    cd $NEW_VERSION-RC
     export SIS_RC_DIR=`pwd`
 
 Remove the modules that are not yet ready for a release.
@@ -194,6 +199,7 @@ The following command performs the replacement using Ant.
 
     :::bash
     ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml branch -Dsis.version=$NEW_VERSION
+    git rm core/sis-build-helper/src/main/ant
 
 Validate with `git diff`, search `SNAPSHOT` in the whole source directory in case we missed some, then commit:
 
@@ -209,6 +215,7 @@ Check first if those hacks are still needed for the next release (they were need
   * In the root `pom.xml` under `maven-javadoc-plugin` configuration, add the following elements:
     * `<link>http://sis.apache.org/apidocs</link>` inside `<links>` block.
     * `<additionalOption>-Xdoclint:all,-reference</additionalOption>` inside `<additionalOptions>` block.
+  * Commit on the release branch only.
 
 
 
@@ -234,6 +241,12 @@ Verify signature for all files:
 
     :::bash
     find . -name "sis-*.asc" -exec gpg --verify '{}' \;
+
+More the `target` directory and execute all examples documented in the [command-line interface page](./command-line.html)
+with the `sis` command replaced by the following:
+
+    :::bash
+    java -classpath "binaries/*" -enableassertions org.apache.sis.console.Command
 
 
 

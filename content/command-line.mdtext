@@ -57,17 +57,13 @@ Optional dependencies    {#dependencies}
 ----------------------------------------
 
 Every JAR files present in the `lib` sub-directory will be included on the classpath during `sis` command execution.
-By default, the `lib` directory contains only the `sis.jar` file.
+By default, the `lib` directory contains the `sis.jar` file with only Derby and JAXB dependencies.
 However users can add other JAR files in that directory for the following optional dependencies:
-
-  * **Derby driver —**
-    needed only if Apache SIS can not locate a JavaDB driver in the JDK installation directory.
-    This is normally not needed on Oracle JDK6, JDK7 or JDK8 distribution.
 
   * **UCAR netCDF library —**
     by default, SIS uses its own embedded netCDF reader which supports only the classical netCDF format, as standardized by OGC.
     If there is a need to read files encoded in GRID or HDF formats, then one can copy the UCAR netCDF library in the `lib` sub-directory.
-    If presents, the UCAR library should be detected and used automatically.
+    If presents, the UCAR library should be detected and used automatically when SIS can not read a netCDF file by itself.
 
 
 
@@ -173,7 +169,7 @@ documented in [download](downloads.html#epsg) page.
   Scope["Large and medium scale topographic mapping, cadastral and engineering survey."],
   Area["Japan - onshore - Honshu between approximately 137°45'E and 139°E - Niigata-ken; Nagano-ken; Yamanashi-ken; Shizuoka-ken."],
   BBox[34.54, 137.32, 38.58, 139.91],
-  Id["EPSG", 6676, "8.9", URI["urn:ogc:def:crs:EPSG:8.9:6676"]],
+  Id["EPSG", 6676, "9.7", URI["urn:ogc:def:crs:EPSG:9.7:6676"]],
   Remark["Replaces JGD2000 / Japan Plane Rectangular CS VIII (CRS code 2450) with effect from 21st October 2011."]]</pre>
 </details>
 
@@ -230,7 +226,7 @@ Executing the following command:
 produces an output like below:
 
     :::text
-        urn:ogc:def:crs:EPSG:8.9:27572    | NTF (Paris) / Lambert zone II
+        urn:ogc:def:crs:EPSG:9.7:27572    | NTF (Paris) / Lambert zone II
 
 As we can see, Apache SIS has been able to find back the identifier code and the actual CRS name.
 
@@ -280,7 +276,7 @@ Executing the following command:
 produces an output like below:
 
     :::text
-        urn:ogc:def:crs:EPSG:8.9:3994    | WGS 84 / Mercator 41
+    urn:ogc:def:crs:EPSG:9.7:3994    | WGS 84 / Mercator 41
 
 In above example, Apache SIS used the fact that a
 _“Mercator (variant A)”_ projection with a _“Scale factor at natural origin”_ parameter value of 0.755799… on the WGS84 datum is numerically equivalent to a
