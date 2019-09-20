@@ -57,8 +57,13 @@ Optional dependencies    {#dependencies}
 ----------------------------------------
 
 Every JAR files present in the `lib` sub-directory will be included on the classpath during `sis` command execution.
-By default, the `lib` directory contains the `sis.jar` file with only Derby and JAXB dependencies.
+By default, the `lib` directory contains the `sis.jar` file with only GeoAPI JAXB API dependencies.
 However users can add other JAR files in that directory for the following optional dependencies:
+
+  * **Derby driver —**
+    needed only if Apache SIS can not locate a JavaDB driver in the JDK installation directory.
+    This is not needed on Oracle JDK8 distribution, but needed for all OpenJDK versions and for
+    Oracle JDK more recent than 8.
 
   * **UCAR netCDF library —**
     by default, SIS uses its own embedded netCDF reader which supports only the classical netCDF format, as standardized by OGC.
@@ -126,8 +131,8 @@ Then another example show how to get a wider set of metadata, with the CRS as on
 
 
 
-Getting ISO 19111 Coordinate Reference Systems (CRS)    {#crs}
---------------------------------------------------------------
+Print Coordinate Reference Systems (CRS) definition    {#crs}
+-------------------------------------------------------------
 
 Apache SIS can read Coordinate Reference System (CRS) definitions from various sources:
 
@@ -143,13 +148,8 @@ For example the following command prints the definition of the _"JGD2011 / Japan
     :::bash
     sis crs EPSG:6676
 
-The first time that a command requires the EPSG dataset, Apache SIS will propose to download and install a local copy.
-This automatic download happen only when using the command-line tools described in this page.
-Developers who wish to use the EPSG dataset in their applications can use the Maven artifact
-documented in [download](downloads.html#epsg) page.
-
 <details>
-  <summary>The above command should produce the following output (click to expand):</summary>
+  <summary>Expected output (click to expand):</summary>
 <pre>ProjectedCRS["JGD2011 / Japan Plane Rectangular CS VIII",
   BaseGeodCRS["JGD2011",
     Datum["Japanese Geodetic Datum 2011",
@@ -173,18 +173,27 @@ documented in [download](downloads.html#epsg) page.
   Remark["Replaces JGD2000 / Japan Plane Rectangular CS VIII (CRS code 2450) with effect from 21st October 2011."]]</pre>
 </details>
 
+The first time that a command requires the EPSG dataset, Apache SIS will propose to download and install a local copy.
+This automatic download happen only when using the command-line tools described in this page.
+Developers who wish to use the EPSG dataset in their applications can use the Maven artifact
+documented in [download](downloads.html#epsg) page.
+If Apache SIS does not propose to download the EPSG geodetic dataset, it may be because no Derby database has been found.
+Try to add the Derby optional dependency [as documented here](./epsg.html#command-line).
+
 The above output is compatible with version 2 of _Well Known Text_ (WKT) format.
-However some applications are restricted to WKT version 1.
-For an output using the legacy WKT 1 format, one can add the `--format wkt1` option to the above command-line.
+The output format can be controlled as below:
 
-The “WKT 2” specification allows some flexibility in keyword names and in the way to specify units of measurement.
-By default, the command-line uses this flexibility for producing less verbose but still legal WKT 2 output.
-If an output closer to WKT 2 recommendations is desired, one can add the `--format wkt2` option to the above command.
-The result will be slightly more verbose.
+  * Some applications are restricted to WKT version 1.
+    For an output using the legacy WKT 1 format, one can add the `--format wkt1` option to the above command-line.
 
-Apache SIS can also read and write CRS definitions in the _Geographic Markup Language_ (GML) format.
-For GML output, one can add the `--format xml` option to the above command.
-The result will be much more verbose than WKT outputs.
+  * The “WKT 2” specification allows some flexibility in keyword names and in the way to specify units of measurement.
+    By default, the command-line uses this flexibility for producing less verbose but still legal WKT 2 output.
+    If an output closer to WKT 2 recommendations is desired, one can add the `--format wkt2` option to the above command.
+    The result will be slightly more verbose.
+
+  * Apache SIS can also read and write CRS definitions in the _Geographic Markup Language_ (GML) format.
+    For GML output, one can add the `--format xml` option to the above command.
+    The result will be much more verbose than WKT outputs.
 
 Java API for accessing functionalities shown in above examples are:
 
@@ -214,7 +223,6 @@ In a _Well Known Text_ (WKT) string, the code can appear at the bottom of the de
 in an optional element like `ID["EPSG", 4326]` or `AUTHORITY["EPSG", "4326"]`.
 However in many cases the code is missing.
 Sometime Apache SIS can find a missing code by comparing a given CRS against the definitions in the EPSG database.
-
 The following example reads a WKT for the _“NTF (Paris) / Lambert zone II”_ Coordinate Reference System,
 but in which the `ID["EPSG", 27572]` element has been intentionally omitted.
 Furthermore, the _“NTF (Paris) / Lambert zone II”_ name has been replaced by _“NTF (Paris) / zone to be discovered by the demo”_ name.

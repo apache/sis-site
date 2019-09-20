@@ -58,12 +58,16 @@ in this page shall be adjusted accordingly.
 
     :::text
     <any root directory for SIS>
+    ├─ $NEW_VERSION-RC
     ├─ master
     ├─ non-free
     │  └─ sis-epsg
-    ├─ distribution
-    │  └─ $NEW_VERSION
-    │     └─ RC$RELEASE_CANDIDATE
+    ├─ releases
+    │  ├─ distribution
+    │  │  └─ $NEW_VERSION
+    │  │     └─ RC$RELEASE_CANDIDATE
+    │  └─ integration-test
+    │     └─ maven
     └─ site
        └─ content
           └─ apidocs
@@ -77,18 +81,20 @@ Replace the `$OLD_VERSION` number by `$NEW_VERSION` in the values of following p
 
   * `DOWNLOAD_URL` in `application/sis-console/src/main/java/org/apache/sis/console/ResourcesDownloader.java` file.
   * `<sis.non-free.version>` in root `pom.xml` file.
-  * Also review the `README` and `NOTICE` files in root directory.
+  * Review the `README` and `NOTICE` files in root directory.
+  * Review the `README` files in `application/sis-console/src/main/artifact/` and subdirectories.
 
 If not already done, build the C/C++ code of `sis-gdal` module:
 
     :::bash
-    storage/sis-gdal/src/main/c
+    cd storage/sis-gdal/src/main/c
     make
     cd -
 
 Commit and merge with other branches up to master.
 
     :::bash
+    git add --update
     git commit --message="Set version number and the EPSG geodetic dataset URL to expected values after release."
     # merge with master
 
@@ -158,6 +164,9 @@ Update [JIRA][JIRA] tasks and prepare release notes as below:
 Commit to staging area (not published immediately):
 
     :::bash
+    cd ../site
+    cp content/release-notes/$OLD_VERSION.html content/release-notes/$NEW_VERSION.html
+    # Edit release notes before to continue.
     svn add content/release-notes/$NEW_VERSION.html
     svn commit --message "Release notes for Apache SIS $NEW_VERSION."
 
@@ -171,6 +180,7 @@ It is okay to checkout the branch in a separated directory if desired.
 The `SIS_RC_DIR` environment variable will specify that directory.
 
     :::bash
+    cd ../master
     git checkout -b $NEW_VERSION-RC
     cd $NEW_VERSION-RC
     export SIS_RC_DIR=`pwd`
@@ -236,11 +246,7 @@ Each of those additional products may cause a failure that did not happen in nor
 
     :::bash
     mvn clean install --activate-profiles apache-release
-
-Verify signature for all files:
-
-    :::bash
-    find . -name "sis-*.asc" -exec gpg --verify '{}' \;
+    find . -name "sis-*.asc" -exec gpg --verify '{}' \;     # Verify signatures.
 
 More the `target` directory and execute all examples documented in the [command-line interface page](./command-line.html)
 with the `sis` command replaced by the following:
@@ -261,16 +267,8 @@ Replace occurrences of `<version>$OLD_VERSION</version>` by `<version>$NEW_VERSI
     cd ../non-free
     svn update
     mvn clean install
+    mvn javadoc:javadoc                   # Test that javadoc can be generated.
     svn commit --message "Set version number and dependencies to $NEW_VERSION."
-
-We deploy the non-free resources in a Nexus repository separated from the rest of Apache SIS for allowing tests later.
-If there is any issue with this deployment, the staging repository can easily be dropped and recreated.
-
-    :::bash
-    mvn deploy --activate-profiles apache-release
-
-Note the URL printed by Maven to the console during the deployment phase.
-They will be needed for the next step.
 
 
 
@@ -279,14 +277,11 @@ Integration test    {#integration-tests}
 
 Open the root `pom.xml` file of integration tests.
 Set version numbers to `$NEW_VERSION` without `-SNAPSHOT` suffix.
-Then go to the `<url>` declaration of the first `<repository>` and replace value by the URL
-of the temporary Maven repository created by Nexus, as noted during deployment in above step.
-Usually, only the 3 last digits need to be updated.
 Verify the configuration and version of Maven plugins.
 Then test and commit (note that execution may be slow).
 
     :::bash
-    cd ../release-test
+    cd ../distribution/integration-test
     svn update
     cd maven
     mvn clean test
@@ -302,10 +297,17 @@ If above verifications succeeded, performs the following _temporary_ changes
 
   * Remove temporarily the `sis-openoffice` module from `application/pom.xml`.
   * Remove the `test-jar` goal from `maven-jar-plugin` in the root `pom.xml`.
+  * Remove all SIS dependencies declared with `<type>test-jar</type>` in all `pom.xml` files.
+    This hack will force us to skip test compilations.
 
-Then deploy SIS. Deploy also the non-free modules:
+Then deploy SIS (without test JAR files).
+Deploy also the non-free resources in a staging repository separated from the rest of Apache SIS.
+If there is any issue with this deployment, the staging repository can easily be dropped and recreated.
 
     :::bash
+    cd $SIS_RC_DIR
+    mvn clean deploy --activate-profiles apache-release --define maven.test.skip=true
+    cd ../non-free
     mvn clean deploy --activate-profiles apache-release
 
 
@@ -315,7 +317,7 @@ Verify and close the Nexus release artifacts    {#nexus-close}
 
 Verify the staged artifacts in the [Nexus repository][repository].
 The artifacts can be found under _Build Promotion_ → _Staging repositories_, and searching for `org.apache.sis` in the _Repository_ column.
-Navigate through the artifact tree and make sure that all javadoc, source, test and jar files have `.asc` (GPG signature) and `.md5` files.
+Navigate through the artifact tree and make sure that all javadoc, source and jar files have `.asc` (GPG signature) and `.md5` files.
 Select any `*-javadoc.jar` file and click on the <cite>Archive Browser</cite> tab on the right side.
 Select any `*.html` file which is known to use some of the custom taglets defined in the `sis-build-helper` module.
 Click on that file and verify that the custom elements are rendered properly.
@@ -356,8 +358,8 @@ of the temporary Maven repository created by Nexus.
 Usually, only the 3 last digits need to be updated.
 
     :::bash
-    cd ../../release-test/maven
-    vim pom.xml
+    cd ../releases/integration-test/maven
+    # Edit <url> in pom.xml before to continue.
     mvn compile
     svn commit -m "Test project for SIS $NEW_VERSION-RC$RELEASE_CANDIDATE"
 
@@ -377,7 +379,7 @@ This will also verify the checksums.
 Verify that the EPSG dataset has been created, then cleanup:
 
     :::bash
-    ll $SIS_DATA
+    ll $SIS_DATA/Databases/SpatialMetadata
     mvn clean
 
 
@@ -389,6 +391,8 @@ Generate the Javadoc:
 
     :::bash
     cd $SIS_RC_DIR
+    git checkout .            # Discard local changes, in particular the hack for excluding test files.
+    mvn clean install --activate-profiles apache-release
     mvn javadoc:aggregate
     cd target/site
     zip -9 -r apache-sis-$NEW_VERSION-doc.zip apidocs
@@ -403,7 +407,7 @@ Create the directory for the new version and release candidate within the distri
 The `$RELEASE_CANDIDATE` variable shall be the number of current release attempt.
 
     :::bash
-    cd ../../distribution
+    cd ../releases/distribution
     svn update
     mkdir -p $NEW_VERSION/RC$RELEASE_CANDIDATE
     svn add $NEW_VERSION
@@ -421,7 +425,7 @@ Move the files generated by Maven to the distribution directory:
     :::bash
     mv $SIS_RC_DIR/target/sis-$NEW_VERSION-* .
     mv $SIS_RC_DIR/target/site/apache-sis-$NEW_VERSION-* .
-    mv $SIS_RC_DIR/application/sis-console/target/distribution/apache-sis-$NEW_VERSION.zip .
+    mv $SIS_RC_DIR/target/distribution/apache-sis-$NEW_VERSION.zip .
 
 Rename the files to something more conform to the convention seen in other Apache projects:
 
@@ -438,23 +442,23 @@ Sign and commit    {#sign}
 Sign the source, javadoc and binary artifacts:
 
     :::bash
-    shasum --algorithm 512 apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.sha
-    md5sum                 apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.md5
+    shas512um apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.sha
+    md5sum    apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.md5
 
-    gpg --use-agent --armor --detach-sign --default-key $SIGNING_KEY apache-sis-$NEW_VERSION-doc.zip
-    shasum --algorithm 512 apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.sha
-    md5sum                 apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.md5
+    gpg --armor --detach-sign --default-key $SIGNING_KEY apache-sis-$NEW_VERSION-doc.zip
+    sha512sum apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.sha
+    md5sum    apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.md5
 
-    gpg --use-agent --armor --detach-sign --default-key $SIGNING_KEY apache-sis-$NEW_VERSION-bin.zip
-    shasum --algorithm 512 apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.sha
-    md5sum                 apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.md5
+    gpg --armor --detach-sign --default-key $SIGNING_KEY apache-sis-$NEW_VERSION-bin.zip
+    sha512sum apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.sha
+    md5sum    apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.md5
 
 Verify checksums and signatures:
 
     :::bash
-    find . -name "*.md5" -exec md5sum --check '{}' \;
-    find . -name "*.sha" -exec shasum --check '{}' \;
-    find . -name "*.asc" -exec gpg --verify '{}' \;
+    find . -name "*.md5" -exec md5sum    --check '{}' \;
+    find . -name "*.sha" -exec sha512sum --check '{}' \;
+    find . -name "*.asc" -exec gpg      --verify '{}' \;
 
 Commit:
 
@@ -491,8 +495,8 @@ Test the release    {#test}
 Execute the following commands in any temporary directory for testing the sources:
 
     :::bash
-    wget --no-check-certificate https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE/apache-sis-$NEW_VERSION-src.zip \
-                                https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE/apache-sis-$NEW_VERSION-src.zip.asc
+    wget https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE/apache-sis-$NEW_VERSION-src.zip \
+         https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE/apache-sis-$NEW_VERSION-src.zip.asc
     # Test
     gpg --verify apache-sis-$NEW_VERSION-src.zip.asc
     unzip apache-sis-$NEW_VERSION-src.zip
@@ -503,8 +507,8 @@ Execute the following commands in any temporary directory for testing the source
 Execute the following commands in any temporary directory for testing the binary:
 
     :::bash
-    wget --no-check-certificate https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE/apache-sis-$NEW_VERSION-bin.zip \
-                                https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE/apache-sis-$NEW_VERSION-bin.zip.asc
+    wget https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE/apache-sis-$NEW_VERSION-bin.zip \
+         https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE/apache-sis-$NEW_VERSION-bin.zip.asc
     # Test
     gpg --verify apache-sis-$NEW_VERSION-bin.zip.asc
     unzip apache-sis-$NEW_VERSION-bin.zip
