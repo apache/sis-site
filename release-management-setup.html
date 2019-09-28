@@ -29,11 +29,11 @@
               </li>
               <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">Project Documentation<b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="book/index.html">Developer guide</a></li>
+                  <li><a href="book/index.html">Developer Guide</a></li>
                   <li><a href="apidocs/index.html">Online Javadoc</a></li>
                   <li><a href="downloads.html">Downloads</a></li>
-                  <li><a href="source.html">Source Code</a></li>
-                  <li><a href="code-patterns.html">Code patterns</a></li>
+                  <li><a href="source.html">Checkout Sources</a></li>
+                  <li><a href="epsg.html">EPSG Database</a></li>
                   <li><a href="faq.html">FAQ</a></li>
                   <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
                 </ul>
@@ -67,11 +67,11 @@
               <li><a href="mail-lists.html">Mailing Lists</a></li>
               <li><a href="team-list.html">Project Team</a></li>
               <li class="nav-header">Project Documentation</li>
-              <li><a href="book/index.html">Developer guide</a></li>
+              <li><a href="book/index.html">Developer Guide</a></li>
               <li><a href="apidocs/index.html">Online Javadoc</a></li>
               <li><a href="downloads.html">Downloads</a></li>
-              <li><a href="source.html">Source Code</a></li>
-              <li><a href="code-patterns.html">Code patterns</a></li>
+              <li><a href="source.html">Checkout Sources</a></li>
+              <li><a href="epsg.html">EPSG Database</a></li>
               <li><a href="faq.html">FAQ</a></li>
               <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
               <li class="nav-header">ASF</li>
@@ -104,7 +104,6 @@ If those steps have already been done, jump directly to the <a href="release-man
 <div class="toc">
 <ul>
 <li><a href="#directory-layout">Directory layout</a></li>
-<li><a href="#shell">Shell configuration</a></li>
 <li><a href="#generate-key">Generate GPG key</a><ul>
 <li><a href="#trust">Web of trust</a></li>
 </ul>
@@ -118,33 +117,24 @@ Some directories are Git checkout, other are ordinary directories. Any other lay
 However in the later case, all relative paths in the <em>release management</em> page will need to be adjusted accordingly.</p>
 <div class="codehilite"><pre>&lt;any root directory for SIS&gt;
 ├─ master
-├─ branches
-├─ tags
 ├─ non-free
 │  ├─ sis-epsg
 │  └─ sis-embedded-data
-├─ distribution
-├─ release-test
-│  └─ maven
+├─ releases
+│  ├─ distribution
+│  └─ integration-test
+│     └─ maven
 └─ site
 </pre></div>
 
 
 <p>Create the above directory structure as below:</p>
-<div class="codehilite"><pre>git clone    https://gitbox.apache.org/repos/asf/sis.git master
+<div class="codehilite"><pre>mkdir releases
+git clone    https://gitbox.apache.org/repos/asf/sis.git master
 svn checkout https://svn.apache.org/repos/asf/sis/data/non-free
-svn checkout https://svn.apache.org/repos/asf/sis/release-test
 svn checkout https://svn.apache.org/repos/asf/sis/site/trunk site
-svn checkout https://dist.apache.org/repos/dist/dev/sis distribution
-mkdir branches
-mkdir tags
-</pre></div>
-
-
-<h1 id="shell">Shell configuration<a class="headerlink" href="#shell" title="Permanent link">&para;</a></h1>
-<p>It is better for Unix shells to contain the following line in their initialization file
-(typically <code>~/.bashrc</code> or <code>~/.profile</code>, where <code>~</code> stands for the user's home directory):</p>
-<div class="codehilite"><pre><span class="nb">export </span><span class="nv">GPG_TTY</span><span class="o">=</span><span class="k">$(</span>tty<span class="k">)</span>
+svn checkout https://svn.apache.org/repos/asf/sis/release-test releases/integration-test
+svn checkout https://dist.apache.org/repos/dist/dev/sis releases/distribution
 </pre></div>
 
 
@@ -293,7 +283,7 @@ together with the PGP key name:</p>
 
   <footer class="footer">
     <div class="container">
-      <p>Copyright &copy; 2013-2018 The Apache Software Foundation, Licensed under the
+      <p>Copyright &copy; 2013-2019 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
           Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
     </div>

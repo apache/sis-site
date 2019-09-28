@@ -29,11 +29,11 @@
               </li>
               <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">Project Documentation<b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="book/index.html">Developer guide</a></li>
+                  <li><a href="book/index.html">Developer Guide</a></li>
                   <li><a href="apidocs/index.html">Online Javadoc</a></li>
                   <li><a href="downloads.html">Downloads</a></li>
-                  <li><a href="source.html">Source Code</a></li>
-                  <li><a href="code-patterns.html">Code patterns</a></li>
+                  <li><a href="source.html">Checkout Sources</a></li>
+                  <li><a href="epsg.html">EPSG Database</a></li>
                   <li><a href="faq.html">FAQ</a></li>
                   <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
                 </ul>
@@ -67,11 +67,11 @@
               <li><a href="mail-lists.html">Mailing Lists</a></li>
               <li><a href="team-list.html">Project Team</a></li>
               <li class="nav-header">Project Documentation</li>
-              <li><a href="book/index.html">Developer guide</a></li>
+              <li><a href="book/index.html">Developer Guide</a></li>
               <li><a href="apidocs/index.html">Online Javadoc</a></li>
               <li><a href="downloads.html">Downloads</a></li>
-              <li><a href="source.html">Source Code</a></li>
-              <li><a href="code-patterns.html">Code patterns</a></li>
+              <li><a href="source.html">Checkout Sources</a></li>
+              <li><a href="epsg.html">EPSG Database</a></li>
               <li><a href="faq.html">FAQ</a></li>
               <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
               <li class="nav-header">ASF</li>
@@ -115,11 +115,7 @@ h2:hover > .headerlink, h3:hover > .headerlink, h1:hover > .headerlink, h6:hover
 <li><a href="#unicode-loop">Loop over character sequences using code points</a></li>
 </ul>
 </li>
-<li><a href="#logging">Logging</a><ul>
-<li><a href="#logger-name">Logger name</a></li>
-<li><a href="#logging-level">Logging level</a></li>
-</ul>
-</li>
+<li><a href="#logging">Logging</a></li>
 </ul>
 </div>
 <h1 id="referencing">Referencing<a class="headerlink" href="#referencing" title="Permanent link">&para;</a></h1>
@@ -136,7 +132,7 @@ work) are properly defined, and let the referencing engine performs the conversi
 <p>Recommended code pattern when using the <code>sis-coverage</code> module.</p>
 <h2 id="gridToCRS">Georeference images with affine transforms, <em>not</em> bounding boxes<a class="headerlink" href="#gridToCRS" title="Permanent link">&para;</a></h2>
 <p>Many users define the geographic extent of an image by its corner locations.
-This approach is not sufficient as it does not specify if the (<var>x</var>,<var>y</var>) axes are interchanged
+This approach may be ambiguous as it does not specify whether the (<var>x</var>,<var>y</var>) axes are interchanged
 (see the <a href="faq.html#axisOrder">axis order issue</a>) or if the <var>y</var> axis is oriented downward.
 All images in SIS shall be georeferenced by at least an affine transform (more complex transforms are also possible),
 never by a rectangle or bounding box.
@@ -147,12 +143,12 @@ In the two-dimensional case, the standard <code>java.awt.geom.AffineTransform</c
 <p>Geospatial data often cover a wide geographic area, spanning many time zones.
 Timezone are sometime specified as metadata in the header of data files to be read,
 or is sometime fixed to <abbr title="Universal Time Coordinated">UTC</abbr> by applications managing world-wide data.
-Many SIS objects have <code>Locale</code> and <code>TimeZone</code> fields.
-Such locale and timezone shall be given to <code>java.text.DateFormat</code> or <code>java.util.Calendar</code> constructors.</p>
+Some Apache SIS objects have <code>Locale</code> and <code>TimeZone</code> information.
+Such locale and timezone are given to <code>java.text.DateFormat</code> or <code>java.util.Calendar</code> constructors among others.</p>
 <p>When reading dates or timestamps from a <abbr title="Java DataBase Connectivity">JDBC</abbr> database, always use the <code>ResultSet</code> method
 accepting a <code>Calendar</code> argument, when such method is available.
 For example prefer the <code>getTimestamp(int, Calendar)</code> method instead than <code>getTimestamp(int)</code>.
-The <code>Calendar</code> object shall has been created with the appropriate timezone.</p>
+The <code>Calendar</code> object should has been created with the appropriate timezone.</p>
 <h2 id="sort">Replace underscores by spaces before sorting<a class="headerlink" href="#sort" title="Permanent link">&para;</a></h2>
 <p>Before to sort programmatic names for human reading, consider replacing all occurrences of the underscore character
 (<code>'_'</code>) by the space character (<code>' '</code>). The ASCII value of the underscore character is greater than <code>'Z'</code> but lower
@@ -164,7 +160,7 @@ so <code>"Foo bar"</code> is sorted before both <code>"FooBar"</code> and <code>
 <p>Since Java 1.5, characters are no longer restricted to 16 bits.
 Some "characters" are actually represented using two consecutive <code>char</code> elements.
 Those "characters" are called <cite>code points</cite>.
-Consequently, when iterating over characters in a string, the following pattern shall be used:</p>
+Consequently, when iterating over characters in a string, the following pattern should be used:</p>
 <div class="codehilite"><pre><span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">string</span><span class="o">.</span><span class="na">length</span><span class="o">();)</span> <span class="o">{</span>
     <span class="kd">final</span> <span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="na">codePointAt</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
     <span class="c1">// ... do some stuff ...</span>
@@ -174,22 +170,14 @@ Consequently, when iterating over characters in a string, the following pattern 
 
 
 <h1 id="logging">Logging<a class="headerlink" href="#logging" title="Permanent link">&para;</a></h1>
-<p>Apache SIS uses the <code>java.util.logging</code> framework with one minor difference:
-instead of invoking the <code>getLogger(String)</code> method provided by the <code>java.util.logging.Logger</code> class,
-we rather invoke the method provided by the <code>apache.sis.util.logging.Logging</code> class.
-The result is identical by default,
-but the SIS method gives a chance to redirect the logging to an other framework like Log4J if desired.
-The difference between the SIS approach and other facades like <code>common-logging</code> is that SIS uses the
-standard Java API (except for the above-cited <code>getLogger</code> method) instead than defining a new API.</p>
-<h2 id="logger-name">Logger name<a class="headerlink" href="#logger-name" title="Permanent link">&para;</a></h2>
-<p>The name given in argument to the <code>getLogger(String)</code> method is usually the package name of the class
-emitting the log messages, but not necessarily. In particular, we do not follow this convention if the class
-is located in an internal package (<code>org.apache.sis.internal.*</code>) since those packages are considered privates.
-In such cases, the logger name should be the package name of the public class that use the internal class.</p>
-<p>The reason for the above rule is that logger names are considered part of the public API,
-since developers use them for configuring their logging (verbosity, destination, <i>etc.</i>).
-Note that the "real" package name of the emitter is available by <code>LogRecord.getSourceClassName()</code>.</p>
-<h2 id="logging-level">Logging level<a class="headerlink" href="#logging-level" title="Permanent link">&para;</a></h2>
+<p>Apache SIS uses the <code>java.util.logging</code> framework, but with a <a href="http://sis.apache.org/apidocs/org/apache/sis/util/logging/LoggerFactory.html">mechanism allowing users to redirect
+to another framework</a>.
+The logger names are usually the package name of the class emitting log messages, but not necessarily.
+In particular, we do not follow this convention if the class is located in an internal package
+(<code>org.apache.sis.internal.*</code>) since those packages are considered privates.
+In such cases, the logger name should be the package name of the public class invoking the internal methods.
+The reason for that rule is that logger names are considered part of the public API,
+since developers use them for configuring their logging (verbosity, destination, <i>etc.</i>).</p>
 <p>All logging at <code>Level.INFO</code> or above shall be targeted to users or administrators, not to developers.
 In particular <code>Level.SEVERE</code> shall be reserved for critical errors that compromise the application stability —
 it shall not be used for exceptions thrown while parsing user data (file or database).</p>
@@ -201,7 +189,7 @@ it shall not be used for exceptions thrown while parsing user data (file or data
 
   <footer class="footer">
     <div class="container">
-      <p>Copyright &copy; 2013-2018 The Apache Software Foundation, Licensed under the
+      <p>Copyright &copy; 2013-2019 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
           Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
     </div>

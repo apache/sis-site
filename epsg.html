@@ -29,11 +29,11 @@
               </li>
               <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">Project Documentation<b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="book/index.html">Developer guide</a></li>
+                  <li><a href="book/index.html">Developer Guide</a></li>
                   <li><a href="apidocs/index.html">Online Javadoc</a></li>
                   <li><a href="downloads.html">Downloads</a></li>
-                  <li><a href="source.html">Source Code</a></li>
-                  <li><a href="code-patterns.html">Code patterns</a></li>
+                  <li><a href="source.html">Checkout Sources</a></li>
+                  <li><a href="epsg.html">EPSG Database</a></li>
                   <li><a href="faq.html">FAQ</a></li>
                   <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
                 </ul>
@@ -67,11 +67,11 @@
               <li><a href="mail-lists.html">Mailing Lists</a></li>
               <li><a href="team-list.html">Project Team</a></li>
               <li class="nav-header">Project Documentation</li>
-              <li><a href="book/index.html">Developer guide</a></li>
+              <li><a href="book/index.html">Developer Guide</a></li>
               <li><a href="apidocs/index.html">Online Javadoc</a></li>
               <li><a href="downloads.html">Downloads</a></li>
-              <li><a href="source.html">Source Code</a></li>
-              <li><a href="code-patterns.html">Code patterns</a></li>
+              <li><a href="source.html">Checkout Sources</a></li>
+              <li><a href="epsg.html">EPSG Database</a></li>
               <li><a href="faq.html">FAQ</a></li>
               <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
               <li class="nav-header">ASF</li>
@@ -148,27 +148,32 @@ For example:</p>
 
 <p>The first time that the command-line tool needs to query EPSG, it will prompt the user for authorization
 to download EPSG geodetic dataset from Maven Central. If the user accepts EPSG terms of use, then a local
-copy of the EPSG geodetic dataset will be created and stored in the <code>apache-sis-0.8/data</code> sub-directory.</p>
+copy of the EPSG geodetic dataset will be created and stored in the <code>apache-sis-1.0/data</code> sub-directory.</p>
 <p>If the command-line tool does not offer to download the EPSG geodetic dataset,
-try adding a <code>derby-&lt;version&gt;.jar</code> file (download lib-distribution from <a href="http://db.apache.org/derby/derby_downloads.html">Derby project</a>) in the <code>apache-sis-0.8/lib</code> sub-directory.
-This is normally not needed with Oracle JDK6, JDK7 or JDK8 because Apache SIS tries to use the JavaDB embedded
-in those distributions, but may be necessary with other distributions or in security-constrained environments.</p>
+try adding a <code>derby-&lt;version&gt;.jar</code> file (download lib-distribution from <a href="http://db.apache.org/derby/derby_downloads.html">Derby project</a>) in the <code>apache-sis-1.0/lib</code> sub-directory.
+This is normally not needed with Oracle JDK8 because Apache SIS tries to use the JavaDB embedded
+in those distributions, but may be necessary with other distributions or in security-constrained environments:</p>
+<div class="codehilite"><pre><span class="nb">cd </span>apache-sis-1.0/lib
+wget http://repo1.maven.org/maven2/org/apache/derby/derby/10.14.2.0/derby-10.14.2.0.jar
+</pre></div>
+
+
 <h2 id="use-local">Use the local copy in other applications<a class="headerlink" href="#use-local" title="Permanent link">&para;</a></h2>
 <p>For using the installed EPSG geodetic dataset in your own application, apply <em>one</em> of the following choices:</p>
 <ul>
-<li>Set the <code>SIS_DATA</code> environment variable to the path of <code>apache-sis-0.8/data</code> directory <em>(preferred choice)</em>.</li>
-<li>Set the <code>derby.system.home</code> Java property to the path of <code>apache-sis-0.8/data/Databases</code> directory.</li>
+<li>Set the <code>SIS_DATA</code> environment variable to the path of <code>apache-sis-1.0/data</code> directory <em>(preferred choice)</em>.</li>
+<li>Set the <code>derby.system.home</code> Java property to the path of <code>apache-sis-1.0/data/Databases</code> directory.</li>
 </ul>
 <p>Alternatively <code>SIS_DATA</code> or <code>derby.system.home</code> can be set to the path of any other directory which contain the same files.
-Examples are shown below for Unix systems, assuming that the current directory is the directory where <code>apache-sis-0.8-bin.zip</code>
+Examples are shown below for Unix systems, assuming that the current directory is the directory where <code>apache-sis-1.0-bin.zip</code>
 has been unzipped:</p>
-<div class="codehilite"><pre><span class="nb">export </span><span class="nv">SIS_DATA</span><span class="o">=</span>apache-sis-0.8/data
-java -classpath apache-sis-0.8/lib/sis.jar:myApp.jar myMainClass
+<div class="codehilite"><pre><span class="nb">export </span><span class="nv">SIS_DATA</span><span class="o">=</span>apache-sis-1.0/data
+java -classpath apache-sis-1.0/lib/sis.jar:myApp.jar myMainClass
 </pre></div>
 
 
 <p>If the <code>SIS_DATA</code> environment variable can not be set, Java property can be used as a fallback:</p>
-<div class="codehilite"><pre><span class="n">java</span> <span class="o">-</span><span class="n">Dderby</span><span class="p">.</span><span class="n">system</span><span class="p">.</span><span class="n">home</span><span class="p">=</span><span class="n">apache</span><span class="o">-</span><span class="n">sis</span><span class="o">-</span>0<span class="p">.</span>8<span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">Databases</span> <span class="o">-</span><span class="n">classpath</span> <span class="n">apache</span><span class="o">-</span><span class="n">sis</span><span class="o">-</span>0<span class="p">.</span>8<span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">sis</span><span class="p">.</span><span class="n">jar</span><span class="p">:</span><span class="n">myApp</span><span class="p">.</span><span class="n">jar</span> <span class="n">myMainClass</span>
+<div class="codehilite"><pre><span class="n">java</span> <span class="o">-</span><span class="n">Dderby</span><span class="p">.</span><span class="n">system</span><span class="p">.</span><span class="n">home</span><span class="p">=</span><span class="n">apache</span><span class="o">-</span><span class="n">sis</span><span class="o">-</span>1<span class="p">.</span>0<span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">Databases</span> <span class="o">-</span><span class="n">classpath</span> <span class="n">apache</span><span class="o">-</span><span class="n">sis</span><span class="o">-</span>1<span class="p">.</span>0<span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">sis</span><span class="p">.</span><span class="n">jar</span><span class="p">:</span><span class="n">myApp</span><span class="p">.</span><span class="n">jar</span> <span class="n">myMainClass</span>
 </pre></div>
 
 
@@ -188,6 +193,7 @@ The target database must be specified by users with <em>one</em> of the followin
     or a directory that contain other Derby databases. The specified directory must exist.</li>
 <li>Register a <code>DataSource</code> under the <code>java:comp/env/jdbc/SpatialMetadata</code> name in a JNDI directory
     (see <a href="#jndi">next section</a>). The database must exist but can be initially empty.</li>
+<li>Set a <code>DataSource</code> <a href="./apidocs/org/apache/sis/setup/Configuration.html">from Java code</a>.</li>
 </ul>
 <p>The Maven dependency is as below (the Derby dependency can be replaced by another database driver
 if that database is specified by JNDI):</p>
@@ -195,12 +201,12 @@ if that database is specified by JNDI):</p>
   <span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>org.apache.sis.non-free<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>sis-epsg<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>0.8<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
   <span class="nt">&lt;/dependency&gt;</span>
 
-  <span class="c">&lt;!-- Following dependency can be omitted on Oracle JDK6, JDK7 or JDK8</span>
-<span class="c">       since those Java distributions contain Derby (a.k.a JavaDB). --&gt;</span>
+  <span class="c">&lt;!-- Following dependency can be omitted on Oracle JDK8</span>
+<span class="c">       since that Java distributions contain Derby (a.k.a JavaDB). --&gt;</span>
   <span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>org.apache.derby<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>derby<span class="nt">&lt;/artifactId&gt;</span>
@@ -229,7 +235,7 @@ Note that <code>sis-epsg</code> and <code>sis-embedded-data</code> should not be
   <span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>org.apache.sis.non-free<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>sis-embedded-data<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>0.8<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.0<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
   <span class="nt">&lt;/dependency&gt;</span>
 <span class="nt">&lt;/dependencies&gt;</span>
@@ -248,7 +254,7 @@ or by uncompressing the <code>sis-embedded-data.jar</code> file locally.</p>
 For using an arbitrary database, register a <code>javax.sql.DataSource</code> instance through the Java Naming and Directory Interface (JNDI).
 That registration can be done programmatically (by Java code) or by configuring XML files in some environments.
 The database must exist but can be empty, in which case it will be populated with an EPSG schema when first needed
-if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​0.8</code> dependency is on the classpath
+if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​1.0</code> dependency is on the classpath
 (see <a href="#maven-epsg">above section</a>).</p>
 <h2 id="jndi-java">Registration by Java code<a class="headerlink" href="#jndi-java" title="Permanent link">&para;</a></h2>
 <p>Registration can be done by the following Java code, provided that a JNDI implementation is available on the classpath:</p>
@@ -260,6 +266,12 @@ if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​0
 <span class="c1">// Registration assuming that a JNDI implementation is available</span>
 <span class="n">Context</span> <span class="n">env</span> <span class="o">=</span> <span class="o">(</span><span class="n">Context</span><span class="o">)</span> <span class="n">InitialContext</span><span class="o">.</span><span class="na">doLookup</span><span class="o">(</span><span class="s">&quot;java:comp/env&quot;</span><span class="o">);</span>
 <span class="n">env</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="s">&quot;jdbc/SpatialMetadata&quot;</span><span class="o">,</span> <span class="n">ds</span><span class="o">);</span>
+</pre></div>
+
+
+<p>If there is no JNDI environment, the <code>org.apache.sis.setup.Configuration</code> class can be used as a fallback:</p>
+<div class="codehilite"><pre><span class="c1">// Fallback if no JNDI environment is available.</span>
+<span class="n">Configuration</span><span class="o">.</span><span class="na">current</span><span class="o">().</span><span class="na">setDatabase</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="n">ds</span><span class="o">);</span>
 </pre></div>
 
 
@@ -322,7 +334,7 @@ fetching the data source from the <code>context.xml</code> file.</p>
 
   <footer class="footer">
     <div class="container">
-      <p>Copyright &copy; 2013-2018 The Apache Software Foundation, Licensed under the
+      <p>Copyright &copy; 2013-2019 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
           Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
     </div>

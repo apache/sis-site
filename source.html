@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Source code</title>
+    <title>Checkout source code</title>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="http://www.apache.org/css/code.css">
@@ -29,11 +29,11 @@
               </li>
               <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">Project Documentation<b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="book/index.html">Developer guide</a></li>
+                  <li><a href="book/index.html">Developer Guide</a></li>
                   <li><a href="apidocs/index.html">Online Javadoc</a></li>
                   <li><a href="downloads.html">Downloads</a></li>
-                  <li><a href="source.html">Source Code</a></li>
-                  <li><a href="code-patterns.html">Code patterns</a></li>
+                  <li><a href="source.html">Checkout Sources</a></li>
+                  <li><a href="epsg.html">EPSG Database</a></li>
                   <li><a href="faq.html">FAQ</a></li>
                   <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
                 </ul>
@@ -67,11 +67,11 @@
               <li><a href="mail-lists.html">Mailing Lists</a></li>
               <li><a href="team-list.html">Project Team</a></li>
               <li class="nav-header">Project Documentation</li>
-              <li><a href="book/index.html">Developer guide</a></li>
+              <li><a href="book/index.html">Developer Guide</a></li>
               <li><a href="apidocs/index.html">Online Javadoc</a></li>
               <li><a href="downloads.html">Downloads</a></li>
-              <li><a href="source.html">Source Code</a></li>
-              <li><a href="code-patterns.html">Code patterns</a></li>
+              <li><a href="source.html">Checkout Sources</a></li>
+              <li><a href="epsg.html">EPSG Database</a></li>
               <li><a href="faq.html">FAQ</a></li>
               <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
               <li class="nav-header">ASF</li>
@@ -86,7 +86,7 @@
           <section id="content" class="row">
             <article class="span12">
               <img src="img/logo.png" class="sis-logo" align="left"/>
-              <p class="page-title">Source code</p>
+              <p class="page-title">Checkout source code</p>
               <style type="text/css">
 /* The following code is added by mdx_elementid.py
    It was originally lifted from http://subversion.apache.org/style/site.css */
@@ -98,138 +98,192 @@
   visibility: hidden;
 }
 h2:hover > .headerlink, h3:hover > .headerlink, h1:hover > .headerlink, h6:hover > .headerlink, h4:hover > .headerlink, h5:hover > .headerlink, dt:hover > .elementid-permalink { visibility: visible }</style>
-<p>Apache SIS source code is maintained using <a href="http://git-scm.com">Git</a> version control.
-Additional data not included in SIS releases are maintained separately using <a href="http://subversion.apache.org">Subversion</a> version control.
-Those data include in particular the <a href="epsg.html">EPSG geodetic dataset</a> and are subject to different licensing terms.
-The Git repository is <a href="https://github.com/apache/sis">mirrored on GitHub</a> and the non-free data can be <a href="http://svn.apache.org/viewvc/sis/data/non-free/">browsed online</a>.
-For fetching the source code and those additional data, use the following commands:</p>
-<div class="codehilite"><pre>git clone https://gitbox.apache.org/repos/asf/sis
+<p>Apache SIS source code is maintained using <a href="http://git-scm.com">Git</a> version control,
+completed by optional data maintained using <a href="http://subversion.apache.org">Subversion</a> version control.
+Optional data include in particular the <a href="epsg.html">EPSG geodetic dataset</a>,
+which is subject to licensing terms different than Apache ones.
+This page describes two ways to checkout Apache SIS source code:</p>
+<ul>
+<li>A basic checkout with only the main repository, the most stable branch, and no configuration requirement.</li>
+<li>A more advanced configuration for active SIS developments, using uncommitted (for now) API
+    and including optional data for more extensive tests.</li>
+</ul>
+<p>It is possible to start with the basic checkout and migrate to the advanced configuration later,
+or to cherry-pick only the interesting parts of the advanced configuration.</p>
+<div class="toc">
+<ul>
+<li><a href="#basic">Basic installation</a></li>
+<li><a href="#advanced">Advanced installation</a><ul>
+<li><a href="#data">Create data directory</a></li>
+<li><a href="#non-free">Checkout non-free data</a></li>
+<li><a href="#postgres">Configure PostgreSQL</a></li>
+<li><a href="#tests">Running extensive tests</a></li>
+<li><a href="#branches">Switch to development branch</a></li>
+</ul>
+</li>
+<li><a href="#netbeans">Opening Apache SIS in NetBeans</a></li>
+<li><a href="#history">History</a></li>
+</ul>
+</div>
+<h1 id="basic">Basic installation<a class="headerlink" href="#basic" title="Permanent link">&para;</a></h1>
+<p>Create an empty directory for the Apache SIS project.
+We use <code>ApacheSIS</code> directory name in this page, but that name can be anything;
+replace that name in the shell commands below if another name is used.
+The Apache SIS source code can be cloned in that directory as below
+(lines starting with <code>#</code> are comments and can be ignored):</p>
+<div class="codehilite"><pre>mkdir ApacheSIS
+<span class="nb">cd </span>ApacheSIS
+git clone https://gitbox.apache.org/repos/asf/sis
+<span class="c">#</span>
+<span class="c"># Alternatively, GitHub mirror can also be used:</span>
+<span class="c"># git clone https://github.com/apache/sis</span>
+<span class="c">#</span>
+<span class="c"># or Subversion (read-only):</span>
+<span class="c"># svn checkout https://github.com/apache/sis/trunk</span>
+</pre></div>
+
+
+<p>That is all. Apache SIS can be built by running <code>mvn install</code> in the <code>sis</code> subdirectory.
+At this stage, the <code>ApacheSIS</code> parent directory is redundant with the <code>sis</code> subdirectory,
+but we recommend to create that parent directory anyway in anticipation
+for more subdirectories to be created later, when desired.
+The remaining of this page describes those optional configurations for more advanced developments.</p>
+<h1 id="advanced">Advanced installation<a class="headerlink" href="#advanced" title="Permanent link">&para;</a></h1>
+<p>This section assumes that above-described basic checkout has been done.
+All subsections below are optional. It is not mandatory to execute all of them,
+but we recommend to at least create the data directory described below
+because some other optional services depend on it.</p>
+<h2 id="data">Create data directory<a class="headerlink" href="#data" title="Permanent link">&para;</a></h2>
+<p>Apache SIS needs a directory where to store database, datum shift files and other optional data.
+That directory is specified by the <code>SIS_DATA</code> environment variable and can be located anywhere.
+A convenient location is a subdirectory of the <code>ApacheSIS</code> directory created in the "basic checkout" section.
+For example (with <code>ApacheSIS</code> as the current directory):</p>
+<div class="codehilite"><pre>mkdir Data
+<span class="nb">export </span><span class="nv">SIS_DATA</span><span class="o">=</span><span class="nv">$PWD</span>/Data
+<span class="c">#</span>
+<span class="c"># For making that environment variable available in future shell sessions,</span>
+<span class="c"># the output of following command can be added to .bash_profile or .bashrc</span>
+<span class="c"># file in user home directory.</span>
+<span class="c">#</span>
+<span class="nb">echo export </span><span class="nv">SIS_DATA</span><span class="o">=</span><span class="nv">$SIS_DATA</span>
+</pre></div>
+
+
+<h2 id="non-free">Checkout non-free data<a class="headerlink" href="#non-free" title="Permanent link">&para;</a></h2>
+<p>The EPSG geodetic dataset is recommended for operations related to Coordinate Reference Systems.
+Without the EPSG database, only a <a href="apidocs/org/apache/sis/referencing/CRS.html#forCode-java.lang.String-">small subset</a>
+of coordinate reference systems can be created from EPSG codes.
+The EPSG database can be <a href="epsg.html">installed in various ways</a>,
+but this section describes an alternative way more suitable to Apache SIS development.
+Before to continue, make sure to agree with <a href="http://www.epsg.org/TermsOfUse.aspx">EPSG terms of use</a>.
+Then following command can be executed with <code>ApacheSIS</code> as the current directory:</p>
+<div class="codehilite"><pre><span class="c"># Executing this command imply agreement with EPSG terms of use.</span>
 svn checkout https://svn.apache.org/repos/asf/sis/data/non-free/
 </pre></div>
 
 
-<p>The source code repository contains <code>geoapi-3.1</code> and <code>geoapi-4.0</code> branches in addition of <code>master</code>.
-The Apache SIS releases are created from the code on <code>master</code> only.
-However the actual development occurs on the <code>geoapi-4.0</code> branch before to be merged to <code>master</code>.
-Those branches exist in order to experiment early new API and technologies — since it may impact
-the library design — while keeping the releases compatible with officially released environments.
-The remaining of this page gives some guidelines about the way SIS source code is organized.</p>
-<div class="toc">
-<ul>
-<li><a href="#development">Development branches</a><ul>
-<li><a href="#geoapi-4.0">GeoAPI 4.0 branch</a></li>
-<li><a href="#geoapi-3.1">GeoAPI 3.1 branch</a></li>
-<li><a href="#master">Master</a><ul>
-<li><a href="#differences">Code differences</a></li>
-<li><a href="#behavior">Behavioral differences</a></li>
-</ul>
-</li>
-<li><a href="#history">History</a></li>
-</ul>
-</li>
-<li><a href="#ide">Opening Apache SIS in an IDE</a><ul>
-<li><a href="#netbeans">NetBeans</a></li>
-<li><a href="#eclipse">Eclipse</a></li>
-</ul>
-</li>
-<li><a href="#license">License header</a></li>
-<li><a href="#naming">Naming convention</a><ul>
-<li><a href="#internal">Internal packages</a></li>
-<li><a href="#substitutions">Substitution for non-existent classes</a></li>
-</ul>
-</li>
-<li><a href="#formatting">Code formatting</a><ul>
-<li><a href="#imports">Import statements</a></li>
-<li><a href="#spaces">Spaces and line length</a></li>
-<li><a href="#brackets">Brackets</a></li>
-<li><a href="#declarations">Member declarations</a></li>
-<li><a href="#tabular-formatting">Exceptions to coding conventions</a></li>
-</ul>
-</li>
-<li><a href="#javadoc">Documentation formatting</a><ul>
-<li><a href="#javadoc-tags">Javadoc annotations</a></li>
-<li><a href="#html">HTML elements</a><ul>
-<li><a href="#paragraph">Paragraphs</a></li>
-<li><a href="#css">Javadoc CSS</a></li>
-</ul>
-</li>
-<li><a href="#mathml">MathML elements</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<h1 id="development">Development branches<a class="headerlink" href="#development" title="Permanent link">&para;</a></h1>
-<p>Users who want stability are encouraged to build from the <code>master</code>.
-The master depends on GeoAPI 3.0.1,
-which is the <a href="http://www.geoapi.org/3.0/index.html">latest GeoAPI</a> released by the Open Geospatial Consortium (<abbr title="Open Geospatial Consortium">OGC</abbr>).
-Developers who want to contribute to Apache SIS are encouraged to use the <code>geoapi-4.0</code> branch for now.</p>
-<h2 id="geoapi-4.0">GeoAPI 4.0 branch<a class="headerlink" href="#geoapi-4.0" title="Permanent link">&para;</a></h2>
-<p>The <code>geoapi-4.0</code> branch is the recommended development branch for now.
-This branch implements the interfaces defined in GeoAPI 4.0 snapshot milestones.
-This branch uses new interfaces introduced in GeoAPI 4.0-SNAPSHOT and contains upgrades for changes in existing GeoAPI interfaces.
-Some changes in GeoAPI 4.0-SNAPSHOT interfaces are incompatible with GeoAPI 3.0.1 interfaces.
-They are caused by changes in the underlying international standards, or by evolution of Java technology.
-The content of this branch may be fully merged to <code>master</code> in the future, depending on new GeoAPI releases from <abbr title="Open Geospatial Consortium">OGC</abbr>.</p>
-<h2 id="geoapi-3.1">GeoAPI 3.1 branch<a class="headerlink" href="#geoapi-3.1" title="Permanent link">&para;</a></h2>
-<p>The <code>geoapi-3.1</code> branch implements the interfaces defined in <a href="http://www.geoapi.org/snapshot/index.html">GeoAPI 3.1 snapshot</a> milestones.
-It has the same content that the <code>geoapi-4.0</code> branch, excluding changes that are incompatible with GeoAPI 3.0.1.
-Developments happen on <code>geoapi-4.0</code> and are periodically merged to <code>geoapi-3.1</code> with the necessary modifications.
-This branch is used merely as an intermediate step between the development branch (<code>geoapi-4.0</code>) and <code>master</code>.
-Its content may be fully merged to <code>master</code> in the future, after new GeoAPI releases from <abbr title="Open Geospatial Consortium">OGC</abbr>.</p>
-<h2 id="master">Master<a class="headerlink" href="#master" title="Permanent link">&para;</a></h2>
-<p>The master is a merge of <code>geoapi-3.1</code> branch ported to the interfaces defined by the <a href="http://www.geoapi.org/3.0/index.html">GeoAPI stable release</a>.
-This is the code which is built by the continuous integration system and deployed on the Maven repository.
-<strong>Commits on master can not be removed, since <code>git push --force</code> are not allowed on this branch.</strong>
-Commits should be pushed on above-cited development branch first,
-so they can be rearranged if needed before merge to <code>master</code>.</p>
-<h3 id="differences">Code differences<a class="headerlink" href="#differences" title="Permanent link">&para;</a></h3>
-<p>The main differences (apart version number) between <code>master</code> and <code>geoapi-3.1/4.0</code> branches
-are the modifications necessary for implementing an older version of GeoAPI interfaces.
-In particular, usages of non-released GeoAPI interfaces may be replaced
-by direct usages of the corresponding Apache SIS implementation classes.</p>
-<p>For security reasons and for avoiding misleading information, the following functionalities are disabled on master for now
-(but are still enabled on branches as experimental features). In particular the <code>Supervisor.ENABLED</code> flag controls
-whether the MBeans documented in the <code>org.apache.sis.console</code> package are enabled or not.</p>
-<ul>
-<li>In <code>core/sis-utility/src/main/java/org/apache/sis/internal/system/Supervisor.java</code>, the <code>ENABLED</code> flag is set to <code>false</code>.</li>
-<li>In <code>core/sis-utility/src/main/java/org/apache/sis/internal/util/TemporalUtilities.java</code>, the <code>REPORT_MISSING_MODULE</code> flag is set to <code>false</code>.</li>
-</ul>
-<h3 id="behavior">Behavioral differences<a class="headerlink" href="#behavior" title="Permanent link">&para;</a></h3>
-<p>Because of changes between GeoAPI 3.0 and GeoAPI 4.0-SNAPSHOT, the following aspects need special care:</p>
-<ul>
-<li>If <code>op</code> is an instance of <code>PassThroughOperation</code>, then the <code>if (op instanceof SingleOperation)</code> expression
-    evaluates to <code>true</code> on master but to <code>false</code> on SIS development branches.</li>
-</ul>
-<h2 id="history">History<a class="headerlink" href="#history" title="Permanent link">&para;</a></h2>
-<p>All developments and tags prior Apache SIS 1.0 were done on a <a href="http://subversion.apache.org">Subversion</a> repository
-and can be <a href="http://svn.apache.org/viewvc/sis/">browsed online</a>.
-Tags for Apache SIS versions 0.1 to 0.8 should be fetched from the <a href="https://svn.apache.org/repos/asf/sis/tags/">SVN repository</a>.
-The development branches on that repository were named <code>JDK8</code>, <code>JDK7</code>, <code>JDK6</code> and <code>trunk</code>.</p>
-<h1 id="ide">Opening Apache SIS in an IDE<a class="headerlink" href="#ide" title="Permanent link">&para;</a></h1>
-<p>Different SIS branches are available depending on the GeoAPI versions.
-The alternatives are listed in <a href="#development">above section</a>.
-One thing to take in consideration can be summarized as below:</p>
-<ul>
-<li>There is no need to build GeoAPI prior working on SIS master.</li>
-<li>When working on a SIS development branch, we recommend to build GeoAPI 4.0-SNAPSHOT locally first.</li>
-</ul>
-<p>While the primarily SIS build system is Maven, the project provides some IDE configuration files for developers convenience.
-Before opening the project in an IDE, the source code needs to be downloaded from the source repository
-and the project built at least once using Maven:</p>
-<div class="codehilite"><pre>git clone https://gitbox.apache.org/repos/asf/sis.git
-<span class="nb">cd </span>sis
-mvn install
+<p>Then copy or link the EPSG scripts in the directory where Apache SIS looks for optional data.
+Adjust the relative paths as needed if the <code>SIS_DATA</code> environment variable
+points to another location than the one used in above section:</p>
+<div class="codehilite"><pre>mkdir <span class="nv">$SIS_DATA</span>/Databases
+mkdir <span class="nv">$SIS_DATA</span>/Databases/ExternalSources
+<span class="nb">cd</span> <span class="nv">$SIS_DATA</span>/Databases/ExternalSources
+ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/Data.sql    EPSG_Data.sql
+ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/FKeys.sql   EPSG_FKeys.sql
+ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/Tables.sql  EPSG_Tables.sql
+<span class="nb">cd</span> -
 </pre></div>
 
 
-<h2 id="netbeans">NetBeans<a class="headerlink" href="#netbeans" title="Permanent link">&para;</a></h2>
-<p>NetBeans can open Maven projects natively. This is the recommended approach for casual working in a small amount of SIS modules.
-For extensive work on Apache SIS or for work impacting many modules, it may be more convenient and faster to open Apache SIS as a NetBeans project.
-Such pre-configured NetBeans project is available in the <code>ide-project/NetBeans</code> directory.
+<p>This is sufficient for allowing Apache SIS to create the geodetic database
+without the need for <code>sis-epsg</code> or <code>sis-embedded-data</code> module on the classpath.
+This setting is not done automatically because Apache projects can not introduce
+non-free dependencies without explicit action from user.
+If this action is not taken, some JUnit tests requiring EPSG data may be skipped.
+If any EPSG file is updated, deleting the <code>$SIS_DATA/​Databases/​SpatialMetadata</code> directory
+is sufficient for causing Apache SIS to recreate the Derby database with new data.</p>
+<h2 id="postgres">Configure PostgreSQL<a class="headerlink" href="#postgres" title="Permanent link">&para;</a></h2>
+<p>Apache SIS is tested with Derby, HSQL and PostgreSQL databases.
+Derby and HSQL are tested automatically using temporary databases in memory.
+But testing on PostgreSQL requires the creation of a dedicated database on the developer platform.
+The requirements are:</p>
+<ul>
+<li>PostgreSQL server running and listening to <code>localhost</code> on default port (5432).</li>
+<li>A role with the same name than Unix user name of the developer running tests.</li>
+<li>An empty database named <code>"SpatialMetadataTest"</code>.</li>
+<li>Above-cited role can connect to <code>SpatialMetadataTest</code> database without password.</li>
+<li><code>org.apache.sis.test.extensive</code> Java property set to <code>true</code>.</li>
+</ul>
+<p>The <code>SpatialMetadataTest</code> database should stay empty when not running tests,
+because Apache SIS always delete the temporary schema after tests completion,
+regardless if the tests were successful or not.
+The role and database can be created by the following SQL instructions
+(replace <code>my_unix_user_name</code> by your actual user name):</p>
+<div class="codehilite"><pre><span class="k">CREATE</span> <span class="k">ROLE</span> <span class="n">my_unix_user_name</span> <span class="n">LOGIN</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="ss">&quot;SpatialMetadataTest&quot;</span> <span class="k">WITH</span> <span class="k">OWNER</span> <span class="o">=</span> <span class="n">my_unix_user_name</span><span class="p">;</span>
+<span class="k">COMMENT</span> <span class="k">ON</span> <span class="k">DATABASE</span> <span class="ss">&quot;SpatialMetadataTest&quot;</span> <span class="k">IS</span> <span class="s1">&#39;For Apache SIS tests only.&#39;</span><span class="p">;</span>
+</pre></div>
+
+
+<p>For opening access to that database without password, it may be necessary
+to add following line (ignoring comment lines) in the <code>pg_hba.conf</code> file.
+Location of this file is system-dependent; it may be <code>/var/​lib/​pgsql/​data</code>:</p>
+<div class="codehilite"><pre># IPv4 local connections:
+# TYPE  DATABASE               USER                 ADDRESS         METHOD
+host    SpatialMetadataTest    my_unix_user_name    127.0.0.1/32    trust
+</pre></div>
+
+
+<p>The last step for allowing Apache SIS to run tests on PostgreSQL is to set the
+<code>org.apache.sis.test.extensive</code> Java property to <code>true</code> (see next section).
+This requirement has been added for avoiding undesired interference with host.
+Note that this step is likely to change after Apache SIS upgrade to JUnit 5.</p>
+<h2 id="tests">Running extensive tests<a class="headerlink" href="#tests" title="Permanent link">&para;</a></h2>
+<p>A simple <code>mvn install</code> execution in the <code>sis</code> directory
+will build and test Apache SIS with the default set of JUnit tests.
+Some tests are skipped by default, either because they would have some effects outside
+the <code>sis</code> directory (for example writing in <code>SpatialMetadataTest</code> database on PostgreSQL),
+or because those tests take a long time to execute.
+For enabling all tests, use the following command:</p>
+<div class="codehilite"><pre><span class="nb">cd </span>sis
+mvn install -Dorg.apache.sis.test.extensive<span class="o">=</span><span class="nb">true</span>
+</pre></div>
+
+
+<h2 id="branches">Switch to development branch<a class="headerlink" href="#branches" title="Permanent link">&para;</a></h2>
+<p>The source code repository contains <code>master</code>, <code>geoapi-3.1</code> and <code>geoapi-4.0</code> branches.
+Apache SIS releases are created from <code>master</code>, which depends on the latest GeoAPI version
+released by the Open Geospatial Consortium (<abbr title="Open Geospatial Consortium">OGC</abbr>), currently <a href="http://www.geoapi.org/3.0/index.html">GeoAPI 3.0.1</a>.
+However daily developments occur on the <code>geoapi-4.0</code> branch before to be merged (indirectly) to <code>master</code>.
+Those branches exist in order to experiment early new API and technologies — since they may impact
+the library design — while keeping the releases compatible with officially released API.
+In summary:</p>
+<ul>
+<li>The <code>geoapi-4.0</code> branch implements interfaces defined in GeoAPI 4.0 snapshots.</li>
+<li>The <code>geoapi-3.1</code> branch implements interfaces defined in <a href="http://www.geoapi.org/snapshot/index.html">GeoAPI 3.1 snapshots</a>.</li>
+<li>The <code>master</code> implements interfaces defined by the <a href="http://www.geoapi.org/3.0/index.html">GeoAPI 3.0.1 stable release</a>.</li>
+</ul>
+<p>Developments on <code>geoapi-4.0</code> branch are merged to <code>geoapi-3.1</code> branch, which is then merged to <code>master</code>.
+When commits reach <code>master</code> they become unmodifiable; the <code>git push --force</code> command is not allowed on that branch.
+Contributors to Apache SIS project should switch to the current development branch before submitting patches:</p>
+<div class="codehilite"><pre><span class="nb">cd </span>sis
+git checkout geoapi-4.0
+</pre></div>
+
+
+<p>Note that those <code>geoapi-xxx</code> branches may disappear or be replaced by something else
+after <abbr title="Open Geospatial Consortium">OGC</abbr> releases the corresponding GeoAPI versions.</p>
+<h1 id="netbeans">Opening Apache SIS in NetBeans<a class="headerlink" href="#netbeans" title="Permanent link">&para;</a></h1>
+<p>Apache SIS build is defined by Maven <code>pom.xml</code> files.
+All major IDE, including NetBeans, can open a project defined by those files.
+However in the particular case of NetBeans IDE, we also provide a way to open Apache SIS using Ant configuration files.
+Compared to "Java with Maven" project, the "Java with Ant" project is faster to build and debug,
+makes easier to see all modules at once, and provides more configuration options.
+Those configuration files are available in the <code>ide-project/NetBeans</code> directory.
 This project will fetch dependencies directly from the <code>.m2/repository</code> local directory,
 and will refer to the resources <code>*.utf</code> files compiled by Maven in the <code>sis-*/target</code> directories.
-Consequently it is important to run <code>mvn install</code> before opening the project
-and after any change in the project dependencies or in the resources.</p>
+Consequently it is important to run <code>mvn install</code> manually (on the command line)
+before opening the project and after any change in the project dependencies or in the resources.</p>
 <p>Users can customize their project configuration by editing the <code>ide-project/NetBeans/nbproject/private/config.properties</code> file.
 The <code>private</code> directory is excluded by the versioning system, so it okay to put user-specific information there.
 For example in order to overwrite the default location of the local Maven repository and to define a system property at execution time,
@@ -239,240 +293,11 @@ one can use:</p>
 </pre></div>
 
 
-<h2 id="eclipse">Eclipse<a class="headerlink" href="#eclipse" title="Permanent link">&para;</a></h2>
-<p>Execute the <code>svn checkout</code> to <code>mvn install</code> commands documented in the beginning of this section,
-then execute the following steps:</p>
-<ul>
-<li>Execute <code>mvn eclipse:eclipse</code> on the command line.</li>
-<li>Open Eclipse in a new workspace.</li>
-<li>Go to <em>Eclipse</em> → <em>Preferences</em> → <em>General</em> → <em>Workspace</em>.</li>
-<li>Change <em>Text file encoding</em> to <em>Other: UTF-8</em>, press <em>Apply</em>, then <em>Ok</em>.</li>
-<li>Go to <em>File</em> → <em>Import</em> → <em>General</em> → <em>Existing Projects in Workspace</em>.</li>
-<li>Choose the <code>sis</code> directory and import.</li>
-</ul>
-<h1 id="license">License header<a class="headerlink" href="#license" title="Permanent link">&para;</a></h1>
-<p>All Java source files (<code>*.java</code>) shall begin with the current ASF license header as described in <a href="http://www.apache.org/legal/src-headers.html">ASF Source Header</a>.
-Properties source files (<code>*.properties</code>) used as inputs to some processor (e.g. the resource compiler)
-shall have the same license header, but with lines prefixed by <code>#</code> instead of <code>*</code>.
-Properties files distributed as-is in the JAR files can summarize the license on a single line for saving space,
-as below:</p>
-<div class="codehilite"><pre># Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.
-</pre></div>
-
-
-<h1 id="naming">Naming convention<a class="headerlink" href="#naming" title="Permanent link">&para;</a></h1>
-<p>Classes that do not implement an interface are usually not prefixed, even if abstract.
-Classes implementing GeoAPI interfaces usually (but not always) begin with <code>Abstract</code>, <code>Default</code>, <code>Simple</code> or <code>General</code> prefix.</p>
-<ul>
-<li>The <code>Abstract</code> prefix is used when a class is abstract according <abbr title="International Organization for Standardization">ISO</abbr> specifications — it may or may not be be abstract in the Java sense.</li>
-<li>The <code>General</code> prefix is used when an implementation is designed for use in the general case,
-    as opposed to other implementations specialized for a fixed number of dimensions or other conditions.</li>
-<li>Implementations specialized for a fixed number of dimensions are suffixed with <code>1D</code>, <code>2D</code>, <code>3D</code> or <code>4D</code> rather than being prefixed.</li>
-</ul>
-<p>Example: <code>GeneralEnvelope</code> class is an implementation of <code>Envelope</code> interface for the multi-dimensional case.
-<code>Envelope2D</code> is another implementation of the same interface specialized for the two-dimensional case.</p>
-<h2 id="internal">Internal packages<a class="headerlink" href="#internal" title="Permanent link">&para;</a></h2>
-<p>All classes in <code>org.apache.sis.internal</code> sub-packages are for SIS usage only and may change without warning in any future release.
-Those classes are excluded from Javadoc and will not be exported by SIS Jigsaw modules.
-Those packages may be renamed after SIS upgraded to JDK 9.</p>
-<h2 id="substitutions">Substitution for non-existent classes<a class="headerlink" href="#substitutions" title="Permanent link">&para;</a></h2>
-<p>When using a JDK 9 class that does not exist on JDK 8, define a class of the same name in a
-<code>org.apache.sis.internal</code> sub-package with the minimal amount of needed functionalities,
-provided that it can be done with reasonable effort.
-Otherwise just delete the JDK9-dependent code from the development branch.</p>
-<h1 id="formatting">Code formatting<a class="headerlink" href="#formatting" title="Permanent link">&para;</a></h1>
-<p>Apache SIS uses the standard Java conventions, except for the 80 characters line length restriction.
-The conventions listed below are guidelines. Some exceptions to those conventions can occur but should
-be rare (see <a href="#tabular-formatting">exceptions to coding conventions</a>).</p>
-<p>For making merges between branches easier, refrain from doing massive code reformatting unless:</p>
-<ul>
-<li>the modified files do not yet exist on the other branches;</li>
-<li>or the modified lines are known to be identical on all active branches (merges work well in such cases);</li>
-<li>or the committer is willing to resolve the merge conflicts.</li>
-</ul>
-<h2 id="imports">Import statements<a class="headerlink" href="#imports" title="Permanent link">&para;</a></h2>
-<p>Isolate at the end of the imports section any import statements that are specific to a platform.
-This separation allows any branch to re-arrange the common import statements without generating
-conflicts with the platform-dependent import statements. Example:</p>
-<div class="codehilite"><pre><span class="kn">import</span> <span class="nn">java.io.File</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.opengis.metadata.Metadata</span><span class="o">;</span>
-
-<span class="c1">// Branch-specific imports</span>
-<span class="kn">import</span> <span class="nn">org.opengis.feature.Feature</span><span class="o">;</span>
-</pre></div>
-
-
-<h2 id="spaces">Spaces and line length<a class="headerlink" href="#spaces" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Indentation:</strong> Use a consistent space indents and never use tabs.<ul>
-<li>Use 4 space indents for Java files.</li>
-<li>Use 2 space indents for XML files, because <abbr title="International Organization for Standardization">ISO</abbr>/<abbr title="Open Geospatial Consortium">OGC</abbr> XML schemas tend to have a very deep structure.</li>
-</ul>
-</li>
-<li><strong>Space after keyword:</strong> Put a space after <code>if</code>, <code>else</code>, <code>for</code>, <code>try</code>, <code>catch</code> and similar keywords
-    (not after method names).</li>
-<li><strong>Trailing Whitespaces:</strong> Remove all trailing whitespaces.<ul>
-<li>Eclipse users can use the <em>Source</em> - <em>Cleanup</em> option to accomplish this.</li>
-<li>NetBeans users can use the use the <em>Source</em> - <em>Remove trailing spaces</em> on a file-by-file basis,
-  or set the <em>Preferences</em> - <em>Editor</em> - <em>On Save</em> - <em>Remove trailing whitespaces</em> option.</li>
-</ul>
-</li>
-<li><strong>Line wrapping:</strong> Use 120-column line width for Java code and Javadoc.
-    Some exceptions to this rule may exist for preserving tabular structures, but should be rare.</li>
-</ul>
-<h2 id="brackets">Brackets<a class="headerlink" href="#brackets" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Curly brackets:</strong> The <code>{</code> and <code>}</code> brackets are mandatory for <code>if</code>, <code>else</code>, <code>while</code> and other blocks,
-    except if the instruction after the keyword is on the same line (e.g. <code>else if</code>).</li>
-</ul>
-<h2 id="declarations">Member declarations<a class="headerlink" href="#declarations" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Class, method and field declarations shall use the keywords in the following order.
-    This is known as the "customary order" in the <a href="http://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.1">Java Language Specification</a>:<ul>
-<li><code>public</code>, <code>protected</code> or <code>private</code>,</li>
-<li><code>abstract</code> or <code>static</code>,</li>
-<li><code>final</code>,</li>
-<li><code>strictfp</code> (should be applied on all test classes).</li>
-</ul>
-</li>
-<li>Member fields do not have any particular prefix (no <code>m_</code> prefix).</li>
-</ul>
-<h2 id="tabular-formatting">Exceptions to coding conventions<a class="headerlink" href="#tabular-formatting" title="Permanent link">&para;</a></h2>
-<p>Many mathematical operations in a two-dimensional space (or more) have symmetry.
-Formatting the code in a way that emphase their symmetrical nature, for example
-aligning identical terms in columns, can help to understand the overall pattern
-and to identify bugs. Example:</p>
-<div class="codehilite"><pre><span class="k">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">xmin</span><span class="o">)</span> <span class="n">xmin</span> <span class="o">=</span> <span class="n">x</span><span class="o">;</span>
-<span class="k">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">xmax</span><span class="o">)</span> <span class="n">xmax</span> <span class="o">=</span> <span class="n">x</span><span class="o">;</span>
-<span class="k">if</span> <span class="o">(</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">ymin</span><span class="o">)</span> <span class="n">ymin</span> <span class="o">=</span> <span class="n">y</span><span class="o">;</span>
-<span class="k">if</span> <span class="o">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="n">ymax</span><span class="o">)</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">y</span><span class="o">;</span>
-</pre></div>
-
-
-<p>The decision to use standard or tabular format is made on a case-by-case basis.
-Of course, tabular format shall not be abused.</p>
-<h1 id="javadoc">Documentation formatting<a class="headerlink" href="#javadoc" title="Permanent link">&para;</a></h1>
-<p>Apache SIS uses the standard Javadoc conventions, except for the 80 characters line length restriction.
-Javadoc lines should not exceed 120 characters, but exceptions to this rule may exist for preserving the
-structure of <code>&lt;table&gt;</code> elements.</p>
-<h2 id="javadoc-tags">Javadoc annotations<a class="headerlink" href="#javadoc-tags" title="Permanent link">&para;</a></h2>
-<p>SIS uses standard javadoc annotations. The meaning of some tags are refined as below:</p>
-<ul>
-<li><code>@since</code>   - the SIS version when the annotated element (class, method, <i>etc.</i>) was first introduced.</li>
-<li><code>@version</code> - the last SIS version when the code of the annotated class got a significant change.</li>
-<li><code>@author</code>  - developer name in <var>FirstName</var> <var>LastName</var> (<var>Organization</var>) format.
-                 A separated <code>@author</code> tag is added for each developer.
-                 The intent is to allow other developers to know to who to ask questions if needed.</li>
-</ul>
-<p>In addition, the <code>sis-build-helper</code> modules provides the following custom javadoc taglets:</p>
-<table class="table">
-<thead>
-<tr>
-<th>Javadoc tag</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>@module</code></td>
-<td>Create links to the module where the class is defined, source code and Maven artifacts.</td>
-</tr>
-<tr>
-<td><code>{@include}</code></td>
-<td>Include the content of a given HTML file below a <code>&lt;h2&gt;</code> section having the given title.</td>
-</tr>
-<tr>
-<td><code>{@preformat}</code></td>
-<td>An inline taglet for pre-formatted text. The first word inside the taglet shall be one of <code>java</code>, <code>xml</code>, <code>sql</code>, <code>wkt</code>, <code>text</code>, <code>math</code> or <code>shell</code>.</td>
-</tr>
-</tbody>
-</table>
-<h2 id="html">HTML elements<a class="headerlink" href="#html" title="Permanent link">&para;</a></h2>
-<p>HTML tags and entities shall be used only when there is no equivalent Javadoc tag.
-For example:</p>
-<ul>
-<li>Instead of "<code>&lt;code&gt;✎&lt;/code&gt;</code>", use "<code>{@code ✎}</code>".</li>
-<li>Instead of "<code>a &amp;lt; b &amp;lt; c</code>", use "<code>{@literal a &lt; b &lt; c}</code>".</li>
-<li>Instead of "<code>&lt;pre&gt;✎&lt;/pre&gt;</code>" for a Java listing, use "<code>{@preformat java ✎}</code>"
-     (this Javadoc tag is specific to Apache SIS — see above table).</li>
-</ul>
-<h3 id="paragraph">Paragraphs<a class="headerlink" href="#paragraph" title="Permanent link">&para;</a></h3>
-<p>Usages of the <code>&lt;p&gt;</code> tag should be relatively rare, since we use CSS styles (see below)
-as much as possible for controlling the margin between elements like lists and tables.
-Do <strong>not</strong> use <code>&lt;p&gt;</code> for the first paragraph in a package, class or member documentation,
-or for the first paragraph after a <code>&lt;/ul&gt;</code>, <code>&lt;/ol&gt;</code>, <code>&lt;/table&gt;</code>, <code>&lt;/blockquote&gt;</code>, <code>&lt;/pre&gt;</code>,
-or <code>{@preformat}</code> element.
-The <code>&lt;p&gt;</code> tag shall be used only for separating a new paragraph from a previous one.
-In such cases, <code>&lt;p&gt;</code> shall have a matching <code>&lt;/p&gt;</code> tag at the paragraph end in order to form valid HTML.</p>
-<h3 id="css">Javadoc CSS<a class="headerlink" href="#css" title="Permanent link">&para;</a></h3>
-<p>Avoid using HTML attributes other than <code>class</code> as much as possible.
-Instead, rely on styling. Some HTML tags having a style definition in Apache SIS are:</p>
-<table class="table">
-<thead>
-<tr>
-<th>HTML tag</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>&lt;div class="section"&gt;</code></td>
-<td>Header of a sub-section in a package, class or member description.</td>
-</tr>
-<tr>
-<td><code>&lt;div class="note"&gt;</code></td>
-<td>Indented text with smaller font, used for notes or examples.</td>
-</tr>
-<tr>
-<td><code>&lt;div class="warning"&gt;</code></td>
-<td>Text in red color, used for warning about probable API changes.</td>
-</tr>
-<tr>
-<td><code>&lt;ul&gt;</code> and <code>&lt;ol&gt;</code></td>
-<td>Default list styles with few space between items (suitable for compact lists).</td>
-</tr>
-<tr>
-<td><code>&lt;ul class="verbose"&gt;</code></td>
-<td>A list style with space between items. Used for lists having verbose (multi-lines) items.</td>
-</tr>
-<tr>
-<td><code>&lt;table class="compact"&gt;</code></td>
-<td>Table without border and no space between rows. Used for lists with columns alignment.</td>
-</tr>
-<tr>
-<td><code>&lt;table class="sis"&gt;</code></td>
-<td>Table with a border, blue headers, light background and some space between columns.</td>
-</tr>
-<tr>
-<td><code>&lt;th class="hsep"&gt;</code></td>
-<td>In SIS tables, draw a line on the top border. Used for drawing table section separators.</td>
-</tr>
-<tr>
-<td><code>&lt;th class="sep"&gt;</code></td>
-<td>In SIS tables, draw a bright line on the left border. Used for drawing column separators.</td>
-</tr>
-<tr>
-<td><code>&lt;td class="sep"&gt;</code></td>
-<td>In SIS tables, draw a bright line on the left border. Used for drawing column separators.</td>
-</tr>
-</tbody>
-</table>
-<h2 id="mathml">MathML elements<a class="headerlink" href="#mathml" title="Permanent link">&para;</a></h2>
-<p>The source code occasionally uses MathML for formulas that are difficult to render with only Unicode characters.
-PNG images are not extensively used for formulas because they are difficult to edit after creation,
-and their content are invisible to search operations (for example when a variable is renamed).
-For examples of MathML usage in SIS, search for the <code>&lt;math …&gt;</code> XML tag in Java source files
-(note: there is also legacy <code>{@preformat math …}</code> custom Javadoc tags, but they may be phased out as MathML adoption increase).
-For an introduction to MathML, see:</p>
-<ul>
-<li><a href="http://www.dessci.com/en/reference/mathml/">A Gentle Introduction to MathML</a> on Design Science</li>
-<li><a href="http://reference.wolfram.com/mathematica/XML/tutorial/MathML.html">Working with MathML</a> on Wolfram Mathematica</li>
-</ul>
-<p>MathML is supported natively in Firefox, Safari and Opera.
-Internet Explorer users need to <a href="http://www.dessci.com/en/products/mathplayer/download.htm">install a plugin</a>.
-Firefox users can optionally install the <a href="http://developer.mozilla.org/en-US/docs/Mozilla/MathML_Project/Fonts">fonts for Mozilla's MathML engine</a> for better results.
-Note that a <a href="http://www.mathjax.org/">JavaScript display engine</a> is available for all browsers, but not yet used by SIS.</p>
+<h1 id="history">History<a class="headerlink" href="#history" title="Permanent link">&para;</a></h1>
+<p>All developments and tags prior Apache SIS 1.0 were done on a <a href="http://subversion.apache.org">Subversion</a> repository
+and can be <a href="http://svn.apache.org/viewvc/sis/">browsed online</a>.
+Tags for Apache SIS versions 0.1 to 0.8 should be fetched from the <a href="https://svn.apache.org/repos/asf/sis/tags/">SVN repository</a>.
+The development branches on that repository were named <code>JDK8</code>, <code>JDK7</code>, <code>JDK6</code> and <code>trunk</code>.</p>
             </article>
           </section>
         </div><!--/span-->
@@ -481,7 +306,7 @@ Note that a <a href="http://www.mathjax.org/">JavaScript display engine</a> is a
 
   <footer class="footer">
     <div class="container">
-      <p>Copyright &copy; 2013-2018 The Apache Software Foundation, Licensed under the
+      <p>Copyright &copy; 2013-2019 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
           Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
     </div>

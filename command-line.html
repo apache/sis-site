@@ -29,11 +29,11 @@
               </li>
               <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">Project Documentation<b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="book/index.html">Developer guide</a></li>
+                  <li><a href="book/index.html">Developer Guide</a></li>
                   <li><a href="apidocs/index.html">Online Javadoc</a></li>
                   <li><a href="downloads.html">Downloads</a></li>
-                  <li><a href="source.html">Source Code</a></li>
-                  <li><a href="code-patterns.html">Code patterns</a></li>
+                  <li><a href="source.html">Checkout Sources</a></li>
+                  <li><a href="epsg.html">EPSG Database</a></li>
                   <li><a href="faq.html">FAQ</a></li>
                   <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
                 </ul>
@@ -67,11 +67,11 @@
               <li><a href="mail-lists.html">Mailing Lists</a></li>
               <li><a href="team-list.html">Project Team</a></li>
               <li class="nav-header">Project Documentation</li>
-              <li><a href="book/index.html">Developer guide</a></li>
+              <li><a href="book/index.html">Developer Guide</a></li>
               <li><a href="apidocs/index.html">Online Javadoc</a></li>
               <li><a href="downloads.html">Downloads</a></li>
-              <li><a href="source.html">Source Code</a></li>
-              <li><a href="code-patterns.html">Code patterns</a></li>
+              <li><a href="source.html">Checkout Sources</a></li>
+              <li><a href="epsg.html">EPSG Database</a></li>
               <li><a href="faq.html">FAQ</a></li>
               <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
               <li class="nav-header">ASF</li>
@@ -112,7 +112,7 @@ in their own application.</p>
 </li>
 <li><a href="#usage">Usage</a></li>
 <li><a href="#examples">Examples</a><ul>
-<li><a href="#crs">Getting ISO 19111 Coordinate Reference Systems (CRS)</a></li>
+<li><a href="#crs">Print Coordinate Reference Systems (CRS) definition</a></li>
 <li><a href="#identifier">Getting a verified EPSG identifier from a Coordinate Reference System</a></li>
 <li><a href="#coordinateOperation">Performing coordinate conversions or transformations</a></li>
 <li><a href="#metadata">Extracting ISO 19115 Metadata</a></li>
@@ -122,9 +122,9 @@ in their own application.</p>
 </ul>
 </div>
 <h1 id="install">Installation<a class="headerlink" href="#install" title="Permanent link">&para;</a></h1>
-<p>Select "Apache SIS 0.8 binary" from the <a href="downloads.html">downloads page</a> an unzip in any directory.
+<p>Select "Apache SIS 1.0 binary" from the <a href="downloads.html">downloads page</a> an unzip in any directory.
 The directory structure will be as below:</p>
-<div class="codehilite"><pre>apache-sis-0.8
+<div class="codehilite"><pre>apache-sis-1.0
 ├─ bin
 ├─ conf
 ├─ data
@@ -136,27 +136,28 @@ The directory structure will be as below:</p>
 <p>The <code>bin</code> sub-directory contains a <code>sis</code> command for Unix systems (Linux or MacOS — we have not yet done a <code>sis.bat</code> file for Windows).
 The <code>bin</code> sub-directory can be added to the <code>PATH</code> environment variable for convenience, but this is not mandatory.
 Example:</p>
-<div class="codehilite"><pre><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PWD</span>/apache-sis-0.8/bin:<span class="nv">$PATH</span>
+<div class="codehilite"><pre><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PWD</span>/apache-sis-1.0/bin:<span class="nv">$PATH</span>
 </pre></div>
 
 
 <p>The remaining of this page assumes that the <code>bin</code> directory is on the search path.
-If not, the same examples can still be executed by replacing the <code>sis</code> command by <code>./apache-sis-0.8/bin/sis</code>.</p>
+If not, the same examples can still be executed by replacing the <code>sis</code> command by <code>./apache-sis-1.0/bin/sis</code>.</p>
 <h2 id="dependencies">Optional dependencies<a class="headerlink" href="#dependencies" title="Permanent link">&para;</a></h2>
 <p>Every JAR files present in the <code>lib</code> sub-directory will be included on the classpath during <code>sis</code> command execution.
-By default, the <code>lib</code> directory contains only the <code>sis.jar</code> file.
+By default, the <code>lib</code> directory contains the <code>sis.jar</code> file with only GeoAPI JAXB API dependencies.
 However users can add other JAR files in that directory for the following optional dependencies:</p>
 <ul>
 <li>
 <p><strong>Derby driver —</strong>
     needed only if Apache SIS can not locate a JavaDB driver in the JDK installation directory.
-    This is normally not needed on Oracle JDK6, JDK7 or JDK8 distribution.</p>
+    This is not needed on Oracle JDK8 distribution, but needed for all OpenJDK versions and for
+    Oracle JDK more recent than 8.</p>
 </li>
 <li>
 <p><strong>UCAR netCDF library —</strong>
     by default, SIS uses its own embedded netCDF reader which supports only the classical netCDF format, as standardized by OGC.
     If there is a need to read files encoded in GRID or HDF formats, then one can copy the UCAR netCDF library in the <code>lib</code> sub-directory.
-    If presents, the UCAR library should be detected and used automatically.</p>
+    If presents, the UCAR library should be detected and used automatically when SIS can not read a netCDF file by itself.</p>
 </li>
 </ul>
 <h1 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h1>
@@ -205,7 +206,7 @@ When two such CRS are known (the <em>source</em> and the <em>target</em>), it is
 However the coordinate operation depends not only on the source and target CRS, but also on the <em>area of interest</em> as shown
 by the example transforming city coordinates in USA and in Canada.
 Then another example show how to get a wider set of metadata, with the CRS as only one specific element of those metadata.</p>
-<h2 id="crs">Getting ISO 19111 Coordinate Reference Systems (CRS)<a class="headerlink" href="#crs" title="Permanent link">&para;</a></h2>
+<h2 id="crs">Print Coordinate Reference Systems (CRS) definition<a class="headerlink" href="#crs" title="Permanent link">&para;</a></h2>
 <p>Apache SIS can read Coordinate Reference System (CRS) definitions from various sources:</p>
 <ul>
 <li>Codes from the EPSG geodetic dataset</li>
@@ -220,12 +221,8 @@ For example the following command prints the definition of the <em>"JGD2011 / Ja
 </pre></div>
 
 
-<p>The first time that a command requires the EPSG dataset, Apache SIS will propose to download and install a local copy.
-This automatic download happen only when using the command-line tools described in this page.
-Developers who wish to use the EPSG dataset in their applications can use the Maven artifact
-documented in <a href="downloads.html#epsg">download</a> page.</p>
 <p><details>
-  <summary>The above command should produce the following output (click to expand):</summary>
+  <summary>Expected output (click to expand):</summary>
 <pre>ProjectedCRS["JGD2011 / Japan Plane Rectangular CS VIII",
   BaseGeodCRS["JGD2011",
     Datum["Japanese Geodetic Datum 2011",
@@ -245,19 +242,34 @@ documented in <a href="downloads.html#epsg">download</a> page.</p>
   Scope["Large and medium scale topographic mapping, cadastral and engineering survey."],
   Area["Japan - onshore - Honshu between approximately 137°45'E and 139°E - Niigata-ken; Nagano-ken; Yamanashi-ken; Shizuoka-ken."],
   BBox[34.54, 137.32, 38.58, 139.91],
-  Id["EPSG", 6676, "8.9", URI["urn:ogc:def:crs:EPSG:8.9:6676"]],
+  Id["EPSG", 6676, "9.7", URI["urn:ogc:def:crs:EPSG:9.7:6676"]],
   Remark["Replaces JGD2000 / Japan Plane Rectangular CS VIII (CRS code 2450) with effect from 21st October 2011."]]</pre>
 </details></p>
+<p>The first time that a command requires the EPSG dataset, Apache SIS will propose to download and install a local copy.
+This automatic download happen only when using the command-line tools described in this page.
+Developers who wish to use the EPSG dataset in their applications can use the Maven artifact
+documented in <a href="downloads.html#epsg">download</a> page.
+If Apache SIS does not propose to download the EPSG geodetic dataset, it may be because no Derby database has been found.
+Try to add the Derby optional dependency <a href="./epsg.html#command-line">as documented here</a>.</p>
 <p>The above output is compatible with version 2 of <em>Well Known Text</em> (WKT) format.
-However some applications are restricted to WKT version 1.
-For an output using the legacy WKT 1 format, one can add the <code>--format wkt1</code> option to the above command-line.</p>
+The output format can be controlled as below:</p>
+<ul>
+<li>
+<p>Some applications are restricted to WKT version 1.
+    For an output using the legacy WKT 1 format, one can add the <code>--format wkt1</code> option to the above command-line.</p>
+</li>
+<li>
 <p>The “WKT 2” specification allows some flexibility in keyword names and in the way to specify units of measurement.
-By default, the command-line uses this flexibility for producing less verbose but still legal WKT 2 output.
-If an output closer to WKT 2 recommendations is desired, one can add the <code>--format wkt2</code> option to the above command.
-The result will be slightly more verbose.</p>
+    By default, the command-line uses this flexibility for producing less verbose but still legal WKT 2 output.
+    If an output closer to WKT 2 recommendations is desired, one can add the <code>--format wkt2</code> option to the above command.
+    The result will be slightly more verbose.</p>
+</li>
+<li>
 <p>Apache SIS can also read and write CRS definitions in the <em>Geographic Markup Language</em> (GML) format.
-For GML output, one can add the <code>--format xml</code> option to the above command.
-The result will be much more verbose than WKT outputs.</p>
+    For GML output, one can add the <code>--format xml</code> option to the above command.
+    The result will be much more verbose than WKT outputs.</p>
+</li>
+</ul>
 <p>Java API for accessing functionalities shown in above examples are:</p>
 <ul>
 <li>Convenience static methods in <code>org.apache.sis.referencing</code> package:<ul>
@@ -285,8 +297,8 @@ Such codes can be written in different ways. For example all the following strin
 <p>In a <em>Well Known Text</em> (WKT) string, the code can appear at the bottom of the definition
 in an optional element like <code>ID["EPSG", 4326]</code> or <code>AUTHORITY["EPSG", "4326"]</code>.
 However in many cases the code is missing.
-Sometime Apache SIS can find a missing code by comparing a given CRS against the definitions in the EPSG database.</p>
-<p>The following example reads a WKT for the <em>“NTF (Paris) / Lambert zone II”</em> Coordinate Reference System,
+Sometime Apache SIS can find a missing code by comparing a given CRS against the definitions in the EPSG database.
+The following example reads a WKT for the <em>“NTF (Paris) / Lambert zone II”</em> Coordinate Reference System,
 but in which the <code>ID["EPSG", 27572]</code> element has been intentionally omitted.
 Furthermore, the <em>“NTF (Paris) / Lambert zone II”</em> name has been replaced by <em>“NTF (Paris) / zone to be discovered by the demo”</em> name.
 Executing the following command:</p>
@@ -295,7 +307,7 @@ Executing the following command:</p>
 
 
 <p>produces an output like below:</p>
-<div class="codehilite"><pre>    urn:ogc:def:crs:EPSG:8.9:27572    | NTF (Paris) / Lambert zone II
+<div class="codehilite"><pre>    urn:ogc:def:crs:EPSG:9.7:27572    | NTF (Paris) / Lambert zone II
 </pre></div>
 
 
@@ -344,7 +356,7 @@ The next example asks the identifier of a CRS which is normally defined as below
 
 
 <p>produces an output like below:</p>
-<div class="codehilite"><pre>    urn:ogc:def:crs:EPSG:8.9:3994    | WGS 84 / Mercator 41
+<div class="codehilite"><pre>urn:ogc:def:crs:EPSG:9.7:3994    | WGS 84 / Mercator 41
 </pre></div>
 
 
@@ -442,7 +454,7 @@ The data file given in argument can be a local file or a URL.
 By default, the metadata are shown in a relatively compact tree-table format.
 But the metadata can optionally be exported as an ISO 19139 compliant XML document.</p>
 <blockquote><b>Note:</b>
-As of SIS 0.8, only ISO 19139 XML documents, CF-compliant netCDF files, GeoTIFF files, GPX files
+As of SIS 1.0, only ISO 19139 XML documents, CF-compliant netCDF files, GeoTIFF files, GPX files
 or Moving Features CSV files can be given in argument to this command.
 </blockquote>
 
@@ -510,7 +522,7 @@ For such cases, it is more efficient to loop inside a small Java program using t
 
   <footer class="footer">
     <div class="container">
-      <p>Copyright &copy; 2013-2018 The Apache Software Foundation, Licensed under the
+      <p>Copyright &copy; 2013-2019 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br />
           Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
     </div>
