@@ -1,0 +1,143 @@
+---
+title: Site management
+---
+
+<!-- TODO: remove? -->
+
+This page explains how the Apache SIS web site is created and how to update the site.
+The intended audiences are SIS release managers and SIS web site maintainers.
+
+General documentation about Apache Content Management System (CMS) can be found in the [CMS reference][cms] page.
+The remaining of this page is specific to the SIS project.
+
+{{< toc >}}
+
+# Directory layout    {#directory-layout}
+
+The source files for the Apache SIS web site can be fetched from Subversion using the following command:
+
+{{< highlight bash >}}
+svn checkout https://svn.apache.org/repos/asf/sis/site/trunk site
+{{< / highlight >}}
+
+The directory layout is as below, omitting version numbers in file names.
+The `*` character stands for an arbitrary amount of files having the given extension.
+
+{{< highlight text >}}
+site
+├─ css
+│  ├─ bootstrap.min.css
+│  └─ sis.css
+├─ img
+│  └─ *.png
+├─ js
+│  ├─ bootstrap.js
+│  └─ jquery.js
+├─ content
+│  └─ *.mdtext
+└─ templates
+   ├─ single_narrative.html
+   └─ skeleton.html
+{{< / highlight >}}
+
+All files with the `.mdtext` extension use the Markdown format, which is described there:
+
+* [General markup syntax][markdown]
+* [Extension to the syntax][extension]
+
+New `.mdtext` files can be created using the [site-management.mdtext][template] file as a template.
+Those files can be modified in any text editor and committed with the usual Subversion commands.
+Each commit will trig a new site build, which will be visible in the _staging_ area at
+[http://sis.staging.apache.org](http://sis.staging.apache.org).
+The build progress can be monitored on the [Buildbot][buildbot] page, but they are usually very fast.
+Once a staging site has been approved, it can be published to
+[http://sis.apache.org](http://sis.apache.org) as below:
+
+* Login to the [ASF Content Management System][cms-admin].
+* Click on _Publish sis site_.
+
+# Content    {#content}
+
+All `.mdtext` files should start as below (replace the `<...>` block by the corresponding content):
+
+{{< highlight markdown >}}
+Title:  <put the page title here>
+Notice: <copy the notice from an existing page>
+{{< / highlight >}}
+
+The title will appear both in the browser window title bar, and as a header at the beginning of the generated HTML page.
+The notice should be followed by a short abstract of the page content (typically a single paragraph),
+then a _Table Of Content_ to be automatically generated:
+
+{{< highlight markdown >}}
+[TOC]
+{{< / highlight >}}
+
+The first header appears after the table of content.
+For each header, and anchor should be specified using the `{#...}` syntax.
+Do not rely on automatically generated anchors, since they may not be stable if some text in the header is modified.
+Example:
+
+{{< highlight markdown >}}
+My first header in my page    {#firstHeader}
+============================================
+{{< / highlight >}}
+
+# Style sheets
+
+The following table lists the style sheets used by Apache SIS.
+The Maven and Javadoc style sheets are mentioned for completeness, but are not located on the web site repository.
+They are rather located together with the SIS library source code.
+
+Page set   | File                                 | Purpose            | Remark
+---------- | ------------------------------------ | ------------------ | ------------------------------------------------------------
+Web site   | `content/css/bootstrap.min.css`      | Main appearance    | Generated from the [Twitter's Bootstrap project][bootstrap].
+Web site   | `http://www.apache.org/css/code.css` | Code highlighting  | Located on the foundation-wide Apache server.
+Web site   | `content/css/sis.css`                | SIS-specific style | Overwrite `bootstrap.min.css`, edited manually.
+Maven site | `src/site/resources/css/site.css`    | Maven site         | Overwrite `maven-base.css`, edited manually.
+Javadoc    | `src/main/javadoc/stylesheet.css`    | Javadoc appearance | Copy of javadoc output, edited manually.
+
+## Updating bootstrap    {#bootstrap}
+
+If the `bootstrap.min.css` file needs to be updated, then visit the [Bootstrap][bootstrap] web site
+and select the following options:
+
+* Scaffolding
+  + Body type and links
+  + Grid system
+  + Layouts
+* Components
+  + Navs, tabs, and pills
+  + Navbar
+* Miscellaneous
+  + Wells
+* Base CSS
+  + Code and pre
+* JS Components
+  + Dropdowns
+
+If additional options are needed, then select the **minimal** amount of new options.
+Do not select an option that _may_ be used; select only the options that are actually going to be used.
+Then:
+
+* Update this page for listing the new options.
+* Download the `bootstrap.zip` file and unzip in the `content` directory, overwriting the existing files.
+* Delete `css/bootstrap.css`, since it is not used.
+* Add the following comment in `css/bootstrap.min.css`, just below the copyright header:
+
+`bootstrap.min.css`:
+
+{{< highlight css >}}
+/*
+ * This file is automatically generated - DO NOT EDIT.
+ * See http://sis.apache.org/site-management.html
+ */
+{{< / highlight >}}
+
+[cms]:       http://www.apache.org/dev/cmsref.html
+[cms-admin]: https://cms.apache.org/sis/
+[bootstrap]: http://twitter.github.io/bootstrap/customize.html
+[markdown]:  http://daringfireball.net/projects/markdown/syntax
+[extension]: http://michelf.ca/projects/php-markdown/extra
+[template]:  http://svn.apache.org/repos/asf/sis/site/trunk/content/site-management.mdtext
+[buildbot]:  http://ci.apache.org/builders/sis-site-staging
