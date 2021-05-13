@@ -14,34 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-# Apache SIS website
+# Apache SIS Javadoc
 
-This is the source code for the website of [Apache SIS](https://sis.apache.org/), hosted at:
+This is the API documentation generated for [Apache SIS](https://sis.apache.org/), hosted at:
 
-    https://sis.apache.org/
+    https://sis.apache.org/apidocs/
 
-## Repository structure
-
-This repository uses 2 branches for building the website.
-- The `main` branch, which contains all the sources for the website.
-- The `asf-site` branch, which contains the generated website being used for the actual website.
-
-When contributing patches, please create pull requests for the `main` branch.
-
-## Content Management System
-
-The website uses Hugo as static website generator.
-See [Hugo](https://gohugo.io/) for more info and for details how to install Hugo.
-
-## Generate the website
-
-To generate the static website, execute `hugo` to generate and serve the website on `localhost:1313`.
-
-During development, it may be useful to run an incremental build. For this to
-work, execute `hugo server -D` to continuously generate and serve the website on
-`localhost:1313`.
-
-## Building and publishing the website
-
-[gitpubsub](https://www.apache.org/dev/gitpubsub.html) is used to publish the
-site, using the content from the `asf-site` branch.
+See the main branch of this repository for more information on repository structure.
