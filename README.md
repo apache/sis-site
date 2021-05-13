@@ -22,9 +22,10 @@ This is the source code for the website of [Apache SIS](https://sis.apache.org/)
 
 ## Repository structure
 
-This repository uses 2 branches for building the website.
+This repository uses 3 branches for building the website.
 - The `main` branch, which contains all the sources for the website.
 - The `asf-site` branch, which contains the generated website being used for the actual website.
+- The `javadoc` branch, which contains API documentation generated from source code.
 
 When contributing patches, please create pull requests for the `main` branch.
 

@@ -49,8 +49,8 @@ in this page shall be adjusted accordingly.
     │  └─ integration-test
     │     └─ maven
     └─ site
-       └─ content
-          └─ apidocs
+       ├─ main
+       └─ javadoc
 {{< / highlight >}}
 
 # Review project status before branching    {#prepare-source}
@@ -441,18 +441,15 @@ svn commit --message "SIS release candidate $RELEASE_CANDIDATE"
 Copy the Javadoc to the web site staging directory:
 
 {{< highlight bash >}}
-cd ../site/content
-rm -r apidocs
+cd ../site/javadoc
+rm -r *
+git reset README.md
+git checkout README.md
 unzip $DIST_DIR/apache-sis-$NEW_VERSION-doc.zip
-{{< / highlight >}}
-
-Execute `svn add` for new files and `svn remove` for deleted files:
-
-{{< highlight bash >}}
-cd apidocs
-svn status | gawk '/^\?.*/ {print $2}' | xargs svn add
-svn status | gawk '/^\!.*/ {print $2}' | xargs svn remove
-svn commit --message "Update javadoc for SIS $NEW_RELEASE."
+mv apidocs/* .
+rmdir apidocs
+git add -A
+git commit --message "Update javadoc for SIS $NEW_RELEASE."
 {{< / highlight >}}
 
 ## Test the release    {#test}
