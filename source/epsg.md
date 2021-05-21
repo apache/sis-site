@@ -29,7 +29,7 @@ In order to use the EPSG geodetic dataset with Apache SIS, apply *one* of the fo
 
 {{< toc >}}
 
-#Install a local copy with command-line tool    {#command-line}
+# Install a local copy with command-line tool    {#command-line}
 
 If the [command-line tool](command-line.html) has been downloaded and installed, just query any CRS.
 For example:
