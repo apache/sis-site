@@ -512,8 +512,8 @@ Commit:
 svn commit --message "Prepare documentation for the $NEW_VERSION release."
 {{< / highlight >}}
 
-The new web site will be published in the [staging area](http://sis.staging.apache.org).
-It will not yet be published on `http://sis.apache.org`.
+The new web site will be published in the [staging area](https://sis.staged.apache.org/).
+It will not yet be published on `https://sis.apache.org`.
 
 # Put the release candidate up for a vote    {#vote}
 

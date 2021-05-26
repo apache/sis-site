@@ -48,10 +48,10 @@ All files with the `.mdtext` extension use the Markdown format, which is describ
 New `.mdtext` files can be created using the [site-management.mdtext][template] file as a template.
 Those files can be modified in any text editor and committed with the usual Subversion commands.
 Each commit will trig a new site build, which will be visible in the _staging_ area at
-[http://sis.staging.apache.org](http://sis.staging.apache.org).
+[https://sis.staged.apache.org/](https://sis.staged.apache.org/).
 The build progress can be monitored on the [Buildbot][buildbot] page, but they are usually very fast.
 Once a staging site has been approved, it can be published to
-[http://sis.apache.org](http://sis.apache.org) as below:
+[https://sis.apache.org](https://sis.apache.org) as below:
 
 * Login to the [ASF Content Management System][cms-admin].
 * Click on _Publish sis site_.
