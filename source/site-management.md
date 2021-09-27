@@ -2,13 +2,8 @@
 title: Site management
 ---
 
-<!-- TODO: remove? -->
-
 This page explains how the Apache SIS web site is created and how to update the site.
 The intended audiences are SIS release managers and SIS web site maintainers.
-
-General documentation about Apache Content Management System (CMS) can be found in the [CMS reference][cms] page.
-The remaining of this page is specific to the SIS project.
 
 {{< toc >}}
 
@@ -17,24 +12,25 @@ The remaining of this page is specific to the SIS project.
 The source files for the Apache SIS web site can be fetched from Subversion using the following command:
 
 {{< highlight bash >}}
-svn checkout https://svn.apache.org/repos/asf/sis/site/trunk site
+git clone https://github.com/apache/sis-site
 {{< / highlight >}}
 
 The directory layout is as below, omitting version numbers in file names.
 The `*` character stands for an arbitrary amount of files having the given extension.
 
 {{< highlight text >}}
-site
-├─ css
-│  ├─ bootstrap.min.css
-│  └─ sis.css
-├─ img
-│  └─ *.png
-├─ js
-│  ├─ bootstrap.js
-│  └─ jquery.js
-├─ content
+sis-site
+├─ source
 │  └─ *.mdtext
+├─ static
+│   ├─ css
+│   │  ├─ bootstrap.min.css
+│   │  └─ sis.css
+│   ├─ img
+│   │  └─ *.png
+│   ├─ js
+│   │  ├─ bootstrap.js
+│   │  └─ jquery.js
 └─ templates
    ├─ single_narrative.html
    └─ skeleton.html
@@ -46,15 +42,13 @@ All files with the `.mdtext` extension use the Markdown format, which is describ
 * [Extension to the syntax][extension]
 
 New `.mdtext` files can be created using the [site-management.mdtext][template] file as a template.
-Those files can be modified in any text editor and committed with the usual Subversion commands.
-Each commit will trig a new site build, which will be visible in the _staging_ area at
+Thee files can be modified in any text editor and committed with the usual Git commands.
+The site must be built manually by executing the `hugo` comment from the project root directory.
+The web site will be written in the `target/content/` sub-directory.
+Copying those files in the `asf-staging` branch will make them visible in the _staging_ area at
 [https://sis.staged.apache.org/](https://sis.staged.apache.org/).
-The build progress can be monitored on the [Buildbot][buildbot] page, but they are usually very fast.
-Once a staging site has been approved, it can be published to
-[https://sis.apache.org](https://sis.apache.org) as below:
-
-* Login to the [ASF Content Management System][cms-admin].
-* Click on _Publish sis site_.
+Once a staging site has been approved, it can be published by merging the `asf-staging` branch
+to the `asf-site` branch.
 
 # Content    {#content}
 

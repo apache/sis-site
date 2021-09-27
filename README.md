@@ -36,13 +36,7 @@ See [Hugo](https://gohugo.io/) for more info and for details how to install Hugo
 
 ## Generate the website
 
-To generate the static website, execute `hugo` to generate and serve the website on `localhost:1313`.
+To generate the static website, execute `hugo` to generate in the `target/` directory.
 
-During development, it may be useful to run an incremental build. For this to
-work, execute `hugo server -D` to continuously generate and serve the website on
-`localhost:1313`.
-
-## Building and publishing the website
-
-[gitpubsub](https://www.apache.org/dev/gitpubsub.html) is used to publish the
-site, using the content from the `asf-site` branch.
+During development, it may be useful to run an incremental build. For this to work,
+execute `hugo server -D` to continuously generate and serve the website on `localhost:1313`.
