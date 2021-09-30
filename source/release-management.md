@@ -263,7 +263,7 @@ mvn clean deploy --activate-profiles apache-release
 
 Verify the staged artifacts in the [Nexus repository][repository].
 The artifacts can be found under _Build Promotion_ → _Staging repositories_, and searching for `org.apache.sis` in the _Repository_ column.
-Navigate through the artifact tree and make sure that all javadoc, source and jar files have `.asc` (GPG signature) and `.md5` files.
+Navigate through the artifact tree and make sure that all javadoc, source and jar files have `.asc` (GPG signature) and `.sha1` files.
 Select any `*-javadoc.jar` file and click on the <cite>Archive Browser</cite> tab on the right side.
 Select any `*.html` file which is known to use some of the custom taglets defined in the `sis-build-helper` module.
 Click on that file and verify that the custom elements are rendered properly.

@@ -17,9 +17,9 @@ For convenience, an aggregated Javadoc and a pre-compiled JAR file are available
 The precompiled JAR file contains most modules and dependencies in a single archive for easier inclusion
 in a classpath.
 
-* [Apache SIS 1.1 sources][src] \[[PGP][src-PGP]\] \[[MD5][src-MD5]\] \[[SHA][src-SHA]\]
-* [Apache SIS 1.1 javadoc][doc] \[[PGP][doc-PGP]\] \[[MD5][doc-MD5]\] \[[SHA][doc-SHA]\]
-* [Apache SIS 1.1 binary][bin]  \[[PGP][bin-PGP]\] \[[MD5][bin-MD5]\] \[[SHA][bin-SHA]\]
+* [Apache SIS 1.1 sources][src] \[[PGP][src-PGP]\] \[[SHA 512][src-SHA]\]
+* [Apache SIS 1.1 javadoc][doc] \[[PGP][doc-PGP]\] \[[SHA 512][doc-SHA]\]
+* [Apache SIS 1.1 binary][bin]  \[[PGP][bin-PGP]\] \[[SHA 512][bin-SHA]\]
 
 ## Verify signatures    {#release-gpg}
 
@@ -125,11 +125,8 @@ See [How to use EPSG geodetic dataset](epsg.html) page for more information.
 [src-PGP]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-src.zip.asc
 [doc-PGP]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-doc.zip.asc
 [bin-PGP]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-bin.zip.asc
-[src-MD5]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-src.zip.md5
-[doc-MD5]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-doc.zip.md5
-[bin-MD5]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-bin.zip.md5
-[src-SHA]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-src.zip.sha
-[doc-SHA]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-doc.zip.sha
-[bin-SHA]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-bin.zip.sha
+[src-SHA]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-src.zip.sha512
+[doc-SHA]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-doc.zip.sha512
+[bin-SHA]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-bin.zip.sha512
 [EPSG]:     https://epsg.org/
 [EPSG-ToU]: https://epsg.org/terms-of-use.html
