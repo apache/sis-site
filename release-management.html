@@ -169,8 +169,8 @@ number of the previous and the new release respectively, and <code>$RELEASE_CAND
 the current release attempt. Those versions shall be set on the command line like below (Unix):</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">gpg --list-keys                     <span class="c1"># For getting the value to put in &lt;your key ID&gt;</span>
 <span class="nb">unset</span> PATH_TO_FX
-<span class="nb">export</span> <span class="nv">OLD_VERSION</span><span class="o">=</span>0.8
-<span class="nb">export</span> <span class="nv">NEW_VERSION</span><span class="o">=</span>1.0
+<span class="nb">export</span> <span class="nv">OLD_VERSION</span><span class="o">=</span>1.1
+<span class="nb">export</span> <span class="nv">NEW_VERSION</span><span class="o">=</span>1.2
 <span class="nb">export</span> <span class="nv">RELEASE_CANDIDATE</span><span class="o">=</span><span class="m">1</span>
 <span class="nb">export</span> <span class="nv">SIGNING_KEY</span><span class="o">=</span>&lt;your key ID&gt;    <span class="c1"># hexadecimal number with 8 or 40 digits.</span></code></pre></div>
 <h2 id="directory-layout">Directory layout   </h2>
@@ -194,15 +194,11 @@ in this page shall be adjusted accordingly.</p>
 <h1 id="prepare-source">Review project status before branching   </h1>
 <p>Replace the <code>$OLD_VERSION</code> number by <code>$NEW_VERSION</code> in the values of following properties on the development branch:</p>
 <ul>
-<li><code>DOWNLOAD_URL</code> in <code>application/sis-console/src/main/java/org/apache/sis/console/ResourcesDownloader.java</code> file.</li>
+<li><code>DOWNLOAD_URL</code> in <code>core/sis-utility/src/main/java/org/apache/sis/setup/OptionalInstallations.java</code> file.</li>
 <li><code>&lt;sis.non-free.version&gt;</code> in root <code>pom.xml</code> file.</li>
 <li>Review the <code>README</code> and <code>NOTICE</code> files in root directory.</li>
 <li>Review the <code>README</code> files in <code>application/sis-console/src/main/artifact/</code> and subdirectories.</li>
 </ul>
-<p>If not already done, build the C/C++ code of <code>sis-gdal</code> module:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> storage/sis-gdal/src/main/c
-make
-<span class="nb">cd</span> -</code></pre></div>
 <p>Commit and merge with other branches up to master.</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">git add --update
 git commit --message<span class="o">=</span><span class="s2">&#34;Set version number and the EPSG geodetic dataset URL to expected values after release.&#34;</span>
@@ -238,9 +234,9 @@ Those codes will appear with strike for making clear that they are deprecated.</
 <li>If successful, HTML files will be generated in the current directory.
 Open those files in a web browser and verify that information are okay,
 in particular the SIS and EPSG version numbers in the first paragraph.</li>
-<li>If okay, move those two HTML files to the <code>../site/content/tables/</code> directory, overwriting previous files.</li>
+<li>If okay, move those two HTML files to the <code>../site/main/static/tables/</code> directory, overwriting previous files.</li>
 <li>Revert the hack in <code>AuthorityCodes</code> class.</li>
-<li>Commit: <code>svn commit --message=&quot;Update the list CRS and operation methods supported by Apache SIS $NEW_VERSION.&quot;</code></li>
+<li>Commit: <code>git commit --message=&quot;Update the list CRS and operation methods supported by Apache SIS $NEW_VERSION.&quot;</code></li>
 </ol>
 <h2 id="release-notes">Prepare release notes   </h2>
 <p>We update JIRA soon because doing so is sometime a reminder of uncompleted tasks in source code.
@@ -249,7 +245,7 @@ Update <a href="http://issues.apache.org/jira/browse/SIS">JIRA</a> tasks and pre
 <li>Ensure that the <em>Fix Version</em> in issues resolved since the last release includes this release version correctly.</li>
 <li>Ensure that all open issues are resolved or closed before proceeding further.</li>
 <li>On the <code>site</code> source code repository, create a <code>content/release-notes/$NEW_VERSION.html</code> file with all the features added.</li>
-<li>Use <code>content/release-notes/$OLD_VERSION.html</code> as a template, omitting everything between the <code>&lt;body&gt;</code> and <code>&lt;/body&gt;</code> tags.</li>
+<li>Use <code>content/release-notes/$OLD_VERSION.html</code> as a template, omitting the old list of issues.</li>
 <li>The release notes can be obtained from JIRA, by clicking on the <em>Versions</em> tab → the version number → <em>Release notes</em>
 and then configuring the release notes to display HTML format and copying it.
 A suggested approach would be to reorganize the release notes as
@@ -257,26 +253,22 @@ A suggested approach would be to reorganize the release notes as
 The <em>Sub Tasks</em> can be classified according the category of their parent issue.</li>
 </ul>
 <p>Commit to staging area (not published immediately):</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> ../site
-cp content/release-notes/<span class="nv">$OLD_VERSION</span>.html content/release-notes/<span class="nv">$NEW_VERSION</span>.html
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> ../site/main
+cp static/release-notes/<span class="nv">$OLD_VERSION</span>.html static/content/release-notes/<span class="nv">$NEW_VERSION</span>.html
 <span class="c1"># Edit release notes before to continue.</span>
-svn add content/release-notes/<span class="nv">$NEW_VERSION</span>.html
-svn commit --message <span class="s2">&#34;Release notes for Apache SIS </span><span class="nv">$NEW_VERSION</span><span class="s2">.&#34;</span></code></pre></div>
+git add static/content/release-notes/<span class="nv">$NEW_VERSION</span>.html
+git commit --message <span class="s2">&#34;Release notes for Apache SIS </span><span class="nv">$NEW_VERSION</span><span class="s2">.&#34;</span></code></pre></div>
 <h1 id="branch">Create release branch   </h1>
 <p>Execute the following commands.
 It is okay to checkout the branch in a separated directory if desired.
 The <code>SIS_RC_DIR</code> environment variable will specify that directory.</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> ../master
 git checkout -b <span class="nv">$NEW_VERSION</span>-RC
-<span class="nb">cd</span> <span class="nv">$NEW_VERSION</span>-RC
 <span class="nb">export</span> <span class="nv">SIS_RC_DIR</span><span class="o">=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span></code></pre></div>
 <p>Remove the modules that are not yet ready for a release.
 This may require removing <code>&lt;module&gt;</code> elements in the parent <code>pom.xml</code> file.</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">git rm core/sis-cql
-git rm core/sis-portrayal
 git rm storage/sis-shapefile
-git rm application/sis-javafx
-git rm application/sis-webapp
 git rm storage/sis-storage/src/main/java/org/apache/sis/storage/WritableGridCoverageResource.java
 git add --update    <span class="c1"># for the removal of &lt;module&gt; elements in pom.xml files.</span>
 git commit --message<span class="o">=</span><span class="s2">&#34;Remove the modules to be excluded from </span><span class="nv">$NEW_VERSION</span><span class="s2"> release.&#34;</span></code></pre></div>
@@ -284,29 +276,15 @@ git commit --message<span class="o">=</span><span class="s2">&#34;Remove the mod
 <ul>
 <li>Remove the whole <code>&lt;pluginRepositories&gt;</code> block (including comment),
 since it should not be needed for releases (and is actually not allowed).</li>
-<li>Remove the <code>jetty</code> dependency since the module that used it has been removed.</li>
 </ul>
 <p>We need to update the SIS version numbers not only in the <code>pom.xml</code> files, but also in a few Java files.
 The following command performs the replacement using Ant.</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml branch -Dsis.version<span class="o">=</span><span class="nv">$NEW_VERSION</span>
-git rm core/sis-build-helper/src/main/ant</code></pre></div>
-<p>Validate with <code>git diff</code>, search <code>SNAPSHOT</code> in the whole source directory in case we missed some, then commit:</p>
+git rm -r core/sis-build-helper/src/main/ant</code></pre></div>
+<p>Validate with <code>git diff --staged</code>, search <code>SNAPSHOT</code> in the whole source directory in case we missed some, then commit:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">git add --update
 mvn clean install
 git commit --message<span class="o">=</span><span class="s2">&#34;Set version number to </span><span class="nv">$NEW_VERSION</span><span class="s2">.&#34;</span></code></pre></div>
-<p>Maybe apply the following hacks on the release branch only (do not apply them on master).
-Check first if those hacks are still needed for the next release (they were needed for 1.0):</p>
-<ul>
-<li>Remove all use of <code>javax.annotation.Generated</code> annotation.
-This removal should not have any effect on compilation result.</li>
-<li>In the root <code>pom.xml</code> under <code>maven-javadoc-plugin</code> configuration, add the following elements:
-<ul>
-<li><code>&lt;link&gt;http://sis.apache.org/apidocs&lt;/link&gt;</code> inside <code>&lt;links&gt;</code> block.</li>
-<li><code>&lt;additionalOption&gt;-Xdoclint:all,-reference&lt;/additionalOption&gt;</code> inside <code>&lt;additionalOptions&gt;</code> block.</li>
-</ul>
-</li>
-<li>Commit on the release branch only.</li>
-</ul>
 <h2 id="test-branch">Test branch extensively   </h2>
 <p>Build the project with the <code>apache-release</code> profile enabled.
 This profile performs the following actions:</p>
@@ -321,7 +299,7 @@ Consequently building the <code>*.zip</code> file is an additional test worth to
 <p>Each of those additional products may cause a failure that did not happen in normal builds.</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mvn clean install --activate-profiles apache-release
 find . -name <span class="s2">&#34;sis-*.asc&#34;</span> -exec gpg --verify <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>     <span class="c1"># Verify signatures.</span></code></pre></div>
-<p>More the <code>target</code> directory and execute all examples documented in the <a href="./command-line.html">command-line interface page</a>
+<p>Move to the <code>target</code> directory and execute all examples documented in the <a href="./command-line.html">command-line interface page</a>
 with the <code>sis</code> command replaced by the following:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">    java -classpath <span class="s2">&#34;binaries/*&#34;</span> -enableassertions org.apache.sis.console.Command</code></pre></div>
 <h2 id="maven-nonfree">Prepare non-free resources   </h2>
@@ -362,7 +340,7 @@ mvn clean deploy --activate-profiles apache-release</code></pre></div>
 <h2 id="nexus-close">Verify and close the Nexus release artifacts   </h2>
 <p>Verify the staged artifacts in the <a href="https://repository.apache.org/index.html">Nexus repository</a>.
 The artifacts can be found under <em>Build Promotion</em> → <em>Staging repositories</em>, and searching for <code>org.apache.sis</code> in the <em>Repository</em> column.
-Navigate through the artifact tree and make sure that all javadoc, source and jar files have <code>.asc</code> (GPG signature) and <code>.md5</code> files.
+Navigate through the artifact tree and make sure that all javadoc, source and jar files have <code>.asc</code> (GPG signature) and <code>.sha1</code> files.
 Select any <code>*-javadoc.jar</code> file and click on the <cite>Archive Browser</cite> tab on the right side.
 Select any <code>*.html</code> file which is known to use some of the custom taglets defined in the <code>sis-build-helper</code> module.
 Click on that file and verify that the custom elements are rendered properly.
@@ -372,6 +350,8 @@ so try to see at least one code snippet.</p>
 <ul>
 <li>Delete all <code>org/apache/sis/parent/$NEW_VERSION/parent-$NEW_VERSION-source-release.zip.*</code> files on the Nexus repository.
 They should not be there - source release will be deployed on an other repository later.</li>
+<li>Delete all <code>org/apache/sis/non-free/$NEW_VERSION/non-free-$NEW_VERSION-source-release.zip.*</code> files.</li>
+<li>Delete all <code>org/apache/sis/non-free/sis-epsg/$NEW_VERSION/sis-epsg-$NEW_VERSION-source.jar.*</code> files.</li>
 </ul>
 <p>Close the Nexus staging repository:</p>
 <ul>
@@ -440,20 +420,16 @@ mv sis-<span class="nv">$NEW_VERSION</span>-source-release.zip     apache-sis-<s
 mv sis-<span class="nv">$NEW_VERSION</span>-source-release.zip.asc apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.asc</code></pre></div>
 <h2 id="sign">Sign and commit   </h2>
 <p>Sign the source, javadoc and binary artifacts:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">shas512um apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.sha
-md5sum    apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.md5
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">sha512sum apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-src.zip.sha512
 
 gpg --armor --detach-sign --default-key <span class="nv">$SIGNING_KEY</span> apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip
-sha512sum apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip.sha
-md5sum    apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip.md5
+sha512sum apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip.sha512
 
 gpg --armor --detach-sign --default-key <span class="nv">$SIGNING_KEY</span> apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip
-sha512sum apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip.sha
-md5sum    apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip.md5</code></pre></div>
+sha512sum apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip &gt; apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip.sha512</code></pre></div>
 <p>Verify checksums and signatures:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">find . -name <span class="s2">&#34;*.md5&#34;</span> -exec md5sum    --check <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
-find . -name <span class="s2">&#34;*.sha&#34;</span> -exec sha512sum --check <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
-find . -name <span class="s2">&#34;*.asc&#34;</span> -exec gpg      --verify <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">find . -name <span class="s2">&#34;*.sha512&#34;</span> -exec sha512sum --check <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
+find . -name <span class="s2">&#34;*.asc&#34;</span>    -exec gpg      --verify <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span></code></pre></div>
 <p>Commit:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">svn add apache-sis-<span class="nv">$NEW_VERSION</span>-*
 <span class="nb">cd</span> ../..
@@ -462,8 +438,8 @@ svn commit --message <span class="s2">&#34;SIS release candidate </span><span cl
 <p>Copy the Javadoc to the web site staging directory:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> ../site/javadoc
 rm -r *
-git reset README.md
-git checkout README.md
+git reset -- README.md
+git checkout -- README.md
 unzip <span class="nv">$DIST_DIR</span>/apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip
 mv apidocs/* .
 rmdir apidocs
@@ -487,8 +463,7 @@ unzip apache-sis-<span class="nv">$NEW_VERSION</span>-bin.zip
 <span class="nb">cd</span> apache-sis-<span class="nv">$NEW_VERSION</span>
 <span class="nb">unset</span> SIS_DATA
 bin/sis about --verbose
-bin/sis metadata https://github.com/opengeospatial/geoapi/raw/master/geoapi-netcdf/src/test/resources/org/opengis/wrapper/netcdf/NCEP-SST.nc
-bin/sis crs http://svn.apache.org/repos/asf/sis/trunk/core/sis-referencing/src/test/resources/org/apache/sis/referencing/crs/ProjectedCRS.xml --format WKT</code></pre></div>
+bin/sis crs https://github.com/apache/sis/raw/master/core/sis-referencing/src/test/resources/org/apache/sis/referencing/crs/ProjectedCRS.xml --format WKT</code></pre></div>
 <h1 id="openoffice">Prepare OpenOffice add-in   </h1>
 <p>The OpenOffice add-in source code can be distributed under Apache 2 license only.
 But the binary may contain non-free resources, notably the EPSG geodetic dataset.
@@ -506,7 +481,6 @@ Add a new <code>&lt;release&gt;</code> block for the new release with the estima
 <p>Update the version numbers from the old one to <code>$NEW_VERSION</code> in the following files.</p>
 <ul>
 <li><code>content/index.mdtext</code></li>
-<li><code>content/gdal.mdtext</code></li>
 <li><code>content/downloads.mdtext</code> (need also to update <code>$NEW_VERSION-SNAPSHOT</code> to the next snapshot version)</li>
 <li><code>content/command-line.mdtext</code></li>
 <li><code>content/epsg.mdtext</code> (be aware that the version number may sometime be behind the SIS version number)</li>
