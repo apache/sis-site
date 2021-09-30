@@ -40,38 +40,28 @@ sis crs EPSG:6676
 
 The first time that the command-line tool needs to query EPSG, it will prompt the user for authorization
 to download EPSG geodetic dataset from Maven Central. If the user accepts EPSG terms of use, then a local
-copy of the EPSG geodetic dataset will be created and stored in the `apache-sis-1.0/data` sub-directory.
-
-If the command-line tool does not offer to download the EPSG geodetic dataset,
-try adding a `derby-<version>.jar` file (download lib-distribution from [Derby project][Derby]) in the `apache-sis-1.0/lib` sub-directory.
-This is normally not needed with Oracle JDK8 because Apache SIS tries to use the JavaDB embedded
-in those distributions, but may be necessary with other distributions or in security-constrained environments:
-
-{{< highlight bash >}}
-cd apache-sis-1.0/lib
-wget http://repo1.maven.org/maven2/org/apache/derby/derby/10.14.2.0/derby-10.14.2.0.jar
-{{< / highlight >}}
+copy of the EPSG geodetic dataset will be created and stored in the `apache-sis-1.1/data` sub-directory.
 
 ## Use the local copy in other applications    {#use-local}
 
 For using the installed EPSG geodetic dataset in your own application, apply *one* of the following choices:
 
-* Set the `SIS_DATA` environment variable to the path of `apache-sis-1.0/data` directory _(preferred choice)_.
-* Set the `derby.system.home` Java property to the path of `apache-sis-1.0/data/Databases` directory.
+* Set the `SIS_DATA` environment variable to the path of `apache-sis-1.1/data` directory _(preferred choice)_.
+* Set the `derby.system.home` Java property to the path of `apache-sis-1.1/data/Databases` directory.
 
 Alternatively `SIS_DATA` or `derby.system.home` can be set to the path of any other directory which contain the same files.
-Examples are shown below for Unix systems, assuming that the current directory is the directory where `apache-sis-1.0-bin.zip`
+Examples are shown below for Unix systems, assuming that the current directory is the directory where `apache-sis-1.1-bin.zip`
 has been unzipped:
 
 {{< highlight bash >}}
-export SIS_DATA=apache-sis-1.0/data
-java -classpath apache-sis-1.0/lib/sis.jar:myApp.jar myMainClass
+export SIS_DATA=apache-sis-1.1/data
+java -classpath apache-sis-1.1/lib/sis.jar:myApp.jar myMainClass
 {{< / highlight >}}
 
 If the `SIS_DATA` environment variable can not be set, Java property can be used as a fallback:
 
 {{< highlight java >}}
-java -Dderby.system.home=apache-sis-1.0/data/Databases -classpath apache-sis-1.0/lib/sis.jar:myApp.jar myMainClass
+java -Dderby.system.home=apache-sis-1.1/data/Databases -classpath apache-sis-1.1/lib/sis.jar:myApp.jar myMainClass
 {{< / highlight >}}
 
 # Add a Maven dependency    {#maven}
@@ -103,7 +93,7 @@ if that database is specified by JNDI):
   <dependency>
     <groupId>org.apache.sis.non-free</groupId>
     <artifactId>sis-epsg</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <scope>runtime</scope>
   </dependency>
 
@@ -140,7 +130,7 @@ Note that `sis-epsg` and `sis-embedded-data` should not be specified in the same
   <dependency>
     <groupId>org.apache.sis.non-free</groupId>
     <artifactId>sis-embedded-data</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <scope>runtime</scope>
   </dependency>
 </dependencies>
@@ -160,7 +150,7 @@ While Apache SIS uses Apache Derby by default, it is also possible to use anothe
 For using an arbitrary database, register a `javax.sql.DataSource` instance through the Java Naming and Directory Interface (JNDI).
 That registration can be done programmatically (by Java code) or by configuring XML files in some environments.
 The database must exist but can be empty, in which case it will be populated with an EPSG schema when first needed
-if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​1.0</code> dependency is on the classpath
+if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​1.1</code> dependency is on the classpath
 (see [above section](#maven-epsg)).
 
 ## Registration by Java code    {#jndi-java}

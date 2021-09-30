@@ -13,11 +13,11 @@ in their own application.
 
 # Installation    {#install}
 
-Select "Apache SIS 1.0 binary" from the [downloads page](downloads.html) an unzip in any directory.
+Select "Apache SIS 1.1 binary" from the [downloads page](downloads.html) an unzip in any directory.
 The directory structure will be as below:
 
 {{< highlight text >}}
-apache-sis-1.0
+apache-sis-1.1
 ├─ bin
 ├─ conf
 ├─ data
@@ -30,11 +30,11 @@ The `bin` sub-directory can be added to the `PATH` environment variable for conv
 Example:
 
 {{< highlight bash >}}
-export PATH=$PWD/apache-sis-1.0/bin:$PATH
+export PATH=$PWD/apache-sis-1.1/bin:$PATH
 {{< / highlight >}}
 
 The remaining of this page assumes that the `bin` directory is on the search path.
-If not, the same examples can still be executed by replacing the `sis` command by `./apache-sis-1.0/bin/sis`.
+If not, the same examples can still be executed by replacing the `sis` command by `./apache-sis-1.1/bin/sis`.
 
 ## Optional dependencies    {#dependencies}
 
@@ -362,7 +362,7 @@ By default, the metadata are shown in a relatively compact tree-table format.
 But the metadata can optionally be exported as an ISO 19139 compliant XML document.
 
 <blockquote><b>Note:</b>
-As of SIS 1.0, only ISO 19139 XML documents, CF-compliant netCDF files, GeoTIFF files, GPX files
+As of SIS 1.1, only ISO 19139 XML documents, CF-compliant netCDF files, GeoTIFF files, GPX files
 or Moving Features CSV files can be given in argument to this command.
 </blockquote>
 

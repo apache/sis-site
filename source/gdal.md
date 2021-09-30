@@ -8,7 +8,7 @@ or for getting the exact same numerical results than Proj.4.
 The two libraries can coexist and can be used through the same API,
 provided that prerequisites are meet.
 
-**NOTE: this module has been temporarily retired in Apache SIS 1.0. It needs to be upgraded to Proj version 5 and 6 before new release.**
+**NOTE: this module has been temporarily retired in Apache SIS 1.1. It needs to be upgraded to Proj version 5 and 6 before new release.**
 
 {{< toc >}}
 

@@ -2,8 +2,8 @@
 title: Apache SIS downloads
 ---
 
-Apache SIS 1.0 is now available.
-See the [release notes](release-notes/1.0.html) for a list of changes since the previous version.
+Apache SIS 1.1 is now available.
+See the [release notes](release-notes/1.1.html) for a list of changes since the previous version.
 
 Apache SIS releases are available under the [Apache License, Version 2.0][license].
 See the `NOTICE` file contained in each release artifact for applicable copyright attribution notices.
@@ -17,9 +17,9 @@ For convenience, an aggregated Javadoc and a pre-compiled JAR file are available
 The precompiled JAR file contains most modules and dependencies in a single archive for easier inclusion
 in a classpath.
 
-* [Apache SIS 1.0 sources][src] \[[PGP][src-PGP]\] \[[MD5][src-MD5]\] \[[SHA][src-SHA]\]
-* [Apache SIS 1.0 javadoc][doc] \[[PGP][doc-PGP]\] \[[MD5][doc-MD5]\] \[[SHA][doc-SHA]\]
-* [Apache SIS 1.0 binary][bin]  \[[PGP][bin-PGP]\] \[[MD5][bin-MD5]\] \[[SHA][bin-SHA]\]
+* [Apache SIS 1.1 sources][src] \[[PGP][src-PGP]\] \[[MD5][src-MD5]\] \[[SHA][src-SHA]\]
+* [Apache SIS 1.1 javadoc][doc] \[[PGP][doc-PGP]\] \[[MD5][doc-MD5]\] \[[SHA][doc-SHA]\]
+* [Apache SIS 1.1 binary][bin]  \[[PGP][bin-PGP]\] \[[MD5][bin-MD5]\] \[[SHA][bin-SHA]\]
 
 ## Verify signatures    {#release-gpg}
 
@@ -59,7 +59,7 @@ If running on Java 11 or higher, at least one of the two next dependencies is al
 
 {{< highlight xml >}}
 <properties>
-  <sis.version>1.0</sis.version>
+  <sis.version>1.1</sis.version>
 </properties>
 
 <dependencies>
@@ -119,17 +119,17 @@ See [How to use EPSG geodetic dataset](epsg.html) page for more information.
 [maven]:    http://maven.apache.org/
 [keys]:     https://www.apache.org/dist/sis/KEYS
 [license]:  http://www.apache.org/licenses/LICENSE-2.0
-[src]:      http://www.apache.org/dyn/closer.cgi/sis/1.0/apache-sis-1.0-src.zip
-[doc]:      http://www.apache.org/dyn/closer.cgi/sis/1.0/apache-sis-1.0-doc.zip
-[bin]:      http://www.apache.org/dyn/closer.cgi/sis/1.0/apache-sis-1.0-bin.zip
-[src-PGP]:  https://www.apache.org/dist/sis/1.0/apache-sis-1.0-src.zip.asc
-[doc-PGP]:  https://www.apache.org/dist/sis/1.0/apache-sis-1.0-doc.zip.asc
-[bin-PGP]:  https://www.apache.org/dist/sis/1.0/apache-sis-1.0-bin.zip.asc
-[src-MD5]:  https://www.apache.org/dist/sis/1.0/apache-sis-1.0-src.zip.md5
-[doc-MD5]:  https://www.apache.org/dist/sis/1.0/apache-sis-1.0-doc.zip.md5
-[bin-MD5]:  https://www.apache.org/dist/sis/1.0/apache-sis-1.0-bin.zip.md5
-[src-SHA]:  https://www.apache.org/dist/sis/1.0/apache-sis-1.0-src.zip.sha
-[doc-SHA]:  https://www.apache.org/dist/sis/1.0/apache-sis-1.0-doc.zip.sha
-[bin-SHA]:  https://www.apache.org/dist/sis/1.0/apache-sis-1.0-bin.zip.sha
+[src]:      http://www.apache.org/dyn/closer.cgi/sis/1.1/apache-sis-1.1-src.zip
+[doc]:      http://www.apache.org/dyn/closer.cgi/sis/1.1/apache-sis-1.1-doc.zip
+[bin]:      http://www.apache.org/dyn/closer.cgi/sis/1.1/apache-sis-1.1-bin.zip
+[src-PGP]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-src.zip.asc
+[doc-PGP]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-doc.zip.asc
+[bin-PGP]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-bin.zip.asc
+[src-MD5]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-src.zip.md5
+[doc-MD5]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-doc.zip.md5
+[bin-MD5]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-bin.zip.md5
+[src-SHA]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-src.zip.sha
+[doc-SHA]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-doc.zip.sha
+[bin-SHA]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-bin.zip.sha
 [EPSG]:     https://epsg.org/
 [EPSG-ToU]: https://epsg.org/terms-of-use.html
