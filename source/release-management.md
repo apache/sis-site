@@ -24,8 +24,8 @@ the current release attempt. Those versions shall be set on the command line lik
 {{< highlight bash >}}
 gpg --list-keys                     # For getting the value to put in <your key ID>
 unset PATH_TO_FX
-export OLD_VERSION=0.8
-export NEW_VERSION=1.0
+export OLD_VERSION=1.1
+export NEW_VERSION=1.2
 export RELEASE_CANDIDATE=1
 export SIGNING_KEY=<your key ID>    # hexadecimal number with 8 or 40 digits.
 {{< / highlight >}}
@@ -57,18 +57,10 @@ in this page shall be adjusted accordingly.
 
 Replace the `$OLD_VERSION` number by `$NEW_VERSION` in the values of following properties on the development branch:
 
-* `DOWNLOAD_URL` in `application/sis-console/src/main/java/org/apache/sis/console/ResourcesDownloader.java` file.
+* `DOWNLOAD_URL` in `core/sis-utility/src/main/java/org/apache/sis/setup/OptionalInstallations.java` file.
 * `<sis.non-free.version>` in root `pom.xml` file.
 * Review the `README` and `NOTICE` files in root directory.
 * Review the `README` files in `application/sis-console/src/main/artifact/` and subdirectories.
-
-If not already done, build the C/C++ code of `sis-gdal` module:
-
-{{< highlight bash >}}
-cd storage/sis-gdal/src/main/c
-make
-cd -
-{{< / highlight >}}
 
 Commit and merge with other branches up to master.
 
@@ -118,9 +110,9 @@ Those steps are also useful as additional tests, since failure to generate those
 4. If successful, HTML files will be generated in the current directory.
    Open those files in a web browser and verify that information are okay,
    in particular the SIS and EPSG version numbers in the first paragraph.
-5. If okay, move those two HTML files to the `../site/content/tables/` directory, overwriting previous files.
+5. If okay, move those two HTML files to the `../site/main/static/tables/` directory, overwriting previous files.
 6. Revert the hack in `AuthorityCodes` class.
-7. Commit: `svn commit --message="Update the list CRS and operation methods supported by Apache SIS $NEW_VERSION."`
+7. Commit: `git commit --message="Update the list CRS and operation methods supported by Apache SIS $NEW_VERSION."`
 
 ## Prepare release notes    {#release-notes}
 
@@ -130,7 +122,7 @@ Update [JIRA][JIRA] tasks and prepare release notes as below:
 * Ensure that the _Fix Version_ in issues resolved since the last release includes this release version correctly.
 * Ensure that all open issues are resolved or closed before proceeding further.
 * On the `site` source code repository, create a `content/release-notes/$NEW_VERSION.html` file with all the features added.
-* Use `content/release-notes/$OLD_VERSION.html` as a template, omitting everything between the `<body>` and `</body>` tags.
+* Use `content/release-notes/$OLD_VERSION.html` as a template, omitting the old list of issues.
 * The release notes can be obtained from JIRA, by clicking on the _Versions_ tab → the version number → _Release notes_
   and then configuring the release notes to display HTML format and copying it.
   A suggested approach would be to reorganize the release notes as
@@ -140,11 +132,11 @@ Update [JIRA][JIRA] tasks and prepare release notes as below:
 Commit to staging area (not published immediately):
 
 {{< highlight bash >}}
-cd ../site
-cp content/release-notes/$OLD_VERSION.html content/release-notes/$NEW_VERSION.html
+cd ../site/main
+cp static/release-notes/$OLD_VERSION.html static/content/release-notes/$NEW_VERSION.html
 # Edit release notes before to continue.
-svn add content/release-notes/$NEW_VERSION.html
-svn commit --message "Release notes for Apache SIS $NEW_VERSION."
+git add static/content/release-notes/$NEW_VERSION.html
+git commit --message "Release notes for Apache SIS $NEW_VERSION."
 {{< / highlight >}}
 
 # Create release branch    {#branch}
@@ -156,7 +148,6 @@ The `SIS_RC_DIR` environment variable will specify that directory.
 {{< highlight bash >}}
 cd ../master
 git checkout -b $NEW_VERSION-RC
-cd $NEW_VERSION-RC
 export SIS_RC_DIR=`pwd`
 {{< / highlight >}}
 
@@ -165,10 +156,7 @@ This may require removing `<module>` elements in the parent `pom.xml` file.
 
 {{< highlight bash >}}
 git rm core/sis-cql
-git rm core/sis-portrayal
 git rm storage/sis-shapefile
-git rm application/sis-javafx
-git rm application/sis-webapp
 git rm storage/sis-storage/src/main/java/org/apache/sis/storage/WritableGridCoverageResource.java
 git add --update    # for the removal of <module> elements in pom.xml files.
 git commit --message="Remove the modules to be excluded from $NEW_VERSION release."
@@ -178,33 +166,22 @@ Open the root `pom.xml` file in an editor and perform the following changes:
 
 * Remove the whole `<pluginRepositories>` block (including comment),
   since it should not be needed for releases (and is actually not allowed).
-* Remove the `jetty` dependency since the module that used it has been removed.
 
 We need to update the SIS version numbers not only in the `pom.xml` files, but also in a few Java files.
 The following command performs the replacement using Ant.
 
 {{< highlight bash >}}
 ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml branch -Dsis.version=$NEW_VERSION
-git rm core/sis-build-helper/src/main/ant
+git rm -r core/sis-build-helper/src/main/ant
 {{< / highlight >}}
 
-Validate with `git diff`, search `SNAPSHOT` in the whole source directory in case we missed some, then commit:
+Validate with `git diff --staged`, search `SNAPSHOT` in the whole source directory in case we missed some, then commit:
 
 {{< highlight bash >}}
 git add --update
 mvn clean install
 git commit --message="Set version number to $NEW_VERSION."
 {{< / highlight >}}
-
-Maybe apply the following hacks on the release branch only (do not apply them on master).
-Check first if those hacks are still needed for the next release (they were needed for 1.0):
-
-* Remove all use of `javax.annotation.Generated` annotation.
-  This removal should not have any effect on compilation result.
-* In the root `pom.xml` under `maven-javadoc-plugin` configuration, add the following elements:
-  * `<link>http://sis.apache.org/apidocs</link>` inside `<links>` block.
-  * `<additionalOption>-Xdoclint:all,-reference</additionalOption>` inside `<additionalOptions>` block.
-* Commit on the release branch only.
 
 ## Test branch extensively    {#test-branch}
 
@@ -225,7 +202,7 @@ mvn clean install --activate-profiles apache-release
 find . -name "sis-*.asc" -exec gpg --verify '{}' \;     # Verify signatures.
 {{< / highlight >}}
 
-More the `target` directory and execute all examples documented in the [command-line interface page](./command-line.html)
+Move to the `target` directory and execute all examples documented in the [command-line interface page](./command-line.html)
 with the `sis` command replaced by the following:
 
 {{< highlight bash >}}
@@ -297,6 +274,8 @@ Additional cleaning:
 
 * Delete all `org/apache/sis/parent/$NEW_VERSION/parent-$NEW_VERSION-source-release.zip.*` files on the Nexus repository.
   They should not be there - source release will be deployed on an other repository later.
+* Delete all `org/apache/sis/non-free/$NEW_VERSION/non-free-$NEW_VERSION-source-release.zip.*` files.
+* Delete all `org/apache/sis/non-free/sis-epsg/$NEW_VERSION/sis-epsg-$NEW_VERSION-source.jar.*` files.
 
 Close the Nexus staging repository:
 
@@ -408,24 +387,20 @@ mv sis-$NEW_VERSION-source-release.zip.asc apache-sis-$NEW_VERSION-src.zip.asc
 Sign the source, javadoc and binary artifacts:
 
 {{< highlight bash >}}
-shas512um apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.sha
-md5sum    apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.md5
+sha512sum apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.sha512
 
 gpg --armor --detach-sign --default-key $SIGNING_KEY apache-sis-$NEW_VERSION-doc.zip
-sha512sum apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.sha
-md5sum    apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.md5
+sha512sum apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.sha512
 
 gpg --armor --detach-sign --default-key $SIGNING_KEY apache-sis-$NEW_VERSION-bin.zip
-sha512sum apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.sha
-md5sum    apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.md5
+sha512sum apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.sha512
 {{< / highlight >}}
 
 Verify checksums and signatures:
 
 {{< highlight bash >}}
-find . -name "*.md5" -exec md5sum    --check '{}' \;
-find . -name "*.sha" -exec sha512sum --check '{}' \;
-find . -name "*.asc" -exec gpg      --verify '{}' \;
+find . -name "*.sha512" -exec sha512sum --check '{}' \;
+find . -name "*.asc"    -exec gpg      --verify '{}' \;
 {{< / highlight >}}
 
 Commit:
@@ -443,8 +418,8 @@ Copy the Javadoc to the web site staging directory:
 {{< highlight bash >}}
 cd ../site/javadoc
 rm -r *
-git reset README.md
-git checkout README.md
+git reset -- README.md
+git checkout -- README.md
 unzip $DIST_DIR/apache-sis-$NEW_VERSION-doc.zip
 mv apidocs/* .
 rmdir apidocs
@@ -477,8 +452,7 @@ unzip apache-sis-$NEW_VERSION-bin.zip
 cd apache-sis-$NEW_VERSION
 unset SIS_DATA
 bin/sis about --verbose
-bin/sis metadata https://github.com/opengeospatial/geoapi/raw/master/geoapi-netcdf/src/test/resources/org/opengis/wrapper/netcdf/NCEP-SST.nc
-bin/sis crs http://svn.apache.org/repos/asf/sis/trunk/core/sis-referencing/src/test/resources/org/apache/sis/referencing/crs/ProjectedCRS.xml --format WKT
+bin/sis crs https://github.com/apache/sis/raw/master/core/sis-referencing/src/test/resources/org/apache/sis/referencing/crs/ProjectedCRS.xml --format WKT
 {{< / highlight >}}
 
 # Prepare OpenOffice add-in    {#openoffice}
