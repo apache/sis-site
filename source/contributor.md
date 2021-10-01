@@ -37,14 +37,14 @@ Apache SIS also provides an introduction in the [Developer guide](book/en/develo
 ## The ISO/OGC Geospatial Model    {#ogc}
 
 SIS builds on the standards developed through a collaboration between the International
-Organization for Standardization ({{< abbr title="International Organization for Standardization" text="ISO" >}}) and the Open Geospatial Consortium ({{< abbr title="Open Geospatial Consortium" text="OGC" >}}).
+Organization for Standardization (ISO) and the Open Geospatial Consortium (OGC).
 Contributors to SIS should have at least a basic understanding of the model developed in the
-{{< abbr title="International Organization for Standardization" text="ISO" >}} 19000 series of specifications, starting with the Abstract model and working through the
-_Feature_ model. While the {{< abbr title="International Organization for Standardization" text="ISO" >}} specifications are sold, the {{< abbr title="Open Geospatial Consortium" text="OGC" >}} releases its own, essentially
-identical versions of standards which have evolved from the collaboration. The {{< abbr title="Open Geospatial Consortium" text="OGC" >}} specifications
-are available for the [{{< abbr title="Open Geospatial Consortium" text="OGC" >}} standards and specification][standards] page.
+{{% ISO %}} 19000 series of specifications, starting with the Abstract model and working through the
+_Feature_ model. While the {{% ISO %}} specifications are sold, the {{% OGC %}} releases its own, essentially
+identical versions of standards which have evolved from the collaboration. The {{% OGC %}} specifications
+are available for the [{{% OGC %}} standards and specification][standards] page.
 
-As time progresses, we hope to develop documentation material to introduce the {{< abbr title="International Organization for Standardization" text="ISO" >}} 19000 specification series.
+As time progresses, we hope to develop documentation material to introduce the {{% ISO %}} 19000 specification series.
 Most of the documentation provided by SIS can be found in the [Developer guide](book/en/developer-guide.html).
 
 ## Object-Oriented Programming in Java    {#java}
@@ -83,7 +83,7 @@ the concept is central to all graphics programming.
 ## The GeoAPI Interfaces    {#geoapi}
 
 SIS is build partially as an implementation of the GeoAPI interfaces. GeoAPI defines a set
-of objects offering particular methods thereby providing an interpretation of the {{< abbr title="International Organization for Standardization" text="ISO" >}}/{{< abbr title="Open Geospatial Consortium" text="OGC" >}}
+of objects offering particular methods thereby providing an interpretation of the {{% ISO %}}/{{% OGC %}}
 standards in the Java language. GeoAPI therefore defines the core of the model implemented
 by Apache SIS.
 

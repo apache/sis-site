@@ -183,7 +183,7 @@ git checkout geoapi-4.0
 {{< / highlight >}}
 
 Note that those `geoapi-xxx` branches may disappear or be replaced by something else
-after {{< abbr title="Open Geospatial Consortium" text="OGC" >}} releases the corresponding GeoAPI versions.
+after {{% OGC %}} releases the corresponding GeoAPI versions.
 
 # Opening Apache SIS in NetBeans    {#netbeans}
 

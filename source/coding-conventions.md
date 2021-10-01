@@ -23,7 +23,7 @@ as below:
 Classes that do not implement an interface are usually not prefixed, even if abstract.
 Classes implementing GeoAPI interfaces usually (but not always) begin with `Abstract`, `Default`, `Simple` or `General` prefix.
 
-* The `Abstract` prefix is used when a class is abstract according {{< abbr title="International Organization for Standardization" text="ISO" >}} specifications — it may or may not be be abstract in the Java sense.
+* The `Abstract` prefix is used when a class is abstract according {{% ISO %}} specifications — it may or may not be be abstract in the Java sense.
 * The `General` prefix is used when an implementation is designed for use in the general case,
   as opposed to other implementations specialized for a fixed number of dimensions or other conditions.
 * Implementations specialized for a fixed number of dimensions are suffixed with `1D`, `2D`, `3D` or `4D` rather than being prefixed.
@@ -75,7 +75,7 @@ import org.opengis.feature.Feature;
 
 * **Indentation:** Use a consistent space indents and never use tabs.
   + Use 4 space indents for Java files.
-  + Use 2 space indents for XML files, because {{< abbr title="International Organization for Standardization" text="ISO" >}}/{{< abbr title="Open Geospatial Consortium" text="OGC" >}} XML schemas tend to have a very deep structure.
+  + Use 2 space indents for XML files, because {{% ISO %}}/{{% OGC %}} XML schemas tend to have a very deep structure.
 * **Space after keyword:** Put a space after `if`, `else`, `for`, `try`, `catch` and similar keywords
   (not after method names).
 * **Trailing Whitespaces:** Remove all trailing whitespaces.

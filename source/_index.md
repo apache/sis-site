@@ -66,7 +66,6 @@ Following links are for those who wish to contribute to Apache SIS:
 * [Build](build.html): build from the source, create the distribution file.
 * [Issue tracking][JIRA]: JIRA.
 * [Release management](release-management.html) (for release managers)
-* [Web site management](site-management.html) (for release managers and site maintainers)
 * [SIS Wiki][wiki] for "drawing board" and roadmap.
 
 [geoapi]: http://www.geoapi.org/

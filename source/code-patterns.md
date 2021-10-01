@@ -15,10 +15,11 @@ Recommended code pattern when using the `sis-referencing` module.
 The [axis order issue](faq.html#axisOrder) causes lot of confusion,
 and developers are sometime tempted to swap their ordinate values in order to comply with some expected axis ordering.
 It should never be necessary, since the Apache SIS referencing engine manages axis order transparently — provided that
-the Coordinate Reference System (CRS) definition is accurate. If a code needs to swap ordinates, this is probably an
-indication that the CRS has not been properly defined. Instead than patching the coordinate values, try to make sure
-that the _Source CRS_ (associated to the original data) and the _Target CRS_ (the coordinate space where to perform the
-work) are properly defined, and let the referencing engine performs the conversion from the source to the target CRS.
+the Coordinate Reference System (CRS) definition is accurate.
+If a code needs to swap ordinates, this is probably an indication that the {{% CRS %}} has not been properly defined.
+Instead than patching the coordinate values, try to make sure that the _Source CRS_ (associated to the original data)
+and the _Target CRS_ (the coordinate space where to perform the work) are properly defined,
+and let the referencing engine performs the conversion from the source to the target {{% CRS %}}.
 
 # Coverages    {#coverage}
 
@@ -41,12 +42,12 @@ Recommended code pattern for internationalization.
 
 Geospatial data often cover a wide geographic area, spanning many time zones.
 Timezone are sometime specified as metadata in the header of data files to be read,
-or is sometime fixed to UTC by applications managing world-wide data.
+or is sometime fixed to {{% UTC %}} by applications managing world-wide data.
 Some Apache SIS objects have `Locale` and `TimeZone` information.
 Such locale and timezone are given to `java.text.DateFormat` or `java.util.Calendar` constructors among others.
 
-When reading dates or timestamps from a JDBC database, always use the `ResultSet` method
-accepting a `Calendar` argument, when such method is available.
+When reading dates or timestamps from a {{% JDBC %}} database,
+always use the `ResultSet` method accepting a `Calendar` argument, when such method is available.
 For example prefer the `getTimestamp(int, Calendar)` method instead than `getTimestamp(int)`.
 The `Calendar` object should has been created with the appropriate timezone.
 
@@ -88,8 +89,3 @@ since developers use them for configuring their logging (verbosity, destination,
 All logging at `Level.INFO` or above shall be targeted to users or administrators, not to developers.
 In particular `Level.SEVERE` shall be reserved for critical errors that compromise the application stability —
 it shall not be used for exceptions thrown while parsing user data (file or database).
-
-*[CRS]:  Coordinate Reference System
-*[JDBC]: Java DataBase Connectivity
-*[OGC]:  Open Geospatial Consortium
-*[UTC]:  Universal Time Coordinated
