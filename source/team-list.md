@@ -7,6 +7,7 @@ title: Apache SIS team
 The Project Management Committee (PMC) is the group of people with formal oversight of the project.
 
 * Adam Estrada
+* Alexis Manin
 * Andrew Hart
 * Charitha Madusanka
 * Gregory D. Reddin
@@ -29,7 +30,7 @@ The Project Management Committee (PMC) is the group of people with formal oversi
 Committers are peoples with write access to the source code repository.
 All PMC members are implicitly committers.
 
-* Alexis Manin
+* Bruno Kinoshita
 * Christina Hough
 * Rémi Maréchal
 
