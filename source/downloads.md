@@ -2,28 +2,28 @@
 title: Apache SIS downloads
 ---
 
-Apache SIS 1.1 is now available.
-See the [release notes](release-notes/1.1.html) for a list of changes since the previous version.
+Apache {{% SIS %}} {{% version %}} is now available.
+See the [release notes](release-notes/{{% version %}}.html) for a list of changes since the previous version.
 
-Apache SIS releases are available under the [Apache License, Version 2.0][license].
+Apache {{% SIS %}} releases are available under the [Apache License, Version 2.0][license].
 See the `NOTICE` file contained in each release artifact for applicable copyright attribution notices.
 
 {{< toc >}}
 
 # Download ZIP files    {#bundles}
 
-Apache SIS is distributed in the form of Java source code in a multi-modules Apache Maven project.
+Apache {{% SIS %}} is distributed in the form of Java source code in a multi-modules Apache Maven project.
 For convenience, an aggregated Javadoc and a pre-compiled JAR file are available as separated downloads.
 The precompiled JAR file contains most modules and dependencies in a single archive for easier inclusion
 in a classpath.
 
-* [Apache SIS 1.1 sources][src] \[[PGP][src-PGP]\] \[[SHA 512][src-SHA]\]
-* [Apache SIS 1.1 javadoc][doc] \[[PGP][doc-PGP]\] \[[SHA 512][doc-SHA]\]
-* [Apache SIS 1.1 binary][bin]  \[[PGP][bin-PGP]\] \[[SHA 512][bin-SHA]\]
+* [Apache SIS {{% version %}} sources][src] \[[PGP][src-PGP]\] \[[SHA 512][src-SHA]\]
+* [Apache SIS {{% version %}} javadoc][doc] \[[PGP][doc-PGP]\] \[[SHA 512][doc-SHA]\]
+* [Apache SIS {{% version %}} binary][bin]  \[[PGP][bin-PGP]\] \[[SHA 512][bin-SHA]\]
 
 ## Verify signatures    {#release-gpg}
 
-All downloads can be verified using the Apache SIS code signing [KEYS][keys].
+All downloads can be verified using the Apache {{% SIS %}} code signing [KEYS][keys].
 The PGP (_Pretty Good Privacy_) signatures can be verified using any OpenPGP implementation, for example GPG (_GNU Privacy Guard_).
 First download the [KEYS][keys] file and the `.asc` signature files for the relevant release packages.
 Make sure you get these files from the main distribution directory, rather than from a mirror.
@@ -52,14 +52,13 @@ pgpv apache-sis-X.Y.Z.zip.asc
 
 # Download as a Maven dependency    {#maven}
 
-An easy approach to integrate Apache SIS into a Java project uses the [Apache Maven][maven]
+An easy approach to integrate Apache {{% SIS %}} into a Java project uses the [Apache Maven][maven]
 dependency management tool to automatically obtain the required Java Archives (JAR) files from the network.
 Below are examples of declarations in a `pom.xml` file for building a project with a SIS core module.
-If running on Java 11 or higher, at least one of the two next dependencies is also required:
 
 {{< highlight xml >}}
 <properties>
-  <sis.version>1.1</sis.version>
+  <sis.version>{{% version %}}</sis.version>
 </properties>
 
 <dependencies>
@@ -70,21 +69,11 @@ If running on Java 11 or higher, at least one of the two next dependencies is al
   </dependency>
 </dependencies>
 
-<!-- The following dependency can be omitted on Java 8 (unconditionally), or
-     on Java 9 and 10 if the "--add-modules java.xml.bind" option is used. -->
+<!-- The following dependency can be omitted if XML support is not desired. -->
 <dependency>
   <groupId>org.glassfish.jaxb</groupId>
   <artifactId>jaxb-runtime</artifactId>
-  <version>2.3.2</version>
-  <scope>runtime</scope>
-</dependency>
-
-<!-- Above JAXB dependency can be replaced by the following dependency
-     if no XML (un)marshalling is wanted. This dependency is lighter. -->
-<dependency>
-  <groupId>jakarta.xml.bind</groupId>
-  <artifactId>jakarta.xml.bind-api</artifactId>
-  <version>2.3.2</version>
+  <version>2.3.3</version>
   <scope>runtime</scope>
 </dependency>
 {{< / highlight >}}
@@ -119,14 +108,14 @@ See [How to use EPSG geodetic dataset](epsg.html) page for more information.
 [maven]:    http://maven.apache.org/
 [keys]:     https://www.apache.org/dist/sis/KEYS
 [license]:  http://www.apache.org/licenses/LICENSE-2.0
-[src]:      http://www.apache.org/dyn/closer.cgi/sis/1.1/apache-sis-1.1-src.zip
-[doc]:      http://www.apache.org/dyn/closer.cgi/sis/1.1/apache-sis-1.1-doc.zip
-[bin]:      http://www.apache.org/dyn/closer.cgi/sis/1.1/apache-sis-1.1-bin.zip
-[src-PGP]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-src.zip.asc
-[doc-PGP]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-doc.zip.asc
-[bin-PGP]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-bin.zip.asc
-[src-SHA]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-src.zip.sha512
-[doc-SHA]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-doc.zip.sha512
-[bin-SHA]:  https://www.apache.org/dist/sis/1.1/apache-sis-1.1-bin.zip.sha512
+[src]:      http://www.apache.org/dyn/closer.cgi/sis/{{% version %}}/apache-sis-{{% version %}}-src.zip
+[doc]:      http://www.apache.org/dyn/closer.cgi/sis/{{% version %}}/apache-sis-{{% version %}}-doc.zip
+[bin]:      http://www.apache.org/dyn/closer.cgi/sis/{{% version %}}/apache-sis-{{% version %}}-bin.zip
+[src-PGP]:  https://www.apache.org/dist/sis/{{% version %}}/apache-sis-{{% version %}}-src.zip.asc
+[doc-PGP]:  https://www.apache.org/dist/sis/{{% version %}}/apache-sis-{{% version %}}-doc.zip.asc
+[bin-PGP]:  https://www.apache.org/dist/sis/{{% version %}}/apache-sis-{{% version %}}-bin.zip.asc
+[src-SHA]:  https://www.apache.org/dist/sis/{{% version %}}/apache-sis-{{% version %}}-src.zip.sha512
+[doc-SHA]:  https://www.apache.org/dist/sis/{{% version %}}/apache-sis-{{% version %}}-doc.zip.sha512
+[bin-SHA]:  https://www.apache.org/dist/sis/{{% version %}}/apache-sis-{{% version %}}-bin.zip.sha512
 [EPSG]:     https://epsg.org/
 [EPSG-ToU]: https://epsg.org/terms-of-use.html

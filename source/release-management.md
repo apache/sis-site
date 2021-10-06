@@ -24,7 +24,7 @@ the current release attempt. Those versions shall be set on the command line lik
 {{< highlight bash >}}
 gpg --list-keys                     # For getting the value to put in <your key ID>
 unset PATH_TO_FX
-export OLD_VERSION=1.1
+export OLD_VERSION={{% version %}}
 export NEW_VERSION=1.2
 export RELEASE_CANDIDATE=1
 export SIGNING_KEY=<your key ID>    # hexadecimal number with 8 or 40 digits.
@@ -249,7 +249,7 @@ If above verifications succeeded, performs the following _temporary_ changes
   This hack will force us to skip test compilations.
 
 Then deploy SIS (without test JAR files).
-Deploy also the non-free resources in a staging repository separated from the rest of Apache SIS.
+Deploy also the non-free resources in a staging repository separated from the rest of Apache {{% SIS %}}.
 If there is any issue with this deployment, the staging repository can easily be dropped and recreated.
 
 {{< highlight bash >}}
@@ -309,7 +309,7 @@ mvn compile
 svn commit -m "Test project for SIS $NEW_VERSION-RC$RELEASE_CANDIDATE"
 {{< / highlight >}}
 
-Create a temporary directory where Apache SIS will write the EPSG dataset.
+Create a temporary directory where Apache {{% SIS %}} will write the EPSG dataset.
 
 {{< highlight bash >}}
 mkdir target/SpatialMetadata

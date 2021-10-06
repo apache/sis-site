@@ -2,7 +2,7 @@
 title: Recommended code patterns
 ---
 
-This page lists some recommended code pattern for developing or using Apache SIS.
+This page lists some recommended code pattern for developing or using Apache {{% SIS %}}.
 
 {{< toc >}}
 
@@ -10,14 +10,14 @@ This page lists some recommended code pattern for developing or using Apache SIS
 
 Recommended code pattern when using the `sis-referencing` module.
 
-## Never explicitely swap ordinates for axis order    {#axisOrder}
+## Never explicitely swap coordinates for axis order    {#axisOrder}
 
 The [axis order issue](faq.html#axisOrder) causes lot of confusion,
-and developers are sometime tempted to swap their ordinate values in order to comply with some expected axis ordering.
-It should never be necessary, since the Apache SIS referencing engine manages axis order transparently — provided that
-the Coordinate Reference System (CRS) definition is accurate.
-If a code needs to swap ordinates, this is probably an indication that the {{% CRS %}} has not been properly defined.
-Instead than patching the coordinate values, try to make sure that the _Source CRS_ (associated to the original data)
+and developers are sometime tempted to swap their coordinate values in order to comply with some expected axis ordering.
+It should never be necessary, since the Apache {{% SIS %}} referencing engine manages axis order transparently —
+provided that the Coordinate Reference System (CRS) definition is accurate.
+If a code needs to swap coordinates, this is probably an indication that the {{% CRS %}} has not been properly defined.
+Instead of patching the coordinate values, try to make sure that the _Source CRS_ (associated to the original data)
 and the _Target CRS_ (the coordinate space where to perform the work) are properly defined,
 and let the referencing engine performs the conversion from the source to the target {{% CRS %}}.
 
@@ -32,7 +32,7 @@ This approach may be ambiguous as it does not specify whether the (<var>x</var>,
 (see the [axis order issue](faq.html#axisOrder)) or if the <var>y</var> axis is oriented downward.
 All images in SIS shall be georeferenced by at least an affine transform (more complex transforms are also possible),
 never by a rectangle or bounding box.
-In the two-dimensional case, the standard `java.awt.geom.AffineTransform` class can be used.
+In the two-dimensional case, the standard `java.awt.geom.Affine­Transform` class can be used.
 
 # International    {#international}
 
@@ -43,12 +43,12 @@ Recommended code pattern for internationalization.
 Geospatial data often cover a wide geographic area, spanning many time zones.
 Timezone are sometime specified as metadata in the header of data files to be read,
 or is sometime fixed to {{% UTC %}} by applications managing world-wide data.
-Some Apache SIS objects have `Locale` and `TimeZone` information.
+Some Apache {{% SIS %}} objects have `Locale` and `TimeZone` information.
 Such locale and timezone are given to `java.text.DateFormat` or `java.util.Calendar` constructors among others.
 
 When reading dates or timestamps from a {{% JDBC %}} database,
 always use the `ResultSet` method accepting a `Calendar` argument, when such method is available.
-For example prefer the `getTimestamp(int, Calendar)` method instead than `getTimestamp(int)`.
+For example prefer the `getTimestamp(int, Calendar)` method instead of `getTimestamp(int)`.
 The `Calendar` object should has been created with the appropriate timezone.
 
 ## Replace underscores by spaces before sorting    {#sort}
@@ -77,7 +77,7 @@ for (int i=0; i<string.length();) {
 
 # Logging    {#logging}
 
-Apache SIS uses the `java.util.logging` framework, but with a [mechanism allowing users to redirect
+Apache {{% SIS %}} uses the `java.util.logging` framework, but with a [mechanism allowing users to redirect
 to another framework](http://sis.apache.org/apidocs/org/apache/sis/util/logging/LoggerFactory.html).
 The logger names are usually the package name of the class emitting log messages, but not necessarily.
 In particular, we do not follow this convention if the class is located in an internal package

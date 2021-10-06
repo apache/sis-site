@@ -2,7 +2,7 @@
 title: Questions fréquentes (FAQ)
 ---
 
-Cette page liste quelques questions fréquemment posées à propos de Apache SIS.
+Cette page liste quelques questions fréquemment posées à propos de Apache {{% SIS %}}.
 Son contenu est traduit de la [page de FAQ en anglais](faq.html).
 
 {{< toc >}}
@@ -49,7 +49,7 @@ public class MyApp {
 
 ### Quelles projections sont supportées ?    {#operation-methods}
 
-Les formules supportées par Apache SIS (incluant les projections cartographiques, mais pas uniquement)
+Les formules supportées par Apache {{% SIS %}} (incluant les projections cartographiques, mais pas uniquement)
 sont listées sur la page [Coordinate Operation Methods](tables/CoordinateOperationMethods.html).
 La quantité de formules de projection est relativement faible,
 mais la quantité de _Systèmes de Coordonées projetés_ que l’on peut construire avec est considérable.
@@ -59,7 +59,7 @@ utilisées avec différents paramètres, on peut couvrir des milliers de project
 Afin d’utiliser une formule de projection, il est nécessaire de connaître les paramètres de la projection.
 Par soucis de facilité d’utilisation, des milliers de projections avec des paramètres pré-définis ont un identifiant unique.
 Une source bien connue de ces définitions est la base de données EPSG, mais il existe d’autres autorités.
-Les systèmes de coordonnées prédéfinis dans Apache SIS sont listés à la page
+Les systèmes de coordonnées prédéfinis dans Apache {{% SIS %}} sont listés à la page
 [Coordinate Reference Systems](tables/CoordinateReferenceSystems.html).
 
 ### Qu’est ce que le problème d’ordre des axes et comment est il abordé ?    {#axisOrder}
@@ -83,13 +83,13 @@ Les standards {{% OGC %}} récents stipulent que l’ordre des axes est celui d�
 Les standards {{% OGC %}} plus anciens utilisaient l’ordre des axes (_x_, _y_), ignorant la définition de l’autorité.
 Parmi les standards {{% OGC %}} obsolètes qui utilisent un ordre des axes non-conforme,
 l’un des plus influent est la version 1 de la spécification _Well Known Text_ (WKT).
-Selon ce format très utilisé, les définitions WKT sans éléments `AXIS[...]`
+Selon ce format très utilisé, les définitions {{% WKT %}} sans éléments `AXIS[…]`
 doivent par défaut être dans l’ordre (_longitude_, _latitude_) ou (_x_, _y_).
-Dans la version 2 du format WKT, les éléments `AXIS[...]` ne sont plus optionnels
-et doivent contenir explicitement le sous-élément `ORDER[...]` pour appuyer l’ordre des axes à appliquer.
+Dans la version 2 du format {{% WKT %}}, les éléments `AXIS[…]` ne sont plus optionnels
+et doivent contenir explicitement le sous-élément `ORDER[…]` pour appuyer l’ordre des axes à appliquer.
 
 Beaucoup de logiciels utilisent toujours l’ancien ordre des axes (_x_, _y_), parfois parce qu’il est plus simple à implémenter.
-Mais Apache SIS suit l’ordre des axes _tel que défini par l’autorité_ (à l’exception de la lecture de fichier WKT 1).
+Mais Apache {{% SIS %}} suit l’ordre des axes _tel que défini par l’autorité_ (à l’exception de la lecture de fichier {{% WKT %}} 1).
 Il permet toutefois de changer l’ordre des axes après la création d’un {{% CRS %}}.
 Ce changement se fait avec le code suivant :
 
@@ -102,7 +102,7 @@ crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)
 
 ### Comment créer une projection de type Transverse Universelle de Mercator (UTM) ?    {#UTM}
 
-Si la zone UTM n’est pas connue, une façon simple est d’utiliser la méthode `universal(...)` sur l’une des constantes de `CommonCRS`.
+Si la zone UTM n’est pas connue, une façon simple est d’utiliser la méthode `universal(…)` sur l’une des constantes de `CommonCRS`.
 Cette méthode prend en argument une coordonnées géographique en (_latitude_, _longitude_) et en calcule la zone UTM correspondante.
 Voir [le code java ci-dessus](#transform-point).
 
@@ -140,8 +140,8 @@ Ces méthodes ont le mot « (Spherical) » dans leur nom, par exemple _« Mer
 Ces formules de projections peuvent être utilisées dans les définitions _Well Known Text_ (WKT).
 
 Il est possible d’utiliser une formule sphérique avec une projection qui n’a pas de contrepartie sphérique
-en déclarant explicitement les paramètres `"semi_major"` et `"semi_minor"` dans la définition WKT.
-Ces paramètres sont généralement déduit du référentiel, mais Apache SIS autorise les déclarations à surcharger ces valeurs.
+en déclarant explicitement les paramètres `"semi_major"` et `"semi_minor"` dans la définition {{% WKT %}}.
+Ces paramètres sont généralement déduit du référentiel, mais Apache {{% SIS %}} autorise les déclarations à surcharger ces valeurs.
 
 ### Comment puis-je identifier le type de projection d’un CRS ?    {#projectionKind}
 
@@ -154,17 +154,18 @@ listés à la page [Coordinate Operation Methods](tables/CoordinateOperationMeth
 La propriété _identifiant_ d’un {{% CRS %}} peut être obtenue par la méthode `getIdentifiers()`
 qui retourne une collection de zéro ou un élément.
 Si le {{% CRS %}} a été créé à partir d’un _Well Known Text_ (WKT)
-et que le WKT se termine avec un élément `AUTHORITY["EPSG", "xxxx"]` (WKT version 1) ou `ID["EPSG", xxxx]` (WKT version 2,
+et que le {{% WKT %}} se termine avec un élément `AUTHORITY["EPSG", "xxxx"]` ({{% WKT %}} version 1)
+ou `ID["EPSG", xxxx]` ({{% WKT %}} version 2,
 alors l’identifiant (un code numérique EPSG dans cet exemple) sera le _xxxx_ de cet élément.
 Si le {{% CRS %}} a été créé à partir de la base EPSG (par exemple avec l’appelle à `CRS.forCode("EPSG:xxxx")`),
 alors l’identifiant est le code _xxxx_ donné à la méthode.
 Si le {{% CRS %}} a été créé d’une autre façon, alors la collection retournée par la méthode `getIdentifiers()`
 pourra être vide dans le cas où le programme qui a créé le {{% CRS %}} a aussi pris la responsabilité de fournir les identifiants.
 
-Si la collection d’identifiants est vide, la méthode la plus efficace de le corriger est de s’assurer que le WKT
-contient un élément `AUTHORITY` ou `ID` (en supposant que le {{% CRS %}} vient d’un WKT).
-Si ce n’est pas possible, alors la classe `org.​apache.​sis.​referencing.​IdentifiedObjects` contient des méthodes utilitaires qui peuvent aider
-Dans l’exemple suivant, l’appel à `lookupEPSG(...)` va parcourir la base EPSG pour un {{% CRS %}} équivalent (en ignorant les métadonnées).
+Si la collection d’identifiants est vide, la méthode la plus efficace de le corriger est de s’assurer que le {{% WKT %}}
+contient un élément `AUTHORITY` ou `ID` (en supposant que le {{% CRS %}} vient d’un {{% WKT %}}).
+Si ce n’est pas possible, alors la classe `org.apache.sis.referencing.IdentifiedObjects` contient des méthodes utilitaires qui peuvent aider
+Dans l’exemple suivant, l’appel à `lookupEPSG(…)` va parcourir la base EPSG pour un {{% CRS %}} équivalent (en ignorant les métadonnées).
 *Attention, cette recherche est sensible à l’ordre des axes.*
 La plupart des {{% CRS %}} géographiques de la base EPSG sont déclarés avec l’ordre des axes (_latitude_, _longitude_).
 En conséquence, si le {{% CRS %}} possède un ordre des axes (_longitude_, _latitude_), la recherche a toutes les chances de ne pas trouver de résultats.
@@ -177,7 +178,7 @@ if (identifier != null) {
 }
 {{< / highlight >}}
 
-### Comment obtenir l’URN « urn:ogc:def:crs:... » d’un CRS existant ?    {#lookupURN}
+### Comment obtenir l’URN « urn:ogc:def:crs:… » d’un CRS existant ?    {#lookupURN}
 
 L’{{% OGC %}} définit les URN pour les identifiants de {{% CRS %}}, par exemple `"urn:​ogc:​def:​crs:​epsg:​7.1:​4326"`
 avec `"7.1"` comme version de la base EPSG utilisée.
@@ -191,13 +192,13 @@ CoordinateReferenceSystem myCRS = ...;
 String urn = IdentifiedObjects.lookupURN(myCRS);
 {{< / highlight >}}
 
-### Puis-je m’appuyer sur IdentifiedObjects.lookupEPSG(...) comme inverse de CRS.forCode(...) ?   {#lookupReliability}
+### Puis-je m’appuyer sur IdentifiedObjects.lookupEPSG(…) comme inverse de CRS.forCode(…) ?   {#lookupReliability}
 
 Pour les {{% CRS %}} créés avec la base EPSG, en général oui.
-À noter toutefois que `IdentifiedObjects.getIdentifier(...)` est moins riche et insensible aux détails de la définition du {{% CRS %}}
+À noter toutefois que `IdentifiedObjects.getIdentifier(…)` est moins riche et insensible aux détails de la définition du {{% CRS %}}
 car il n’interroge pas la base de données EPSG. Il marche uniquement si le {{% CRS %}} déclare explicitement son code
 ce qui est le cas des {{% CRS %}} créés à partir de la base EPSG ou lus à partir d’un _Well Known Text_ (WKT) avec un élément `AUTHORITY` ou `ID`.
-La méthode `lookupEPSG(...)` à l’inverse est plus robuste contre les erreurs de déclaration de code car elle compare toujours le {{% CRS %}} avec celui de la base.
+La méthode `lookupEPSG(…)` à l’inverse est plus robuste contre les erreurs de déclaration de code car elle compare toujours le {{% CRS %}} avec celui de la base.
 Elle peut échouer s’il y a une légère différence (par exemple d’arrondie dans les paramètres)
 entre le {{% CRS %}} fourni et le {{% CRS %}} trouvé dans la base de données.
 
@@ -211,7 +212,7 @@ Afin de tester si deux {{% CRS %}} sont fonctionnellement équivalents, utilisez
 
 Oui, toutes les classes définies dans les paquets `org.apache.sis.referencing.crs`, `cs` et `datum`
 définissent leurs propres méthodes `equals(Object)` et `hashCode()`.
-La bibliothèque Apache SIS utilise elle-même les objets {{% CRS %}} dans des `Map` à des fins de cache.
+La bibliothèque Apache {{% SIS %}} utilise elle-même les objets {{% CRS %}} dans des `Map` à des fins de cache.
 
 ## Transformation de coordonnées   {#transforms}
 
@@ -242,7 +243,7 @@ GeodeticCRS["WGS 84",
     Unit["degree", 0.017453292519943295]]
 {{< / highlight >}}
 
-Si l’ordre (_longitude_, _latitude_) est voulu, Apache SIS est capable de le forcer comme décrit [ci-dessus](#axisOrder).
+Si l’ordre (_longitude_, _latitude_) est voulu, Apache {{% SIS %}} est capable de le forcer comme décrit [ci-dessus](#axisOrder).
 
 ### Les ordres des axes sont corrects mais les coordonnées transformées sont encore fausses.  {#projectionName}
 
@@ -256,12 +257,13 @@ ESRI définit aussi une projection _« Stereographic »_ qui est en réalité 
 
 ### J’ai juste utilisé le WKT d’une autorité connue et mes coordonnées transformées sont toujours fausses !    {#parameterUnits}
 
-La spécification _Well Known Text_ (WKT) a été interprétée de différentes façons en fonction des implémentations logicielles.
+La version 1 de la spécification _Well Known Text_ (WKT) a été interprétée de différentes façons en fonction des implémentations logicielles.
 Un problème subtil vient des unités d’angles pour le méridien d’origine et les paramètres de projection.
-La spécification WKT 1 stipule clairement : _« Si l’élément `PRIMEM` apparaît dans `GEOGCS`,
+La spécification {{% WKT %}} 1 stipule clairement : _« Si l’élément `PRIMEM` apparaît dans `GEOGCS`,
 alors l’unité des longitudes doit correspondre à celle du système de coordonnées géographiques »_ (traduction libre de {{% OGC %}} 01-009).
-Toutefois ESRI et GDAL entres autres utilisent inconditionnellement des degrés décimaux, ignorant cette partie de la spécification WKT.
-Ce problème peut être identifié en inspectant l’extrait de WKT suivant :
+Toutefois ESRI et GDAL entres autres utilisent inconditionnellement des degrés décimaux, ignorant cette partie de la spécification {{% WKT %}} 1
+(note: cette remarque ne s’applique pas à {{% WKT %}} 2).
+Ce problème peut être identifié en inspectant l’extrait de {{% WKT %}} suivant :
 
 {{< highlight text >}}
 PROJCS["Lambert II étendu",
@@ -273,20 +275,20 @@ PROJCS["Lambert II étendu",
 {{< / highlight >}}
 
 Le méridien d’origine de Paris est situé à approximativement 2,597 gradians de Greenwich, ce qui correspond à 2,337 degrés.
-À partir de ce fait, on peut voir que le WKT ci-dessus utilise des degrés malgré la déclaration de l’unité `UNIT["grad"]`.
+À partir de ce fait, on peut voir que le {{% WKT %}} ci-dessus utilise des degrés malgré la déclaration de l’unité `UNIT["grad"]`.
 Cette erreur s’applique aussi aux valeurs des paramètres, qui déclarent 46,8° dans l’exemple ci-dessus alors que la valeur officielle est de 52 gradians.
-Par défaut, Apache SIS interprète ces valeurs angulaires en gradians quand il lit ce type de WKT, ce qui produit de grandes erreurs.
+Par défaut, Apache {{% SIS %}} interprète ces valeurs angulaires en gradians quand il lit ce type de {{% WKT %}}, ce qui produit de grandes erreurs.
 Afin d’obtenir le résultat attendu, il est possible de :
 
 * Remplacer `UNIT["grad", 0.01570796326794897]` par `UNIT["degree", 0.017453292519943295]`,
-  ce qui va assurer que Apache SIS, GDAL et ESRI comprennent ce WKT de la même manière.
+  ce qui va assurer que Apache {{% SIS %}}, GDAL et ESRI comprennent ce {{% WKT %}} 1 de la même manière.
 
-* Ou demander explicitement à Apache SIS de lire le WKT en utilisant les conventions ESRI ou GDAL,
-  avec l’énumération `Convention.​WKT1_COMMON_UNITS` pour la valeur de `WKTFormat` dans le paquet `org.​apache.​sis.​io.​wkt`.
+* Ou demander explicitement à Apache {{% SIS %}} de lire le {{% WKT %}} en utilisant les conventions ESRI ou GDAL,
+  avec l’énumération `Convention.WKT1_COMMON_UNITS` pour la valeur de `WKTFormat` dans le paquet `org.apache.sis.io.wkt`.
 
 Il est à noter que le standard GeoPackage requiert explicitement la conformité avec {{% OGC %}} 01-009
-et que le nouveau standard WKT 2 suit aussi l’interprétation de {{% OGC %}} 01-009.
-Le comportement par défaut de Apache SIS est cohérent avec ces deux standards.
+et que le nouveau standard {{% WKT %}} 2 suit aussi l’interprétation de {{% OGC %}} 01-009.
+Le comportement par défaut de Apache {{% SIS %}} est cohérent avec ces deux standards.
 
 ### J’ai vérifié tous ce qui est ci-dessus et j’ai toujours une erreur d’environ un kilomètre. {#BursaWolf}
 
@@ -298,8 +300,8 @@ Mais quand la transformation implique un changement de référentiel, le module 
 Il y a plusieurs façon de spécifier comment appliquer un changement de référentiel, et la plupart sont seulement approximatives.
 La méthode de Bursa-Wolf est l’une d’elle, mais pas la seule. Toutefois elle est une des plus fréquemment utilisées.
 Les paramètres Bursa-Wolf peuvent être spécifiés à l’intérieur de l’élément `TOWGS84` de la version 1 du format _Well Known Text_ (WKT),
-ou dans l’élément `BOUNDCRS` avec la version 2 du format WKT.
-Si le {{% CRS %}} est lu à partir d’une chaine WKT, assurez-vous qu’elle contient l’élément approprié.
+ou dans l’élément `BOUNDCRS` avec la version 2 du format {{% WKT %}}.
+Si le {{% CRS %}} est lu à partir d’une chaine {{% WKT %}}, assurez-vous qu’elle contient l’élément approprié.
 
 ### J’obtiens des résultats légèrement différents d’un environnement d’exécution à l’autre.   {#slightDifferences}
 
@@ -319,9 +321,9 @@ Assurez vous également que les [paramètres de connexion à la base EPSG](epsg.
 
 ### Puis-je présumer qu’il est toujours possible de transformer un CRS arbitraire vers WGS84 ?    {#toWGS84}
 
-Pour les {{% CRS %}} 2D horizontaux créés avec la base de données EPSG, l’appel à `CRS.findOperation(...)` devrait toujours marcher.
+Pour les {{% CRS %}} 2D horizontaux créés avec la base de données EPSG, l’appel à `CRS.findOperation(…)` devrait toujours marcher.
 Pour les {{% CRS %}} 3D ayant n’importe quel axe de hauteur autre que la hauteur ellipsoïdale, ou pour les {{% CRS %}} 2D de type `EngineeringCRS`, la méthode peu échouer.
-Il reste à noter que dans le cas ou la méthode `CRS.findOperation(...)` ne lève pas d’erreur, l’appel à `MathTransform.transform(...)` peut
+Il reste à noter que dans le cas ou la méthode `CRS.findOperation(…)` ne lève pas d’erreur, l’appel à `MathTransform.transform(…)` peut
 produire des valeurs `NaN` or `Infinity`si la coordonnée transformée est éloignée de la zone de validité.
 
 # Métadonnées    {#metadata}

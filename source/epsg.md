@@ -6,14 +6,14 @@ The [EPSG geodetic dataset][EPSG] is a de-facto standard providing
 [thousands of Coordinate Reference System (CRS) definitions](tables/CoordinateReferenceSystems.html)
 together with information about how to perform coordinate operations, their accuracies and their domains of validity.
 The EPSG dataset is owned and maintained by the [International Association of Oil & Gas producers][IOGP].
-Usage of EPSG dataset with Apache SIS is optional but strongly recommended:
+Usage of EPSG dataset with Apache {{% SIS %}} is optional but strongly recommended:
 without that geodetic dataset, only a small subset of CRS definitions will be available
 (basically the constants enumerated in the [`CommonCRS`](apidocs/org/apache/sis/referencing/CommonCRS.html) Java class)
 unless full definitions are provided in _Well Known Text_ (WKT) or _Geographic Markup Language_ (GML) formats.
 Furthermore, coordinate operations between any given pair of CRS may be less accurate
-and their domains of validity may be unspecified if Apache SIS can not query EPSG.
+and their domains of validity may be unspecified if Apache {{% SIS %}} can not query EPSG.
 
-The EPSG geodetic dataset is not distributed with Apache SIS because the [EPSG terms of use][EPSG-ToU]
+The EPSG geodetic dataset is not distributed with Apache {{% SIS %}} because the [EPSG terms of use][EPSG-ToU]
 are incompatible with Apache license. The following items are quoted from those terms of use:
 
 * The [EPSG][EPSG] Facilities are published by [IOGP][IOGP] at no charge. Distribution for profit is forbidden.
@@ -25,7 +25,7 @@ are incompatible with Apache license. The following items are quoted from those 
   of the information provided that numeric equivalence is achieved.
 * No data that has been modified other than as permitted in these Terms of Use shall be attributed to the EPSG Dataset.
 
-In order to use the EPSG geodetic dataset with Apache SIS, apply *one* of the following choices:
+In order to use the EPSG geodetic dataset with Apache {{% SIS %}}, apply *one* of the following choices:
 
 {{< toc >}}
 
@@ -40,28 +40,30 @@ sis crs EPSG:6676
 
 The first time that the command-line tool needs to query EPSG, it will prompt the user for authorization
 to download EPSG geodetic dataset from Maven Central. If the user accepts EPSG terms of use, then a local
-copy of the EPSG geodetic dataset will be created and stored in the `apache-sis-1.1/data` sub-directory.
+copy of the EPSG geodetic dataset will be created and stored in the `apache-sis-{{% version %}}/data` sub-directory.
 
 ## Use the local copy in other applications    {#use-local}
 
 For using the installed EPSG geodetic dataset in your own application, apply *one* of the following choices:
 
-* Set the `SIS_DATA` environment variable to the path of `apache-sis-1.1/data` directory _(preferred choice)_.
-* Set the `derby.system.home` Java property to the path of `apache-sis-1.1/data/Databases` directory.
+* Set the `SIS_DATA` environment variable to the path of `apache-sis-{{% version %}}/data` directory _(recommended)_.
+* Set the `derby.system.home` Java property to the path of `apache-sis-{{% version %}}/data/Databases` directory.
 
 Alternatively `SIS_DATA` or `derby.system.home` can be set to the path of any other directory which contain the same files.
-Examples are shown below for Unix systems, assuming that the current directory is the directory where `apache-sis-1.1-bin.zip`
+Examples are shown below for Unix systems, assuming that the current directory is the directory where `apache-sis-{{% version %}}-bin.zip`
 has been unzipped:
 
 {{< highlight bash >}}
-export SIS_DATA=apache-sis-1.1/data
-java -classpath apache-sis-1.1/lib/sis.jar:myApp.jar myMainClass
+export SIS_DATA=apache-sis-{{% version %}}/data
+java -classpath apache-sis-{{% version %}}/lib/sis-referencing.jar:myApp.jar myMainClass
 {{< / highlight >}}
 
 If the `SIS_DATA` environment variable can not be set, Java property can be used as a fallback:
 
-{{< highlight java >}}
-java -Dderby.system.home=apache-sis-1.1/data/Databases -classpath apache-sis-1.1/lib/sis.jar:myApp.jar myMainClass
+{{< highlight bash >}}
+java -Dderby.system.home=apache-sis-{{% version %}}/data/Databases \
+     -classpath apache-sis-{{% version %}}/lib/sis-referencing.jar:myApp.jar \
+     myMainClass
 {{< / highlight >}}
 
 # Add a Maven dependency    {#maven}
@@ -74,10 +76,10 @@ In both cases, we assume that developers who add those dependencies explicitely 
 
 ## As database installer     {#maven-epsg}
 
-With `sis-epsg` artifact on the classpath, Apache SIS will create a local copy of EPSG database when first needed.
+With `sis-epsg` artifact on the classpath, Apache {{% SIS %}} will create a local copy of EPSG database when first needed.
 The target database must be specified by users with *one* of the following choices:
 
-* Set the `SIS_DATA` environment variable to the path of an initially empty directory _(preferred choice)_.
+* Set the `SIS_DATA` environment variable to the path of an initially empty directory _(recommended)_.
   The specified directory must exist, but sub-directories will be created as needed.
 * Set the `derby.system.home` Java property to the path of an initially empty directory,
   or a directory that contain other Derby databases. The specified directory must exist.
@@ -93,7 +95,7 @@ if that database is specified by JNDI):
   <dependency>
     <groupId>org.apache.sis.non-free</groupId>
     <artifactId>sis-epsg</artifactId>
-    <version>1.1</version>
+    <version>{{% version %}}</version>
     <scope>runtime</scope>
   </dependency>
 
@@ -130,7 +132,7 @@ Note that `sis-epsg` and `sis-embedded-data` should not be specified in the same
   <dependency>
     <groupId>org.apache.sis.non-free</groupId>
     <artifactId>sis-embedded-data</artifactId>
-    <version>1.1</version>
+    <version>{{% version %}}</version>
     <scope>runtime</scope>
   </dependency>
 </dependencies>
@@ -146,11 +148,11 @@ or by uncompressing the `sis-embedded-data.jar` file locally.
 
 # Use Java Naming and Directory Interface    {#jndi}
 
-While Apache SIS uses Apache Derby by default, it is also possible to use another database software like HSQL or PostgreSQL.
+While Apache {{% SIS %}} uses Apache Derby by default, it is also possible to use another database software like HSQL or PostgreSQL.
 For using an arbitrary database, register a `javax.sql.DataSource` instance through the Java Naming and Directory Interface (JNDI).
 That registration can be done programmatically (by Java code) or by configuring XML files in some environments.
 The database must exist but can be empty, in which case it will be populated with an EPSG schema when first needed
-if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​1.1</code> dependency is on the classpath
+if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​{{% version %}}</code> dependency is on the classpath
 (see [above section](#maven-epsg)).
 
 ## Registration by Java code    {#jndi-java}
@@ -160,8 +162,8 @@ Registration can be done by the following Java code, provided that a JNDI implem
 {{< highlight java >}}
 // Example using PostgreSQL data source (org.postgresql.ds.PGSimpleDataSource)
 PGSimpleDataSource ds = new PGSimpleDataSource();
-ds.setServerName("localhost");
 ds.setDatabaseName("SpatialMetadata");
+// Server default to "localhost".
 
 // Registration assuming that a JNDI implementation is available
 Context env = (Context) InitialContext.doLookup("java:comp/env");
@@ -170,7 +172,7 @@ env.bind("jdbc/SpatialMetadata", ds);
 
 If there is no JNDI environment, the `org.apache.sis.setup.Configuration` class can be used as a fallback:
 
-{{< highlight java >}}
+{{< highlight bash >}}
 // Fallback if no JNDI environment is available.
 Configuration.current().setDatabase(() -> ds);
 {{< / highlight >}}
@@ -178,7 +180,7 @@ Configuration.current().setDatabase(() -> ds);
 ## Registration in web application containers    {#jndi-webapp}
 
 JNDI implementations are provided by web application containers like Apache Tomcat.
-When Apache SIS is used in a JavaEE container, the data source can be configured as below:
+When Apache {{% SIS %}} is used in a JavaEE container, the data source can be configured as below:
 
 1. Make the JDBC driver available to the web container and its applications.
    On Tomcat, this is accomplished by installing the driver's JAR files into the `$CATALINA_HOME/lib` directory.
@@ -219,7 +221,7 @@ export JAVA_OPTS=-Dderby.system.home=$SIS_DATA/Databases
 
 5. If using Derby, verify on the `localhost:8080/derby/derbynet` page (skip this step if another database is used).
 
-More advanced configurations are possible. For example Tomcat can invoke a custom Java method instead than
+More advanced configurations are possible. For example Tomcat can invoke a custom Java method instead of
 fetching the data source from the `context.xml` file.
 
 [IOGP]:     https://www.iogp.org/

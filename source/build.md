@@ -2,12 +2,22 @@
 title: Build from source
 ---
 
-Apache SIS is built by Maven.
+Apache {{% SIS %}} is built by Maven.
 For installing the JAR files in the local Maven repository, execute the following command
 from the SIS project root:
 
 {{< highlight bash >}}
 mvn install
+{{< / highlight >}}
+
+The JavaFX application is excluded by default because it depends on
+the [JavaFX platform][JavaFX] which is distributed under GPL license
+(note that the SIS module stay under Apache 2 licence).
+Likewise the [EPSG geodetic dataset](epsg.html) is excluded by default for licensing reasons.
+For including the JavaFX module and the use of EPSG dataset in the build:
+
+{{< highlight bash >}}
+mvn install --activate-profiles javafx,non-free
 {{< / highlight >}}
 
 For signing the artifacts and producing distribution files (`apache-sis-bin.zip` and `apache-sis.oxt`),
@@ -27,8 +37,8 @@ The remaining of this page provides more advanced tips for SIS developers.
 
 The distribution archive is a file with the `.zip` extension containing most SIS modules except `sis-webapp`
 (because Web applications use an other packaging) together with their dependencies.
-However for users convenience, we provide a shell script launching the SIS command line tool.
-That shell script, together with other files (`README`, `LICENSE`, <i>etc.</i>) are bundled in a ZIP file created as below:
+However for users convenience, we provide shell scripts launching the SIS command line tool or the JavaFX application.
+Those shell scripts, together with other files (`README`, `LICENSE`, <i>etc.</i>) are bundled in a ZIP file created as below:
 
 {{< highlight bash >}}
 cd application/sis-console
@@ -37,32 +47,29 @@ mvn package org.apache.sis.core:sis-build-helper:dist
 
 This task is executed automatically if the `apache-release` profile is activated at build time.
 Above command is for the cases where the developer wants the distribution file without rebuilding the whole project.
-Optionally, the Apache SIS version can be inserted as a 4th element between `sis-build-helper:` and `:dist`
-if there is many versions of the plugin in the local repository.
-
-The result will be created in the `target/distribution/apache-sis-<version>.zip` file.
-To test, uncompress in any directory and execute `apache-sis-<version>/bin/sis`.
+The result will be created in the `target/​distribution/​apache-​sis-​<version>.zip` file.
+To test, uncompress in any directory and execute `apache-​sis-​<version>/​bin/sis`.
 
 ## Known limitations   {#limitations}
 
 The current plugin implementation has some hard-coded values, especially:
 
-* The ZIP file content is copied from the `application/sis-console/src/main/artifact` directory.
-* The final filename is hard-coded to `apache-sis-<version>.zip`.
+* The ZIP file content is copied from the `application/​sis-console/​src/​main/​artifact` directory.
+* The final filename is hard-coded to `apache-​sis-​<version>.zip`.
 
 # SIS-specific Maven plugin   {#build-helper}
 
-Apache SIS uses a `sis-build-helper` plugin for SIS-specific tasks and Javadoc customization.
+Apache {{% SIS %}} uses a `sis-​build-​helper` plugin for SIS-specific tasks and Javadoc customization.
 This plugin is used automatically by `mvn install`. Consequently the remaining of this page
 can be safely ignored. This page is provided only as a reference for developers wanting to
 take a closer look to SIS `pom.xml` file.
 
 ## Localized resources compiler    {#resources}
 
-Localized resources are provided in `*.properties` files as specified by the `java.util.PropertyResourceBundle` standard class.
+Localized resources are provided in `*.properties` files as specified by the `java.util.Property­Resource­Bundle` standard class.
 However SIS does not use those resources files directly. Instead `*.properties` files are transformed into binary files having
 the same filename but the `.utf` extension. This conversion is done for efficiency, for convenience (the compiler applies the
-`java.text.MessageFormat` _doubled single quotes_ rule itself), and for compile-time safety.
+`java.text.Message­Format` _doubled single quotes_ rule itself), and for compile-time safety.
 
 In addition to generating the `*.utf` files, the resource compiler may modify the `*.java` files having the same name than the
 resource files. For example given a set of `Vocabulary*.properties` files (one for each supported language), the compiler will
@@ -103,15 +110,15 @@ mvn org.apache.sis.core:sis-build-helper:compile-resources
 
 ## JAR files collector    {#jar-collect}
 
-Links or lists all JAR files (including dependencies) in the `target/binaries` directory of the parent project.
+Links or lists all JAR files (including dependencies) in the `target/​binaries` directory of the parent project.
 This plugin performs a work similar to the standard Maven assembly plugin work, with the following differences:
 
 * In multi-modules projects, this plugin does not create anything in the `target` directory of sub-modules.
-  Instead, this plugin groups everything in the `target/binaries` directory of the parent module.
+  Instead, this plugin groups everything in the `target/​binaries` directory of the parent module.
 * This plugin does not create any ZIP file. It only links or lists JAR files.
   This plugin uses hard links on platforms that support them,
   so execution of this plugin should be very cheap and consume few disk space.
-* Dependencies already present in the `target/binaries` directory are presumed stables and
+* Dependencies already present in the `target/​binaries` directory are presumed stables and
   are not overwritten. Only artifacts produced by the Maven build are unconditionally overwritten.
 
 This plugin can be activated by the following fragment in the parent `pom.xml` file:
@@ -134,3 +141,6 @@ This plugin can be activated by the following fragment in the parent `pom.xml` f
   </plugins>
 </build>
 {{< / highlight >}}
+
+
+[JavaFX]: https://openjfx.io/

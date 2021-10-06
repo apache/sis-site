@@ -2,7 +2,7 @@
 title: Frequently asked questions
 ---
 
-This page lists some Frequently Asked Questions (FAQ) when using Apache SIS.
+This page lists some Frequently Asked Questions (FAQ) when using Apache {{% SIS %}}.
 This FAQ is also [available in French](faq_fr.html).
 
 {{< toc >}}
@@ -33,11 +33,11 @@ public class MyApp {
         CoordinateReferenceSystem sourceCRS = CommonCRS.WGS84.geographic();
         CoordinateReferenceSystem targetCRS = CommonCRS.WGS84.universal(40, 14);  // Get whatever zone is valid for 14°E.
         CoordinateOperation operation = CRS.findOperation(sourceCRS, targetCRS, null);
-
-        // The above lines are costly and should be performed only once before to project many points.
-        // In this example, the operation that we got is valid for coordinates in geographic area from
-        // 12°E to 18°E (UTM zone 33) and 0°N to 84°N.
-
+        /*
+         * The above lines are costly and should be performed only once before to project many points.
+         * In this example, the operation that we got is valid for coordinates in geographic area from
+         * 12°E to 18°E (UTM zone 33) and 0°N to 84°N.
+         */
         DirectPosition ptSrc = new DirectPosition2D(40, 14);           // 40°N 14°E
         DirectPosition ptDst = operation.getMathTransform().transform(ptSrc, null);
 
@@ -49,22 +49,22 @@ public class MyApp {
 
 ### Which map projections are supported?    {#operation-methods}
 
-The operation _methods_ (including, but not limited to, map projections) supported by Apache SIS
-are listed in the [Coordinate Operation Methods](tables/CoordinateOperationMethods.html) page.
+The operation _methods_ (including, but not limited to, map projections) supported by
+Apache {{% SIS %}} are listed in the [Coordinate Operation Methods](tables/CoordinateOperationMethods.html) page.
 The amount of map projection methods is relatively small,
-but the amount of _projected {{% CRS %}}_ that we can build from them can be very large.
+but the amount of _projected Coordinate Reference Systems_ that we can build from them can be very large.
 For example with only three family of methods (_Cylindrical Mercator_, _Transverse Mercator_ and _Lambert Conic Conformal_)
 used with different parameter values, we can cover thousands of projected {{% CRS %}} listed in the EPSG geodetic dataset.
 
 In order to use a map projection method, we need to know the value to assign to the projection parameters.
 For convenience, thousands of projected {{% CRS %}} with pre-defined parameter values are are assigned a unique identifier.
 A well-known source of such definitions is the EPSG geodetic dataset, but other authorities also exist.
-The predefined {{% CRS %}} known to Apache SIS are listed in the
+The predefined {{% CRS %}} known to Apache {{% SIS %}} are listed in the
 [Coordinate Reference Systems](tables/CoordinateReferenceSystems.html) page.
 
 ### What is the axis order issue and how is it addressed?    {#axisOrder}
 
-The axis order is specified by the authority (typically a national agency) defining the Coordinate Reference System ({{% CRS %}}).
+The axis order is specified by the authority (typically a national agency) defining the Coordinate Reference System (CRS).
 The order depends on the {{% CRS %}} type and the country defining the {{% CRS %}}.
 In the case of geographic {{% CRS %}}, the (_latitude_, _longitude_) axis order is widely used by geographers and pilots for centuries.
 However software developers tend to consistently use the (_x_, _y_) order for every kind of {{% CRS %}}.
@@ -83,13 +83,13 @@ Recent {{% OGC %}} standards mandate the use of axis order as defined by the aut
 Oldest {{% OGC %}} standards used the (_x_, _y_) axis order instead, ignoring any authority specification.
 Among the legacy {{% OGC %}} standards that used the non-conform axis order,
 an influent one is version 1 of the _Well Known Text_ (WKT) format specification.
-According that widely-used format, WKT definitions without explicit `AXIS[...]` elements
+According that widely-used format, {{% WKT %}} definitions without explicit `AXIS[…]` elements
 shall default to (_longitude_, _latitude_) or (_x_, _y_) axis order.
-In version 2 of the WKT format, `AXIS[...]` elements are no longer optional
-and should contain an explicit `ORDER[...]` sub-element for making the intended order yet more obvious.
+In version 2 of the {{% WKT %}} format, `AXIS[…]` elements are no longer optional
+and should contain an explicit `ORDER[…]` sub-element for making the intended order yet more obvious.
 
 Many software products still use the old (_x_, _y_) axis order, sometime because it is easier to implement.
-But Apache SIS rather defaults to axis order _as defined by the authority_ (except when parsing a WKT 1 definition),
+But Apache {{% SIS %}} rather defaults to axis order _as defined by the authority_ (except when parsing a {{% WKT %}} 1 definition),
 but allows changing axis order to the (_x_, _y_) order after {{% CRS %}} creation.
 This change can be done with the following code:
 
@@ -102,7 +102,7 @@ crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)
 
 ### How do I instantiate a Universal Transverse Mercator (UTM) projection?    {#UTM}
 
-If the UTM zone is unknown, an easy way is to invoke the `universal(...)` method on one of the `CommonCRS` pre-defined constants.
+If the UTM zone is unknown, an easy way is to invoke the `universal(…)` method on one of the `CommonCRS` pre-defined constants.
 That method receives in argument a geographic coordinate in (_latitude_, _longitude_) order and computes the UTM zone from it.
 See the [above Java code example](#transform-point).
 
@@ -139,8 +139,8 @@ Those methods have "(Spherical)" in their name, for example _"Mercator (Spherica
 Those projection methods can be used in Well Known Text (WKT) definitions.
 
 If there is a need to use spherical formulas with a projection that does not have a "(Spherical)" counterpart,
-this can be done with explicit declarations of `"semi_major"` and `"semi_minor"` parameter values in the WKT definition.
-Those parameter values are usually inferred from the datum, but Apache SIS allows explicit declarations to override the inferred values.
+this can be done with explicit declarations of `"semi_major"` and `"semi_minor"` parameter values in the {{% WKT %}} definition.
+Those parameter values are usually inferred from the datum, but Apache {{% SIS %}} allows explicit declarations to override the inferred values.
 
 ### How can I identify the projection kind of a CRS?    {#projectionKind}
 
@@ -153,17 +153,18 @@ listed in the [Coordinate Operation Methods](tables/CoordinateOperationMethods.h
 The _identifier_ of a Coordinate Reference System (CRS) object can be obtained by the `getIdentifiers()` method,
 which usually return a collection of zero or one element.
 If the {{% CRS %}} has been created from a Well Known Text (WKT) parsing
-and the WKT ends with an `AUTHORITY["EPSG", "xxxx"]` (WKT version 1) or `ID["EPSG", xxxx]` (WKT version 2) element,
+and the {{% WKT %}} ends with an `AUTHORITY["EPSG", "xxxx"]` ({{% WKT %}} version 1)
+or `ID["EPSG", xxxx]` ({{% WKT %}} version 2) element,
 then the identifier (an EPSG numerical code in this example) is the _xxxx_ value in that element.
 If the {{% CRS %}} has been created from the EPSG geodetic dataset (for example by a call to `CRS.forCode("EPSG:xxxx")`),
 then the identifier is the _xxxx_ code given to that method.
 If the {{% CRS %}} has been created in another way, then the collection returned by the `getIdentifiers()` method
 may or may not be empty depending if the program that created the {{% CRS %}} took the responsibility of providing identifiers.
 
-If the collection of identifiers is empty, the most effective fix is to make sure that the WKT
-contains an `AUTHORITY` or `ID` element (assuming that the {{% CRS %}} was parsed from a WKT).
-If this is not possible, then the `org.​apache.​sis.​referencing.​IdentifiedObjects` class contains some convenience methods which may help.
-In the following example, the call to `lookupEPSG(...)` will scan the EPSG database for a {{% CRS %}} equals
+If the collection of identifiers is empty, the most effective fix is to make sure that the {{% WKT %}}
+contains an `AUTHORITY` or `ID` element (assuming that the {{% CRS %}} was parsed from a {{% WKT %}}).
+If this is not possible, then the `org.apache.sis.referencing.IdentifiedObjects` class contains some convenience methods which may help.
+In the following example, the call to `lookupEPSG(…)` will scan the EPSG database for a {{% CRS %}} equals
 (ignoring metadata) to the given one. *Note that this scan is sensitive to axis order.*
 Most geographic {{% CRS %}} in the EPSG database are declared with (_latitude_, _longitude_) axis order.
 Consequently if the given {{% CRS %}} has (_longitude_, _latitude_) axis order, then the scan is likely to find no match.
@@ -176,7 +177,7 @@ if (identifier != null) {
 }
 {{< / highlight >}}
 
-### How do I get the "urn:ogc:def:crs:..." URN of an existing CRS?    {#lookupURN}
+### How do I get the "urn:ogc:def:crs:…" URN of an existing CRS?    {#lookupURN}
 
 {{% OGC %}} defines URN for {{% CRS %}} identifiers, for example `"urn:​ogc:​def:​crs:​epsg:​7.1:​4326"`
 where `"7.1"` is the version of the EPSG database used.
@@ -190,13 +191,13 @@ CoordinateReferenceSystem myCRS = ...;
 String urn = IdentifiedObjects.lookupURN(myCRS);
 {{< / highlight >}}
 
-### Can I rely on IdentifiedObjects.lookupEPSG(...) to work correctly as the inverse of CRS.forCode(...)?   {#lookupReliability}
+### Is IdentifiedObjects.lookupEPSG(…) a reliable inverse of CRS.forCode(…)?   {#lookupReliability}
 
 For {{% CRS %}} created from the EPSG geodetic dataset, usually yes.
-Note however that `IdentifiedObjects.getIdentifier(...)` is cheaper and insensitive to the details of {{% CRS %}} definition,
+Note however that `IdentifiedObjects.getIdentifier(…)` is cheaper and insensitive to the details of {{% CRS %}} definition,
 since it never query the database. But it works only if the {{% CRS %}} declares explicitly its code,
 which is the case for {{% CRS %}} created from the EPSG database or parsed from a Well Known Text (WKT) having an `AUTHORITY` or `ID` element.
-The `lookupEPSG(...)` method on the other hand is robust to erroneous code declaration,
+The `lookupEPSG(…)` method on the other hand is robust to erroneous code declaration,
 since it always compares the {{% CRS %}} with the database content.
 But it may fail if there is slight mismatch (for example rounding errors in projection parameters)
 between the supplied {{% CRS %}} and the {{% CRS %}} found in the database.
@@ -205,19 +206,19 @@ between the supplied {{% CRS %}} and the {{% CRS %}} found in the database.
 
 Two Coordinate Reference Systems may not be considered equal if they are associated to different metadata
 (name, identifiers, scope, domain of validity, remarks), even though they represent the same logical {{% CRS %}}.
-In order to test if two {{% CRS %}} are functionally equivalent, use `Utilities​.equalsIgnoreMetadata(myFirstCRS, mySecondCRS)`.
+In order to test if two {{% CRS %}} are functionally equivalent, use `Utilities​.equals­Ignore­Metadata(myFirstCRS, mySecondCRS)`.
 
 ### Are CRS objects safe for use as keys in HashMap?    {#crsHashCode}
 
 Yes, every classes defined in the `org.apache.sis.referencing.crs`, `cs` and `datum` packages
 define properly their `equals(Object)` and `hashCode()` methods.
-The Apache SIS library itself uses {{% CRS %}} objects in `HashMap`-like containers for caching purpose.
+The Apache {{% SIS %}} library itself uses {{% CRS %}} objects in `HashMap`-like containers for caching purpose.
 
 ## Coordinate transformations    {#transforms}
 
 ### My transformed coordinates are totally wrong!    {#axisOrderInTransforms}
 
-This is most frequently caused by ordinate values given in the wrong order.
+This is most frequently caused by coordinate values given in the wrong order.
 Developers tend to assume a (_x_, _y_) or (_longitude_, _latitude_) axis order.
 But geographers and pilots are using (_latitude_, _longitude_) axis order for centuries,
 and the EPSG geodetic dataset defines geographic Coordinate Reference Systems that way.
@@ -242,7 +243,7 @@ GeodeticCRS["WGS 84",
     Unit["degree", 0.017453292519943295]]
 {{< / highlight >}}
 
-If (_longitude_, _latitude_) axis order is really wanted, Apache SIS can be forced to that order [as described above](#axisOrder).
+If (_longitude_, _latitude_) axis order is really wanted, Apache {{% SIS %}} can be forced to that order [as described above](#axisOrder).
 
 ### I have correct axis order but my transformed coordinates are still wrong.   {#projectionName}
 
@@ -256,12 +257,13 @@ ESRI also defines a _"Stereographic"_ projection, which is actually an oblique p
 
 ### I just used the WKT of a well-known authority and my transformed coordinates are still wrong!    {#parameterUnits}
 
-The Well Known Text (WKT) specification has been interpreted in different ways by different implementors.
+The version 1 of Well Known Text (WKT) specification has been interpreted in different ways by different implementors.
 One subtle issue is the angular units of prime meridian and projection parameter values.
-The WKT 1 specification clary states: _"If the `PRIMEM` clause occurs inside a `GEOGCS`,
+The {{% WKT %}} 1 specification clary states: _"If the `PRIMEM` clause occurs inside a `GEOGCS`,
 then the longitude units will match those of the geographic coordinate system"_ (source: {{% OGC %}} 01-009).
-However ESRI and GDAL among others unconditionally use decimal degrees, ignoring this part of the WKT specification.
-This problem can be identified by WKT inspection as in the following extract:
+However ESRI and GDAL among others unconditionally use decimal degrees, ignoring this part of the {{% WKT %}} 1 specification
+(note: this remark does not apply to {{% WKT %}} 2).
+This problem can be identified by {{% WKT %}} inspection as in the following extract:
 
 {{< highlight text >}}
 PROJCS["Lambert II étendu",
@@ -273,20 +275,20 @@ PROJCS["Lambert II étendu",
 {{< / highlight >}}
 
 The Paris prime meridian is located at approximatively 2.597 gradians from Greenwich, which is 2.337 degrees.
-From this fact, we can see that the above WKT uses decimal degrees despite its `UNIT["grad"]` declaration.
+From this fact, we can see that the above {{% WKT %}} uses decimal degrees despite its `UNIT["grad"]` declaration.
 This mismatch applies also to the parameter value, which declare 46.8° in the above example while the official value is 52 gradians.
-By default, Apache SIS interprets those angular values as gradians when parsing such WKT, resulting in a large error.
+By default, Apache {{% SIS %}} interprets those angular values as gradians when parsing such {{% WKT %}}, resulting in a large error.
 In order to get the intended result, there is a choice:
 
 * Replace `UNIT["grad", 0.01570796326794897]` by `UNIT["degree", 0.017453292519943295]`,
-  which ensure that Apache SIS, GDAL and ESRI understand that WKT in the same way.
+  which ensure that Apache {{% SIS %}}, GDAL and ESRI understand that {{% WKT %}} 1 in the same way.
 
-* Or ask explicitely Apache SIS to parse the WKT using the ESRI or GDAL conventions, by specifying the
-  `Convention.​WKT1_COMMON_UNITS` enumeration value to `WKTFormat` in the `org.​apache.​sis.​io.​wkt` package.
+* Or ask explicitely Apache {{% SIS %}} to parse the {{% WKT %}} using the ESRI or GDAL conventions, by specifying the
+  `Convention.WKT1_COMMON_UNITS` enumeration value to `WKTFormat` in the `org.apache.sis.io.wkt` package.
 
-Note that the GeoPackage standard explicitely requires {{% OGC %}} 01-009 compliant WKT
-and the new WKT 2 standard also follows the {{% OGC %}} 01-009 interpretation.
-The default Apache SIS behavior is consistent with those two standards.
+Note that the GeoPackage standard explicitely requires {{% OGC %}} 01-009 compliant {{% WKT %}}
+and the new {{% WKT %}} 2 standard also follows the {{% OGC %}} 01-009 interpretation.
+The default Apache {{% SIS %}} behavior is consistent with those two standards.
 
 ### I verified all the above and still have an error of about one kilometer.    {#BursaWolf}
 
@@ -298,8 +300,8 @@ But when the transformation involves a change of datum, the referencing module n
 There is many way to specify how to perform a datum shift, and most of them are only approximation.
 The Bursa-Wolf method is one of them, not the only one. However it is one of the most frequently used methods.
 The Bursa-Wolf parameters can be specified inside a `TOWGS84` element with version 1 of Well Known Text (WKT) format,
-or in a `BOUNDCRS` element with version 2 of WKT format.
-If the CRS are parsed from a WKT string, make sure that the string contains the appropriate element.
+or in a `BOUNDCRS` element with version 2 of {{% WKT %}} format.
+If the CRS are parsed from a {{% WKT %}} string, make sure that the string contains the appropriate element.
 
 ### I get slightly different results depending on the environment I’m running in.    {#slightDifferences}
 
@@ -319,9 +321,9 @@ Make sure that the [connection parameters to the EPSG database](epsg.html) are a
 
 ### Can I always expect a transform from an arbitrary CRS to WGS84 to succeed?    {#toWGS84}
 
-For 2D horizontal {{% CRS %}} created from the EPSG database, calls to `CRS.findOperation(...)` should generally succeed.
+For 2D horizontal {{% CRS %}} created from the EPSG database, calls to `CRS.findOperation(…)` should generally succeed.
 For 3D {{% CRS %}} having any kind of height different than ellipsoidal height, or for a 2D {{% CRS %}} of type `EngineeringCRS`, it may fail.
-Note however that even if the call to `CRS.findOperation(...)` succeed, the call to `MathTransform.transform(...)` may fail
+Note however that even if the call to `CRS.findOperation(…)` succeed, the call to `MathTransform.transform(…)` may fail
 or produce `NaN` or infinity values if the coordinate to transform is far from the domain of validity.
 
 # Metadata    {#metadata}

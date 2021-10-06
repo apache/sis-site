@@ -2,7 +2,7 @@
 title: Source code
 ---
 
-This page describes some coding conventions applied in Apache SIS development.
+This page describes some coding conventions applied in Apache {{% SIS %}} development.
 
 {{< toc >}}
 
@@ -28,25 +28,25 @@ Classes implementing GeoAPI interfaces usually (but not always) begin with `Abst
   as opposed to other implementations specialized for a fixed number of dimensions or other conditions.
 * Implementations specialized for a fixed number of dimensions are suffixed with `1D`, `2D`, `3D` or `4D` rather than being prefixed.
 
-Example: `GeneralEnvelope` class is an implementation of `Envelope` interface for the multi-dimensional case.
-`Envelope2D` is another implementation of the same interface specialized for the two-dimensional case.
+Example: the `GeneralEnvelope` class is an implementation of `Envelope` interface for the multi-dimensional case.
+The `Envelope2D` class is another implementation of the same interface specialized for the two-dimensional case.
 
 ## Internal packages    {#internal}
 
 All classes in `org.apache.sis.internal` sub-packages are for SIS usage only and may change without warning in any future release.
 Those classes are excluded from Javadoc and will not be exported by SIS Jigsaw modules.
-Those packages may be renamed after SIS upgraded to JDK 9.
+Those packages may be renamed after SIS upgraded to JDK 9+.
 
 ## Substitution for non-existent classes    {#substitutions}
 
-When using a JDK 9 class that does not exist on JDK 8, define a class of the same name in a
+When using a JDK 9+ class that does not exist on JDK 8, define a class of the same name in a
 `org.apache.sis.internal` sub-package with the minimal amount of needed functionalities,
 provided that it can be done with reasonable effort.
 Otherwise just delete the JDK9-dependent code from the development branch.
 
 # Code formatting    {#formatting}
 
-Apache SIS uses the standard Java conventions, except for the 80 characters line length restriction.
+Apache {{% SIS %}} uses the standard Java conventions, except for the 80 characters line length restriction.
 The conventions listed below are guidelines. Some exceptions to those conventions can occur but should
 be rare (see [exceptions to coding conventions](#tabular-formatting)).
 
@@ -75,7 +75,7 @@ import org.opengis.feature.Feature;
 
 * **Indentation:** Use a consistent space indents and never use tabs.
   + Use 4 space indents for Java files.
-  + Use 2 space indents for XML files, because {{% ISO %}}/{{% OGC %}} XML schemas tend to have a very deep structure.
+  + Use 2 space indents for XML files, because {{% ISO %}}/{{% OGC %}} {{% XML %}} schemas tend to have a very deep structure.
 * **Space after keyword:** Put a space after `if`, `else`, `for`, `try`, `catch` and similar keywords
   (not after method names).
 * **Trailing Whitespaces:** Remove all trailing whitespaces.
@@ -119,7 +119,7 @@ Of course, tabular format shall not be abused.
 
 # Documentation formatting    {#javadoc}
 
-Apache SIS uses the standard Javadoc conventions, except for the 80 characters line length restriction.
+Apache {{% SIS %}} uses the standard Javadoc conventions, except for the 80 characters line length restriction.
 Javadoc lines should not exceed 120 characters, but exceptions to this rule may exist for preserving the
 structure of `<table>` elements.
 
@@ -149,7 +149,7 @@ For example:
 * Instead of "`<code>✎</code>`", use "`{@code ✎}`".
 * Instead of "`a &lt; b &lt; c`", use "`{@literal a < b < c}`".
 * Instead of "`<pre>✎</pre>`" for a Java listing, use "`{@preformat java ✎}`"
-  (this Javadoc tag is specific to Apache SIS — see above table).
+  (this Javadoc tag is specific to Apache {{% SIS %}} — see above table).
 
 ### Paragraphs    {#paragraph}
 
@@ -164,11 +164,10 @@ In such cases, `<p>` shall have a matching `</p>` tag at the paragraph end in or
 ### Javadoc CSS    {#css}
 
 Avoid using HTML attributes other than `class` as much as possible.
-Instead, rely on styling. Some HTML tags having a style definition in Apache SIS are:
+Instead, rely on styling. Some HTML tags having a style definition in Apache {{% SIS %}} are:
 
 HTML tag                  | Description
 ------------------------- | -------------------------------------------------------------------------------------------
-`<div class="section">`   | Header of a sub-section in a package, class or member description.
 `<div class="note">`      | Indented text with smaller font, used for notes or examples.
 `<div class="warning">`   | Text in red color, used for warning about probable API changes.
 `<ul>` and `<ol>`         | Default list styles with few space between items (suitable for compact lists).
@@ -188,7 +187,7 @@ For examples of MathML usage in SIS, search for the `<math …>` XML tag in Java
 (note: there is also legacy `{@preformat math …}` custom Javadoc tags, but they may be phased out as MathML adoption increase).
 For an introduction to MathML, see:
 
-* [A Gentle Introduction to MathML][mathml-dessci] on Design Science
+* [MathML learn & use][mathml-W3C] on W3C
 * [Working with MathML][mathml-wolfram] on Wolfram Mathematica
 
 MathML is supported natively in Firefox, Safari and Opera.
@@ -197,9 +196,9 @@ Firefox users can optionally install the [fonts for Mozilla's MathML engine][mat
 Note that a [JavaScript display engine][mathml-mathjax] is available for all browsers, but not yet used by SIS.
 
 [srcheaders]:       http://www.apache.org/legal/src-headers.html
-[JLS-order]:        http://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.1
-[mathml-wolfram]:   http://reference.wolfram.com/mathematica/XML/tutorial/MathML.html
-[mathml-dessci]:    http://www.dessci.com/en/reference/mathml/
-[mathml-fonts]:     http://developer.mozilla.org/en-US/docs/Mozilla/MathML_Project/Fonts
-[mathml-plugin-ie]: http://www.dessci.com/en/products/mathplayer/download.htm
-[mathml-mathjax]:   http://www.mathjax.org/
+[JLS-order]:        https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.1
+[mathml-W3C]:       https://www.w3.org/Math/
+[mathml-wolfram]:   https://reference.wolfram.com/language/XML/tutorial/MathML.html
+[mathml-fonts]:     https://developer.mozilla.org/en-US/docs/Web/MathML/Fonts
+[mathml-plugin-ie]: https://info.wiris.com/mathplayer-info
+[mathml-mathjax]:   https://www.mathjax.org/
