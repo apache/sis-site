@@ -44,7 +44,6 @@
           <li><a class="dropdown-item" href="tables/CoordinateOperationMethods.html">Map Projections</a></li>
           <li><a class="dropdown-item" href="code-patterns.html">Code Patterns</a></li>
           <li><a class="dropdown-item" href="faq.html">FAQ</a></li>
-          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown">
@@ -54,6 +53,7 @@
           <li><a class="dropdown-item" href="coding-conventions.html">Coding Conventions.</a></li>
           <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
           <li><a class="dropdown-item" href="release-management.html">Release management</a></li>
+          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown">
@@ -78,9 +78,8 @@
 
 
 <div class="row flex-nowrap">
-  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
-    <hr>
-    <ul class="nav nav-pills flex-column mb-auto">
+  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 12rem;">
+    <ul class="nav nav-pills flex-column mb-auto position-fixed">
       <li><a class="nav-link  text-white " href="/index.html">Home</a></li>
       <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
       <li><a class="nav-link  active " href="downloads.html">Downloads</a></li>
@@ -97,9 +96,9 @@
         <img src="img/logo.png" class="sis-logo" align="left"/>
         <p class="page-title">Apache SIS downloads</p>
         
-	<p>Apache SIS 1.1 is now available.
+	<p>Apache <abbr title="Spatial Information System">SIS</abbr> 1.1 is now available.
 See the <a href="release-notes/1.1.html">release notes</a> for a list of changes since the previous version.</p>
-<p>Apache SIS releases are available under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.
+<p>Apache <abbr title="Spatial Information System">SIS</abbr> releases are available under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.
 See the <code>NOTICE</code> file contained in each release artifact for applicable copyright attribution notices.</p>
 <nav id="TableOfContents">
   <ul>
@@ -116,7 +115,7 @@ See the <code>NOTICE</code> file contained in each release artifact for applicab
   </ul>
 </nav>
 <h1 id="bundles">Download ZIP files   </h1>
-<p>Apache SIS is distributed in the form of Java source code in a multi-modules Apache Maven project.
+<p>Apache <abbr title="Spatial Information System">SIS</abbr> is distributed in the form of Java source code in a multi-modules Apache Maven project.
 For convenience, an aggregated Javadoc and a pre-compiled JAR file are available as separated downloads.
 The precompiled JAR file contains most modules and dependencies in a single archive for easier inclusion
 in a classpath.</p>
@@ -126,7 +125,7 @@ in a classpath.</p>
 <li><a href="http://www.apache.org/dyn/closer.cgi/sis/1.1/apache-sis-1.1-bin.zip">Apache SIS 1.1 binary</a>  [<a href="https://www.apache.org/dist/sis/1.1/apache-sis-1.1-bin.zip.asc">PGP</a>] [<a href="https://www.apache.org/dist/sis/1.1/apache-sis-1.1-bin.zip.sha512">SHA 512</a>]</li>
 </ul>
 <h2 id="release-gpg">Verify signatures   </h2>
-<p>All downloads can be verified using the Apache SIS code signing <a href="https://www.apache.org/dist/sis/KEYS">KEYS</a>.
+<p>All downloads can be verified using the Apache <abbr title="Spatial Information System">SIS</abbr> code signing <a href="https://www.apache.org/dist/sis/KEYS">KEYS</a>.
 The PGP (<em>Pretty Good Privacy</em>) signatures can be verified using any OpenPGP implementation, for example GPG (<em>GNU Privacy Guard</em>).
 First download the <a href="https://www.apache.org/dist/sis/KEYS">KEYS</a> file and the <code>.asc</code> signature files for the relevant release packages.
 Make sure you get these files from the main distribution directory, rather than from a mirror.
@@ -141,10 +140,9 @@ pgp apache-sis-X.Y.Z.zip.asc</code></pre></div>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">pgpk -a KEYS
 pgpv apache-sis-X.Y.Z.zip.asc</code></pre></div>
 <h1 id="maven">Download as a Maven dependency   </h1>
-<p>An easy approach to integrate Apache SIS into a Java project uses the <a href="http://maven.apache.org/">Apache Maven</a>
+<p>An easy approach to integrate Apache <abbr title="Spatial Information System">SIS</abbr> into a Java project uses the <a href="http://maven.apache.org/">Apache Maven</a>
 dependency management tool to automatically obtain the required Java Archives (JAR) files from the network.
-Below are examples of declarations in a <code>pom.xml</code> file for building a project with a SIS core module.
-If running on Java 11 or higher, at least one of the two next dependencies is also required:</p>
+Below are examples of declarations in a <code>pom.xml</code> file for building a project with a SIS core module.</p>
 <div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;properties&gt;</span>
   <span class="nt">&lt;sis.version&gt;</span>1.1<span class="nt">&lt;/sis.version&gt;</span>
 <span class="nt">&lt;/properties&gt;</span>
@@ -157,21 +155,11 @@ If running on Java 11 or higher, at least one of the two next dependencies is al
   <span class="nt">&lt;/dependency&gt;</span>
 <span class="nt">&lt;/dependencies&gt;</span>
 
-<span class="c">&lt;!-- The following dependency can be omitted on Java 8 (unconditionally), or
-</span><span class="c">     on Java 9 and 10 if the &#34;--add-modules java.xml.bind&#34; option is used. --&gt;</span>
+<span class="c">&lt;!-- The following dependency can be omitted if XML support is not desired. --&gt;</span>
 <span class="nt">&lt;dependency&gt;</span>
   <span class="nt">&lt;groupId&gt;</span>org.glassfish.jaxb<span class="nt">&lt;/groupId&gt;</span>
   <span class="nt">&lt;artifactId&gt;</span>jaxb-runtime<span class="nt">&lt;/artifactId&gt;</span>
-  <span class="nt">&lt;version&gt;</span>2.3.2<span class="nt">&lt;/version&gt;</span>
-  <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
-<span class="nt">&lt;/dependency&gt;</span>
-
-<span class="c">&lt;!-- Above JAXB dependency can be replaced by the following dependency
-</span><span class="c">     if no XML (un)marshalling is wanted. This dependency is lighter. --&gt;</span>
-<span class="nt">&lt;dependency&gt;</span>
-  <span class="nt">&lt;groupId&gt;</span>jakarta.xml.bind<span class="nt">&lt;/groupId&gt;</span>
-  <span class="nt">&lt;artifactId&gt;</span>jakarta.xml.bind-api<span class="nt">&lt;/artifactId&gt;</span>
-  <span class="nt">&lt;version&gt;</span>2.3.2<span class="nt">&lt;/version&gt;</span>
+  <span class="nt">&lt;version&gt;</span>2.3.3<span class="nt">&lt;/version&gt;</span>
   <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span></code></pre></div>
 <h2 id="non-free">Include non-free resources   </h2>

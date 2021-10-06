@@ -44,7 +44,6 @@
           <li><a class="dropdown-item" href="tables/CoordinateOperationMethods.html">Map Projections</a></li>
           <li><a class="dropdown-item" href="code-patterns.html">Code Patterns</a></li>
           <li><a class="dropdown-item" href="faq.html">FAQ</a></li>
-          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown">
@@ -54,6 +53,7 @@
           <li><a class="dropdown-item" href="coding-conventions.html">Coding Conventions.</a></li>
           <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
           <li><a class="dropdown-item" href="release-management.html">Release management</a></li>
+          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown">
@@ -78,9 +78,8 @@
 
 
 <div class="row flex-nowrap">
-  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
-    <hr>
-    <ul class="nav nav-pills flex-column mb-auto">
+  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 12rem;">
+    <ul class="nav nav-pills flex-column mb-auto position-fixed">
       <li><a class="nav-link  text-white " href="/index.html">Home</a></li>
       <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
       <li><a class="nav-link  text-white " href="downloads.html">Downloads</a></li>
@@ -97,10 +96,16 @@
         <img src="img/logo.png" class="sis-logo" align="left"/>
         <p class="page-title">Build from source</p>
         
-	<p>Apache SIS is built by Maven.
+	<p>Apache <abbr title="Spatial Information System">SIS</abbr> is built by Maven.
 For installing the JAR files in the local Maven repository, execute the following command
 from the SIS project root:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mvn install</code></pre></div>
+<p>The JavaFX application is excluded by default because it depends on
+the <a href="https://openjfx.io/">JavaFX platform</a> which is distributed under GPL license
+(note that the SIS module stay under Apache 2 licence).
+Likewise the <a href="epsg.html">EPSG geodetic dataset</a> is excluded by default for licensing reasons.
+For including the JavaFX module and the use of EPSG dataset in the build:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mvn install --activate-profiles javafx,non-free</code></pre></div>
 <p>For signing the artifacts and producing distribution files (<code>apache-sis-bin.zip</code> and <code>apache-sis.oxt</code>),
 execute the following command.
 Note that it requires an OpenPGP (<em>Open Pretty Good Privacy</em>) software for cryptography signatures
@@ -125,32 +130,30 @@ Note that it requires an OpenPGP (<em>Open Pretty Good Privacy</em>) software fo
 <h1 id="dist">Distribution file  </h1>
 <p>The distribution archive is a file with the <code>.zip</code> extension containing most SIS modules except <code>sis-webapp</code>
 (because Web applications use an other packaging) together with their dependencies.
-However for users convenience, we provide a shell script launching the SIS command line tool.
-That shell script, together with other files (<code>README</code>, <code>LICENSE</code>, <i>etc.</i>) are bundled in a ZIP file created as below:</p>
+However for users convenience, we provide shell scripts launching the SIS command line tool or the JavaFX application.
+Those shell scripts, together with other files (<code>README</code>, <code>LICENSE</code>, <i>etc.</i>) are bundled in a ZIP file created as below:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> application/sis-console
 mvn package org.apache.sis.core:sis-build-helper:dist</code></pre></div>
 <p>This task is executed automatically if the <code>apache-release</code> profile is activated at build time.
 Above command is for the cases where the developer wants the distribution file without rebuilding the whole project.
-Optionally, the Apache SIS version can be inserted as a 4th element between <code>sis-build-helper:</code> and <code>:dist</code>
-if there is many versions of the plugin in the local repository.</p>
-<p>The result will be created in the <code>target/distribution/apache-sis-&lt;version&gt;.zip</code> file.
-To test, uncompress in any directory and execute <code>apache-sis-&lt;version&gt;/bin/sis</code>.</p>
+The result will be created in the <code>target/​distribution/​apache-​sis-​&lt;version&gt;.zip</code> file.
+To test, uncompress in any directory and execute <code>apache-​sis-​&lt;version&gt;/​bin/sis</code>.</p>
 <h2 id="limitations">Known limitations  </h2>
 <p>The current plugin implementation has some hard-coded values, especially:</p>
 <ul>
-<li>The ZIP file content is copied from the <code>application/sis-console/src/main/artifact</code> directory.</li>
-<li>The final filename is hard-coded to <code>apache-sis-&lt;version&gt;.zip</code>.</li>
+<li>The ZIP file content is copied from the <code>application/​sis-console/​src/​main/​artifact</code> directory.</li>
+<li>The final filename is hard-coded to <code>apache-​sis-​&lt;version&gt;.zip</code>.</li>
 </ul>
 <h1 id="build-helper">SIS-specific Maven plugin  </h1>
-<p>Apache SIS uses a <code>sis-build-helper</code> plugin for SIS-specific tasks and Javadoc customization.
+<p>Apache <abbr title="Spatial Information System">SIS</abbr> uses a <code>sis-​build-​helper</code> plugin for SIS-specific tasks and Javadoc customization.
 This plugin is used automatically by <code>mvn install</code>. Consequently the remaining of this page
 can be safely ignored. This page is provided only as a reference for developers wanting to
 take a closer look to SIS <code>pom.xml</code> file.</p>
 <h2 id="resources">Localized resources compiler   </h2>
-<p>Localized resources are provided in <code>*.properties</code> files as specified by the <code>java.util.PropertyResourceBundle</code> standard class.
+<p>Localized resources are provided in <code>*.properties</code> files as specified by the <code>java.util.Property­Resource­Bundle</code> standard class.
 However SIS does not use those resources files directly. Instead <code>*.properties</code> files are transformed into binary files having
 the same filename but the <code>.utf</code> extension. This conversion is done for efficiency, for convenience (the compiler applies the
-<code>java.text.MessageFormat</code> <em>doubled single quotes</em> rule itself), and for compile-time safety.</p>
+<code>java.text.Message­Format</code> <em>doubled single quotes</em> rule itself), and for compile-time safety.</p>
 <p>In addition to generating the <code>*.utf</code> files, the resource compiler may modify the <code>*.java</code> files having the same name than the
 resource files. For example given a set of <code>Vocabulary*.properties</code> files (one for each supported language), the compiler will
 generate the corresponding <code>Vocabulary*.utf</code> files, then look for a <code>Vocabulary.java</code> source file. If such source file is found
@@ -180,15 +183,15 @@ in the module containing the resources to recompile. This is sometime useful for
 the constants in the <code>Keys</code> inner class in a feaster way than building the project.</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mvn org.apache.sis.core:sis-build-helper:compile-resources</code></pre></div>
 <h2 id="jar-collect">JAR files collector   </h2>
-<p>Links or lists all JAR files (including dependencies) in the <code>target/binaries</code> directory of the parent project.
+<p>Links or lists all JAR files (including dependencies) in the <code>target/​binaries</code> directory of the parent project.
 This plugin performs a work similar to the standard Maven assembly plugin work, with the following differences:</p>
 <ul>
 <li>In multi-modules projects, this plugin does not create anything in the <code>target</code> directory of sub-modules.
-Instead, this plugin groups everything in the <code>target/binaries</code> directory of the parent module.</li>
+Instead, this plugin groups everything in the <code>target/​binaries</code> directory of the parent module.</li>
 <li>This plugin does not create any ZIP file. It only links or lists JAR files.
 This plugin uses hard links on platforms that support them,
 so execution of this plugin should be very cheap and consume few disk space.</li>
-<li>Dependencies already present in the <code>target/binaries</code> directory are presumed stables and
+<li>Dependencies already present in the <code>target/​binaries</code> directory are presumed stables and
 are not overwritten. Only artifacts produced by the Maven build are unconditionally overwritten.</li>
 </ul>
 <p>This plugin can be activated by the following fragment in the parent <code>pom.xml</code> file:</p>

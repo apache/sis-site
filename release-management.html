@@ -44,7 +44,6 @@
           <li><a class="dropdown-item" href="tables/CoordinateOperationMethods.html">Map Projections</a></li>
           <li><a class="dropdown-item" href="code-patterns.html">Code Patterns</a></li>
           <li><a class="dropdown-item" href="faq.html">FAQ</a></li>
-          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown">
@@ -54,6 +53,7 @@
           <li><a class="dropdown-item" href="coding-conventions.html">Coding Conventions.</a></li>
           <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
           <li><a class="dropdown-item" href="release-management.html">Release management</a></li>
+          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown">
@@ -78,9 +78,8 @@
 
 
 <div class="row flex-nowrap">
-  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
-    <hr>
-    <ul class="nav nav-pills flex-column mb-auto">
+  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 12rem;">
+    <ul class="nav nav-pills flex-column mb-auto position-fixed">
       <li><a class="nav-link  text-white " href="/index.html">Home</a></li>
       <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
       <li><a class="nav-link  text-white " href="downloads.html">Downloads</a></li>
@@ -329,7 +328,7 @@ svn commit --message <span class="s2">&#34;Set version number and dependencies t
 This hack will force us to skip test compilations.</li>
 </ul>
 <p>Then deploy SIS (without test JAR files).
-Deploy also the non-free resources in a staging repository separated from the rest of Apache SIS.
+Deploy also the non-free resources in a staging repository separated from the rest of Apache <abbr title="Spatial Information System">SIS</abbr>.
 If there is any issue with this deployment, the staging repository can easily be dropped and recreated.</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> <span class="nv">$SIS_RC_DIR</span>
 mvn clean deploy --activate-profiles apache-release --define maven.test.skip<span class="o">=</span><span class="nb">true</span>
@@ -377,7 +376,7 @@ Usually, only the 3 last digits need to be updated.</p>
 <span class="c1"># Edit &lt;url&gt; in pom.xml before to continue.</span>
 mvn compile
 svn commit -m <span class="s2">&#34;Test project for SIS </span><span class="nv">$NEW_VERSION</span><span class="s2">-RC</span><span class="nv">$RELEASE_CANDIDATE</span><span class="s2">&#34;</span></code></pre></div>
-<p>Create a temporary directory where Apache SIS will write the EPSG dataset.</p>
+<p>Create a temporary directory where Apache <abbr title="Spatial Information System">SIS</abbr> will write the EPSG dataset.</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mkdir target/SpatialMetadata
 <span class="nb">export</span> <span class="nv">SIS_DATA</span><span class="o">=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/target/SpatialMetadata</code></pre></div>
 <p>Clear the local Maven repository in order to force downloads from the Nexus repository, then test.

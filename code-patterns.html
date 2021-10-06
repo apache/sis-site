@@ -44,7 +44,6 @@
           <li><a class="dropdown-item" href="tables/CoordinateOperationMethods.html">Map Projections</a></li>
           <li><a class="dropdown-item" href="code-patterns.html">Code Patterns</a></li>
           <li><a class="dropdown-item" href="faq.html">FAQ</a></li>
-          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown">
@@ -54,6 +53,7 @@
           <li><a class="dropdown-item" href="coding-conventions.html">Coding Conventions.</a></li>
           <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
           <li><a class="dropdown-item" href="release-management.html">Release management</a></li>
+          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown">
@@ -78,9 +78,8 @@
 
 
 <div class="row flex-nowrap">
-  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
-    <hr>
-    <ul class="nav nav-pills flex-column mb-auto">
+  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 12rem;">
+    <ul class="nav nav-pills flex-column mb-auto position-fixed">
       <li><a class="nav-link  text-white " href="/index.html">Home</a></li>
       <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
       <li><a class="nav-link  text-white " href="downloads.html">Downloads</a></li>
@@ -97,12 +96,12 @@
         <img src="img/logo.png" class="sis-logo" align="left"/>
         <p class="page-title">Recommended code patterns</p>
         
-	<p>This page lists some recommended code pattern for developing or using Apache SIS.</p>
+	<p>This page lists some recommended code pattern for developing or using Apache <abbr title="Spatial Information System">SIS</abbr>.</p>
 <nav id="TableOfContents">
   <ul>
     <li><a href="#referencing">Referencing   </a>
       <ul>
-        <li><a href="#axisOrder">Never explicitely swap ordinates for axis order   </a></li>
+        <li><a href="#axisOrder">Never explicitely swap coordinates for axis order   </a></li>
       </ul>
     </li>
     <li><a href="#coverage">Coverages   </a>
@@ -122,17 +121,15 @@
 </nav>
 <h1 id="referencing">Referencing   </h1>
 <p>Recommended code pattern when using the <code>sis-referencing</code> module.</p>
-<h2 id="axisOrder">Never explicitely swap ordinates for axis order   </h2>
+<h2 id="axisOrder">Never explicitely swap coordinates for axis order   </h2>
 <p>The <a href="faq.html#axisOrder">axis order issue</a> causes lot of confusion,
-and developers are sometime tempted to swap their ordinate values in order to comply with some expected axis ordering.
-It should never be necessary, since the Apache SIS referencing engine manages axis order transparently — provided that
-the Coordinate Reference System (CRS) definition is accurate.
-If a code needs to swap ordinates, this is probably an indication that the <abbr title="Coordinate Reference System">CRS</abbr>
-has not been properly defined.
-Instead than patching the coordinate values, try to make sure that the <em>Source CRS</em> (associated to the original data)
+and developers are sometime tempted to swap their coordinate values in order to comply with some expected axis ordering.
+It should never be necessary, since the Apache <abbr title="Spatial Information System">SIS</abbr> referencing engine manages axis order transparently —
+provided that the Coordinate Reference System (CRS) definition is accurate.
+If a code needs to swap coordinates, this is probably an indication that the <abbr title="Coordinate Reference System">CRS</abbr> has not been properly defined.
+Instead of patching the coordinate values, try to make sure that the <em>Source CRS</em> (associated to the original data)
 and the <em>Target CRS</em> (the coordinate space where to perform the work) are properly defined,
-and let the referencing engine performs the conversion from the source to the target <abbr title="Coordinate Reference System">CRS</abbr>
-.</p>
+and let the referencing engine performs the conversion from the source to the target <abbr title="Coordinate Reference System">CRS</abbr>.</p>
 <h1 id="coverage">Coverages   </h1>
 <p>Recommended code pattern when using the <code>sis-coverage</code> module.</p>
 <h2 id="gridToCRS">Georeference images with affine transforms, <em>not</em> bounding boxes   </h2>
@@ -141,20 +138,18 @@ This approach may be ambiguous as it does not specify whether the (<var>x</var>,
 (see the <a href="faq.html#axisOrder">axis order issue</a>) or if the <var>y</var> axis is oriented downward.
 All images in SIS shall be georeferenced by at least an affine transform (more complex transforms are also possible),
 never by a rectangle or bounding box.
-In the two-dimensional case, the standard <code>java.awt.geom.AffineTransform</code> class can be used.</p>
+In the two-dimensional case, the standard <code>java.awt.geom.Affine­Transform</code> class can be used.</p>
 <h1 id="international">International   </h1>
 <p>Recommended code pattern for internationalization.</p>
 <h2 id="timezone">Specify timezone   </h2>
 <p>Geospatial data often cover a wide geographic area, spanning many time zones.
 Timezone are sometime specified as metadata in the header of data files to be read,
-or is sometime fixed to <abbr title="Universal Time Coordinated">UTC</abbr>
-by applications managing world-wide data.
-Some Apache SIS objects have <code>Locale</code> and <code>TimeZone</code> information.
+or is sometime fixed to <abbr title="Universal Time Coordinated">UTC</abbr> by applications managing world-wide data.
+Some Apache <abbr title="Spatial Information System">SIS</abbr> objects have <code>Locale</code> and <code>TimeZone</code> information.
 Such locale and timezone are given to <code>java.text.DateFormat</code> or <code>java.util.Calendar</code> constructors among others.</p>
-<p>When reading dates or timestamps from a <abbr title="Java DataBase Connectivity">JDBC</abbr>
-database,
+<p>When reading dates or timestamps from a <abbr title="Java DataBase Connectivity">JDBC</abbr> database,
 always use the <code>ResultSet</code> method accepting a <code>Calendar</code> argument, when such method is available.
-For example prefer the <code>getTimestamp(int, Calendar)</code> method instead than <code>getTimestamp(int)</code>.
+For example prefer the <code>getTimestamp(int, Calendar)</code> method instead of <code>getTimestamp(int)</code>.
 The <code>Calendar</code> object should has been created with the appropriate timezone.</p>
 <h2 id="sort">Replace underscores by spaces before sorting   </h2>
 <p>Before to sort programmatic names for human reading, consider replacing all occurrences of the underscore character
@@ -174,7 +169,7 @@ Consequently, when iterating over characters in a string, the following pattern 
 </span><span class="c1"></span>    <span class="n">i</span> <span class="o">+=</span> <span class="n">Character</span><span class="o">.</span><span class="na">charCount</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
 <span class="o">}</span></code></pre></div>
 <h1 id="logging">Logging   </h1>
-<p>Apache SIS uses the <code>java.util.logging</code> framework, but with a <a href="http://sis.apache.org/apidocs/org/apache/sis/util/logging/LoggerFactory.html">mechanism allowing users to redirect
+<p>Apache <abbr title="Spatial Information System">SIS</abbr> uses the <code>java.util.logging</code> framework, but with a <a href="http://sis.apache.org/apidocs/org/apache/sis/util/logging/LoggerFactory.html">mechanism allowing users to redirect
 to another framework</a>.
 The logger names are usually the package name of the class emitting log messages, but not necessarily.
 In particular, we do not follow this convention if the class is located in an internal package

@@ -44,7 +44,6 @@
           <li><a class="dropdown-item" href="tables/CoordinateOperationMethods.html">Map Projections</a></li>
           <li><a class="dropdown-item" href="code-patterns.html">Code Patterns</a></li>
           <li><a class="dropdown-item" href="faq.html">FAQ</a></li>
-          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown">
@@ -54,6 +53,7 @@
           <li><a class="dropdown-item" href="coding-conventions.html">Coding Conventions.</a></li>
           <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
           <li><a class="dropdown-item" href="release-management.html">Release management</a></li>
+          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown">
@@ -78,9 +78,8 @@
 
 
 <div class="row flex-nowrap">
-  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
-    <hr>
-    <ul class="nav nav-pills flex-column mb-auto">
+  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 12rem;">
+    <ul class="nav nav-pills flex-column mb-auto position-fixed">
       <li><a class="nav-link  text-white " href="/index.html">Home</a></li>
       <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
       <li><a class="nav-link  text-white " href="downloads.html">Downloads</a></li>
@@ -97,11 +96,11 @@
         <img src="img/logo.png" class="sis-logo" align="left"/>
         <p class="page-title">Checkout source code</p>
         
-	<p>Apache SIS source code is maintained using <a href="http://git-scm.com">Git</a> version control,
+	<p>Apache <abbr title="Spatial Information System">SIS</abbr> source code is maintained using <a href="http://git-scm.com">Git</a> version control,
 completed by optional data maintained using <a href="http://subversion.apache.org">Subversion</a> version control.
 Optional data include in particular the <a href="epsg.html">EPSG geodetic dataset</a>,
 which is subject to licensing terms different than Apache ones.
-This page describes two ways to checkout Apache SIS source code:</p>
+This page describes two ways to checkout Apache <abbr title="Spatial Information System">SIS</abbr> source code:</p>
 <ul>
 <li>A basic checkout with only the main repository, the most stable branch, and no configuration requirement.</li>
 <li>A more advanced configuration for active SIS developments, using uncommitted (for now) API
@@ -126,10 +125,10 @@ or to cherry-pick only the interesting parts of the advanced configuration.</p>
   </ul>
 </nav>
 <h1 id="basic">Basic installation   </h1>
-<p>Create an empty directory for the Apache SIS project.
+<p>Create an empty directory for the Apache <abbr title="Spatial Information System">SIS</abbr> project.
 We use <code>ApacheSIS</code> directory name in this page, but that name can be anything;
 replace that name in the shell commands below if another name is used.
-The Apache SIS source code can be cloned in that directory as below
+The Apache <abbr title="Spatial Information System">SIS</abbr> source code can be cloned in that directory as below
 (lines starting with <code>#</code> are comments and can be ignored):</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mkdir ApacheSIS
 <span class="nb">cd</span> ApacheSIS
@@ -140,7 +139,7 @@ git clone https://gitbox.apache.org/repos/asf/sis
 <span class="c1">#</span>
 <span class="c1"># or Subversion (read-only):</span>
 <span class="c1"># svn checkout https://github.com/apache/sis/trunk</span></code></pre></div>
-<p>That is all. Apache SIS can be built by running <code>mvn install</code> in the <code>sis</code> subdirectory.
+<p>That is all. Apache <abbr title="Spatial Information System">SIS</abbr> can be built by running <code>mvn install</code> in the <code>sis</code> subdirectory.
 At this stage, the <code>ApacheSIS</code> parent directory is redundant with the <code>sis</code> subdirectory,
 but we recommend to create that parent directory anyway in anticipation
 for more subdirectories to be created later, when desired.
@@ -151,7 +150,7 @@ All subsections below are optional. It is not mandatory to execute all of them,
 but we recommend to at least create the data directory described below
 because some other optional services depend on it.</p>
 <h2 id="data">Create data directory   </h2>
-<p>Apache SIS needs a directory where to store database, datum shift files and other optional data.
+<p>Apache <abbr title="Spatial Information System">SIS</abbr> needs a directory where to store database, datum shift files and other optional data.
 That directory is specified by the <code>SIS_DATA</code> environment variable and can be located anywhere.
 A convenient location is a subdirectory of the <code>ApacheSIS</code> directory created in the &ldquo;basic checkout&rdquo; section.
 For example (with <code>ApacheSIS</code> as the current directory):</p>
@@ -168,12 +167,12 @@ For example (with <code>ApacheSIS</code> as the current directory):</p>
 Without the EPSG database, only a <a href="apidocs/org/apache/sis/referencing/CRS.html#forCode-java.lang.String-">small subset</a>
 of coordinate reference systems can be created from EPSG codes.
 The EPSG database can be <a href="epsg.html">installed in various ways</a>,
-but this section describes an alternative way more suitable to Apache SIS development.
+but this section describes an alternative way more suitable to Apache <abbr title="Spatial Information System">SIS</abbr> development.
 Before to continue, make sure to agree with <a href="https://epsg.org/terms-of-use.html">EPSG terms of use</a>.
 Then following command can be executed with <code>ApacheSIS</code> as the current directory:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># Executing this command imply agreement with EPSG terms of use.</span>
 svn checkout https://svn.apache.org/repos/asf/sis/data/non-free/</code></pre></div>
-<p>Then copy or link the EPSG scripts in the directory where Apache SIS looks for optional data.
+<p>Then copy or link the EPSG scripts in the directory where Apache <abbr title="Spatial Information System">SIS</abbr> looks for optional data.
 Adjust the relative paths as needed if the <code>SIS_DATA</code> environment variable
 points to another location than the one used in above section:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mkdir <span class="nv">$SIS_DATA</span>/Databases
@@ -183,15 +182,15 @@ ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/f
 ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/FKeys.sql   EPSG_FKeys.sql
 ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/Tables.sql  EPSG_Tables.sql
 <span class="nb">cd</span> -</code></pre></div>
-<p>This is sufficient for allowing Apache SIS to create the geodetic database
+<p>This is sufficient for allowing Apache <abbr title="Spatial Information System">SIS</abbr> to create the geodetic database
 without the need for <code>sis-epsg</code> or <code>sis-embedded-data</code> module on the classpath.
 This setting is not done automatically because Apache projects can not introduce
 non-free dependencies without explicit action from user.
 If this action is not taken, some JUnit tests requiring EPSG data may be skipped.
 If any EPSG file is updated, deleting the <code>$SIS_DATA/​Databases/​SpatialMetadata</code> directory
-is sufficient for causing Apache SIS to recreate the Derby database with new data.</p>
+is sufficient for causing Apache <abbr title="Spatial Information System">SIS</abbr> to recreate the Derby database with new data.</p>
 <h2 id="postgres">Configure PostgreSQL   </h2>
-<p>Apache SIS is tested with Derby, HSQL and PostgreSQL databases.
+<p>Apache <abbr title="Spatial Information System">SIS</abbr> is tested with Derby, HSQL and PostgreSQL databases.
 Derby and HSQL are tested automatically using temporary databases in memory.
 But testing on PostgreSQL requires the creation of a dedicated database on the developer platform.
 The requirements are:</p>
@@ -203,7 +202,7 @@ The requirements are:</p>
 <li><code>org.apache.sis.test.extensive</code> Java property set to <code>true</code>.</li>
 </ul>
 <p>The <code>SpatialMetadataTest</code> database should stay empty when not running tests,
-because Apache SIS always delete the temporary schema after tests completion,
+because Apache <abbr title="Spatial Information System">SIS</abbr> always delete the temporary schema after tests completion,
 regardless if the tests were successful or not.
 The role and database can be created by the following SQL instructions
 (replace <code>my_unix_user_name</code> by your actual user name):</p>
@@ -216,13 +215,13 @@ Location of this file is system-dependent; it may be <code>/var/​lib/​pgsql/
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text"># IPv4 local connections:
 # TYPE  DATABASE               USER                 ADDRESS         METHOD
 host    SpatialMetadataTest    my_unix_user_name    127.0.0.1/32    trust</code></pre></div>
-<p>The last step for allowing Apache SIS to run tests on PostgreSQL is to set the
+<p>The last step for allowing Apache <abbr title="Spatial Information System">SIS</abbr> to run tests on PostgreSQL is to set the
 <code>org.apache.sis.test.extensive</code> Java property to <code>true</code> (see next section).
 This requirement has been added for avoiding undesired interference with host.
-Note that this step is likely to change after Apache SIS upgrade to JUnit 5.</p>
+Note that this step is likely to change after Apache <abbr title="Spatial Information System">SIS</abbr> upgrade to JUnit 5.</p>
 <h2 id="tests">Running extensive tests   </h2>
 <p>A simple <code>mvn install</code> execution in the <code>sis</code> directory
-will build and test Apache SIS with the default set of JUnit tests.
+will build and test Apache <abbr title="Spatial Information System">SIS</abbr> with the default set of JUnit tests.
 Some tests are skipped by default, either because they would have some effects outside
 the <code>sis</code> directory (for example writing in <code>SpatialMetadataTest</code> database on PostgreSQL),
 or because those tests take a long time to execute.
@@ -231,7 +230,7 @@ For enabling all tests, use the following command:</p>
 mvn install -Dorg.apache.sis.test.extensive<span class="o">=</span>true</code></pre></div>
 <h2 id="branches">Switch to development branch   </h2>
 <p>The source code repository contains <code>master</code>, <code>geoapi-3.1</code> and <code>geoapi-4.0</code> branches.
-Apache SIS releases are created from <code>master</code>, which depends on the latest GeoAPI version
+Apache <abbr title="Spatial Information System">SIS</abbr> releases are created from <code>master</code>, which depends on the latest GeoAPI version
 released by the Open Geospatial Consortium (OGC), currently <a href="http://www.geoapi.org/3.0/index.html">GeoAPI 3.0.1</a>.
 However daily developments occur on the <code>geoapi-4.0</code> branch before to be merged (indirectly) to <code>master</code>.
 Those branches exist in order to experiment early new API and technologies — since they may impact
@@ -244,16 +243,15 @@ In summary:</p>
 </ul>
 <p>Developments on <code>geoapi-4.0</code> branch are merged to <code>geoapi-3.1</code> branch, which is then merged to <code>master</code>.
 When commits reach <code>master</code> they become unmodifiable; the <code>git push --force</code> command is not allowed on that branch.
-Contributors to Apache SIS project should switch to the current development branch before submitting patches:</p>
+Contributors to Apache <abbr title="Spatial Information System">SIS</abbr> project should switch to the current development branch before submitting patches:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> sis
 git checkout geoapi-4.0</code></pre></div>
 <p>Note that those <code>geoapi-xxx</code> branches may disappear or be replaced by something else
-after <abbr title="Open Geospatial Consortium">OGC</abbr>
-releases the corresponding GeoAPI versions.</p>
+after <abbr title="Open Geospatial Consortium">OGC</abbr> releases the corresponding GeoAPI versions.</p>
 <h1 id="netbeans">Opening Apache SIS in NetBeans   </h1>
-<p>Apache SIS build is defined by Maven <code>pom.xml</code> files.
+<p>Apache <abbr title="Spatial Information System">SIS</abbr> build is defined by Maven <code>pom.xml</code> files.
 All major IDE, including NetBeans, can open a project defined by those files.
-However in the particular case of NetBeans IDE, we also provide a way to open Apache SIS using Ant configuration files.
+However in the particular case of NetBeans IDE, we also provide a way to open Apache <abbr title="Spatial Information System">SIS</abbr> using Ant configuration files.
 Compared to &ldquo;Java with Maven&rdquo; project, the &ldquo;Java with Ant&rdquo; project is faster to build and debug,
 makes easier to see all modules at once, and provides more configuration options.
 Those configuration files are available in the <code>ide-project/NetBeans</code> directory.
@@ -268,9 +266,9 @@ one can use:</p>
 <div class="highlight"><pre class="chroma"><code class="language-ini" data-lang="ini"><span class="na">maven.repository</span> <span class="o">=</span> <span class="s">/path/to/my/local/repository</span>
 <span class="na">run.jvmargs</span> <span class="o">=</span> <span class="s">-DmyProperty=myValue</span></code></pre></div>
 <h1 id="history">History   </h1>
-<p>All developments and tags prior Apache SIS 1.0 were done on a <a href="http://subversion.apache.org">Subversion</a> repository
+<p>All developments and tags prior Apache <abbr title="Spatial Information System">SIS</abbr> 1.0 were done on a <a href="http://subversion.apache.org">Subversion</a> repository
 and can be <a href="http://svn.apache.org/viewvc/sis/">browsed online</a>.
-Tags for Apache SIS versions 0.1 to 0.8 should be fetched from the <a href="https://svn.apache.org/repos/asf/sis/tags/">SVN repository</a>.
+Tags for Apache <abbr title="Spatial Information System">SIS</abbr> versions 0.1 to 0.8 should be fetched from the <a href="https://svn.apache.org/repos/asf/sis/tags/">SVN repository</a>.
 The development branches on that repository were named <code>JDK8</code>, <code>JDK7</code>, <code>JDK6</code> and <code>trunk</code>.</p>
 
 
