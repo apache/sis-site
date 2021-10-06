@@ -14,6 +14,7 @@ along with the associated operations which enable the transformation of coordina
 The SIS storage modules provide a common approach to the reading and writing of metadata, features and coverages
 applicable to simple imagery as to many dimensional data structures.
 SIS provides processing functions such as multi-threaded rasters reprojection and isolines computation from raster data.
+The API and the data encodings follow [international standards](standards.html) when available.
 
 <details open>
   <summary>
@@ -21,36 +22,36 @@ SIS provides processing functions such as multi-threaded rasters reprojection an
   </summary>
 
 * Raster formats:
-  * Read NetCDF-3 Classic and 64-bit Offset Format ([OGC 10-092][netCDF]).
-  * Read GeoTIFF ([OGC 19-008][geoTIFF]) including BigTIFF extension.
+  * Read [NetCDF-3 Classic and 64-bit Offset Format][netCDF].
+  * Read [GeoTIFF][geoTIFF] including BigTIFF extension.
   * Read Landsat (groups of GeoTIFF files).
 * Feature formats:
-  * Read Moving Feature Comma Separated Values (CSV) encoding ([OGC 14-084][MF_CSV]).
-  * Read Moving Feature netCDF encoding ([OGC 16-114][netCDF_MF]).
+  * Read [Moving Feature Comma Separated Values (CSV) encoding][MF_CSV].
+  * Read [Moving Feature netCDF encoding][netCDF_MF].
   * Read GPX (a {{% XML %}} schema for {{% GPS %}} data).
-  * Read features from {{% SQL %}} spatial databases by analysing the database schema.
-* Geographic metadata (ISO 19115-1:2014):
+  * Read [features from {{% SQL %}} spatial databases][SF_SQL] by analysing the database schema.
+* Geographic metadata (ISO 19115):
   * Read ISO 19115 metadata from all above-listed raster and feature formats.
-  * Read and write XML documents compliant with ISO 19115-3:2016 (current standard) or ISO 19139:2007 (older standard).
-  * Automatic conversions between the metadata model published in 2003 and the revision published in 2014.
+  * Read and write XML documents compliant with ISO 19115-3 (current standard) or ISO 19139 (older standard).
+  * Automatic conversions between the old metadata model published in 2003 and the revision published in 2014.
 * Units of measurement:
   * Implementation of [JSR-363][JSR_363]
     with parsing, formating and unit conversion functionalities.
   * The same implementation is available as a [small standalone separated project][seshat].
-* Referencing by coordinates (ISO 19111:2007):
-  * Read and write Well Known Text (WKT) version 1 and 2 (ISO 19162:2015).
-  * Read and write Geographic Markup Language (GML) version 3.2 (ISO 19136:2007).
+* Referencing by coordinates (ISO 19111):
+  * Read and write Well Known Text (WKT) version 1 and 2 (ISO 19162).
+  * Read and write [Geographic Markup Language][GML] (GML) version 3.2 (ISO 19136).
   * Use [EPSG geodetic dataset](epsg.html) for geodetic definitions and for coordinate operations.
     * More than 6000 [supported coordinate reference systems](tables/CoordinateReferenceSystems.html).
     * Mercator, Transverse Mercator, Lambert Conic Conformal, stereographic
       and more [supported operation methods](tables/CoordinateOperationMethods.html).
-* Referencing by identifiers (ISO 19112:2003):
+* Referencing by identifiers (ISO 19112):
   * Geohashes (a simple encoding of geographic coordinates into short strings of letters and digits).
   * Military Grid Reference System (MGRS), also used for some civilian uses.
 * Processing:
   * Multi-threaded raster reprojection.
   * Multi-threaded isolines computation from raster data.
-  * Filtering of features (ISO 19143:2010 conceptual model).
+  * [Filtering of features][filter] (ISO 19143 conceptual model).
 </details>
 
 
@@ -71,9 +72,12 @@ However a [command-line tool](command-line.html) is also provided for allowing u
 
 
 [geoapi]:    http://www.geoapi.org/
-[netCDF]:    https://portal.ogc.org/files/?artifact_id=43734
+[GML]:       https://www.ogc.org/standards/gml
+[SF_SQL]:    https://www.ogc.org/standards/sfs
+[filter]:    https://www.ogc.org/standards/filter
+[geoTIFF]:   https://www.ogc.org/standards/geotiff
+[netCDF]:    https://www.ogc.org/standards/netcdf
 [netCDF_MF]: http://docs.opengeospatial.org/bp/16-114r3/16-114r3.html
-[geoTIFF]:   http://docs.opengeospatial.org/is/19-008r4/19-008r4.html
 [MF_CSV]:    http://docs.opengeospatial.org/is/14-084r2/14-084r2.html
-[JSR_363]:   https://www.jcp.org/aboutJava/communityprocess/final/jsr363/index.html
+[JSR_363]:   https://jcp.org/en/jsr/detail?id=363
 [seshat]:    https://unitsofmeasurement.github.io/seshat/
