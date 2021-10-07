@@ -4,107 +4,105 @@
   
 
   <title>Apache SIS - Recommended code patterns</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" media="screen" href="http://www.apache.org/css/code.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+        rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" media="screen" href="css/syntax.css">
   <link rel="stylesheet" type="text/css" media="screen" href="css/sis.css">
 </head>
 
 <body>
 
-<div class="navbar navbar-inverse navbar-fixed-top">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="brand" href="/index.html"> Apache SIS&trade;</a>
-      <div class="nav-collapse">
-        <ul class="nav">
-          <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">About<b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="http://www.apache.org/licenses/">License</a></li>
-              <li><a href="mail-lists.html">Mailing Lists</a></li>
-              <li><a href="team-list.html">Project Team</a></li>
-            </ul>
-          </li>
-          <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">Project Documentation<b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="book/index.html">Developer Guide</a></li>
-              <li><a href="apidocs/index.html">Online Javadoc</a></li>
-              <li><a href="downloads.html">Downloads</a></li>
-              <li><a href="source.html">Checkout Sources</a></li>
-              <li><a href="epsg.html">EPSG Database</a></li>
-              <li><a href="faq.html">FAQ</a></li>
-              <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
-            </ul>
-          </li>
-          <li class="dropdown"> <a class="dropdown-toggle" data-toggle="dropdown">ASF <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="http://www.apache.org">The Foundation</a></li>
-              <li><a href="http://www.apache.org/foundation/sponsorship.html">Donate</a></li>
-              <li><a href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
-              <li><a href="http://www.apache.org/security/">Security</a></li>
-            </ul>
-          </li>
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/index.html"> Apache SIS™</a>
+    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuAbout" data-bs-toggle="dropdown" aria-expanded="false">About</a>
+        <ul class="dropdown-menu" aria-labelledby="menuAbout">
+          <li><a class="dropdown-item" href="http://www.apache.org/licenses/">License</a></li>
+          <li><a class="dropdown-item" href="mail-lists.html">Mailing Lists</a></li>
+          <li><a class="dropdown-item" href="team-list.html">Project Team</a></li>
         </ul>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="container-fluid">
-  <div class="row-fluid">
-    <div class="span2">
-      <div class="apache-con">
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuDownload" data-bs-toggle="dropdown" aria-expanded="false">Download</a>
+        <ul class="dropdown-menu" aria-labelledby="menuDownload">
+          <li><a class="dropdown-item" href="downloads.html">Downloads</a></li>
+          <li><a class="dropdown-item" href="source.html">Checkout Sources</a></li>
+          <li><a class="dropdown-item" href="build.html">Build from Sources</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuDocumentation" data-bs-toggle="dropdown" aria-expanded="false">Documentation</a>
+        <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
+          <li><a class="dropdown-item" href="apidocs/index.html">Online Javadoc</a></li>
+          <li><a class="dropdown-item" href="book/index.html">Developer Guide</a></li>
+          <li><a class="dropdown-item" href="epsg.html">EPSG Database</a></li>
+          <li><a class="dropdown-item" href="tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
+          <li><a class="dropdown-item" href="tables/CoordinateOperationMethods.html">Map Projections</a></li>
+          <li><a class="dropdown-item" href="code-patterns.html">Code Patterns</a></li>
+          <li><a class="dropdown-item" href="faq.html">FAQ</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuContribute" data-bs-toggle="dropdown" aria-expanded="false">Contribute</a>
+        <ul class="dropdown-menu" aria-labelledby="menuContribute">
+          <li><a class="dropdown-item" href="contributor.html">New Contributor</a></li>
+          <li><a class="dropdown-item" href="coding-conventions.html">Coding Conventions.</a></li>
+          <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+          <li><a class="dropdown-item" href="release-management.html">Release management</a></li>
+          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuASF" data-bs-toggle="dropdown" aria-expanded="false">The Foundation</a>
+        <ul class="dropdown-menu" aria-labelledby="menuASF">
+          <li><a class="dropdown-item" href="http://www.apache.org">The Foundation</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/foundation/sponsorship.html">Donate</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/security/">Security</a></li>
+        </ul>
+      </li>
+    </ul>
+    <ul class="navbar-nav ml-auto mb-2 mb-md-0">
+      <li class="nav-item">
         <a href="https://www.apache.org/events/current-event.html">
-          <img src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
+           <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
         </a>
-      </div>
-      <div class="well sidebar-nav">
-        <ul class="nav nav-list">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="http://www.apache.org/licenses/">License</a></li>
-          <li><a href="mail-lists.html">Mailing Lists</a></li>
-          <li><a href="team-list.html">Project Team</a></li>
-          <li class="nav-header">Project Documentation</li>
-          <li><a href="book/index.html">Developer Guide</a></li>
-          <li><a href="apidocs/index.html">Online Javadoc</a></li>
-          <li><a href="downloads.html">Downloads</a></li>
-          <li><a href="source.html">Checkout Sources</a></li>
-          <li><a href="epsg.html">EPSG Database</a></li>
-          <li><a href="faq.html">FAQ</a></li>
-          <li><a href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
-          <li class="nav-header">ASF</li>
-          <li><a href="http://www.apache.org">The Foundation</a></li>
-          <li><a href="http://www.apache.org/foundation/sponsorship.html">Donate</a></li>
-          <li><a href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
-          <li><a href="http://www.apache.org/security/">Security</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="span10">
-      <section id="content" class="row">
-        <article class="span12">
-          <img src="img/logo.png" class="sis-logo" align="left"/>
-          <p class="page-title">Recommended code patterns</p>
-          
-          <style type="text/css">
-               
-               
-              .headerlink, .elementid-permalink {
-                  visibility: hidden;
-              }
-              h2:hover > .headerlink, h3:hover > .headerlink, h1:hover > .headerlink, h6:hover > .headerlink, h4:hover > .headerlink, h5:hover > .headerlink, dt:hover > .elementid-permalink { visibility: visible }
-          </style>
-          
-	<p>This page lists some recommended code pattern for developing or using Apache SIS.</p>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+
+<div class="row flex-nowrap">
+  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 12rem;">
+    <ul class="nav nav-pills flex-column mb-auto position-fixed">
+      <li><a class="nav-link  text-white " href="/index.html">Home</a></li>
+      <li><a class="nav-link  text-white " href="standards.html">Standards</a></li>
+      <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
+      <li><a class="nav-link  text-white " href="downloads.html">Downloads</a></li>
+      <li><a class="nav-link text-white" href="apidocs/index.html">Online Javadoc</a></li>
+      <li><a class="nav-link text-white" href="book/index.html">Developer Guide</a></li>
+      <li><a class="nav-link  text-white " href="epsg.html">EPSG Database</a></li>
+      <li><a class="nav-link  active " href="code-patterns.html">Code patterns</a></li>
+      <li><a class="nav-link  text-white " href="faq.html">FAQ</a></li>
+    </ul>
+  </div>
+  <div class="col">
+    <main class="container">
+      <article>
+        <img src="img/logo.png" class="sis-logo" align="left"/>
+        <p class="page-title">Recommended code patterns</p>
+        
+  <p>This page lists some recommended code pattern for developing or using Apache <abbr title="Spatial Information System">SIS</abbr>.</p>
 <nav id="TableOfContents">
   <ul>
     <li><a href="#referencing">Referencing   </a>
       <ul>
-        <li><a href="#axisOrder">Never explicitely swap ordinates for axis order   </a></li>
+        <li><a href="#axisOrder">Never explicitely swap coordinates for axis order   </a></li>
       </ul>
     </li>
     <li><a href="#coverage">Coverages   </a>
@@ -124,14 +122,15 @@
 </nav>
 <h1 id="referencing">Referencing   </h1>
 <p>Recommended code pattern when using the <code>sis-referencing</code> module.</p>
-<h2 id="axisOrder">Never explicitely swap ordinates for axis order   </h2>
+<h2 id="axisOrder">Never explicitely swap coordinates for axis order   </h2>
 <p>The <a href="faq.html#axisOrder">axis order issue</a> causes lot of confusion,
-and developers are sometime tempted to swap their ordinate values in order to comply with some expected axis ordering.
-It should never be necessary, since the Apache SIS referencing engine manages axis order transparently — provided that
-the Coordinate Reference System (CRS) definition is accurate. If a code needs to swap ordinates, this is probably an
-indication that the CRS has not been properly defined. Instead than patching the coordinate values, try to make sure
-that the <em>Source CRS</em> (associated to the original data) and the <em>Target CRS</em> (the coordinate space where to perform the
-work) are properly defined, and let the referencing engine performs the conversion from the source to the target CRS.</p>
+and developers are sometime tempted to swap their coordinate values in order to comply with some expected axis ordering.
+It should never be necessary, since the Apache <abbr title="Spatial Information System">SIS</abbr> referencing engine manages axis order transparently —
+provided that the Coordinate Reference System (CRS) definition is accurate.
+If a code needs to swap coordinates, this is probably an indication that the <abbr title="Coordinate Reference System">CRS</abbr> has not been properly defined.
+Instead of patching the coordinate values, try to make sure that the <em>Source CRS</em> (associated to the original data)
+and the <em>Target CRS</em> (the coordinate space where to perform the work) are properly defined,
+and let the referencing engine performs the conversion from the source to the target <abbr title="Coordinate Reference System">CRS</abbr>.</p>
 <h1 id="coverage">Coverages   </h1>
 <p>Recommended code pattern when using the <code>sis-coverage</code> module.</p>
 <h2 id="gridToCRS">Georeference images with affine transforms, <em>not</em> bounding boxes   </h2>
@@ -140,18 +139,18 @@ This approach may be ambiguous as it does not specify whether the (<var>x</var>,
 (see the <a href="faq.html#axisOrder">axis order issue</a>) or if the <var>y</var> axis is oriented downward.
 All images in SIS shall be georeferenced by at least an affine transform (more complex transforms are also possible),
 never by a rectangle or bounding box.
-In the two-dimensional case, the standard <code>java.awt.geom.AffineTransform</code> class can be used.</p>
+In the two-dimensional case, the standard <code>java.awt.geom.Affine­Transform</code> class can be used.</p>
 <h1 id="international">International   </h1>
 <p>Recommended code pattern for internationalization.</p>
 <h2 id="timezone">Specify timezone   </h2>
 <p>Geospatial data often cover a wide geographic area, spanning many time zones.
 Timezone are sometime specified as metadata in the header of data files to be read,
-or is sometime fixed to UTC by applications managing world-wide data.
-Some Apache SIS objects have <code>Locale</code> and <code>TimeZone</code> information.
+or is sometime fixed to <abbr title="Universal Time Coordinated">UTC</abbr> by applications managing world-wide data.
+Some Apache <abbr title="Spatial Information System">SIS</abbr> objects have <code>Locale</code> and <code>TimeZone</code> information.
 Such locale and timezone are given to <code>java.text.DateFormat</code> or <code>java.util.Calendar</code> constructors among others.</p>
-<p>When reading dates or timestamps from a JDBC database, always use the <code>ResultSet</code> method
-accepting a <code>Calendar</code> argument, when such method is available.
-For example prefer the <code>getTimestamp(int, Calendar)</code> method instead than <code>getTimestamp(int)</code>.
+<p>When reading dates or timestamps from a <abbr title="Java DataBase Connectivity">JDBC</abbr> database,
+always use the <code>ResultSet</code> method accepting a <code>Calendar</code> argument, when such method is available.
+For example prefer the <code>getTimestamp(int, Calendar)</code> method instead of <code>getTimestamp(int)</code>.
 The <code>Calendar</code> object should has been created with the appropriate timezone.</p>
 <h2 id="sort">Replace underscores by spaces before sorting   </h2>
 <p>Before to sort programmatic names for human reading, consider replacing all occurrences of the underscore character
@@ -171,7 +170,7 @@ Consequently, when iterating over characters in a string, the following pattern 
 </span><span class="c1"></span>    <span class="n">i</span> <span class="o">+=</span> <span class="n">Character</span><span class="o">.</span><span class="na">charCount</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
 <span class="o">}</span></code></pre></div>
 <h1 id="logging">Logging   </h1>
-<p>Apache SIS uses the <code>java.util.logging</code> framework, but with a <a href="http://sis.apache.org/apidocs/org/apache/sis/util/logging/LoggerFactory.html">mechanism allowing users to redirect
+<p>Apache <abbr title="Spatial Information System">SIS</abbr> uses the <code>java.util.logging</code> framework, but with a <a href="http://sis.apache.org/apidocs/org/apache/sis/util/logging/LoggerFactory.html">mechanism allowing users to redirect
 to another framework</a>.
 The logger names are usually the package name of the class emitting log messages, but not necessarily.
 In particular, we do not follow this convention if the class is located in an internal package
@@ -182,39 +181,24 @@ since developers use them for configuring their logging (verbosity, destination,
 <p>All logging at <code>Level.INFO</code> or above shall be targeted to users or administrators, not to developers.
 In particular <code>Level.SEVERE</code> shall be reserved for critical errors that compromise the application stability —
 it shall not be used for exceptions thrown while parsing user data (file or database).</p>
-<p>*[CRS]:  Coordinate Reference System
-*[JDBC]: Java DataBase Connectivity
-*[OGC]:  Open Geospatial Consortium
-*[UTC]:  Universal Time Coordinated</p>
 
 
-        </article>
-      </section>
+      </article>
+    </main>
+    <footer class="footer">
+    <div class="container">
+      <p>
+        Copyright &copy; 2013-2021 The Apache Software Foundation, Licensed under the
+        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
+        Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
+      </p>
     </div>
+</footer>
   </div>
 </div>
 
-<footer class="footer">
-  <div class="container">
-    <p>
-      Copyright &copy; 2013-2021 The Apache Software Foundation, Licensed under the
-      <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
-      Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
-    </p>
-  </div>
-</footer>
-
-<script src="js/jquery-1.9.1.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-
-<script type="text/javascript">
-const pathname = window.location.pathname
-const current_path = pathname.substring(1, pathname.length)
-const link = $('a[href="' + current_path + '"]')
-if (link !== undefined) {
-  link.parents('li,ul').addClass('active')
-}
-</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
 
 </body>
 </html>
