@@ -2,7 +2,7 @@
 title: Standards implemented by Apache SIS
 ---
 
-Apache {{% SIS %}} implements partially or fully the following standards from
+Apache {{% SIS %}} implements the following standards from
 the Open Geospatial Consortium (OGC),
 the International Organization for Standardization (ISO) or
 the Java Community Process (JCP).
