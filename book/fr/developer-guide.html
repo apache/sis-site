@@ -39,17 +39,8 @@
 <li><a href="#GeodeticDatum">Référentiel géodésique</a></li>
 <li><a href="#CoordinateSystem">Systèmes de coordonnées</a><ul>
 <li><a href="#AxisOrder">Ordre des axes</a></li></ul></li>
-<li><a href="#GeographicCRS">Systèmes géographiques</a><ul>
-<li><a href="#GeographicWKT">Format Well-Known Text</a></li></ul></li>
-<li><a href="#ProjectedCRS">Projections cartographiques</a><ul>
-<li><a href="#ProjectedWKT">Format Well-Known Text</a></li></ul></li>
-<li><a href="#CompoundCRS">Dimensions verticales et temporelles</a><ul>
-<li><a href="#CompoundWKT">Format Well-Known Text</a></li></ul></li></ul></li>
-<li><a href="#GetCRS">Obtention d’un système de référence spatial</a><ul>
-<li><a href="#CRSAuthorityFactory">Systèmes prédéfinis par des autorités</a></li>
-<li><a href="#CRSParsing">Lecture d’une définition au format GML ou WKT</a></li>
-<li><a href="#CRSFactory">Construction programmatique explicite</a></li>
-<li><a href="#CRS_UserCode">Ajout de définitions</a></li></ul></li>
+<li><a href="#GeographicCRS">Systèmes géographiques</a></li>
+<li><a href="#ProjectedCRS">Projections cartographiques</a></li></ul></li>
 <li><a href="#CoordinateOperations">Opérations sur les coordonnées</a><ul>
 <li><a href="#CRS.findOperation">Obtention d’une opération sur les coordonnées</a></li>
 <li><a href="#MathTransform">Exécution de opérations</a></li>
@@ -97,15 +88,11 @@
 <p style="margin-top:30pt; font-size:30pt; font-weight:900; text-align:center">
 Introduction à Apache SIS™
 </p>
-<p style="margin-bottom:20pt; text-align:center">
-(<a href="../en/developer-guide.html">English</a> | Français)
-</p>
-<p style="text-align:right; margin-right:30px">
-<i>Martin Desruisseaux</i><br/>
-<i>Christina Hough</i> (pour la traduction anglaise)
-</p>
-<p style="text-align:right; margin-right:30px">Ce document est distribué sous licence Apache 2</p>
-
+<div class="warning">
+Cette page est une traduction de la version anglaise du guide.
+Cette traduction n’est pas maintenue et peut être obsolète.
+Pour des informations plus à jour, voir la version anglaise.
+</div>
 
 
 
@@ -184,8 +171,8 @@ mais qui risquent de le rattraper avant la fin.
 </header>
 <p>
 La majorité des standards utilisés par Apache <abbr title="Spatial Information System">SIS</abbr> ont été élaborés
-par le <a href="http://www.opengeospatial.org">consortium <i>Open Geospatial</i></a> (<abbr>OGC</abbr>),
-parfois en collaboration avec l’<a href="http://www.iso.org">organisation internationale de normalisation</a> (<abbr>ISO</abbr>).
+par le <a href="https://www.ogc.org/">consortium <i>Open Geospatial</i></a> (<abbr>OGC</abbr>),
+parfois en collaboration avec l’<a href="https://www.iso.org/">organisation internationale de normalisation</a> (<abbr>ISO</abbr>).
 Certains standards de l’<abbr>ISO</abbr> deviennent eux-mêmes des standards Européens via la
 <a href="http://inspire.jrc.ec.europa.eu">directive INSPIRE</a>, ou des standards français via l’<abbr>AFNOR</abbr>.
 Ces standards offrent deux technologies clés:
@@ -202,7 +189,7 @@ même si les deux communautés utilisent des représentations internes très dif
 </ul>
 <p>
 Ces standards sont fournis gratuitement à la communauté internationale sous la forme de
-<a href="http://www.opengeospatial.org/standards/is">spécifications (fichiers <abbr title="Portable Document Format">PDF</abbr>)</a> ou de
+<a href="https://www.ogc.org/standards/is">spécifications (fichiers <abbr title="Portable Document Format">PDF</abbr>)</a> ou de
 <a href="http://schemas.opengis.net/gml/3.3/">schémas (fichiers <abbr title="XML Schema Definition">XSD</abbr>)</a>.
 Les organismes de normalisation ne fabriquent pas de logiciel; pour obtenir une implémentation de ces spécifications,
 les utilisateurs doivent choisir un des produits conformes disponibles sur le marché ou développer leur propres solutions.
@@ -220,7 +207,7 @@ plus facilement des informations géographiques.
 </header>
 <p>
 Les travaux de l’<abbr title="Open Geospatial Consortium">OGC</abbr> se font par courriers électroniques,
-par conférences téléphoniques et par <a href="http://www.opengeospatial.org/event?category=ogctcpc">réunions réelles</a>.
+par conférences téléphoniques et par <a href="https://www.ogc.org/event?category=ogctcpc">réunions réelles</a>.
 L’<abbr>OGC</abbr> organise quatre réunions par années, chacune d’une durée de cinq jours,
 hébergées par des organisations membres sponsorisant l’événement (compagnies, universités, centres de recherches, <i>etc.</i>).
 Le continent hôte alterne entre l’Europe et l’Amérique du Nord, avec une présence croissante en Asie depuis 2011.
@@ -284,7 +271,7 @@ laquelle développer de nouveaux standards, et certains de ces nouveaux standard
 <p>
 Tout utilisateur, qu’il soit membre ou non du consortium <i>Open Geospatial</i>, peut proposer des modifications à des standards <abbr title="Open Geospatial Consortium">OGC</abbr>.
 Une liste des propositions actuelles de changements, ainsi qu’un formulaire permettant d’en soumettre de nouvelles,
-sont <a href="http://www.opengeospatial.org/standards/cr">disponibles en ligne</a>.
+sont <a href="https://www.ogc.org/standards/cr">disponibles en ligne</a>.
 Chaque proposition est revue par le <abbr title="Standard Working Group">SWG</abbr>.
 </p><p>
 Certains groupes de travail utilisent d’autres systèmes de soumission en parallèle, par exemple GitHub,
@@ -298,7 +285,7 @@ hébergés en dehors des structures de l’<abbr>OGC</abbr>.
 <p>
 Outre ces organisations formelles de normalisation, il existe aussi des organisations qui ne sont pas officiellement
 dédiées à l’élaboration de normes mais dont les travaux ont été largement adoptés comme standards de fait.
-En particulier, la base de données <a href="http://www.epsg.org">EPSG</a> fournit des codes numériques permettant d’identifier
+En particulier, la base de données <a href="https://epsg.org/">EPSG</a> fournit des codes numériques permettant d’identifier
 facilement un système de référence des coordonnées parmi <a href="../../tables/CoordinateReferenceSystems.html">plusieurs milliers</a>.
 Cette base de données est offerte par des compagnies pétrolières qui ont vu leur intérêt à ce que leurs prospections se fassent
 bien à l’endroit voulu, sachant qu’elles ne contrôlent pas toujours la production des cartes sur lesquelles elles se positionnent.
@@ -311,7 +298,7 @@ Chaque document élabore un service, par exemple les transformations de coordonn
 Le fonctionnement de chaque service est décrit par un ensemble de classes d’objets et leurs interactions.
 Ces éléments sont illustrés par des diagrammes <abbr>UML</abbr> (<i>Unified Modeling Language</i>)
 dans des spécifications dites « abstraites ».
-Les <a href="http://www.opengeospatial.org/standards/as">spécifications abstraites</a> ne font référence à aucun langage informatique concret.
+Les <a href="https://www.ogc.org/standards/as">spécifications abstraites</a> ne font référence à aucun langage informatique concret.
 Leurs concepts peuvent se concrétiser dans un langage de programmation, une base de données ou un schéma <abbr>XML</abbr> de manière plus ou moins directe.
 Il existe toutefois une part d’arbitraire dans la façon de concrétiser une spécification abstraite, étant donné que des ajustements sont souvent nécessaires
 pour tenir compte des contraintes ou des conventions du langage ciblé.
@@ -342,7 +329,7 @@ Même la façon de concevoir les spécifications abstraites a évoluée: les op�
 par conséquence ce qui reste ressemble davantage à des descriptions de schémas de base de données.
 Certaines opérations qui étaient définies dans les anciennes normes apparaissent maintenant, sous une autre forme, dans les spécifications des services web.
 Enfin le terme « spécification d’implémentation » a été abandonné, pour être englobé dans « standard <abbr title="Open Geospatial Consortium">OGC</abbr> ».
-Mais malgré leur dépréciation, les <a href="http://www.opengeospatial.org/docs/retired">anciennes spécifications d’implémentation</a>
+Mais malgré leur dépréciation, les <a href="https://www.ogc.org/docs/retired">anciennes spécifications d’implémentation</a>
 restent utiles aux programmes en langage Java car:
 </p>
 <ul>
@@ -367,207 +354,6 @@ n’apportant pas toujours de nouvelles fonctionnalités mais facilitant l’usa
 </p>
 </article>
 </details>
-
-<p>
-Le tableau suivant liste les principales normes utilisées par le projet.
-Plusieurs normes sont publiées à la fois comme standard <abbr title="International Organization for Standardization">ISO</abbr> et comme standard <abbr>OGC</abbr>,
-d’où la disposition côte-à-côte des deux premières colonnes.
-La section des « spécifications d’implémentation » liste des spécifications qui apportent peu de concepts nouveaux
-comparativement aux spécifications abstraites, mais précisent comment les représenter dans des contextes précis
-tels qu’un document <abbr>XML</abbr>.
-Les normes dépréciées mais malgré tout partiellement utilisées apparaissent <s>barrées</s>.
-Enfin, les paquets GeoAPI seront introduits dans le chapitre suivant.
-</p>
-<table>
-<caption>Principaux standards en relation avec le projet Apache <abbr>SIS</abbr></caption>
-<tr>
-<th>Norme <abbr>ISO</abbr></th>
-<th>Norme <abbr>OGC</abbr></th>
-<th>Titre</th>
-<th>Paquet de GeoAPI</th>
-<th>Paquet de Apache SIS</th>
-</tr><tr>
-<td class="separator" colspan="5">Spécifications abstraites</td>
-</tr><tr>
-<td><abbr>ISO</abbr> 19103</td>
-<td/>
-<td><i>Conceptual schema language</i></td>
-<td><code class="GeoAPI">….util</code></td>
-<td><code class="SIS">….util.iso</code></td>
-</tr><tr>
-<td><abbr>ISO</abbr> 19115-1</td>
-<td>Topic 11</td>
-<td><i>Metadata</i></td>
-<td><code class="GeoAPI">….metadata</code></td>
-<td><code class="SIS">….metadata.iso</code></td>
-</tr><tr>
-<td><abbr>ISO</abbr> 19115-2</td>
-<td/>
-<td><i>Metadata — extensions for imagery and gridded data</i></td>
-<td><code class="GeoAPI">….metadata</code></td>
-<td><code class="SIS">….metadata.iso</code></td>
-</tr><tr>
-<td><abbr>ISO</abbr> 19111</td>
-<td>Topic 2</td>
-<td><i>Spatial referencing by coordinates</i></td>
-<td><code class="GeoAPI">….referencing</code></td>
-<td><code class="SIS">….referencing</code></td>
-</tr><tr>
-<td><abbr>ISO</abbr> 19111-2</td>
-<td/>
-<td><i>Referencing — extension for parametric values</i></td>
-<td><code class="GeoAPI">….referencing</code></td>
-<td><code class="SIS">….referencing</code></td>
-</tr><tr>
-<td><abbr>ISO</abbr> 19112</td>
-<td/>
-<td><i>Spatial referencing by geographic identifier</i></td>
-<td><code class="GeoAPI">….referencing.gazetteer</code></td>
-<td><code class="SIS">….referencing.gazetteer</code></td>
-</tr><tr>
-<td><abbr>ISO</abbr> 19108</td>
-<td/>
-<td><i>Temporal Schema</i></td>
-<td><code class="GeoAPI">….temporal</code></td>
-<td/>
-</tr><tr>
-<td><abbr>ISO</abbr> 19107</td>
-<td>Topic 1</td>
-<td><i>Feature geometry</i></td>
-<td><code class="GeoAPI">….geometry</code></td>
-<td><code class="SIS">….geometry</code></td>
-</tr><tr>
-<td><abbr>ISO</abbr> 19109</td>
-<td>Topic 5</td>
-<td><i>Rules for application schema</i></td>
-<td><code class="GeoAPI">….feature</code></td>
-<td><code class="SIS">….feature</code></td>
-</tr><tr>
-<td><abbr>ISO</abbr> 19123</td>
-<td>Topic 6</td>
-<td><i>Schema for coverage geometry and functions</i></td>
-<td><code class="GeoAPI">….coverage</code></td>
-<td><code class="SIS">….coverage</code></td>
-</tr><tr>
-<td><abbr>ISO</abbr> 19156</td>
-<td>Topic 20</td>
-<td><i>Observations and measurements</i></td>
-<td><code class="GeoAPI">….observation</code></td>
-<td/>
-</tr><tr>
-<td class="separator" colspan="5">Spécifications d’implémentation</td>
-</tr><tr>
-<td><abbr>ISO</abbr> 19139</td>
-<td/>
-<td><i>Metadata <abbr>XML</abbr> schema implementation</i></td>
-<td/>
-<td><code class="SIS">….xml</code></td>
-</tr><tr>
-<td><abbr>ISO</abbr> 19136</td>
-<td>OGC 07-036</td>
-<td><i>Geography Markup Language (<abbr>GML</abbr>) Encoding Standard</i></td>
-<td/>
-<td><code class="SIS">….xml</code></td>
-</tr><tr>
-<td><abbr>ISO</abbr> 19162</td>
-<td>OGC 12-063</td>
-<td><i>Well-known text representation of coordinate reference systems</i></td>
-<td/>
-<td><code class="SIS">….io.wkt</code></td>
-</tr><tr>
-<td/>
-<td><s><abbr>OGC</abbr> 01-009</s></td>
-<td><s><i>Coordinate Transformation Services</i></s></td>
-<td><code class="GeoAPI">….referencing</code></td>
-<td><code class="SIS">….referencing</code></td>
-</tr><tr>
-<td/>
-<td><s><abbr>OGC</abbr> 01-004</s></td>
-<td><s><i>Grid Coverage</i></s></td>
-<td><code class="GeoAPI">….coverage</code></td>
-<td><code class="SIS">….coverage</code></td>
-</tr><tr>
-<td/>
-<td><abbr>OGC</abbr> 10-092</td>
-<td><i>NetCDF binary encoding: classic and 64-bit offset format</i></td>
-<td/>
-<td><code class="SIS">….storage.netcdf</code></td>
-</tr><tr>
-<td/>
-<td><abbr>OGC</abbr> 14-084</td>
-<td><i>Moving features Comma Separated Values (CSV) encoding</i></td>
-<td/>
-<td><code class="SIS">….storage</code></td>
-</tr><tr>
-<td><abbr>ISO</abbr> 13249</td>
-<td/>
-<td><i><abbr>SQL</abbr> spatial</i></td>
-<td/>
-<td/>
-</tr><tr>
-<td/>
-<td><abbr>SLD</abbr></td>
-<td><i>Styled Layer Descriptor</i></td>
-<td><code class="GeoAPI">….style</code></td>
-<td/>
-</tr><tr>
-<td class="separator" colspan="5">Services web</td>
-</tr><tr>
-<td/>
-<td><abbr>CSW</abbr></td>
-<td><i>Catalog Services</i></td>
-<td/>
-<td/>
-</tr><tr>
-<td><abbr>ISO</abbr> 19128</td>
-<td><abbr>WMS</abbr></td>
-<td><i>Web Map Service</i></td>
-<td/>
-<td/>
-</tr><tr>
-<td/>
-<td><abbr>WMTS</abbr></td>
-<td><i>Web Map Tile Service</i></td>
-<td/>
-<td/>
-</tr><tr>
-<td><abbr>ISO</abbr> 19142</td>
-<td><abbr>WFS</abbr></td>
-<td><i>Web Feature Service</i></td>
-<td/>
-<td/>
-</tr><tr>
-<td/>
-<td><abbr>WCS</abbr></td>
-<td><i>Web Coverage Service</i></td>
-<td/>
-<td/>
-</tr><tr>
-<td/>
-<td><abbr>WPS</abbr></td>
-<td><i>Web Processing Service</i></td>
-<td/>
-<td/>
-</tr><tr>
-<td/>
-<td>Open<abbr>LS</abbr></td>
-<td><i>Location Services</i></td>
-<td/>
-<td/>
-</tr><tr>
-<td/>
-<td><abbr>SWE</abbr></td>
-<td><i>Sensor Web Enablement</i></td>
-<td/>
-<td/>
-</tr><tr>
-<td/>
-<td><abbr>SOS</abbr></td>
-<td><i>Sensor Observation Service</i></td>
-<td/>
-<td/>
-</tr>
-</table>
 </section>
 
 
@@ -614,7 +400,7 @@ quitte à obtenir une valeur nulle en attendant qu’une nouvelle version de la 
 </header>
 <p>
 En 2001, le consortium <i>Open GIS</i> (l’ancien nom du consortium <i>Open Geospatial</i>) publia la spécification d’implémentation
-<a href="http://www.opengeospatial.org/standards/ct"><abbr title="Open Geospatial Consortium">OGC</abbr> 01-009: <cite>Coordinate Transformation Services</cite></a>.
+<a href="https://www.ogc.org/standards/ct"><abbr title="Open Geospatial Consortium">OGC</abbr> 01-009: <cite>Coordinate Transformation Services</cite></a>.
 Cette spécification, élaborée par <i>Computer Aided Development Corporation</i> (Cadcorp),
 était accompagnée d’interfaces <abbr title="Component Object Model">COM</abbr>, <abbr title="Common Object Request Broker Architecture">CORBA</abbr> et Java.
 À cette époque, la vague des services web n’avait pas encore éclipsé les interfaces de programmation classiques.
@@ -632,7 +418,7 @@ qui héberge depuis lors le code source dans un <a href="http://www.geoapi.org/s
 Le projet pris le nom de « GeoAPI » à ce moment là, et utilisa les interfaces de la spécification <abbr>OGC</abbr> 01-009 comme point de départ.
 </p><p>
 Quelques mois plus tard, l’<abbr>OGC</abbr> lança le projet
-<a href="http://www.opengeospatial.org/standards/go"><abbr>GO-1</abbr>: <i>Geographic Objects</i></a>,
+<a href="https://www.ogc.org/standards/go"><abbr>GO-1</abbr>: <i>Geographic Objects</i></a>,
 qui poursuivait des buts similaires à ceux de GeoAPI.
 Entre-temps, l’<abbr>OGC</abbr> avait abandonné certaines de leur spécifications en faveur des normes <abbr title="International Organization for Standardization">ISO</abbr>.
 GeoAPI et <abbr>GO-1</abbr> ont joint leurs efforts pour une refonte des interfaces de GeoAPI en les basant sur ces nouvelles normes <abbr>ISO</abbr>.
@@ -648,7 +434,7 @@ Afin de reprendre les développements, un nouveau groupe de travail « GeoAPI 3.
 Ce groupe a réduit les ambitions par rapport à GeoAPI 2.0 en se concentrant sur les interfaces les plus stables,
 et en plaçant les autres — notamment les géométries — dans un module nommé « <a href="http://www.geoapi.org/geoapi-pending/index.html">pending</a> »,
 pour considérations futures. <a href="http://www.geoapi.org/3.0/index.html">GeoAPI 3.0</a> est devenu un
-<a href="http://www.opengeospatial.org/standards/geoapi">standard <abbr>OGC</abbr></a> en 2011.
+<a href="https://www.ogc.org/standards/geoapi">standard <abbr>OGC</abbr></a> en 2011.
 Cette version a été la première à être déployée dans le <a href="http://search.maven.org/#search|ga|1|geoapi">dépôt central de Maven</a>.
 </p>
 </article>
@@ -984,10 +770,6 @@ et sont associés à un mécanisme permettant de transformer des coordonnées d�
 <nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#DataAccess">Chapitre précédent</a></div><div class="next-chapter"><a href="#Geometry">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 <nav><p>Dans ce chapitre:</p><ul class="toc"/></nav>
-<p style="color:red; font-size:larger; font-weight:bold; text-align:center">
-Ce chapitre est une ébauche. Apache <abbr title="Spatial Information System">SIS</abbr> 0.8 n’offre pas encore de support des couvertures de données.
-L’ajout de ce support est en cours et sera disponible dans une version future.
-</p>
 <p>
 Les images, souvent nommées <i>rasters</i> en anglais, sont des cas particuliers
 d’une structure de données appelée <i>coverages</i>.
@@ -1002,7 +784,7 @@ Un <i>coverage</i> est une fonction qui, à partir d’une coordonnée spécifi�
 retourne une valeur d’attribut. L’ensemble des valeurs pouvant être données en entrée est appelé le domaine
 (<i>domain</i> en anglais), alors que l’ensemble des valeurs pouvant être retournées est appelé <i>range</i> en anglais.
 Le domaine est souvent l’espace spatio-temporel couvert par les données,
-mais rien dans <abbr>SIS</abbr> n’empêche les couvertures de s’étendre à d’autres dimensions.
+mais rien dans <abbr title="Spatial Information System">SIS</abbr> n’empêche les couvertures de s’étendre à d’autres dimensions.
 Par exemple les études en thermodynamique utilisent souvent un espace dont les dimensions sont la température et la pression.
 </p>
 <div class="example"><p><b>Exemple:</b>
@@ -1058,6 +840,9 @@ des instances de <code class="SIS">Range</code> ainsi que d’autres information
 <i>fonction de transfert</i> (décrite plus loin).
 </p>
 </aside>
+<div class="warning">
+Cette section est incomplète. Voyez la version anglaise pour une version éventuellement plus complète.
+</div>
 </section>
 
 
@@ -1263,17 +1048,8 @@ est vrai, alors il est garanti que l’enveloppe est vide.
 <li><a href="#GeodeticDatum">Référentiel géodésique</a></li>
 <li><a href="#CoordinateSystem">Systèmes de coordonnées</a><ul>
 <li><a href="#AxisOrder">Ordre des axes</a></li></ul></li>
-<li><a href="#GeographicCRS">Systèmes géographiques</a><ul>
-<li><a href="#GeographicWKT">Format Well-Known Text</a></li></ul></li>
-<li><a href="#ProjectedCRS">Projections cartographiques</a><ul>
-<li><a href="#ProjectedWKT">Format Well-Known Text</a></li></ul></li>
-<li><a href="#CompoundCRS">Dimensions verticales et temporelles</a><ul>
-<li><a href="#CompoundWKT">Format Well-Known Text</a></li></ul></li></ul></li>
-<li><a href="#GetCRS">Obtention d’un système de référence spatial</a><ul>
-<li><a href="#CRSAuthorityFactory">Systèmes prédéfinis par des autorités</a></li>
-<li><a href="#CRSParsing">Lecture d’une définition au format GML ou WKT</a></li>
-<li><a href="#CRSFactory">Construction programmatique explicite</a></li>
-<li><a href="#CRS_UserCode">Ajout de définitions</a></li></ul></li>
+<li><a href="#GeographicCRS">Systèmes géographiques</a></li>
+<li><a href="#ProjectedCRS">Projections cartographiques</a></li></ul></li>
 <li><a href="#CoordinateOperations">Opérations sur les coordonnées</a><ul>
 <li><a href="#CRS.findOperation">Obtention d’une opération sur les coordonnées</a></li>
 <li><a href="#MathTransform">Exécution de opérations</a></li>
@@ -1376,7 +1152,6 @@ Les <cite>conversions</cite> ainsi que les <cite>transformations</cite> de coord
 dont la racine est l’interface <code class="GeoAPI">CoordinateOperation</code>.
 Ces classes seront discutées dans <a href="#CoordinateOperations">une autre section</a>.
 </p>
-
 
 
 
@@ -1603,9 +1378,6 @@ et est représenté par l’interface <code class="GeoAPI">GeographicCRS</code>.
 Les systèmes utilisant les autres sortes de latitudes sont représentés par d’autres interfaces <abbr>CRS</abbr>.
 </p>
 
-<h4 id="GeographicWKT"><span class="section-number">5.1.4.1.</span> Format <i>Well-Known Text</i></h4>
-<p style="color: red">TODO</p>
-
 <h3 id="ProjectedCRS"><span class="section-number">5.1.5.</span> Projections cartographiques</h3>
 <p>
 Les projections cartographiques représentent une surface courbe (la Terre) sur une surface plane (une carte ou un écran d’ordinateur)
@@ -1614,42 +1386,15 @@ Les propriétés géométriques à conserver dépendent de l’objet d’étude 
 Par exemple les pays plutôt allongés dans le sens Est-Ouest utilisent souvent une projection de Lambert,
 alors que les pays plutôt allongés dans le sens Nord-Sud préfèrent une projection de Mercator Transverse.
 </p>
-<p style="color: red">TODO</p>
-
-<h4 id="ProjectedWKT"><span class="section-number">5.1.5.1.</span> Format <i>Well-Known Text</i></h4>
-<p style="color: red">TODO</p>
-
-<h3 id="CompoundCRS"><span class="section-number">5.1.6.</span> Dimensions verticales et temporelles</h3>
-<p style="color: red">TODO</p>
-
-<h4 id="CompoundWKT"><span class="section-number">5.1.6.1.</span> Format <i>Well-Known Text</i></h4>
-<p style="color: red">TODO</p>
+<div class="warning">
+Cette section est incomplète. Voyez la version anglaise pour une version éventuellement plus complète.
+</div>
 </section>
 
 
 <section>
 <header>
-<h2 id="GetCRS"><span class="section-number">5.2.</span> Obtention d’un système de référence spatial</h2>
-</header>
-<p style="color: red">TODO</p>
-
-<h3 id="CRSAuthorityFactory"><span class="section-number">5.2.1.</span> Systèmes prédéfinis par des autorités</h3>
-<p style="color: red">TODO</p>
-
-<h3 id="CRSParsing"><span class="section-number">5.2.2.</span> Lecture d’une définition au format GML ou WKT</h3>
-<p style="color: red">TODO</p>
-
-<h3 id="CRSFactory"><span class="section-number">5.2.3.</span> Construction programmatique explicite</h3>
-<p style="color: red">TODO</p>
-
-<h3 id="CRS_UserCode"><span class="section-number">5.2.4.</span> Ajout de définitions</h3>
-<p style="color: red">TODO</p>
-</section>
-
-
-<section>
-<header>
-<h2 id="CoordinateOperations"><span class="section-number">5.3.</span> Opérations sur les coordonnées</h2>
+<h2 id="CoordinateOperations"><span class="section-number">5.2.</span> Opérations sur les coordonnées</h2>
 </header>
 <p>
 Étant donné un système de référence des coordonnées (<abbr>CRS</abbr>) <em>source</em> selon lequel sont exprimés des coordonnées existantes
@@ -1676,7 +1421,7 @@ Dans cet exemple, ce critère entraîne la sélection d’une opération valide 
 </div>
 
 
-<h3 id="CRS.findOperation"><span class="section-number">5.3.1.</span> Obtention d’une opération sur les coordonnées</h3>
+<h3 id="CRS.findOperation"><span class="section-number">5.2.1.</span> Obtention d’une opération sur les coordonnées</h3>
 <p>
 La façon la plus facile d’obtenir une opération sur les coordonnées à partir des informations présentées ci-dessus
 est d’utiliser la classe de commodité <code class="SIS">org.apache.sis.referencing.CRS</code>:
@@ -1717,7 +1462,7 @@ En outre, sa précision sera certainement moindre que la précision centimétriq
 Vérifier la zone de validité ainsi que la précision déclarées dans les méta-données de la transformation prend alors une importance particulière.
 </p>
 
-<h3 id="MathTransform"><span class="section-number">5.3.2.</span> Exécution de opérations</h3>
+<h3 id="MathTransform"><span class="section-number">5.2.2.</span> Exécution de opérations</h3>
 <p>
 L’objet <code class="GeoAPI">CoordinateOperation</code> introduit dans la section précédente fournit des informations de haut-niveau
 (<abbr>CRS</abbr> source et destination, zone de validité, précision, paramètres de l’opération, <i>etc</i>).
@@ -1768,13 +1513,13 @@ Notons que toutes les coordonnées géographiques dans ce code ont la latitude a
 }</code></pre>
 
 
-<h3 id="TransformDerivative"><span class="section-number">5.3.3.</span> Dérivées partielles des opérations</h3>
+<h3 id="TransformDerivative"><span class="section-number">5.2.3.</span> Dérivées partielles des opérations</h3>
 <p>
 La section précédente indiquait comment projeter les coordonnées d’un système de référence vers un autre.
 Mais il existe une autre opération moins connue, qui consiste à calculer non pas la coordonnée projetée d’un point,
 mais plutôt la dérivée de la fonction de projection cartographique en ce point.
 Cette opération était définie dans une ancienne spécification du consortium Open Geospatial,
-<a href="http://www.opengeospatial.org/standards/ct">OGC 01-009</a>, aujourd’hui un peu oubliée mais pourtant encore utile.
+<a href="https://www.ogc.org/standards/ct">OGC 01-009</a>, aujourd’hui un peu oubliée mais pourtant encore utile.
 Appelons <var>P</var> une projection cartographique qui convertit une latitude et longitude (<var>φ</var>, <var>λ</var>) en degrés
 vers une coordonnée projetée (<var>x</var>, <var>y</var>) en mètres.
 Dans l’expression ci-dessous, nous représentons le résultat de la projection cartographique
@@ -1902,7 +1647,7 @@ Par extension, on peut aussi s’en servir pour déterminer si des axes sont int
 ou si la direction d’un axe est renversée. Mais l’intérêt des dérivées ne s’arrête pas là.
 </p>
 
-<h4 id="DerivativeAndEnvelope"><span class="section-number">5.3.3.1.</span> Utilité des dérivées pour la reprojection d’enveloppes</h4>
+<h4 id="DerivativeAndEnvelope"><span class="section-number">5.2.3.1.</span> Utilité des dérivées pour la reprojection d’enveloppes</h4>
 <p>
 Les systèmes d’information géographiques ont très fréquemment besoin de projeter une enveloppe.
 Mais l’approche naïve, qui consisterait à projeter chacun des 4 coins du rectangle, ne suffit pas.
@@ -1989,7 +1734,7 @@ ce qui empêche la méthode <code class="SIS">Envelopes​.transform(…)</code>
 </p>
 
 
-<h4 id="DerivativeAndRaster"><span class="section-number">5.3.3.2.</span> Utilité des dérivées pour la reprojection d’images</h4>
+<h4 id="DerivativeAndRaster"><span class="section-number">5.2.3.2.</span> Utilité des dérivées pour la reprojection d’images</h4>
 <p>
 La projection cartographique d’une image s’effectue en préparant une image initialement vide qui contiendra le résultat de l’opération,
 puis à remplir cette image en itérant sur tous les pixels. Pour chaque pixel de l’image <em>destination</em>, on obtient la coordonnées
@@ -2063,7 +1808,7 @@ On s’évite ainsi des projections cartographiques, en apparence une seule dans
 mais en fait beaucoup plus dans une grille de transformation d’image (3× la somme des itérations précédentes).
 </p>
 
-<h4 id="GetDerivative"><span class="section-number">5.3.3.3.</span> Obtention de la dérivée en un point</h4>
+<h4 id="GetDerivative"><span class="section-number">5.2.3.3.</span> Obtention de la dérivée en un point</h4>
 <p>
 Cette discussion n’aurait pas un grand intérêt si le coût du calcul des dérivées des projections cartographiques
 était élevé par rapport aux coût de la projection des points. Mais lorsque l’on dérive analytiquement les équations
@@ -2100,12 +1845,15 @@ Une fonction inverse peut donc implémenter le calcul de sa dérivée comme suit
 }</code></pre>
 
 </section>
+<div class="warning">
+Ce chapitre est incomplet. Voyez la version anglaise pour une version plus complète.
+</div>
 </section>
 
 
 <section>
 <header>
-<h2 id="Formats"><span class="section-number">5.4.</span> Formats de stockage des données</h2>
+<h2 id="Formats"><span class="section-number">5.3.</span> Formats de stockage des données</h2>
 </header>
 <p>
 Apache <abbr title="Spatial Information System">SIS</abbr> peut lire et écrire des données spatiales et leurs méta-données associées dans différents formats.
@@ -2117,7 +1865,7 @@ Apache <abbr title="Spatial Information System">SIS</abbr> peut lire et écrire 
 
 <section>
 <header>
-<h2 id="XML-ISO"><span class="section-number">5.5.</span> Représentation des objets en <abbr>XML</abbr></h2>
+<h2 id="XML-ISO"><span class="section-number">5.4.</span> Représentation des objets en <abbr>XML</abbr></h2>
 </header>
 <p>
 Les objets définis par les standards <abbr title="Open Geospatial Consortium">OGC</abbr>/<abbr title="International Organization for Standardization">ISO</abbr> doivent pouvoir être échangés sur internet
@@ -2215,11 +1963,11 @@ Les <i>features</i> en sont un exemple, car leur structure est dynamique.
 
 <section>
 <header>
-<h3 id="XML-ISO-19115"><span class="section-number">5.5.1.</span> Représentation des méta-données selon <abbr title="International Organization for Standardization">ISO</abbr> 19115-3</h3>
+<h3 id="XML-ISO-19115"><span class="section-number">5.4.1.</span> Représentation des méta-données selon <abbr title="International Organization for Standardization">ISO</abbr> 19115-3</h3>
 </header>
 <p>
 Pour chaque classe de méta-donnée, il existe un type <abbr>XML</abbr> portant le même nom que dans la spécification abstraite
-(par exemple <code class="OGC">gmd:MD_Metadata</code> et <code class="OGC">gmd:CI_Citation</code>).
+(par exemple <code class="OGC">mdb:MD_Metadata</code> et <code class="OGC">cit:CI_Citation</code>).
 Tous ces types peuvent être employés comme racine d’un document <abbr>XML</abbr>.
 Ainsi, il est possible d’écrire un document représentant un objet <code class="OGC">MD_Metadata</code> complet,
 ou d’écrire un document représentant seulement un objet <code class="OGC">CI_Citation</code>.
@@ -2249,7 +1997,7 @@ Cette pratique double la profondeur de l’arborescence, en introduisant une dup
                       &lt;onlineResource&gt;
                         <b>&lt;CI_OnlineResource&gt;</b>
                           &lt;linkage&gt;
-                            &lt;URL&gt;http://www.opengeospatial.org&lt;/URL&gt;
+                            &lt;URL&gt;https://www.ogc.org&lt;/URL&gt;
                           &lt;/linkage&gt;
                         <b>&lt;/CI_OnlineResource&gt;</b>
                       &lt;/onlineResource&gt;
@@ -2273,7 +2021,7 @@ est donc constitué d’une alternance systématique de deux types d’élément
 <li><p>
 Il y a d’abord le nom de la propriété, qui commence toujours par une lettre minuscule (en ignorant les préfixes).
 Dans les <abbr title="Application Programming Interface">API</abbr> Java, chaque propriété correspond à une méthode de la classe englobante.
-Dans l’exemple ci-haut, <code class="OGC">gmd:identificationInfo</code> (une propriété de la classe <code class="OGC">MD_Metadata</code>)
+Dans l’exemple ci-haut, <code class="OGC">mdb:identificationInfo</code> (une propriété de la classe <code class="OGC">MD_Metadata</code>)
 correspond à la méthode <code class="GeoAPI">Metadata​.getIdentificationInfo()</code>.
 </p></li>
 <li><p>
@@ -2321,7 +2069,7 @@ Ces attributs n’ont pas de méthodes Java dédiées, mais sont accessibles ind
 </aside>
 
 
-<h4 id="gco-id"><span class="section-number">5.5.1.1.</span> Identification d’instances déjà définies</h4>
+<h4 id="gco-id"><span class="section-number">5.4.1.1.</span> Identification d’instances déjà définies</h4>
 <p>
 L’élément englobant peut contenir un attribut <code class="OGC">id</code> ou <code class="OGC">uuid</code>.
 Si un de ces attributs est présent, l’élément englobé peut être complètement omis;
@@ -2401,7 +2149,7 @@ où peuvent être manipulés tous types d’identifiants (pas seulement <abbr>XM
 
 
 
-<h4 id="nilReason"><span class="section-number">5.5.1.2.</span> Représentation de valeurs manquantes</h4>
+<h4 id="nilReason"><span class="section-number">5.4.1.2.</span> Représentation de valeurs manquantes</h4>
 <p>
 Lorsqu’une propriété n’est pas définie, la méthode correspondante de GeoAPI retourne généralement <code>null</code>.
 Toutefois les choses se compliquent lorsque la propriété manquante est une valeur considérée comme obligatoire par le standard <abbr title="International Organization for Standardization">ISO</abbr> 19115.
@@ -2883,7 +2631,7 @@ Les modules de GeoAPI sont:
 <ul>
 <li><p>
 <b><code class="GeoAPI">geoapi</code></b> — contient les interfaces couvertes par le
-<a href="http://www.opengeospatial.org/standards/geoapi">standard GeoAPI de l’<abbr title="Open Geospatial Consortium">OGC</abbr></a>.
+<a href="https://www.ogc.org/standards/geoapi">standard GeoAPI de l’<abbr title="Open Geospatial Consortium">OGC</abbr></a>.
 Les versions finales de Apache <abbr>SIS</abbr> dépendent de ce module.
 </p></li>
 <li><p>
@@ -2893,7 +2641,7 @@ Les versions finales de Apache <abbr>SIS</abbr> dépendent de ce module.
 Certains ajouts apparaissent dans des interfaces normalement définies par le module <code class="GeoAPI">geoapi</code>,
 d’où la nécessité de les copier.
 Les branches de développement
-<code>jdk7</code> et <code>jdk8</code> de Apache <abbr>SIS</abbr> dépendent de ce module,
+<code>JDK8</code> et <code>JDK9</code> de Apache <abbr>SIS</abbr> dépendent de ce module,
 mais cette dépendance est transformée en une dépendance vers le module <code class="GeoAPI">geoapi</code>
 standard au moment de fusionner les branches avec le tronc.
 </p></li>
@@ -2961,8 +2709,8 @@ Une conversion à partir des schémas <abbr>UML</abbr> évite ce problème, mais
 </p>
 <div class="example"><p><b>Exemple:</b>
 Les schémas <abbr>XSD</abbr> des méta-données insèrent
-un élément <code class="OGC">&lt;gmd:CI_Citation&gt;</code> à l’intérieur de <code class="OGC">&lt;gmd:citation&gt;</code>,
-un élément <code class="OGC">&lt;gmd:CI_OnlineResource&gt;</code> à l’intérieur de <code class="OGC">&lt;gmd:onlineResource&gt;</code>,
+un élément <code class="OGC">&lt;cit:CI_Citation&gt;</code> à l’intérieur de <code class="OGC">&lt;cit:citation&gt;</code>,
+un élément <code class="OGC">&lt;cit:CI_OnlineResource&gt;</code> à l’intérieur de <code class="OGC">&lt;cit:onlineResource&gt;</code>,
 et ainsi de suite pour la centaine de classes définies dans le standard <abbr title="International Organization for Standardization">ISO</abbr> 19115.
 Cette redondance n’est absolument pas nécessaire à un programme Java.
 </p></div>
@@ -3279,10 +3027,10 @@ Les extensions s’obtiennent par les méthodes statiques <code class="GeoAPI">v
 contrairement à celle de <code>Enum</code>, créeront de nouvelles instances si le nom donné ne correspond pas au nom d’une instance existante.
 </p>
 
-<pre><code><code class="GeoAPI">MediumName</code> cdRom  = <code class="GeoAPI">MediumName</code>.<code class="GeoAPI">CD_ROM;</code>
-<code class="GeoAPI">MediumName</code> usbKey = <code class="GeoAPI">MediumName</code>.<code class="GeoAPI">valueOf</code>(<i>"<code class="GeoAPI">USB_KEY</code>"</i>); <code class="comment">// Aucune constante n’existe pour cette valeur.</code>
-<b>assert</b> <code class="GeoAPI">MediumName</code>.<code class="GeoAPI">valueOf</code>(<i>"<code class="GeoAPI">CD_ROM</code>"</i>)  == cdRom  : <i>"valueOf doit retourner les constantes existantes."</i>;
-<b>assert</b> <code class="GeoAPI">MediumName</code>.<code class="GeoAPI">valueOf</code>(<i>"<code class="GeoAPI">USB_KEY</code>"</i>) == usbKey : <i>"valueOf doit cacher les valeurs précédemment demandées."</i>;</code></pre>
+<pre><code>MediumName cdRom  = MediumName.<code class="GeoAPI">CD_ROM;</code>
+MediumName usbKey = MediumName.<code class="GeoAPI">valueOf</code>(<i>"<code class="GeoAPI">USB_KEY</code>"</i>); <code class="comment">// Aucune constante n’existe pour cette valeur.</code>
+<b>assert</b> MediumName.<code class="GeoAPI">valueOf</code>(<i>"<code class="GeoAPI">CD_ROM</code>"</i>)  == cdRom  : <i>"valueOf doit retourner les constantes existantes."</i>;
+<b>assert</b> MediumName.<code class="GeoAPI">valueOf</code>(<i>"<code class="GeoAPI">USB_KEY</code>"</i>) == usbKey : <i>"valueOf doit cacher les valeurs précédemment demandées."</i>;</code></pre>
 </section>
 
 
