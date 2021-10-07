@@ -3,7 +3,7 @@ title: Questions fréquentes (FAQ)
 ---
 
 Cette page liste quelques questions fréquemment posées à propos de Apache {{% SIS %}}.
-Son contenu est traduit de la [page de FAQ en anglais](faq.html).
+Son contenu est traduit de la [page de FAQ en anglais](../faq.html).
 
 {{< toc >}}
 

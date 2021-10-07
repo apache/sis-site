@@ -3,7 +3,6 @@ title: Frequently asked questions
 ---
 
 This page lists some Frequently Asked Questions (FAQ) when using Apache {{% SIS %}}.
-This FAQ is also [available in French](faq_fr.html).
 
 {{< toc >}}
 
