@@ -7,3 +7,5 @@ mais cette traduction n'est pas maintenue et peut être obsolète.
 Les pages les plus complètes sont les versions anglaises.
 
 * [Questions fréquentes (FAQ)](faq.html)
+* [Guide du développeur](../book/fr/developer-guide.html)
+* [Add-in OpenOffice](../openoffice/fr/index.html)

@@ -66,7 +66,7 @@ EPSG database installation is [described in a separated page](epsg.html).
 
 Apache {{% SIS %}} is a Java library for use by other applications.
 Leveraging the full SIS capabilities or getting the best performance require that users write their own applications on top of SIS.
-The [developer guide](book/index.html), [online Javadoc](apidocs/index.html) and [recommended code patterns](code-patterns.html) page
+The [developer guide](book/en/developer-guide.html), [online Javadoc](apidocs/index.html) and [recommended code patterns](code-patterns.html) page
 provide instructions about developing with SIS.
 However a [command-line tool](command-line.html) is also provided for allowing users to experiment some SIS functionalities before writing code.
 
