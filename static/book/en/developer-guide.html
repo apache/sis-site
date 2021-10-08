@@ -1647,7 +1647,14 @@ But the usefulness of map projection derivatives goes further.
 
 <h4 id="DerivativeAndEnvelope"><span class="section-number">5.3.3.1.</span> Transform derivatives applied to envelopes</h4>
 <p>
-<span style="color: red">TODO</span>
+Geographic information systems often need to transform an envelope from one <abbr>CRS</abbr> to another.
+But a naive approach transforming the 4 corners is not sufficient.
+The figure below shows an envelope before a map projection and the geometric shape
+that we would get if all points (not only the corners) were projected.
+The resulting geometric shape is more complex than a rectangle because of the curvature caused by the map projection.
+Computing the envelope that contains the 4 corners of that shape is not enough,
+because the area in the bottom of the projected shape is lower than the two bottom corners.
+That surface would be outside the envelope.
 </p>
 <div class="row-of-boxes">
 <div>
@@ -1659,7 +1666,35 @@ But the usefulness of map projection derivatives goes further.
 </div>
 </div>
 <p>
-<span style="color: red">TODO</span>
+A simple way to reduce the problem could be to sample a large number of points on each envelope border.
+For example we could sample 40 points on each border, transform them to the target <abbr>CRS</abbr>
+and compute an envelope containing all the transformed points.
+But even with 40 points, the point which is closest to the minimum in above figure can still be above that minimum.
+Consequently we still miss a small portion of the projected shape.
+It may be tempting to declare this error is negligible, but a single missing pixel can be enough for
+causing artifacts such as thin black lines in a mosaic or missing “piece of pie” in a projection over a pole.
+A workaround could be to arbitrarily increase the envelope size by some percentage,
+but a percentage too high will cause a larger amount of unnecessary data processing (e.g. more data to load from a file)
+while a percentage too low will leave some artifacts.
+</p><p>
+Map projection derivatives offer a more efficient way to resolve this problem.
+The figure below reproduces the same projected shape than above figure but with exaggerated deformations.
+The Apache <abbr title="Spatial Information System">SIS</abbr> algorithm projects the 4 corners as in the naive approach,
+but opportunistically computes also their derivatives (the Jacobian matrices).
+Between two corners and using derivative information, there is only one possible cubic curve.
+We can describe that curve by the
+
+<i>f(<var>x</var>)</i> = <var>C</var>₀ + <var>C</var>₁<var>x</var> + <var>C</var>₂<var>x</var>² + <var>C</var>₃<var>x</var>³ equation
+
+with <var>C</var> coefficients computed from corner positions and derivatives.
+This approximation (shown by the red curve in above figure) does not match exactly the desired curve
+(shown by the blue shape in above figure) but is close.
+We do not use directly the cubic curve minimum,
+but instead we take the longitude λ (for above example) where this minimum is located.
+This is shown by the green dashed line in above figure.
+This position is easy to compute when the <var>C</var> coefficients are known.
+Assuming that the λ coordinate of the cubic curve minimum is close to the λ coordinates of the projected shape minimum,
+we can project the point on the envelope border at that location instead of projecting blindly 40 points on that border.
 </p>
 <div class="row-of-boxes">
 <div>
@@ -1678,13 +1713,34 @@ The same cubic line can have two minimums.</li>
 </div>
 </div>
 <p>
-<span style="color: red">TODO</span>
+In practice Apache <abbr>SIS</abbr> uses 8 points:
+the 4 corners plus one point at the center of each border of the envelope to project.
+The center points are added as a safety for map projections having symmetric deformations above and below equator.
+According our tests, using only those 8 points together with derivatives as described above
+gives more accurate results than “brute force” approach with 160 points on the 4 envelope borders.
+Saving 150 points seems small compared to computer performances.
+But above discussion used a two-dimensional envelope as an example.
+The same discussion applies to <var>n</var>-dimensional envelopes as well.
+Apache <abbr>SIS</abbr> can apply this algorithm on envelopes with any number of dimensions up to 64.
+The performance gain offered by this algorithm compared to “brute force” approach
+increases exponentially with the number of dimensions.
+</p><p>
+Apache <abbr>SIS</abbr> implements the algorithm described in this section
+by the static <code class="SIS">Envelopes​.transform(CoordinateOperation, Envelope)</code> method.
+An alternative <code class="SIS">Envelopes​.transform(MathTransform, Envelope)</code> method is also available,
+but should be used only when the <code class="GeoAPI">CoordinateOperation</code> is unknown.
+The reason is because <code class="GeoAPI">MathTransform</code> objects does not contain any information about coordinate system axes,
+which prevent the <code class="SIS">Envelopes​.transform(…)</code> method to handle special cases such as envelopes containing a pole.
 </p>
 
 
 <h4 id="DerivativeAndRaster"><span class="section-number">5.3.3.2.</span> Transform derivatives applied to rasters</h4>
 <p>
-<span style="color: red">TODO</span>
+A raster can be projected by preparing an initially empty raster which will contain the resampled pixel values.
+Then for each pixel in the <em>destination</em> raster, we use the <em>inverse</em> of the map projection
+(<var>T</var>⁻¹) for computing the coordinates of the corresponding pixel in source raster.
+The transformed coordinates may not fall at the center of a source raster pixel,
+so source pixel values usually need to be interpolated.
 </p>
 <div style="display:flex; flex-direction:column; align-items:center">
 <div style="display:flex; justify-content:space-between; width:564px">
@@ -1694,7 +1750,17 @@ The same cubic line can have two minimums.</li>
 <img alt="Raster reprojection" src="../images/RasterProjection.png"/>
 </div>
 <p>
-<span style="color: red">TODO</span>
+However applying the inverse transform on all pixel coordinates can be relatively slow.
+We can accelerate raster reprojections by pre-computing an <cite>interpolation grid</cite>.
+This grid contains the coordinate values of inverse transform <var>T</var>⁻¹ for only a few points.
+The coordinate values of other points are obtained by bilinear interpolations between interpolation grid points.
+Historically, this algorithm was implemented in the <code>WarpGrid</code> object of <cite>Java Advanced Imaging</cite> library.
+The performance gain is yet better if the same interpolation grid is reused for many rasters having their pixels at the same coordinates.
+</p><p>
+A difficulty in using interpolation grids is to determine how many points we need for keeping errors
+(defined as the difference between interpolated positions and actual positions computed by <var>T</var>⁻¹)
+below some threshold value (for example ¼ of pixel size).
+A “brute force” approach is to begin with a grid of size 3×3, then increase the number of points iteratively:
 </p>
 <div class="row-of-boxes">
 <div>
@@ -1716,16 +1782,45 @@ Continuing…
 </div>
 </div>
 <p>
-<span style="color: red">TODO</span>
+We could stop dividing the grid when, after having computed new points,
+we verified that the differences between coordinates computed by <var>T</var>⁻¹ during last iteration
+and coordinates computed by bilinear interpolations for the same points are lower than the threshold value.
+Unfortunately this approach can only tell us <strong>after</strong> computing new points… that those new points were unnecessary.
+This is unfortunate considering that each iteration adds an amount of points approximately equal to
+3 times the <em>sum</em> of the number of points of all previous iterations.
+</p><p>
+Map projection derivatives help to improve the speed of interpolation grid computations.
+Using the derivatives, we can estimate whether another iteration is necessary <strong>before</strong> to execute it.
+The basic idea is to check if the derivatives at two neighbor points define two tangent lines that are almost parallel.
+In such case, we assume that the transform between those two points is almost linear.
+In order to define numerically the meaning of “almost linear”,
+we compute the intersection of the two tangent lines as illustrated below (the blue arrows).
+Then we compute the distance between that intersection and the straight line connecting the two points
+(the dashed line in the figure below).
 </p>
 <p style="text-align:center"><img alt="Intersection of derivatives" src="../images/IntersectionOfDerivatives.png" style="border: solid 1px"/></p>
 <p>
-<span style="color: red">TODO</span>
+In “brute force” algorithm without derivatives, iteration stops when the distance between interpolated positions (blue dashed line)
+and actual projected positions (red curve) is less than the threshold value.
+This criteria requires to compute the projected positions before the decision can be made.
+But with an algorithm using derivatives, the projected positions (red curve) are replaced by the tangents intersection point.
+If the actual projected curve does not have too much deformations
+(which should be the case for pairs of neighbor points close enough),
+then the red curve stay between the blue dashed line and the tangents intersection point.
+By using that intersection point, we reduce greatly the number of points to transform
+(3× the sum of all previous iterations).
 </p>
 
 <h4 id="GetDerivative"><span class="section-number">5.3.3.3.</span> Getting the derivative at a point</h4>
 <p>
-<span style="color: red">TODO</span>
+The algorithms discussed in previous section would be irrelevant if map projection derivatives were costly to compute.
+But analytic derivations of their formulas show that map projection and derivative formulas have many terms in common.
+Furthermore map projection formulas are simplified by Apache <abbr title="Spatial Information System">SIS</abbr> implementation strategy,
+which takes out linear terms (delegated to affine transforms)
+so that <code>NormalizedProjection</code> subclasses can focus on the non-linear terms only.
+Map projection implementations in Apache <abbr>SIS</abbr> exploit those characteristics
+for computing Jacobian matrices (if required) together with projected points in a single operation,
+reusing many common terms between the two set of formulas.
 Example:</p>
 
 <pre><code><code class="SIS">AbstractMathTransform</code> projection = ...;         <code class="comment">// An Apache SIS map projection.</code>
@@ -1734,7 +1829,15 @@ Example:</p>
 <code class="GeoAPI">Matrix</code>   derivative  = projection.<code class="SIS">transform</code>(sourcePoint, 0, targetPoint, 0, <b>true</b>);</code></pre>
 
 <p>
-<span style="color: red">TODO</span>
+If only the Jacobian matrix is desired (without the projected point),
+then the <code class="GeoAPI">MathTransform​.derivative(DirectPosition)</code> method offers a more readable alternative.
+</p><p>
+Many operations on coordinate transforms can also be applied on transform derivatives:
+concatenation of a chain of transforms, inversion, taking a subset of the dimensions, <i>etc.</i>
+Inverse projection formulas are usually more complicated than forward projections formulas,
+but thankfully their derivatives do not need to be computed:
+the Jacobian matrix of an inverse transform is the inverse of the Jacobian matrix of the forward transform.
+Calculation of inverse projections can be implemented as below:
 </p>
 
 <pre><code>@Override
