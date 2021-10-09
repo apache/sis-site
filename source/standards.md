@@ -10,6 +10,7 @@ The same standard is sometime published jointly by both {{% OGC %}} and {{% ISO 
 Links to free versions of the standards are given when available.
 The _Upgrade needed_ column indicates that a more recent version of the standard
 is available but that Apache {{% SIS %}} has not yet been upgraded to that version.
+Some standards are implemented partially, others almost fully.
 
 <table>
   <tr>
