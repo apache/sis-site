@@ -107,12 +107,28 @@ all services that we can expect from a Geographic Information System (GIS).
 Furthermore this application covers a very small subset of Apache <abbr title="Spatial Information System">SIS</abbr> capabilities.
 But it can give an idea of what is available there.
 For launching the application, <a href="downloads.html">download</a> binaries, unzip then execute (on Unix system):</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">bash -x apache-sis-1.1/bin/sisfx</code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">bash apache-sis-1.1/bin/sisfx</code></pre></div>
 <p>On first execution, the application will ask user to download the <a href="https://openjfx.io/">JavaFX framework</a> (if not already done).
 That framework is not included in the Apache <abbr title="Spatial Information System">SIS</abbr> binaries for licensing reasons (it is under GPL license).
 Later on, the application will offer to download the <a href="epsg.html">EPSG geodetic dataset</a> when first needed.
-That dataset is not included neither again for licensing reasons.
-After those two steps are completed, user can see an application like below:</p>
+That dataset is not included neither again for licensing reasons.</p>
+<div class="warning">
+<h3>Known bug</h3>
+<p>Automatic download of EPSG data described in above paragraph does not work,
+because Maven central does not accept anymore <code>"http:"</code> URLs
+(they have to be changed to <code>"https:"</code>).
+This problem will be fixed in Apache <abbr title="Spatial Information System">SIS</abbr> 1.2.
+In the meantime, the following commands can be executed in a Unix shell as a workaround
+if you accept the <a href="https://epsg.org/terms-of-use.html">EPSG terms of use</a>.</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> apache-sis-1.1/data
+rm -rf Databases
+wget https://repo1.maven.org/maven2/org/apache/sis/non-free/sis-embedded-data/1.1/sis-embedded-data-1.1.jar
+unzip sis-embedded-data-1.1.jar SIS_DATA/Databases/*
+mv SIS_DATA/Databases .
+rmdir SIS_DATA
+<span class="nb">cd</span> ..</code></pre></div>
+</div>
+<p>After those two steps are completed, user can see an application like below:</p>
 <div id="carousel" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner" style="width:983.25px; height:650px">
     <div class="carousel-item active">
