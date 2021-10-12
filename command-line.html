@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
         rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" media="screen" href="css/syntax.css">
-  <link rel="stylesheet" type="text/css" media="screen" href="css/sis.css">
+  <link rel="stylesheet" type="text/css" media="screen" href="syntax.css">
+  <link rel="stylesheet" type="text/css" media="screen" href="sis.css">
 </head>
 
 <body>
@@ -32,14 +32,14 @@
           <li><a class="dropdown-item" href="downloads.html">Downloads</a></li>
           <li><a class="dropdown-item" href="source.html">Checkout Sources</a></li>
           <li><a class="dropdown-item" href="build.html">Build from Sources</a></li>
+          <li><a class="dropdown-item" href="epsg.html">EPSG Database</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" id="menuDocumentation" data-bs-toggle="dropdown" aria-expanded="false">Documentation</a>
         <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
           <li><a class="dropdown-item" href="apidocs/index.html">Online Javadoc</a></li>
-          <li><a class="dropdown-item" href="book/index.html">Developer Guide</a></li>
-          <li><a class="dropdown-item" href="epsg.html">EPSG Database</a></li>
+          <li><a class="dropdown-item" href="book/en/developer-guide.html">Developer Guide</a></li>
           <li><a class="dropdown-item" href="tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
           <li><a class="dropdown-item" href="tables/CoordinateOperationMethods.html">Map Projections</a></li>
           <li><a class="dropdown-item" href="code-patterns.html">Code Patterns</a></li>
@@ -50,10 +50,11 @@
         <a class="nav-link dropdown-toggle" id="menuContribute" data-bs-toggle="dropdown" aria-expanded="false">Contribute</a>
         <ul class="dropdown-menu" aria-labelledby="menuContribute">
           <li><a class="dropdown-item" href="contributor.html">New Contributor</a></li>
-          <li><a class="dropdown-item" href="coding-conventions.html">Coding Conventions.</a></li>
+          <li><a class="dropdown-item" href="coding-conventions.html">Coding Conventions</a></li>
           <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
-          <li><a class="dropdown-item" href="release-management.html">Release management</a></li>
           <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="release-management.html">Release management</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown">
@@ -78,15 +79,16 @@
 
 
 <div class="row flex-nowrap">
-  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 12rem;">
+  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width:13rem; min-height:40rem">
     <ul class="nav nav-pills flex-column mb-auto position-fixed">
       <li><a class="nav-link  text-white " href="/index.html">Home</a></li>
       <li><a class="nav-link  text-white " href="standards.html">Standards</a></li>
       <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
+      <li><a class="nav-link  text-white " href="javafx.html">Application (demo)</a></li>
       <li><a class="nav-link  text-white " href="downloads.html">Downloads</a></li>
-      <li><a class="nav-link text-white" href="apidocs/index.html">Online Javadoc</a></li>
-      <li><a class="nav-link text-white" href="book/index.html">Developer Guide</a></li>
       <li><a class="nav-link  text-white " href="epsg.html">EPSG Database</a></li>
+      <li><a class="nav-link text-white" href="apidocs/index.html">Online Javadoc</a></li>
+      <li><a class="nav-link text-white" href="book/en/developer-guide.html">Developer Guide</a></li>
       <li><a class="nav-link  text-white " href="code-patterns.html">Code patterns</a></li>
       <li><a class="nav-link  text-white " href="faq.html">FAQ</a></li>
     </ul>
@@ -94,7 +96,7 @@
   <div class="col">
     <main class="container">
       <article>
-        <img src="img/logo.png" class="sis-logo" align="left"/>
+        <img src="images/logo.png" class="sis-logo" align="left"/>
         <p class="page-title">Command-line interface</p>
         
   <p>A command-line interface is provided for extracting information from data files or authority codes,
@@ -229,6 +231,22 @@ For example the following command prints the definition of the <em>&ldquo;JGD201
 This automatic download happen only when using the command-line tools described in this page or the <a href="javafx.html">JavaFX</a> application.
 Developers who wish to use the EPSG dataset in their applications can use the Maven artifact
 documented in <a href="downloads.html#epsg">download</a> page.</p>
+<div class="warning">
+<h3>Known bug</h3>
+<p>Automatic download of EPSG data described in above paragraph does not work,
+because Maven central does not accept anymore <code>"http:"</code> URLs
+(they have to be changed to <code>"https:"</code>).
+This problem will be fixed in Apache <abbr title="Spatial Information System">SIS</abbr> 1.2.
+In the meantime, the following commands can be executed in a Unix shell as a workaround
+if you accept the <a href="https://epsg.org/terms-of-use.html">EPSG terms of use</a>.</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> apache-sis-1.1/data
+rm -rf Databases
+wget https://repo1.maven.org/maven2/org/apache/sis/non-free/sis-embedded-data/1.1/sis-embedded-data-1.1.jar
+unzip sis-embedded-data-1.1.jar SIS_DATA/Databases/*
+mv SIS_DATA/Databases .
+rmdir SIS_DATA
+<span class="nb">cd</span> ..</code></pre></div>
+</div>
 <p>The above output is compatible with version 2 of <em>Well Known Text</em> (WKT) format.
 The output format can be controlled as below:</p>
 <ul>
