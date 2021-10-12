@@ -12,13 +12,36 @@ But it can give an idea of what is available there.
 For launching the application, [download](downloads.html) binaries, unzip then execute (on Unix system):
 
 {{< highlight bash >}}
-bash -x apache-sis-{{% version %}}/bin/sisfx
+bash apache-sis-{{% version %}}/bin/sisfx
 {{< / highlight >}}
 
 On first execution, the application will ask user to download the [JavaFX framework][JavaFX] (if not already done).
 That framework is not included in the Apache {{% SIS %}} binaries for licensing reasons (it is under GPL license).
 Later on, the application will offer to download the [EPSG geodetic dataset](epsg.html) when first needed.
 That dataset is not included neither again for licensing reasons.
+
+
+<div class="warning">
+<h3>Known bug</h3>
+<p>Automatic download of EPSG data described in above paragraph does not work,
+because Maven central does not accept anymore <code>"http:"</code> URLs
+(they have to be changed to <code>"https:"</code>).
+This problem will be fixed in Apache {{% SIS %}} 1.2.
+In the meantime, the following commands can be executed in a Unix shell as a workaround
+if you accept the <a href="https://epsg.org/terms-of-use.html">EPSG terms of use</a>.</p>
+
+{{< highlight bash >}}
+cd apache-sis-1.1/data
+rm -rf Databases
+wget https://repo1.maven.org/maven2/org/apache/sis/non-free/sis-embedded-data/1.1/sis-embedded-data-1.1.jar
+unzip sis-embedded-data-1.1.jar SIS_DATA/Databases/*
+mv SIS_DATA/Databases .
+rmdir SIS_DATA
+cd ..
+{{< / highlight >}}
+</div>
+
+
 After those two steps are completed, user can see an application like below:
 
 <div id="carousel" class="carousel slide" data-bs-ride="carousel">
