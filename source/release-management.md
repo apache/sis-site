@@ -566,8 +566,7 @@ The output shall report only good signatures.
 
 * WAIT 24 hours after committing releases for mirrors to replicate.
 * Publish the web site updates:
-  + Login to the [ASF Content Management System][cms-admin].
-  + Click on _Publish sis site_.
+  * On the `asf-site` branch, execute `git merge asf-staging` and push.
 * Make an announcement about the release on the `dev@`, `users@`, and `announce@` mailing lists.
   A template is available [here](templates/release-announce.html).
   The email needs to be sent from an `@apache.org` email address.
@@ -581,7 +580,7 @@ svn delete https://dist.apache.org/repos/dist/release/sis/$OLD_VERSION \
 
 # Update master for the next development cycle    {#next-release}
 
-On the development branch (usually JDK8),
+On the development branch,
 update the version numbers in the `pom.xml` files on master with the following command:
 
 {{< highlight bash >}}
@@ -604,5 +603,4 @@ all directories starting with the old version number. The sub-directories need t
 
 [release-faq]:      http://www.apache.org/dev/release.html
 [JIRA]:             http://issues.apache.org/jira/browse/SIS
-[cms-admin]:        https://cms.apache.org/sis/
 [repository]:       https://repository.apache.org/index.html

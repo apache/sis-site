@@ -98,9 +98,6 @@ if that database is specified by JNDI):
     <version>{{% version %}}</version>
     <scope>runtime</scope>
   </dependency>
-
-  <!-- Following dependency can be omitted on Oracle JDK8
-       since that Java distributions contain Derby (a.k.a JavaDB). -->
   <dependency>
     <groupId>org.apache.derby</groupId>
     <artifactId>derby</artifactId>
