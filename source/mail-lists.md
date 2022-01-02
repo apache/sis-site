@@ -20,7 +20,7 @@ or collaboration with communities outside Apache.
 - Subscribe:   [geospatial-subscribe@apache.org][geo-sub]
 - Post (after subscription): [geospatial@apache.org][geo-post]
 - Unsubscribe: [geospatial-unsubscribe@apache.org][geo-unsub]
-- Archives:    [Pony mail][geo-pony-arch]
+- Archives:    [Pony mail][geo-arch]
 
 
 # Apache SIS mailing lists
@@ -32,7 +32,7 @@ This is where users can ask questions about how to use SIS.
 - Subscribe:   [user-subscribe@sis.apache.org][usr-sub]
 - Post (after subscription): [user@sis.apache.org][usr-post]
 - Unsubscribe: [user-unsubscribe@sis.apache.org][usr-unsub]
-- Archives:    [Pony mail][usr-pony-arch] or [Apache][usr-arch]
+- Archives:    [Pony mail][usr-arch]
 
 ## Developer mailing list    {#developer}
 
@@ -41,7 +41,7 @@ This is where the community hangs out and SIS development happens.
 - Subscribe:   [dev-subscribe@sis.apache.org][dev-sub]
 - Post (after subscription): [dev@sis.apache.org][dev-post]
 - Unsubscribe: [dev-unsubscribe@sis.apache.org][dev-unsub]
-- Archives:    [Pony mail][dev-pony-arch] or [Apache][dev-arch]
+- Archives:    [Pony mail][dev-arch]
 
 ## Issues mailing list    {#issues}
 
@@ -49,7 +49,7 @@ This is where changes on JIRA issues are reported.
 
 - Subscribe:   [issues-subscribe@sis.apache.org][iss-sub]
 - Unsubscribe: [issues-unsubscribe@sis.apache.org][iss-unsub]
-- Archives:    [Pony mail][iss-pony-arch]
+- Archives:    [Pony mail][iss-arch]
 
 ## Commit mailing list    {#commit}
 
@@ -58,7 +58,7 @@ any changes to the sis code and documentation.
 
 - Subscribe:   [commits-subscribe@sis.apache.org][com-sub]
 - Unsubscribe: [commits-unsubscribe@sis.apache.org][com-unsub]
-- Archives:    [Pony mail][com-pony-arch] or [Apache][com-arch]
+- Archives:    [Pony mail][com-arch]
 
 [geo-sub]:   mailto:geospatial-subscribe@apache.org
 [usr-sub]:   mailto:user-subscribe@sis.apache.org
@@ -73,12 +73,9 @@ any changes to the sis code and documentation.
 [dev-unsub]: mailto:dev-unsubscribe@sis.apache.org
 [iss-unsub]: mailto:issues-unsubscribe@sis.apache.org
 [com-unsub]: mailto:commits-unsubscribe@sis.apache.org
-[usr-arch]:  http://mail-archives.apache.org/mod_mbox/sis-user/
-[dev-arch]:  http://mail-archives.apache.org/mod_mbox/sis-dev/
-[com-arch]:  http://mail-archives.apache.org/mod_mbox/sis-commits/
-[geo-pony-arch]: https://lists.apache.org/list.html?geospatial@apache.org
-[usr-pony-arch]: https://lists.apache.org/list.html?user@sis.apache.org
-[dev-pony-arch]: https://lists.apache.org/list.html?dev@sis.apache.org
-[iss-pony-arch]: https://lists.apache.org/list.html?issues@sis.apache.org
-[com-pony-arch]: https://lists.apache.org/list.html?commits@sis.apache.org
-[policy]: http://www.apache.org/foundation/public-archives.html
+[geo-arch]:  https://lists.apache.org/list.html?geospatial@apache.org
+[usr-arch]:  https://lists.apache.org/list.html?user@sis.apache.org
+[dev-arch]:  https://lists.apache.org/list.html?dev@sis.apache.org
+[iss-arch]:  https://lists.apache.org/list.html?issues@sis.apache.org
+[com-arch]:  https://lists.apache.org/list.html?commits@sis.apache.org
+[policy]:    http://www.apache.org/foundation/public-archives.html
