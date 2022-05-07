@@ -9,39 +9,23 @@ The graphical application is in early development stage and very far from provid
 all services that we can expect from a Geographic Information System (GIS).
 Furthermore this application covers a very small subset of Apache {{% SIS %}} capabilities.
 But it can give an idea of what is available there.
-For launching the application, [download](downloads.html) binaries, unzip then execute (on Unix system):
+
+{{< toc >}}
+
+# Installation    {#install}
+
+Select "Apache {{% SIS %}} {{% version %}} binary" from the [downloads page](downloads.html) an unzip in any directory.
+See the [command line](command-line.html) page for a description of the directory structure.
+For launching the application, execute (on Unix system):
 
 {{< highlight bash >}}
-bash apache-sis-{{% version %}}/bin/sisfx
+./apache-sis-{{% version %}}/bin/sisfx
 {{< / highlight >}}
 
 On first execution, the application will ask user to download the [JavaFX framework][JavaFX] (if not already done).
 That framework is not included in the Apache {{% SIS %}} binaries for licensing reasons (it is under GPL license).
 Later on, the application will offer to download the [EPSG geodetic dataset](epsg.html) when first needed.
 That dataset is not included neither again for licensing reasons.
-
-
-<div class="warning">
-<h3>Known bug</h3>
-<p>Automatic download of EPSG data described in above paragraph does not work,
-because Maven central does not accept anymore <code>"http:"</code> URLs
-(they have to be changed to <code>"https:"</code>).
-This problem will be fixed in Apache {{% SIS %}} 1.2.
-In the meantime, the following commands can be executed in a Unix shell as a workaround
-if you accept the <a href="https://epsg.org/terms-of-use.html">EPSG terms of use</a>.</p>
-
-{{< highlight bash >}}
-cd apache-sis-1.1/data
-rm -rf Databases
-wget https://repo1.maven.org/maven2/org/apache/sis/non-free/sis-embedded-data/1.1/sis-embedded-data-1.1.jar
-unzip sis-embedded-data-1.1.jar SIS_DATA/Databases/*
-mv SIS_DATA/Databases .
-rmdir SIS_DATA
-cd ..
-{{< / highlight >}}
-</div>
-
-
 After those two steps are completed, user can see an application like below:
 
 <div id="carousel" class="carousel slide" data-bs-ride="carousel">
@@ -90,9 +74,10 @@ After those two steps are completed, user can see an application like below:
 
 # Open files
 
-Drag and drop some netCDF or GeoTIFF files in the explorer (the white area on the left side of main window).
+Drag and drop some netCDF, GeoTIFF, ASCII Grid or World Files in the explorer
+(the white area on the left side of main window).
 Multiple files or entire directories can be dragged.
-Opened files are listed and netCDF variables are shown below each file as a tree.
+Opened files are listed and variables are shown below each file as a tree.
 Files can be closed with the contextual menu (click on a file with the right mouse button).
 The panel on the right side gives a summary of the selected file or variable;
 more information can be read in the “Metadata” tab.
@@ -100,6 +85,24 @@ The summary panel shows the data geographic area as a blue bounding box on a wor
 If the geographic area crosses the anti-meridian (the meridian at ±180° of longitude),
 the bounding box will be shown with two parts on each side of the map.
 Many (but not all) classes of the Apache {{% SIS %}} library are capable to handle such situation.
+
+## Data on cloud
+
+Apache {{% SIS %}} can open data on Amazon S3.
+This is not enabled by default in the JavaFX application because of the large amount of dependencies required.
+An option for downloading the dependencies may be provided in a future release.
+In the meantime, SIS has to be built from the source for enabling this functionality.
+
+## File size limit
+
+There is usually no size limit when viewing only the metadata, because only the file headers are read at that time.
+When viewing the data, there is no size limit if the data are pyramided and tiled with tiles of reasonable size,
+because the application loads only the tiles needed for the area being displayed.
+An example of file format supporting tiling is GeoTIFF.
+If a format does not support tiling (e.g. netCDF-3) or if data does not use the tiling capability of the format,
+then the data are fully loaded as one big tile.
+A future version of the JavaFX application may allow to load only a subset of the data
+(the Apache {{% SIS %}} API already allows that).
 
 
 # Explore metadata

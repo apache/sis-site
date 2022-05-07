@@ -144,29 +144,9 @@ sis crs EPSG:6676
 <br/>
 
 The first time that a command requires the EPSG dataset, Apache {{% SIS %}} will propose to download and install a local copy.
-This automatic download happen only when using the command-line tools described in this page or the [JavaFX](javafx.html) application.
+This automatic download happens only when using the command-line tools described in this page or the [JavaFX](javafx.html) application.
 Developers who wish to use the EPSG dataset in their applications can use the Maven artifact
 documented in [download](downloads.html#epsg) page.
-
-<div class="warning">
-<h3>Known bug</h3>
-<p>Automatic download of EPSG data described in above paragraph does not work,
-because Maven central does not accept anymore <code>"http:"</code> URLs
-(they have to be changed to <code>"https:"</code>).
-This problem will be fixed in Apache {{% SIS %}} 1.2.
-In the meantime, the following commands can be executed in a Unix shell as a workaround
-if you accept the <a href="https://epsg.org/terms-of-use.html">EPSG terms of use</a>.</p>
-
-{{< highlight bash >}}
-cd apache-sis-1.1/data
-rm -rf Databases
-wget https://repo1.maven.org/maven2/org/apache/sis/non-free/sis-embedded-data/1.1/sis-embedded-data-1.1.jar
-unzip sis-embedded-data-1.1.jar SIS_DATA/Databases/*
-mv SIS_DATA/Databases .
-rmdir SIS_DATA
-cd ..
-{{< / highlight >}}
-</div>
 
 The above output is compatible with version 2 of _Well Known Text_ (WKT) format.
 The output format can be controlled as below:

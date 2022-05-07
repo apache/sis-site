@@ -8,7 +8,7 @@ This page lists some recommended code pattern for developing or using Apache {{%
 
 # Referencing    {#referencing}
 
-Recommended code pattern when using the `sis-referencing` module.
+This section lists recommended code pattern when using the `sis-referencing` module.
 
 ## Never explicitely swap coordinates for axis order    {#axisOrder}
 
@@ -21,9 +21,9 @@ Instead of patching the coordinate values, try to make sure that the _Source CRS
 and the _Target CRS_ (the coordinate space where to perform the work) are properly defined,
 and let the referencing engine performs the conversion from the source to the target {{% CRS %}}.
 
-# Coverages    {#coverage}
+# Rasters and coverages    {#coverage}
 
-Recommended code pattern when using the `sis-coverage` module.
+This section lists recommended code pattern when using the `sis-coverage` module.
 
 ## Georeference images with affine transforms, _not_ bounding boxes    {#gridToCRS}
 
@@ -34,9 +34,18 @@ All images in SIS shall be georeferenced by at least an affine transform (more c
 never by a rectangle or bounding box.
 In the two-dimensional case, the standard `java.awt.geom.Affine­Transform` class can be used.
 
+## Do not cast `Raster` to `WritableRaster`
+
+Some images are writable. But modifying pixel values should be done by invoking the
+`getWritableTile(…)` and `releaseWritableTile(…)` methods of `WritableRenderedImage` interface.
+Do not cast directly a `Raster` to `WritableRaster` even when the cast is safe,
+because some raster data may be shared by many tiles having identical content.
+Furthermore changes in pixel values may be lost if {@code releaseWritableTile(…)} is not invoked.
+
+
 # International    {#international}
 
-Recommended code pattern for internationalization.
+This section lists recommended code pattern for internationalization.
 
 ## Specify timezone    {#timezone}
 
@@ -77,8 +86,11 @@ for (int i=0; i<string.length();) {
 
 # Logging    {#logging}
 
-Apache {{% SIS %}} uses the `java.util.logging` framework, but with a [mechanism allowing users to redirect
-to another framework](http://sis.apache.org/apidocs/org/apache/sis/util/logging/LoggerFactory.html).
+Apache {{% SIS %}} uses the `java.util.logging` framework.
+It does not necessarily means that all SIS users are forced to use this framework,
+as it is possible to use `java.util.logging` as an API and have logging redirected to another system.
+For example the logging can be redirect to SLF4J by adding the `jul-to-slf4j` dependency to a project.
+
 The logger names are usually the package name of the class emitting log messages, but not necessarily.
 In particular, we do not follow this convention if the class is located in an internal package
 (`org.apache.sis.internal.*`) since those packages are considered privates.
