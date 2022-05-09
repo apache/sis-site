@@ -40,6 +40,7 @@
         <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
           <li><a class="dropdown-item" href="apidocs/index.html">Online Javadoc</a></li>
           <li><a class="dropdown-item" href="book/en/developer-guide.html">Developer Guide</a></li>
+          <li><a class="dropdown-item" href="formats.html">Supported formats</a></li>
           <li><a class="dropdown-item" href="tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
           <li><a class="dropdown-item" href="tables/CoordinateOperationMethods.html">Map Projections</a></li>
           <li><a class="dropdown-item" href="code-patterns.html">Code Patterns</a></li>
@@ -83,6 +84,7 @@
     <ul class="nav nav-pills flex-column mb-auto position-fixed">
       <li><a class="nav-link  text-white " href="/index.html">Home</a></li>
       <li><a class="nav-link  text-white " href="standards.html">Standards</a></li>
+      <li><a class="nav-link  text-white " href="formats.html">Formats</a></li>
       <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
       <li><a class="nav-link  text-white " href="javafx.html">Application (demo)</a></li>
       <li><a class="nav-link  text-white " href="downloads.html">Downloads</a></li>
@@ -212,7 +214,7 @@ see <a href="./source.html#postgres">PostgreSQL testing configuration</a> for mo
 Then execute the following commands and fix as much warnings as practical:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">systemctl start postgresql.service        <span class="c1"># Optional — exact command depends on Linux distribution.</span>
 mvn clean install --define org.apache.sis.test.extensive<span class="o">=</span><span class="nb">true</span>
-mvn javadoc:aggregate</code></pre></div>
+mvn javadoc:aggregate --activate-profiles javafx</code></pre></div>
 <p>If the <code>SIS_DATA</code> environment variable was set during above build, unset it a try again.
 Ideally the build should be tested in both conditions (<code>SIS_DATA</code> set and unset).
 That test may be done in a separated shell (console window) in order to preserve
@@ -244,7 +246,7 @@ Update <a href="http://issues.apache.org/jira/browse/SIS">JIRA</a> tasks and pre
 <ul>
 <li>Ensure that the <em>Fix Version</em> in issues resolved since the last release includes this release version correctly.</li>
 <li>Ensure that all open issues are resolved or closed before proceeding further.</li>
-<li>On the <code>site</code> source code repository, create a <code>content/release-notes/$NEW_VERSION.html</code> file with all the features added.</li>
+<li>On the <code>site</code> source code repository, create a <code>static/release-notes/$NEW_VERSION.html</code> file with all the features added.</li>
 <li>Use <code>content/release-notes/$OLD_VERSION.html</code> as a template, omitting the old list of issues.</li>
 <li>The release notes can be obtained from JIRA, by clicking on the <em>Versions</em> tab → the version number → <em>Release notes</em>
 and then configuring the release notes to display HTML format and copying it.
@@ -267,9 +269,8 @@ git checkout -b <span class="nv">$NEW_VERSION</span>-RC
 <span class="nb">export</span> <span class="nv">SIS_RC_DIR</span><span class="o">=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span></code></pre></div>
 <p>Remove the modules that are not yet ready for a release.
 This may require removing <code>&lt;module&gt;</code> elements in the parent <code>pom.xml</code> file.</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">git rm core/sis-cql
-git rm storage/sis-shapefile
-git rm storage/sis-storage/src/main/java/org/apache/sis/storage/WritableGridCoverageResource.java
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">git rm -r core/sis-cql
+git rm -r storage/sis-shapefile
 git add --update    <span class="c1"># for the removal of &lt;module&gt; elements in pom.xml files.</span>
 git commit --message<span class="o">=</span><span class="s2">&#34;Remove the modules to be excluded from </span><span class="nv">$NEW_VERSION</span><span class="s2"> release.&#34;</span></code></pre></div>
 <p>Open the root <code>pom.xml</code> file in an editor and perform the following changes:</p>
@@ -394,7 +395,7 @@ mvn clean</code></pre></div>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> <span class="nv">$SIS_RC_DIR</span>
 git checkout .            <span class="c1"># Discard local changes, in particular the hack for excluding test files.</span>
 mvn clean install --activate-profiles apache-release
-mvn javadoc:aggregate
+mvn javadoc:aggregate --activate-profiles javafx
 <span class="nb">cd</span> target/site
 zip -9 -r apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip apidocs
 <span class="nb">cd</span> ../..</code></pre></div>
@@ -553,8 +554,7 @@ svn delete https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERS
 <li>WAIT 24 hours after committing releases for mirrors to replicate.</li>
 <li>Publish the web site updates:
 <ul>
-<li>Login to the <a href="https://cms.apache.org/sis/">ASF Content Management System</a>.</li>
-<li>Click on <em>Publish sis site</em>.</li>
+<li>On the <code>asf-site</code> branch, execute <code>git merge asf-staging</code> and push.</li>
 </ul>
 </li>
 <li>Make an announcement about the release on the <code>dev@</code>, <code>users@</code>, and <code>announce@</code> mailing lists.
@@ -565,7 +565,7 @@ The email needs to be sent from an <code>@apache.org</code> email address.</li>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">svn delete https://dist.apache.org/repos/dist/release/sis/<span class="nv">$OLD_VERSION</span> <span class="se">\
 </span><span class="se"></span>    --message <span class="s2">&#34;Archive SIS-</span><span class="nv">$OLD_VERSION</span><span class="s2"> after release of SIS-</span><span class="nv">$NEW_VERSION</span><span class="s2">.&#34;</span></code></pre></div>
 <h1 id="next-release">Update master for the next development cycle   </h1>
-<p>On the development branch (usually JDK8),
+<p>On the development branch,
 update the version numbers in the <code>pom.xml</code> files on master with the following command:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mvn clean
 mvn release:update-versions --define <span class="nv">autoVersionSubmodules</span><span class="o">=</span>true</code></pre></div>
@@ -587,7 +587,7 @@ all directories starting with the old version number. The sub-directories need t
     <footer class="footer">
     <div class="container">
       <p>
-        Copyright &copy; 2013-2021 The Apache Software Foundation, Licensed under the
+        Copyright &copy; 2013-2022 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
         Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
       </p>
