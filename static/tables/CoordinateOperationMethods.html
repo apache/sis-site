@@ -15,16 +15,16 @@
     <header>
       <h1>Apache SIS™ Coordinate Operation Methods</h1>
       <p>
-        The following tables summarize the coordinate operation methods known to Apache SIS 1.0
+        The following tables summarize the coordinate operation methods known to Apache SIS 1.2
         together with the recognized parameters. There is three kinds of parameters:
       </p>
       <ul class="verbose">
         <li>
           The <code>semi-major</code> and <code>semi-minor</code> parameters are needed for all map projections,
           but usually do not need to be specified explicitly since they are inferred from the ellipsoid
-          (unless <a href="http://sis.apache.org/apidocs/org/apache/sis/referencing/operation/transform/DefaultMathTransformFactory.html">creating parameterized transforms directly</a>).
-          For this reason, those parameters are usually not shown in <a href="https://epsg.org/">EPSG registry</a>
-          or <a href="https://docs.ogc.org/is/12-063r5/12-063r5.html">Well Known Text</a> (WKT) definitions.
+          (unless <a href="https://sis.apache.org/apidocs/org/apache/sis/referencing/operation/transform/DefaultMathTransformFactory.html">creating parameterized transforms directly</a>).
+          For this reason, those parameters are usually not shown in <a href="https://epsg.org/">EPSG repository</a>
+          or <a href="http://docs.opengeospatial.org/is/12-063r5/12-063r5.html">Well Known Text</a> (WKT) definitions.
         </li><li>
           The <code>earth_radius</code> and <code>inverse_flattening</code> parameters (not shown below) are implicitly supported by all map projections.
           They are other ways to specify the ellipsoid (actually rarely used).
@@ -38,7 +38,6 @@
     <nav>
       <h2>Table of content:</h2>
       <ul>
-        <li><a href="#9825">Pseudo Plate Carree</a></li>
         <li>
           Cylindrical projections
           <ul>
@@ -53,6 +52,7 @@
             <li><a href="#9804">Mercator (variant A)</a></li>
             <li><a href="#9805">Mercator (variant B)</a></li>
             <li><a href="#1044">Mercator (variant C)</a></li>
+            <li><a href="#Mercator_Auxiliary_Sphere">Mercator_Auxiliary_Sphere</a></li>
             <li><a href="#Miller_Cylindrical">Miller_Cylindrical</a></li>
             <li><a href="#1024">Popular Visualisation Pseudo Mercator</a></li>
             <li><a href="#9807">Transverse Mercator</a></li>
@@ -72,7 +72,12 @@
         </li><li>
           Planar projections
           <ul>
+            <li><a href="#Azimuthal_Equidistant_(Spherical)">Azimuthal Equidistant (Spherical)</a></li>
+            <li><a href="#9820">Lambert Azimuthal Equal Area</a></li>
+            <li><a href="#1027">Lambert Azimuthal Equal Area (Spherical)</a></li>
+            <li><a href="#9832">Modified Azimuthal Equidistant</a></li>
             <li><a href="#9809">Oblique Stereographic</a></li>
+            <li><a href="#9840">Orthographic</a></li>
             <li><a href="#9810">Polar Stereographic (variant A)</a></li>
             <li><a href="#9829">Polar Stereographic (variant B)</a></li>
             <li><a href="#9830">Polar Stereographic (variant C)</a></li>
@@ -84,14 +89,21 @@
           <ul>
             <li><a href="#9843">Axis order reversal (2D)</a></li>
             <li><a href="#9844">Axis order reversal (geographic3D horizontal)</a></li>
+            <li><a href="#9806">Cassini-Soldner</a></li>
             <li><a href="#Geocentric_To_Ellipsoid">Geocentric_To_Ellipsoid</a></li>
             <li><a href="#9602">Geographic/geocentric conversions</a></li>
             <li><a href="#Geographic2D_to_3D_conversion">Geographic2D to 3D conversion</a></li>
             <li><a href="#9659">Geographic3D to 2D conversion</a></li>
+            <li><a href="#9833">Hyperbolic Cassini-Soldner</a></li>
             <li><a href="#Interpolation_1D">Interpolation 1D</a></li>
             <li><a href="#Mollweide">Mollweide</a></li>
+            <li><a href="#North_pole_rotation">North pole rotation</a></li>
+            <li><a href="#9825">Pseudo Plate Carree</a></li>
+            <li><a href="#Satellite-Tracking">Satellite-Tracking</a></li>
             <li><a href="#Sinusoidal">Sinusoidal</a></li>
+            <li><a href="#South_pole_rotation">South pole rotation</a></li>
             <li><a href="#9824">Transverse Mercator Zoned Grid System</a></li>
+            <li><a href="#Wraparound">Wraparound</a></li>
           </ul>
         </li><li>
           Tranformations
@@ -101,7 +113,7 @@
             <li><a href="#1032">Coordinate Frame Rotation (geocentric domain)</a></li>
             <li><a href="#9607">Coordinate Frame Rotation (geog2D domain)</a></li>
             <li><a href="#1038">Coordinate Frame Rotation (geog3D domain)</a></li>
-            <li><a href="#9655">France geocentric interpolation</a></li>
+            <li><a href="#1087">Geocentric translation by Grid Interpolation (IGN)</a></li>
             <li><a href="#1031">Geocentric translations (geocentric domain)</a></li>
             <li><a href="#9603">Geocentric translations (geog2D domain)</a></li>
             <li><a href="#1035">Geocentric translations (geog3D domain)</a></li>
@@ -111,6 +123,7 @@
             <li><a href="#9601">Longitude rotation</a></li>
             <li><a href="#9604">Molodensky</a></li>
             <li><a href="#9613">NADCON</a></li>
+            <li><a href="#9614">NTv1</a></li>
             <li><a href="#9615">NTv2</a></li>
             <li><a href="#1033">Position Vector transformation (geocentric domain)</a></li>
             <li><a href="#9606">Position Vector transformation (geog2D domain)</a></li>
@@ -120,87 +133,6 @@
         </li>
       </ul>
     </nav>
-    <article>
-      <header>
-        <h2 id="9825">Pseudo Plate Carree</h2>
-      </header>
-      <blockquote>
-        <table class="info">
-          <tr>
-            <th>EPSG code:</th>
-            <td>9825</td>
-          </tr>
-          <tr>
-            <th>Aliases:</th>
-            <td><span class="non-epsg">NetCDF:</span><code>latitude_longitude</code></td>
-          </tr>
-        </table>
-        <table class="param">
-          <caption>Operation parameters:</caption>
-          <tr>
-            <th>EPSG</th>
-            <th class="sep">Name</th>
-            <th class="sep">Remarks</th>
-            <th class="sep" colspan="3">Value domain</th>
-            <th class="sep">Default</th>
-          </tr><tr>
-            <td></td>
-            <td class="sep">
-              <details>
-                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
-                <table class="aliases">
-                  <tr>
-                    <th>ESRI:</th>
-                    <td>Semi_Major</td>
-                  </tr><tr>
-                    <th>NetCDF:</th>
-                    <td>semi_major_axis</td>
-                  </tr><tr>
-                    <th>GeoTIFF:</th>
-                    <td>SemiMajorAxis</td>
-                  </tr><tr>
-                    <th>Proj4:</th>
-                    <td>a</td>
-                  </tr>
-                </table>
-              </details>
-            </td>
-            <td class="sep"></td>
-            <td class="sep right">(0</td>
-            <td class="center">…</td>
-            <td class="left">∞) m</td>
-            <td class="sep"></td>
-          </tr><tr>
-            <td></td>
-            <td class="sep">
-              <details>
-                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
-                <table class="aliases">
-                  <tr>
-                    <th>ESRI:</th>
-                    <td>Semi_Minor</td>
-                  </tr><tr>
-                    <th>NetCDF:</th>
-                    <td>semi_minor_axis</td>
-                  </tr><tr>
-                    <th>GeoTIFF:</th>
-                    <td>SemiMinorAxis</td>
-                  </tr><tr>
-                    <th>Proj4:</th>
-                    <td>b</td>
-                  </tr>
-                </table>
-              </details>
-            </td>
-            <td class="sep"></td>
-            <td class="sep right">(0</td>
-            <td class="center">…</td>
-            <td class="left">∞) m</td>
-            <td class="sep"></td>
-          </tr>
-        </table>
-      </blockquote>
-    </article>
     <article>
       <header>
         <h2 id="1029">Equidistant Cylindrical (Spherical)</h2>
@@ -526,16 +458,13 @@
                     <td>latitude_of_center</td>
                   </tr><tr>
                     <th>ESRI:</th>
-                    <td>Latitude_Of_Origin</td>
+                    <td>Latitude_Of_Center</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>NatOriginLat</td>
+                    <td>CenterLat</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>lat_0</td>
-                  </tr><tr>
-                    <th>ESRI:</th>
-                    <td>Latitude_Of_Center</td>
                   </tr>
                 </table>
               </details>
@@ -556,16 +485,13 @@
                     <td>longitude_of_center</td>
                   </tr><tr>
                     <th>ESRI:</th>
-                    <td>Central_Meridian</td>
+                    <td>Longitude_Of_Center</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>NatOriginLong</td>
+                    <td>CenterLong</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>lonc</td>
-                  </tr><tr>
-                    <th>ESRI:</th>
-                    <td>Longitude_Of_Center</td>
                   </tr>
                 </table>
               </details>
@@ -628,7 +554,7 @@
             <td class="sep right">[-360</td>
             <td class="center">…</td>
             <td class="left">360]°</td>
-            <td class="sep"></td>
+            <td class="sep">Azimuth of initial line</td>
           </tr><tr>
             <td>8815</td>
             <td class="sep">
@@ -808,16 +734,13 @@
                     <td>latitude_of_center</td>
                   </tr><tr>
                     <th>ESRI:</th>
-                    <td>Latitude_Of_Origin</td>
+                    <td>Latitude_Of_Center</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>NatOriginLat</td>
+                    <td>CenterLat</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>lat_0</td>
-                  </tr><tr>
-                    <th>ESRI:</th>
-                    <td>Latitude_Of_Center</td>
                   </tr>
                 </table>
               </details>
@@ -838,16 +761,13 @@
                     <td>longitude_of_center</td>
                   </tr><tr>
                     <th>ESRI:</th>
-                    <td>Central_Meridian</td>
+                    <td>Longitude_Of_Center</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>NatOriginLong</td>
+                    <td>CenterLong</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>lonc</td>
-                  </tr><tr>
-                    <th>ESRI:</th>
-                    <td>Longitude_Of_Center</td>
                   </tr>
                 </table>
               </details>
@@ -910,7 +830,7 @@
             <td class="sep right">[-360</td>
             <td class="center">…</td>
             <td class="left">360]°</td>
-            <td class="sep"></td>
+            <td class="sep">Azimuth of initial line</td>
           </tr><tr>
             <td>8815</td>
             <td class="sep">
@@ -1132,16 +1052,13 @@
                     <td>latitude_of_center</td>
                   </tr><tr>
                     <th>ESRI:</th>
-                    <td>Latitude_Of_Origin</td>
+                    <td>Latitude_Of_Center</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>NatOriginLat</td>
+                    <td>CenterLat</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>lat_0</td>
-                  </tr><tr>
-                    <th>ESRI:</th>
-                    <td>Latitude_Of_Center</td>
                   </tr>
                 </table>
               </details>
@@ -1372,16 +1289,13 @@
                     <td>latitude_of_center</td>
                   </tr><tr>
                     <th>ESRI:</th>
-                    <td>Latitude_Of_Origin</td>
+                    <td>Latitude_Of_Center</td>
                   </tr><tr>
                     <th>GeoTIFF:</th>
-                    <td>NatOriginLat</td>
+                    <td>CenterLat</td>
                   </tr><tr>
                     <th>Proj4:</th>
                     <td>lat_0</td>
-                  </tr><tr>
-                    <th>ESRI:</th>
-                    <td>Latitude_Of_Center</td>
                   </tr>
                 </table>
               </details>
@@ -2817,6 +2731,249 @@
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="Mercator_Auxiliary_Sphere">Mercator_Auxiliary_Sphere</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Major</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_major_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMajorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>a</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Minor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_minor_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMinorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>b</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td>8823</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude of 1st standard parallel</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>standard_parallel_1</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Standard_Parallel_1</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>standard_parallel</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>StdParallel1</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_ts</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(-90</td>
+            <td class="center">…</td>
+            <td class="left">90)°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8801</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>latitude_of_origin</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Latitude_Of_Origin</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>latitude_of_projection_origin</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>NatOriginLat</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep">Optional ¹</td>
+            <td class="sep right">[-0</td>
+            <td class="center">…</td>
+            <td class="left">0]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8802</td>
+            <td class="sep">
+              <details>
+                <summary>Longitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>central_meridian</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Central_Meridian</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>longitude_of_projection_origin</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>NatOriginLong</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lon_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-180</td>
+            <td class="center">…</td>
+            <td class="left">180]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8806</td>
+            <td class="sep">
+              <details>
+                <summary>False easting</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Easting</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseEasting</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>x_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td>8807</td>
+            <td class="sep">
+              <details>
+                <summary>False northing</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Northing</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseNorthing</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>y_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">ESRI:</span><code>Auxiliary_Sphere_Type</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[0</td>
+            <td class="center">…</td>
+            <td class="left">3]</td>
+            <td class="sep">0</td>
+          </tr>
+        </table>
+        <table class="footnotes">
+          <tr>
+            <td>¹</td>
+            <td>This parameter borrowed from the “Mercator (variant A)” projection is not formally a parameter of this projection.</td>
           </tr>
         </table>
       </blockquote>
@@ -5473,6 +5630,690 @@
     </article>
     <article>
       <header>
+        <h2 id="Azimuthal_Equidistant_(Spherical)">Azimuthal Equidistant (Spherical)</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Major</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_major_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMajorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>a</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Minor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_minor_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMinorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>b</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td>8801</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>latitude_of_origin</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>CenterLat</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-90</td>
+            <td class="center">…</td>
+            <td class="left">90]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8802</td>
+            <td class="sep">
+              <details>
+                <summary>Longitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>central_meridian</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>CenterLong</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lon_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-180</td>
+            <td class="center">…</td>
+            <td class="left">180]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8806</td>
+            <td class="sep">
+              <details>
+                <summary>False easting</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseEasting</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>x_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td>8807</td>
+            <td class="sep">
+              <details>
+                <summary>False northing</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseNorthing</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>y_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9820">Lambert Azimuthal Equal Area</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9820</td>
+          </tr>
+          <tr>
+            <th>Aliases:</th>
+            <td><span class="non-epsg">OGC:</span><code>Lambert_Azimuthal_Equal_Area</code>, <span class="non-epsg">ESRI:</span><code>Lambert_Azimuthal_Equal_Area</code>, <span class="non-epsg">NetCDF:</span><code>LambertAzimuthalEqualArea</code>, <span class="non-epsg">GeoTIFF:</span><code>CT_LambertAzimEqualArea</code>, <span class="non-epsg">Proj4:</span><code>laea</code></td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Major</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_major_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMajorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>a</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Minor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_minor_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMinorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>b</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td>8801</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>latitude_of_center</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Latitude_Of_Origin</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>latitude_of_projection_origin</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>CenterLat</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-90</td>
+            <td class="center">…</td>
+            <td class="left">90]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8802</td>
+            <td class="sep">
+              <details>
+                <summary>Longitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>longitude_of_center</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Central_Meridian</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>longitude_of_projection_origin</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>CenterLong</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lon_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-180</td>
+            <td class="center">…</td>
+            <td class="left">180]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8806</td>
+            <td class="sep">
+              <details>
+                <summary>False easting</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Easting</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseEasting</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>x_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td>8807</td>
+            <td class="sep">
+              <details>
+                <summary>False northing</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Northing</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseNorthing</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>y_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="1027">Lambert Azimuthal Equal Area (Spherical)</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>1027, <del>9821</del></td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Major</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_major_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMajorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>a</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Minor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_minor_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMinorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>b</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td>8806</td>
+            <td class="sep">
+              <details>
+                <summary>False easting</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Easting</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseEasting</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>x_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td>8807</td>
+            <td class="sep">
+              <details>
+                <summary>False northing</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Northing</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseNorthing</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>y_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9832">Modified Azimuthal Equidistant</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9832</td>
+          </tr>
+          <tr>
+            <th>Aliases:</th>
+            <td><span class="non-epsg">GeoTIFF:</span><code>CT_AzimuthalEquidistant</code>, <span class="non-epsg">Proj4:</span><code>aeqd</code></td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Major</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_major_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMajorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>a</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Minor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_minor_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMinorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>b</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td>8801</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>latitude_of_origin</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>CenterLat</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-90</td>
+            <td class="center">…</td>
+            <td class="left">90]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8802</td>
+            <td class="sep">
+              <details>
+                <summary>Longitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>central_meridian</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>CenterLong</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lon_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-180</td>
+            <td class="center">…</td>
+            <td class="left">180]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8806</td>
+            <td class="sep">
+              <details>
+                <summary>False easting</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseEasting</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>x_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td>8807</td>
+            <td class="sep">
+              <details>
+                <summary>False northing</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseNorthing</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>y_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
         <h2 id="9809">Oblique Stereographic</h2>
       </header>
       <blockquote>
@@ -5638,6 +6479,207 @@
             <td class="center">…</td>
             <td class="left">∞)</td>
             <td class="sep">1</td>
+          </tr><tr>
+            <td>8806</td>
+            <td class="sep">
+              <details>
+                <summary>False easting</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Easting</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseEasting</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>x_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td>8807</td>
+            <td class="sep">
+              <details>
+                <summary>False northing</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Northing</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseNorthing</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>y_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9840">Orthographic</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9840</td>
+          </tr>
+          <tr>
+            <th>Aliases:</th>
+            <td><span class="non-epsg">OGC:</span><code>Orthographic</code>, <span class="non-epsg">ESRI:</span><code>Orthographic</code>, <span class="non-epsg">NetCDF:</span><code>Orthographic</code>, <span class="non-epsg">GeoTIFF:</span><code>CT_Orthographic</code>, <span class="non-epsg">S57:</span><code>Orthographic</code>, <span class="non-epsg">S57:</span><code>ORT</code>, <span class="non-epsg">Proj4:</span><code>ortho</code></td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Major</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_major_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMajorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>a</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Minor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_minor_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMinorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>b</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td>8801</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>latitude_of_origin</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Latitude_Of_Center</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>latitude_of_projection_origin</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>CenterLat</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-90</td>
+            <td class="center">…</td>
+            <td class="left">90]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8802</td>
+            <td class="sep">
+              <details>
+                <summary>Longitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>central_meridian</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Longitude_Of_Center</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>longitude_of_projection_origin</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>CenterLong</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lon_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-180</td>
+            <td class="center">…</td>
+            <td class="left">180]°</td>
+            <td class="sep">0°</td>
           </tr><tr>
             <td>8806</td>
             <td class="sep">
@@ -6685,6 +7727,207 @@
     </article>
     <article>
       <header>
+        <h2 id="9806">Cassini-Soldner</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9806</td>
+          </tr>
+          <tr>
+            <th>Aliases:</th>
+            <td><span class="non-epsg">OGC:</span><code>Cassini_Soldner</code>, <span class="non-epsg">ESRI:</span><code>Cassini_Soldner</code>, <span class="non-epsg">GeoTIFF:</span><code>CT_CassiniSoldner</code>, <span class="non-epsg">Proj4:</span><code>cass</code></td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Major</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_major_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMajorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>a</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Minor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_minor_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMinorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>b</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td>8801</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>latitude_of_origin</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Latitude_Of_Origin</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>latitude_of_projection_origin</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>NatOriginLat</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-90</td>
+            <td class="center">…</td>
+            <td class="left">90]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8802</td>
+            <td class="sep">
+              <details>
+                <summary>Longitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>central_meridian</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Central_Meridian</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>longitude_of_central_meridian</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>NatOriginLong</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lon_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-180</td>
+            <td class="center">…</td>
+            <td class="left">180]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8806</td>
+            <td class="sep">
+              <details>
+                <summary>False easting</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Easting</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseEasting</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>x_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td>8807</td>
+            <td class="sep">
+              <details>
+                <summary>False northing</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Northing</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseNorthing</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>y_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
         <h2 id="Geocentric_To_Ellipsoid">Geocentric_To_Ellipsoid</h2>
       </header>
       <blockquote>
@@ -6919,6 +8162,203 @@
     </article>
     <article>
       <header>
+        <h2 id="9833">Hyperbolic Cassini-Soldner</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9833</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Major</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_major_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMajorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>a</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Minor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_minor_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMinorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>b</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td>8801</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>latitude_of_origin</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Latitude_Of_Origin</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>latitude_of_projection_origin</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>NatOriginLat</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-90</td>
+            <td class="center">…</td>
+            <td class="left">90]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8802</td>
+            <td class="sep">
+              <details>
+                <summary>Longitude of natural origin</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>central_meridian</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>Central_Meridian</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>longitude_of_central_meridian</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>NatOriginLong</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lon_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-180</td>
+            <td class="center">…</td>
+            <td class="left">180]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td>8806</td>
+            <td class="sep">
+              <details>
+                <summary>False easting</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Easting</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_easting</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseEasting</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>x_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr><tr>
+            <td>8807</td>
+            <td class="sep">
+              <details>
+                <summary>False northing</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>ESRI:</th>
+                    <td>False_Northing</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>false_northing</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>FalseNorthing</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>y_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
         <h2 id="Interpolation_1D">Interpolation 1D</h2>
       </header>
       <blockquote>
@@ -7102,6 +8542,363 @@
     </article>
     <article>
       <header>
+        <h2 id="North_pole_rotation">North pole rotation</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>Aliases:</th>
+            <td>rotated_latitude_longitude</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">SIS:</span><code>Latitude of rotated pole</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>grid_north_pole_latitude:</th>
+                    <td>grid_north_pole_latitude</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-90</td>
+            <td class="center">…</td>
+            <td class="left">90]°</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">SIS:</span><code>Longitude of rotated pole</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>grid_north_pole_longitude:</th>
+                    <td>grid_north_pole_longitude</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-180</td>
+            <td class="center">…</td>
+            <td class="left">180]°</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">SIS:</span><code>Axis rotation</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>north_pole_grid_longitude:</th>
+                    <td>north_pole_grid_longitude</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-180</td>
+            <td class="center">…</td>
+            <td class="left">180]°</td>
+            <td class="sep">0°</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="9825">Pseudo Plate Carree</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9825</td>
+          </tr>
+          <tr>
+            <th>Aliases:</th>
+            <td><span class="non-epsg">NetCDF:</span><code>latitude_longitude</code></td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Major</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_major_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMajorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>a</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Minor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_minor_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMinorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>b</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="Satellite-Tracking">Satellite-Tracking</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_major</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Major</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_major_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMajorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>a</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>semi_minor</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>ESRI:</th>
+                    <td>Semi_Minor</td>
+                  </tr><tr>
+                    <th>NetCDF:</th>
+                    <td>semi_minor_axis</td>
+                  </tr><tr>
+                    <th>GeoTIFF:</th>
+                    <td>SemiMinorAxis</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>b</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) m</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">ESRI:</span><code>Latitude_Of_Origin</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>latitude_of_origin</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-90</td>
+            <td class="center">…</td>
+            <td class="left">90]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">ESRI:</span><code>Central_Meridian</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>central_meridian</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lon_0</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-180</td>
+            <td class="center">…</td>
+            <td class="left">180]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">ESRI:</span><code>Standard_Parallel_1</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>standard_parallel_1</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_1</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-90</td>
+            <td class="center">…</td>
+            <td class="left">90]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">ESRI:</span><code>Standard_Parallel_2</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>OGC:</th>
+                    <td>standard_parallel_2</td>
+                  </tr><tr>
+                    <th>Proj4:</th>
+                    <td>lat_2</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-90</td>
+            <td class="center">…</td>
+            <td class="left">90]°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">SIS:</span><code>satellite_orbit_inclination</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(−∞</td>
+            <td class="center">…</td>
+            <td class="left">∞)°</td>
+            <td class="sep">0°</td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">SIS:</span><code>satellite_orbital_period</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) d</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">SIS:</span><code>ascending_node_period</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞) d</td>
+            <td class="sep"></td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
         <h2 id="Sinusoidal">Sinusoidal</h2>
       </header>
       <blockquote>
@@ -7236,6 +9033,83 @@
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="South_pole_rotation">South pole rotation</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>Aliases:</th>
+            <td><span class="non-epsg">WMO:</span><code>Rotated Latitude/longitude</code>, rotated_latlon_grib</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">SIS:</span><code>Latitude of rotated pole</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>grid_south_pole_latitude:</th>
+                    <td>grid_south_pole_latitude</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-90</td>
+            <td class="center">…</td>
+            <td class="left">90]°</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">SIS:</span><code>Longitude of rotated pole</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>grid_south_pole_longitude:</th>
+                    <td>grid_south_pole_longitude</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-180</td>
+            <td class="center">…</td>
+            <td class="left">180]°</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">SIS:</span><code>Axis rotation</code></summary>
+                <table class="aliases">
+                  <tr>
+                    <th>grid_south_pole_angle:</th>
+                    <td>grid_south_pole_angle</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[-180</td>
+            <td class="center">…</td>
+            <td class="left">180]°</td>
+            <td class="sep">0°</td>
           </tr>
         </table>
       </blockquote>
@@ -7461,6 +9335,67 @@
             <td class="center">…</td>
             <td class="left">∞) m</td>
             <td class="sep">0 m</td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
+        <h2 id="Wraparound">Wraparound</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">OGC:</span><code>dim</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[1</td>
+            <td class="center">…</td>
+            <td class="left">∞)</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">SIS:</span><code>wraparound_dim</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">[0</td>
+            <td class="center">…</td>
+            <td class="left">∞)</td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td></td>
+            <td class="sep">
+              <details>
+                <summary><span class="non-epsg">SIS:</span><code>period</code></summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep right">(0</td>
+            <td class="center">…</td>
+            <td class="left">∞)</td>
+            <td class="sep"></td>
           </tr>
         </table>
       </blockquote>
@@ -7926,6 +9861,10 @@
             <th>EPSG code:</th>
             <td>9607</td>
           </tr>
+          <tr>
+            <th>Aliases:</th>
+            <td><span class="non-epsg">ESRI:</span><code>Coordinate_Frame</code></td>
+          </tr>
         </table>
         <table class="param">
           <caption>Operation parameters:</caption>
@@ -8328,13 +10267,17 @@
     </article>
     <article>
       <header>
-        <h2 id="9655">France geocentric interpolation</h2>
+        <h2 id="1087">Geocentric translation by Grid Interpolation (IGN)</h2>
       </header>
       <blockquote>
         <table class="info">
           <tr>
             <th>EPSG code:</th>
-            <td>9655</td>
+            <td>1087, <del>9655</del></td>
+          </tr>
+          <tr>
+            <th>Aliases:</th>
+            <td>France geocentric interpolation</td>
           </tr>
         </table>
         <table class="param">
@@ -8427,6 +10370,38 @@
             <td class="sep"></td>
             <td class="sep center" colspan="3"></td>
             <td class="sep">gr3df97a.txt</td>
+          </tr><tr>
+            <td>1048</td>
+            <td class="sep">
+              <details>
+                <summary>EPSG code for Interpolation CRS</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>Interpolation CRS code:</th>
+                    <td>Interpolation CRS code</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep center" colspan="3"></td>
+            <td class="sep"></td>
+          </tr><tr>
+            <td>1062</td>
+            <td class="sep">
+              <details>
+                <summary>EPSG code for "standard" CT</summary>
+                <table class="aliases">
+                  <tr>
+                    <th>Standard CT code:</th>
+                    <td>Standard CT code</td>
+                  </tr>
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep center" colspan="3"></td>
+            <td class="sep"></td>
           </tr>
         </table>
       </blockquote>
@@ -8517,6 +10492,10 @@
           <tr>
             <th>EPSG code:</th>
             <td>9603</td>
+          </tr>
+          <tr>
+            <th>Aliases:</th>
+            <td><span class="non-epsg">ESRI:</span><code>Geocentric_Translation</code></td>
           </tr>
         </table>
         <table class="param">
@@ -9220,6 +11199,41 @@
     </article>
     <article>
       <header>
+        <h2 id="9614">NTv1</h2>
+      </header>
+      <blockquote>
+        <table class="info">
+          <tr>
+            <th>EPSG code:</th>
+            <td>9614</td>
+          </tr>
+        </table>
+        <table class="param">
+          <caption>Operation parameters:</caption>
+          <tr>
+            <th>EPSG</th>
+            <th class="sep">Name</th>
+            <th class="sep">Remarks</th>
+            <th class="sep" colspan="3">Value domain</th>
+            <th class="sep">Default</th>
+          </tr><tr>
+            <td>8656</td>
+            <td class="sep">
+              <details>
+                <summary>Latitude and longitude difference file</summary>
+                <table class="aliases">
+                </table>
+              </details>
+            </td>
+            <td class="sep"></td>
+            <td class="sep center" colspan="3"></td>
+            <td class="sep"></td>
+          </tr>
+        </table>
+      </blockquote>
+    </article>
+    <article>
+      <header>
         <h2 id="9615">NTv2</h2>
       </header>
       <blockquote>
@@ -9415,6 +11429,10 @@
           <tr>
             <th>EPSG code:</th>
             <td>9606</td>
+          </tr>
+          <tr>
+            <th>Aliases:</th>
+            <td><span class="non-epsg">ESRI:</span><code>Position_Vector</code></td>
           </tr>
         </table>
         <table class="param">
