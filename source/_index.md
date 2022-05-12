@@ -6,29 +6,30 @@ Apache Spatial Information System (SIS) is a free software, Java language librar
 SIS provides data structures for geographic features and associated metadata along with methods to manipulate those data structures.
 The library is an implementation of [GeoAPI 3.0.1][geoapi] interfaces and can be used for desktop or server applications.
 
-The SIS metadata module forms the base of the library and enables the creation of metadata objects
+The SIS metadata module enables the creation of metadata objects
 which comply with the model of {{% OGC %}}/{{% ISO %}} international standards.
-The SIS referencing module enable the construction of geodetic data structures for geospatial referencing
-such as axis, projection and coordinate reference system definitions,
+The SIS referencing module enables the construction of data structures for coordinate reference system definitions,
 along with the associated operations which enable the transformation of coordinates between different systems of reference.
 The SIS storage modules provide a common approach to the reading and writing of metadata, features and coverages
 applicable to simple imagery as to many dimensional data structures.
 SIS provides processing functions such as multi-threaded rasters reprojection and isolines computation from raster data.
 The API and the data encodings follow [international standards](standards.html) when available.
 
-<details open>
+<details>
   <summary>
-    Some international standards and other features supported by Apache {{% SIS %}} are:
+    More information on international standards and features supported by Apache {{% SIS %}}:
   </summary>
 
 * Raster formats:
   * Read [NetCDF-3 Classic and 64-bit Offset Format][netCDF].
   * Read [GeoTIFF][geoTIFF] including BigTIFF extension.
   * Read Landsat (groups of GeoTIFF files).
+  * Read ESRI BIL/BIP/BSQ and read/write ERSI ASCII Grid.
+  * Read/write World Files with any image format supported by Image I/O.
 * Feature formats:
   * Read [Moving Feature Comma Separated Values (CSV) encoding][MF_CSV].
   * Read [Moving Feature netCDF encoding][netCDF_MF].
-  * Read GPX (a {{% XML %}} schema for {{% GPS %}} data).
+  * Read {{% GPX %}} (a {{% XML %}} schema for {{% GPS %}} data).
   * Read [features from {{% SQL %}} spatial databases][SF_SQL] by analysing the database schema.
 * Geographic metadata (ISO 19115):
   * Read ISO 19115 metadata from all above-listed raster and feature formats.
@@ -58,7 +59,7 @@ The API and the data encodings follow [international standards](standards.html) 
 
 ## Using Apache SIS    {#user}
 
-The latest SIS release is {{% version %}}, released October 2021,
+The latest SIS release is {{% version %}}, released May 2022,
 and can be [downloaded](downloads.html) as a `zip` files or as Maven dependencies.
 Apache {{% SIS %}} requires Java 17 or higher for [building](build.html), but can be executed on Java 8 or higher.
 The EPSG geodetic dataset is optional for licensing reasons, but recommended.
@@ -68,7 +69,8 @@ Apache {{% SIS %}} is a Java library for use by other applications.
 Leveraging the full SIS capabilities or getting the best performance require that users write their own applications on top of SIS.
 The [developer guide](book/en/developer-guide.html), [online Javadoc](apidocs/index.html) and [recommended code patterns](code-patterns.html) page
 provide instructions about developing with SIS.
-However a [command-line tool](command-line.html) is also provided for allowing users to experiment some SIS functionalities before writing code.
+However a [command-line tool](command-line.html) and a [JavaFX application](javafx.html)
+are also provided for allowing users to experiment some SIS functionalities before writing code.
 
 
 [geoapi]:    http://www.geoapi.org/

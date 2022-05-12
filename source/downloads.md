@@ -13,9 +13,9 @@ See the `NOTICE` file contained in each release artifact for applicable copyrigh
 # Download ZIP files    {#bundles}
 
 Apache {{% SIS %}} is distributed in the form of Java source code in a multi-modules Apache Maven project.
-For convenience, an aggregated Javadoc and a pre-compiled JAR file are available as separated downloads.
-The precompiled JAR file contains most modules and dependencies in a single archive for easier inclusion
-in a classpath.
+For convenience, an aggregated Javadoc and pre-compiled JAR files are available as separated downloads.
+The precompiled JAR files contain most modules and mandatory dependencies.
+Optional dependencies (JAXB implementation, UCAR netCDF library, Amazon SDK) are not included.
 
 * [Apache SIS {{% version %}} sources][src] \[[PGP][src-PGP]\] \[[SHA 512][src-SHA]\]
 * [Apache SIS {{% version %}} javadoc][doc] \[[PGP][doc-PGP]\] \[[SHA 512][doc-SHA]\]
