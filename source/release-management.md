@@ -81,7 +81,7 @@ Then execute the following commands and fix as much warnings as practical:
 {{< highlight bash >}}
 systemctl start postgresql.service        # Optional — exact command depends on Linux distribution.
 mvn clean install --define org.apache.sis.test.extensive=true
-mvn javadoc:aggregate
+mvn javadoc:aggregate --activate-profiles javafx
 {{< / highlight >}}
 
 If the `SIS_DATA` environment variable was set during above build, unset it a try again.
@@ -121,8 +121,8 @@ Update [JIRA][JIRA] tasks and prepare release notes as below:
 
 * Ensure that the _Fix Version_ in issues resolved since the last release includes this release version correctly.
 * Ensure that all open issues are resolved or closed before proceeding further.
-* On the `site` source code repository, create a `content/release-notes/$NEW_VERSION.html` file with all the features added.
-* Use `content/release-notes/$OLD_VERSION.html` as a template, omitting the old list of issues.
+* On the `site` source code repository, create a `static/release-notes/$NEW_VERSION.html` file with all the features added.
+* Use `static/release-notes/$OLD_VERSION.html` as a template, omitting the old list of issues.
 * The release notes can be obtained from JIRA, by clicking on the _Versions_ tab → the version number → _Release notes_
   and then configuring the release notes to display HTML format and copying it.
   A suggested approach would be to reorganize the release notes as
@@ -133,9 +133,9 @@ Commit to staging area (not published immediately):
 
 {{< highlight bash >}}
 cd ../site/main
-cp static/release-notes/$OLD_VERSION.html static/content/release-notes/$NEW_VERSION.html
+cp static/release-notes/$OLD_VERSION.html static/release-notes/$NEW_VERSION.html
 # Edit release notes before to continue.
-git add static/content/release-notes/$NEW_VERSION.html
+git add static/release-notes/$NEW_VERSION.html
 git commit --message "Release notes for Apache SIS $NEW_VERSION."
 {{< / highlight >}}
 
@@ -155,9 +155,9 @@ Remove the modules that are not yet ready for a release.
 This may require removing `<module>` elements in the parent `pom.xml` file.
 
 {{< highlight bash >}}
-git rm core/sis-cql
-git rm storage/sis-shapefile
-git rm storage/sis-storage/src/main/java/org/apache/sis/storage/WritableGridCoverageResource.java
+git rm -r core/sis-cql
+git rm -r storage/sis-shapefile
+git rm -r application/sis-webapp
 git add --update    # for the removal of <module> elements in pom.xml files.
 git commit --message="Remove the modules to be excluded from $NEW_VERSION release."
 {{< / highlight >}}
@@ -256,7 +256,7 @@ If there is any issue with this deployment, the staging repository can easily be
 cd $SIS_RC_DIR
 mvn clean deploy --activate-profiles apache-release --define maven.test.skip=true
 cd ../non-free
-mvn clean deploy --activate-profiles apache-release
+mvn clean deploy --activate-profiles apache-release --define maven.test.skip=true
 {{< / highlight >}}
 
 ## Verify and close the Nexus release artifacts    {#nexus-close}
@@ -269,6 +269,7 @@ Select any `*.html` file which is known to use some of the custom taglets define
 Click on that file and verify that the custom elements are rendered properly.
 In particular, all Java code snippets are missing if the `@preformat` taglet had not be properly registered,
 so try to see at least one code snippet.
+In the `sis-epsg-$NEW_VERSION.jar` file, verify that `META-INF/LICENSE` contains the EPSG terms of use.
 
 Additional cleaning:
 
@@ -287,12 +288,6 @@ Close the Nexus staging repository:
 
 We will announce later (in the <cite>Put the release candidate up for a vote</cite> section) on the `dev@` mailing list
 the availability of this temporary repository for testing purpose.
-
-In the Nexus repository used for non-free resources:
-
-* Delete all `*-source-release.zip.*` files since they duplicate the `*-source.zip.*` files.
-* In the `sis-epsg-$NEW_VERSION.jar` file, verify that `META-INF/LICENSE` contain the EPSG terms of use.
-* Close the repository and take note of its URL.
 
 ## Test the Nexus release artifacts    {#nexus-text}
 
@@ -339,7 +334,7 @@ Generate the Javadoc:
 cd $SIS_RC_DIR
 git checkout .            # Discard local changes, in particular the hack for excluding test files.
 mvn clean install --activate-profiles apache-release
-mvn javadoc:aggregate
+mvn javadoc:aggregate --activate-profiles javafx
 cd target/site
 zip -9 -r apache-sis-$NEW_VERSION-doc.zip apidocs
 cd ../..
@@ -469,15 +464,14 @@ to build the add-in:
 
 # Prepare Web site    {#prepare-website}
 
-Review and update the `content/DOAP.rdf` file on the `site` source code repository.
+Review and update the `static/DOAP.rdf` file on the `site` source code repository.
 Add a new `<release>` block for the new release with the estimated release date.
 
-Update the version numbers from the old one to `$NEW_VERSION` in the following files.
+Update the following files (e.g. the release date in `index.md`):
 
-* `content/index.mdtext`
-* `content/downloads.mdtext` (need also to update `$NEW_VERSION-SNAPSHOT` to the next snapshot version)
-* `content/command-line.mdtext`
-* `content/epsg.mdtext` (be aware that the version number may sometime be behind the SIS version number)
+* `source/index.md`
+* `source/command-line.md`
+* `source/epsg.md`
 
 Commit:
 
@@ -580,20 +574,15 @@ svn delete https://dist.apache.org/repos/dist/release/sis/$OLD_VERSION \
 
 # Update master for the next development cycle    {#next-release}
 
-On the development branch,
-update the version numbers in the `pom.xml` files on master with the following command:
+On the `master` branch:
 
-{{< highlight bash >}}
-mvn clean
-mvn release:update-versions --define autoVersionSubmodules=true
-{{< / highlight >}}
+* Update the version numbers in all `pom.xml` files.
+* Edit the value of the `MAJOR_VERSION` or `MINOR_VERSION` constant in the
+  `core/sis-utility/src/main/java/org/apache/sis/internal/system/Modules.java` file.
 
-This change will need to be merged manually on the JDK7 branch and on the master.
 Then on the development branch:
 
 * Edit the version number in the `application/sis-console/src/main/artifact/README` file.
-* Edit the value of the `MAJOR_VERSION` or `MINOR_VERSION` constant in the
-  `core/sis-utility/src/main/java/org/apache/sis/internal/system/Modules.java` file.
 
 ## Delete old artifacts on Maven snapshot repository    {#nexus-clean}
 
