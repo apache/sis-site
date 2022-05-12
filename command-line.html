@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
+
 
   <title>Apache SIS - Command-line interface</title>
   <meta charset="utf-8">
@@ -52,7 +52,9 @@
         <ul class="dropdown-menu" aria-labelledby="menuContribute">
           <li><a class="dropdown-item" href="contributor.html">New Contributor</a></li>
           <li><a class="dropdown-item" href="coding-conventions.html">Coding Conventions</a></li>
+          <li><a class="dropdown-item" href="mail-lists.html">Mailing Lists</a></li>
           <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+          <li><a class="dropdown-item" href="https://github.com/apache/sis">GitHub mirror</a></li>
           <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="release-management.html">Release management</a></li>
@@ -100,7 +102,7 @@
       <article>
         <img src="images/logo.png" class="sis-logo" align="left"/>
         <p class="page-title">Command-line interface</p>
-        
+
   <p>A command-line interface is provided for extracting information from data files or authority codes,
 and for performing coordinate operations.
 That command-line tool is provided for allowing users to experiment some Apache <abbr title="Spatial Information System">SIS</abbr> functionalities
@@ -127,9 +129,9 @@ in their own application.</p>
   </ul>
 </nav>
 <h1 id="install">Installation   </h1>
-<p>Select &ldquo;Apache <abbr title="Spatial Information System">SIS</abbr> 1.1 binary&rdquo; from the <a href="downloads.html">downloads page</a> an unzip in any directory.
+<p>Select &ldquo;Apache <abbr title="Spatial Information System">SIS</abbr> 1.2 binary&rdquo; from the <a href="downloads.html">downloads page</a> an unzip in any directory.
 The directory structure will be as below:</p>
-<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">apache-sis-1.1
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">apache-sis-1.2
 ├─ bin
 ├─ conf
 ├─ data
@@ -138,9 +140,9 @@ The directory structure will be as below:</p>
 <p>The <code>bin</code> sub-directory contains a <code>sis</code> command for Unix systems (Linux or MacOS — we have not yet done a <code>sis.bat</code> file for Windows).
 The <code>bin</code> sub-directory can be added to the <code>PATH</code> environment variable for convenience, but this is not mandatory.
 Example:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PWD</span>/apache-sis-1.1/bin:<span class="nv">$PATH</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PWD</span>/apache-sis-1.2/bin:<span class="nv">$PATH</span></code></pre></div>
 <p>The remaining of this page assumes that the <code>bin</code> directory is on the search path.
-If not, the same examples can still be executed by replacing the <code>sis</code> command by <code>./apache-sis-1.1/bin/sis</code>.</p>
+If not, the same examples can still be executed by replacing the <code>sis</code> command by <code>./apache-sis-1.2/bin/sis</code>.</p>
 <h2 id="dependencies">Optional dependencies   </h2>
 <p>Every JAR files present in the <code>lib</code> sub-directory will be included on the classpath during <code>sis</code> command execution.
 By default, the <code>lib</code> directory contains the <code>sis-*.jar</code> files together with GeoAPI, JAXB and Apache Derby dependencies.
@@ -286,7 +288,7 @@ The following example reads a <abbr title="Well Known Text">WKT</abbr> for the <
 but in which the <code>ID[&quot;EPSG&quot;, 27572]</code> element has been intentionally omitted.
 Furthermore, the <em>“NTF (Paris) / Lambert zone II”</em> name has been replaced by <em>“NTF (Paris) / zone to be discovered by the demo”</em> name.
 Executing the following command:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">sis identifier http://sis.apache.org/examples/crs/MissingIdentifier.wkt</code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">sis identifier https://sis.apache.org/examples/crs/MissingIdentifier.wkt</code></pre></div>
 <p>produces an output like below:</p>
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">urn:ogc:def:crs:EPSG:9.7:27572    | NTF (Paris) / Lambert zone II</code></pre></div>
 <p>As we can see, Apache <abbr title="Spatial Information System">SIS</abbr> has been able to find back the identifier code and the actual <abbr title="Coordinate Reference System">CRS</abbr> name.</p>
@@ -295,7 +297,7 @@ The most frequent case is a <abbr title="Well Known Text">WKT</abbr> that define
 but declare an EPSG code for a <abbr title="Coordinate Reference System">CRS</abbr> with (<em>latitude</em>, <em>longitude</em>) axes.
 Apache <abbr title="Spatial Information System">SIS</abbr> can detect such mismatches.
 For example executing the following command:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">sis identifier http://sis.apache.org/examples/crs/WrongAxisOrder.wkt</code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">sis identifier https://sis.apache.org/examples/crs/WrongAxisOrder.wkt</code></pre></div>
 <p>produces an output like below:</p>
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">!   urn:ogc:def:crs:EPSG:8.9:4979    | WGS 84
 
@@ -317,7 +319,7 @@ The next example asks the identifier of a <abbr title="Coordinate Reference Syst
     Parameter[&#34;Latitude of natural origin&#34;, -0.0],
   (... definition omitted for brevity ...)</code></pre></div>
 <p>Executing the following command:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">sis identifier http://sis.apache.org/examples/crs/EquivalentDefinition.wkt</code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">sis identifier https://sis.apache.org/examples/crs/EquivalentDefinition.wkt</code></pre></div>
 <p>produces an output like below:</p>
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">urn:ogc:def:crs:EPSG:9.7:3994    | WGS 84 / Mercator 41</code></pre></div>
 <p>In above example, Apache <abbr title="Spatial Information System">SIS</abbr> used the fact that a
@@ -345,8 +347,8 @@ can also have an influence; while optional, that area should be specified when i
 <p>The following example transform coordinates from the North American Datum 1927 (EPSG:4267) to WGS84 (EPSG:4326).
 The example is run twice: once for cities in USA, then once for cities in Canada:
 (Note: the application may log warnings to the console. Those warnings can be ignored)</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">wget http://sis.apache.org/examples/coordinates/AmericanCities.csv
-wget http://sis.apache.org/examples/coordinates/CanadianCities.csv
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">wget https://sis.apache.org/examples/coordinates/AmericanCities.csv
+wget https://sis.apache.org/examples/coordinates/CanadianCities.csv
 sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 AmericanCities.csv
 sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 CanadianCities.csv</code></pre></div>
 <p>The first execution should print the following header, followed by transformed coordinate values.
@@ -436,7 +438,9 @@ The following example shows the metadata of a netCDF file accessible from the we
 </details>
 <br/>
 <p>Adding the <code>--format xml</code> option to the above command will format the same metadata in a <abbr title="Extensible Markup Language">XML</abbr> document.
-The output is not shown in this page because of its verbosity.</p>
+The output is not shown in this page because of its verbosity.
+<strong>Note:</strong> in current Apache <abbr title="Spatial Information System">SIS</abbr> version, XML output requires manual installation of additional dependencies.
+See <a href="https://issues.apache.org/jira/browse/SIS-545">issue SIS-545</a> for more information.</p>
 <p>Java API for accessing functionalities shown in above examples are:</p>
 <ul>
 <li>Convenience static methods in <code>org.apache.sis.xml</code> package:

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
+
 
   <title>Apache SIS - How to use EPSG geodetic dataset</title>
   <meta charset="utf-8">
@@ -52,7 +52,9 @@
         <ul class="dropdown-menu" aria-labelledby="menuContribute">
           <li><a class="dropdown-item" href="contributor.html">New Contributor</a></li>
           <li><a class="dropdown-item" href="coding-conventions.html">Coding Conventions</a></li>
+          <li><a class="dropdown-item" href="mail-lists.html">Mailing Lists</a></li>
           <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+          <li><a class="dropdown-item" href="https://github.com/apache/sis">GitHub mirror</a></li>
           <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="release-management.html">Release management</a></li>
@@ -100,7 +102,7 @@
       <article>
         <img src="images/logo.png" class="sis-logo" align="left"/>
         <p class="page-title">How to use EPSG geodetic dataset</p>
-        
+
   <p>The <a href="https://epsg.org/">EPSG geodetic dataset</a> is a de-facto standard providing
 <a href="tables/CoordinateReferenceSystems.html">thousands of Coordinate Reference System (CRS) definitions</a>
 together with information about how to perform coordinate operations, their accuracies and their domains of validity.
@@ -151,21 +153,21 @@ For example:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">sis crs EPSG:6676</code></pre></div>
 <p>The first time that the command-line tool needs to query EPSG, it will prompt the user for authorization
 to download EPSG geodetic dataset from Maven Central. If the user accepts EPSG terms of use, then a local
-copy of the EPSG geodetic dataset will be created and stored in the <code>apache-sis-1.1/data</code> sub-directory.</p>
+copy of the EPSG geodetic dataset will be created and stored in the <code>apache-sis-1.2/data</code> sub-directory.</p>
 <h2 id="use-local">Use the local copy in other applications   </h2>
 <p>For using the installed EPSG geodetic dataset in your own application, apply <em>one</em> of the following choices:</p>
 <ul>
-<li>Set the <code>SIS_DATA</code> environment variable to the path of <code>apache-sis-1.1/data</code> directory <em>(recommended)</em>.</li>
-<li>Set the <code>derby.system.home</code> Java property to the path of <code>apache-sis-1.1/data/Databases</code> directory.</li>
+<li>Set the <code>SIS_DATA</code> environment variable to the path of <code>apache-sis-1.2/data</code> directory <em>(recommended)</em>.</li>
+<li>Set the <code>derby.system.home</code> Java property to the path of <code>apache-sis-1.2/data/Databases</code> directory.</li>
 </ul>
 <p>Alternatively <code>SIS_DATA</code> or <code>derby.system.home</code> can be set to the path of any other directory which contain the same files.
-Examples are shown below for Unix systems, assuming that the current directory is the directory where <code>apache-sis-1.1-bin.zip</code>
+Examples are shown below for Unix systems, assuming that the current directory is the directory where <code>apache-sis-1.2-bin.zip</code>
 has been unzipped:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">export</span> <span class="nv">SIS_DATA</span><span class="o">=</span>apache-sis-1.1/data
-java -classpath apache-sis-1.1/lib/sis-referencing.jar:myApp.jar myMainClass</code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">export</span> <span class="nv">SIS_DATA</span><span class="o">=</span>apache-sis-1.2/data
+java -classpath apache-sis-1.2/lib/sis-referencing.jar:myApp.jar myMainClass</code></pre></div>
 <p>If the <code>SIS_DATA</code> environment variable can not be set, Java property can be used as a fallback:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">java -Dderby.system.home<span class="o">=</span>apache-sis-1.1/data/Databases <span class="se">\
-</span><span class="se"></span>     -classpath apache-sis-1.1/lib/sis-referencing.jar:myApp.jar <span class="se">\
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">java -Dderby.system.home<span class="o">=</span>apache-sis-1.2/data/Databases <span class="se">\
+</span><span class="se"></span>     -classpath apache-sis-1.2/lib/sis-referencing.jar:myApp.jar <span class="se">\
 </span><span class="se"></span>     myMainClass</code></pre></div>
 <h1 id="maven">Add a Maven dependency   </h1>
 <p>Maven projects can get the EPSG geodetic dataset automatically, <em>without any prompt for terms of use agreement</em>,
@@ -191,7 +193,7 @@ if that database is specified by JNDI):</p>
   <span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>org.apache.sis.non-free<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>sis-epsg<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.1<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.2<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
   <span class="nt">&lt;/dependency&gt;</span>
   <span class="nt">&lt;dependency&gt;</span>
@@ -219,7 +221,7 @@ Note that <code>sis-epsg</code> and <code>sis-embedded-data</code> should not be
   <span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>org.apache.sis.non-free<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>sis-embedded-data<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.1<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.2<span class="nt">&lt;/version&gt;</span>
     <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
   <span class="nt">&lt;/dependency&gt;</span>
 <span class="nt">&lt;/dependencies&gt;</span></code></pre></div>
@@ -235,7 +237,7 @@ or by uncompressing the <code>sis-embedded-data.jar</code> file locally.</p>
 For using an arbitrary database, register a <code>javax.sql.DataSource</code> instance through the Java Naming and Directory Interface (JNDI).
 That registration can be done programmatically (by Java code) or by configuring XML files in some environments.
 The database must exist but can be empty, in which case it will be populated with an EPSG schema when first needed
-if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​1.1</code> dependency is on the classpath
+if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​1.2</code> dependency is on the classpath
 (see <a href="#maven-epsg">above section</a>).</p>
 <h2 id="jndi-java">Registration by Java code   </h2>
 <p>Registration can be done by the following Java code, provided that a JNDI implementation is available on the classpath:</p>
