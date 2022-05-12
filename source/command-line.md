@@ -194,7 +194,7 @@ Furthermore, the _“NTF (Paris) / Lambert zone II”_ name has been replaced by
 Executing the following command:
 
 {{< highlight bash >}}
-sis identifier http://sis.apache.org/examples/crs/MissingIdentifier.wkt
+sis identifier https://sis.apache.org/examples/crs/MissingIdentifier.wkt
 {{< / highlight >}}
 
 produces an output like below:
@@ -212,7 +212,7 @@ Apache {{% SIS %}} can detect such mismatches.
 For example executing the following command:
 
 {{< highlight bash >}}
-sis identifier http://sis.apache.org/examples/crs/WrongAxisOrder.wkt
+sis identifier https://sis.apache.org/examples/crs/WrongAxisOrder.wkt
 {{< / highlight >}}
 
 produces an output like below:
@@ -250,7 +250,7 @@ ProjectedCRS["Scaled Mercator",
 Executing the following command:
 
 {{< highlight bash >}}
-sis identifier http://sis.apache.org/examples/crs/EquivalentDefinition.wkt
+sis identifier https://sis.apache.org/examples/crs/EquivalentDefinition.wkt
 {{< / highlight >}}
 
 produces an output like below:
@@ -283,8 +283,8 @@ The example is run twice: once for cities in USA, then once for cities in Canada
 (Note: the application may log warnings to the console. Those warnings can be ignored)
 
 {{< highlight bash >}}
-wget http://sis.apache.org/examples/coordinates/AmericanCities.csv
-wget http://sis.apache.org/examples/coordinates/CanadianCities.csv
+wget https://sis.apache.org/examples/coordinates/AmericanCities.csv
+wget https://sis.apache.org/examples/coordinates/CanadianCities.csv
 sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 AmericanCities.csv
 sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 CanadianCities.csv
 {{< / highlight >}}
@@ -396,6 +396,8 @@ The following example shows the metadata of a netCDF file accessible from the we
 
 Adding the `--format xml` option to the above command will format the same metadata in a {{% XML %}} document.
 The output is not shown in this page because of its verbosity.
+**Note:** in current Apache {{% SIS %}} version, XML output requires manual installation of additional dependencies.
+See [issue SIS-545](https://issues.apache.org/jira/browse/SIS-545) for more information.
 
 Java API for accessing functionalities shown in above examples are:
 
