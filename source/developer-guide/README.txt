@@ -5,12 +5,14 @@ by the `org.apache.sis.internal.book.Assembler` class in `sis-build-helper` modu
 Assuming the following directory structure:
 
 (current directory)
- ├─ master
- │   └─ core
- │       └─ sis-build-helper
- └─ site
-     ├─ source
-     └─ static
+├─ master
+│   └─ core
+│       └─ sis-build-helper
+└─ site
+    ├─ main
+    │   └─ source
+    └─ asf-staging
+        └─ book
 
 Then the command can be used as below on Unix systems:
 
