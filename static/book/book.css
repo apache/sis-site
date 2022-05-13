@@ -1,89 +1,75 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Licensed to the Apache Software Foundation (ASF)
+ * under one or more contributor license agreements.
  */
 
 /*
  * Table of content, to be shown on the left side.
- * main{left} should be at least equal to nav.toc{width}.
+ * main{left} should be at least equal to nav{width}.
  * We use <p> element for the "Table of content" title instead than <h1>
  * because we don't want those textes to be inserted in the auto-generated TOC.
  */
 nav {
-  font-family: sans-serif;
-  line-height: 100%;
-  color:       #006699;
-}
-
-nav.toc {
-  background-color: #f7f8f9;
-  position:  absolute;
-  overflow:  auto;
-  top:       0;
-  bottom:    0;
-  left:      0;
-  max-width: 80%;
-  width:     20em;
+  position:         absolute;
+  top:              0;
+  left:             0;
+  right:            0;
+  bottom:           0;
+  width:            450px;
+  white-space:      nowrap;
+  overflow:         auto;
+  font-family:      sans-serif;
+  font-size:        smaller;
+  color:            #1a5276;
+  background-color: #f8f9f9;
+  border-right:     #cacfd2 1px solid;
 }
 
 main {
-  left:     20em;
-  right:    0;
-  top:      0;
-  bottom:   0;
   position: fixed;
+  left:     450px;
+  top:      0;
+  right:    0;
+  bottom:   0;
   overflow: auto;
 }
 
 nav a {
+  display: block;
   text-decoration: none;
   font-family: sans-serif;
-  font-size: small;
-  color: #006699;
+  color: #5d6d7e;
+  transition: all 50ms ease-in-out;
 }
 
+nav a:focus,
 nav a:hover {
+  color: #154360;
   text-decoration: underline;
 }
 
 nav p {
-  font-size:   large;
-  font-weight:  bold;
-  margin-top:    9px;
-  margin-bottom: 6px;
-  margin-left:   6px;
+  font-size:      large;
+  font-weight:    bold;
+  padding-left:   15px;
+  padding-bottom: 4px;
+  margin-bottom:  6px;
+  border-bottom:  #2471a3 1px solid;
 }
 
-/*
- * Table of content items. Note that fragments of TOC are repeated at the beginning
- * of each chapter in the main body. Those fragments have a slightly different layout.
- */
-ul.toc {
-  list-style-type: square;
-  margin-bottom:   30px;
-  padding-left:    21px;
+nav ul {
+  list-style-type: none;
+  padding-left:    15px;
 }
 
-ul.toc ul {
-  list-style-type: square;
-  padding-left:    21px;
-}
-
-nav.toc ul.toc li {
+nav ul li {
   margin-top:    3px;
   margin-bottom: 3px;
+}
+
+nav li.active > a {
+  color: #154360;
+  font-weight: bolder;
 }
 
 /*
