@@ -50,7 +50,7 @@ pgpk -a KEYS
 pgpv apache-sis-X.Y.Z.zip.asc
 {{< / highlight >}}
 
-# Download as a Maven dependency    {#maven}
+# Download as Maven dependencies    {#maven}
 
 An easy approach to integrate Apache {{% SIS %}} into a Java project uses the [Apache Maven][maven]
 dependency management tool to automatically obtain the required Java Archives (JAR) files from the network.
@@ -67,16 +67,36 @@ Below are examples of declarations in a `pom.xml` file for building a project wi
     <artifactId>sis-referencing</artifactId>
     <version>${sis.version}</version>
   </dependency>
-</dependencies>
 
-<!-- The following dependency can be omitted if XML support is not desired. -->
-<dependency>
-  <groupId>org.glassfish.jaxb</groupId>
-  <artifactId>jaxb-runtime</artifactId>
-  <version>2.3.3</version>
-  <scope>runtime</scope>
-</dependency>
+  <!-- The following dependency can be omitted if XML support is not desired. -->
+  <dependency>
+    <groupId>org.glassfish.jaxb</groupId>
+    <artifactId>jaxb-runtime</artifactId>
+    <version>2.3.6</version>
+    <scope>runtime</scope>
+  </dependency>
+</dependencies>
 {{< / highlight >}}
+
+The `sis-referencing` module in above example can be replaced by one or many of the following modules:
+
+<table>
+  <tr><th>Service</th>                          <th>Group</th>                                   <th>Artifact</th></tr>
+  <tr><td>ISO 19115 metadata</td>               <td><code>org.apache.sis.core</code></td>        <td><code>sis-metadata</code></td></tr>
+  <tr><td>Referencing by coordinates</td>       <td><code>org.apache.sis.core</code></td>        <td><code>sis-referencing</code></td></tr>
+  <tr><td>Referencing by identifiers</td>       <td><code>org.apache.sis.core</code></td>        <td><code>sis-referencing-by-identifiers</code></td></tr>
+  <tr><td>Features and coverages</td>           <td><code>org.apache.sis.core</code></td>        <td><code>sis-feature</code></td></tr>
+  <tr><td>Feature data from SQL database</td>   <td><code>org.apache.sis.storage</code></td>     <td><code>sis-sqlstore</code></td></tr>
+  <tr><td>Feature data from GPX files</td>      <td><code>org.apache.sis.storage</code></td>     <td><code>sis-xmlstore</code></td></tr>
+  <tr><td>Features and rasters from NetCDF</td> <td><code>org.apache.sis.storage</code></td>     <td><code>sis-netcdf</code></td></tr>
+  <tr><td>Raster data from GeoTIFF</td>         <td><code>org.apache.sis.storage</code></td>     <td><code>sis-geotiff</code></td></tr>
+  <tr><td>Raster data from Landsat</td>         <td><code>org.apache.sis.storage</code></td>     <td><code>sis-earth-observation</code></td></tr>
+  <tr><td>Raster data from GCOM (JAXA)</td>     <td><code>org.apache.sis.profile</code></td>     <td><code>sis-japan-profile</code></td></tr>
+  <tr><td>Connection to storages on cloud</td>  <td><code>org.apache.sis.cloud</code></td>       <td><code>sis-cloud-aws</code></td></tr>
+  <tr><td>Console application</td>              <td><code>org.apache.sis.application</code></td> <td><code>sis-console</code></td></tr>
+  <tr><td>Graphical application</td>            <td><code>org.apache.sis.application</code></td> <td><code>sis-javafx</code></td></tr>
+</table>
+
 
 ## Include non-free resources    {#non-free}
 

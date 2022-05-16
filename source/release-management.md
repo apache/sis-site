@@ -471,7 +471,9 @@ Update the following files (e.g. the release date in `index.md`):
 
 * `source/index.md`
 * `source/command-line.md`
-* `source/epsg.md`
+* `source/epsg.md` for EPSG dataset version
+* `source/download.md` for SIS version and JAXB dependency
+* `source/developer-guide/introduction/Installation.html`
 
 Commit:
 
