@@ -475,10 +475,28 @@ Update the following files (e.g. the release date in `index.md`):
 * `source/download.md` for SIS version and JAXB dependency
 * `source/developer-guide/introduction/Installation.html`
 
-Commit:
+Execute `hugo` and browse the documentation in the `target` repository.
+If okay, commit and copy to staging repository:
 
 {{< highlight bash >}}
-svn commit --message "Prepare documentation for the $NEW_VERSION release."
+git commit --message "Prepare documentation for the $NEW_VERSION release."
+
+# Copy to staging repository
+rm --recursive ../asf-staging/*
+mv target/.htaccess target/* ../asf-staging/
+rmdir target
+cd ../asf-staging/
+rm fr.html
+
+# Remove trailing whitespaces
+find . -name "*.html" -type f -exec sed -i 's/[[:space:]]*$//' '{}' \;
+find . -name "*.xml" -type f -exec sed -i 's/[[:space:]]*$//' '{}' \;
+
+# Commit
+git add --all
+git commit --message "Staging repository for the $NEW_VERSION release."
+```
+
 {{< / highlight >}}
 
 The new web site will be published in the [staging area](https://sis.staged.apache.org/).

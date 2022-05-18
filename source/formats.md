@@ -1,5 +1,5 @@
 ---
-title: Formats supported by Apache SIS
+title: Data formats supported by Apache SIS
 ---
 
 Apache {{% SIS %}} can read data from the formats listed below.
@@ -98,3 +98,38 @@ Most of Apache {{% SIS %}} API is designed for multi-dimensional data.
 When requesting a `RenderedImage`, a two-dimensional slice must be specified,
 unless the data are already two-dimensional.
 The two-dimensional slice can be along any dimensions.
+See the [SIS developer guide](book/en/developer-guide.html#DataAccess) for more information.
+
+
+# Accessing data on the cloud
+
+Data files can be located on Amazon S3 storage service.
+For accessing those data, add the following dependency to the Maven project:
+
+{{< highlight xml >}}
+<dependencies>
+  <dependency>
+    <groupId>org.apache.sis.cloud</groupId>
+    <artifactId>sis-cloud-aws</artifactId>
+    <version>{{% version %}}</version>
+    <scope>runtime</scope>
+  </dependency>
+</dependencies>
+{{< / highlight >}}
+
+With above dependency on the classpath, it is possible to instantiate `java.nio.Path` object
+with a value of the form `"S3://bucket/pseudo-directory/file"`.
+Login and password can be specified in a `~/.aws/credentials` file like below
+(Apache SIS does not yet manage credentials by itself).
+
+{{< highlight config >}}
+[default]
+aws_access_key_id = <some value>
+aws_secret_access_key = <some value>
+{{< / highlight >}}
+
+An alternative to above configuration is to set the
+`AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.
+See [AWS developer guide][aws-credentials] for more information.
+
+[aws-credentials]: https://docs.aws.amazon.com/sdkref/latest/guide/file-format.html
