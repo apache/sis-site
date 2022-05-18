@@ -86,7 +86,7 @@
     <ul class="nav nav-pills flex-column mb-auto position-fixed">
       <li><a class="nav-link  text-white " href="/index.html">Home</a></li>
       <li><a class="nav-link  text-white " href="standards.html">Standards</a></li>
-      <li><a class="nav-link  text-white " href="formats.html">Formats</a></li>
+      <li><a class="nav-link  text-white " href="formats.html">Data formats</a></li>
       <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
       <li><a class="nav-link  text-white " href="javafx.html">Application (demo)</a></li>
       <li><a class="nav-link  active " href="downloads.html">Downloads</a></li>
@@ -114,7 +114,7 @@ See the <code>NOTICE</code> file contained in each release artifact for applicab
         <li><a href="#release-gpg">Verify signatures   </a></li>
       </ul>
     </li>
-    <li><a href="#maven">Download as a Maven dependency   </a>
+    <li><a href="#maven">Download as Maven dependencies   </a>
       <ul>
         <li><a href="#non-free">Include non-free resources   </a></li>
       </ul>
@@ -146,7 +146,7 @@ pgp apache-sis-X.Y.Z.zip.asc</code></pre></div>
 <p>Using PGP version 5:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">pgpk -a KEYS
 pgpv apache-sis-X.Y.Z.zip.asc</code></pre></div>
-<h1 id="maven">Download as a Maven dependency   </h1>
+<h1 id="maven">Download as Maven dependencies   </h1>
 <p>An easy approach to integrate Apache <abbr title="Spatial Information System">SIS</abbr> into a Java project uses the <a href="http://maven.apache.org/">Apache Maven</a>
 dependency management tool to automatically obtain the required Java Archives (JAR) files from the network.
 Below are examples of declarations in a <code>pom.xml</code> file for building a project with a SIS core module.</p>
@@ -160,15 +160,32 @@ Below are examples of declarations in a <code>pom.xml</code> file for building a
     <span class="nt">&lt;artifactId&gt;</span>sis-referencing<span class="nt">&lt;/artifactId&gt;</span>
     <span class="nt">&lt;version&gt;</span>${sis.version}<span class="nt">&lt;/version&gt;</span>
   <span class="nt">&lt;/dependency&gt;</span>
-<span class="nt">&lt;/dependencies&gt;</span>
 
-<span class="c">&lt;!-- The following dependency can be omitted if XML support is not desired. --&gt;</span>
-<span class="nt">&lt;dependency&gt;</span>
-  <span class="nt">&lt;groupId&gt;</span>org.glassfish.jaxb<span class="nt">&lt;/groupId&gt;</span>
-  <span class="nt">&lt;artifactId&gt;</span>jaxb-runtime<span class="nt">&lt;/artifactId&gt;</span>
-  <span class="nt">&lt;version&gt;</span>2.3.3<span class="nt">&lt;/version&gt;</span>
-  <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
-<span class="nt">&lt;/dependency&gt;</span></code></pre></div>
+  <span class="c">&lt;!-- The following dependency can be omitted if XML support is not desired. --&gt;</span>
+  <span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.glassfish.jaxb<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>jaxb-runtime<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.3.6<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+  <span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;/dependencies&gt;</span></code></pre></div>
+<p>The <code>sis-referencing</code> module in above example can be replaced by one or many of the following modules:</p>
+<table>
+  <tr><th>Service</th>                          <th>Group</th>                                   <th>Artifact</th></tr>
+  <tr><td>ISO 19115 metadata</td>               <td><code>org.apache.sis.core</code></td>        <td><code>sis-metadata</code></td></tr>
+  <tr><td>Referencing by coordinates</td>       <td><code>org.apache.sis.core</code></td>        <td><code>sis-referencing</code></td></tr>
+  <tr><td>Referencing by identifiers</td>       <td><code>org.apache.sis.core</code></td>        <td><code>sis-referencing-by-identifiers</code></td></tr>
+  <tr><td>Features and coverages</td>           <td><code>org.apache.sis.core</code></td>        <td><code>sis-feature</code></td></tr>
+  <tr><td>Feature data from SQL database</td>   <td><code>org.apache.sis.storage</code></td>     <td><code>sis-sqlstore</code></td></tr>
+  <tr><td>Feature data from GPX files</td>      <td><code>org.apache.sis.storage</code></td>     <td><code>sis-xmlstore</code></td></tr>
+  <tr><td>Features and rasters from NetCDF</td> <td><code>org.apache.sis.storage</code></td>     <td><code>sis-netcdf</code></td></tr>
+  <tr><td>Raster data from GeoTIFF</td>         <td><code>org.apache.sis.storage</code></td>     <td><code>sis-geotiff</code></td></tr>
+  <tr><td>Raster data from Landsat</td>         <td><code>org.apache.sis.storage</code></td>     <td><code>sis-earth-observation</code></td></tr>
+  <tr><td>Raster data from GCOM (JAXA)</td>     <td><code>org.apache.sis.profile</code></td>     <td><code>sis-japan-profile</code></td></tr>
+  <tr><td>Connection to storages on cloud</td>  <td><code>org.apache.sis.cloud</code></td>       <td><code>sis-cloud-aws</code></td></tr>
+  <tr><td>Console application</td>              <td><code>org.apache.sis.application</code></td> <td><code>sis-console</code></td></tr>
+  <tr><td>Graphical application</td>            <td><code>org.apache.sis.application</code></td> <td><code>sis-javafx</code></td></tr>
+</table>
 <h2 id="non-free">Include non-free resources   </h2>
 <p>The <a href="https://epsg.org/">EPSG geodetic dataset</a> is optional but strongly recommended.
 The EPSG dataset is a de-facto standard providing

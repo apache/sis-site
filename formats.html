@@ -3,7 +3,7 @@
 <head>
 
 
-  <title>Apache SIS - Formats supported by Apache SIS</title>
+  <title>Apache SIS - Data formats supported by Apache SIS</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
@@ -86,7 +86,7 @@
     <ul class="nav nav-pills flex-column mb-auto position-fixed">
       <li><a class="nav-link  text-white " href="/index.html">Home</a></li>
       <li><a class="nav-link  text-white " href="standards.html">Standards</a></li>
-      <li><a class="nav-link  active " href="formats.html">Formats</a></li>
+      <li><a class="nav-link  active " href="formats.html">Data formats</a></li>
       <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
       <li><a class="nav-link  text-white " href="javafx.html">Application (demo)</a></li>
       <li><a class="nav-link  text-white " href="downloads.html">Downloads</a></li>
@@ -101,7 +101,7 @@
     <main class="container">
       <article>
         <img src="images/logo.png" class="sis-logo" align="left"/>
-        <p class="page-title">Formats supported by Apache SIS</p>
+        <p class="page-title">Data formats supported by Apache SIS</p>
 
   <p>Apache <abbr title="Spatial Information System">SIS</abbr> can read data from the formats listed below.
 Some formats are supported in read-only mode, others in read/write modes.
@@ -191,7 +191,29 @@ or a <abbr title="Java DataBase Connectivity">JDBC</abbr> <code>DataSource</code
 <p>Most of Apache <abbr title="Spatial Information System">SIS</abbr> API is designed for multi-dimensional data.
 When requesting a <code>RenderedImage</code>, a two-dimensional slice must be specified,
 unless the data are already two-dimensional.
-The two-dimensional slice can be along any dimensions.</p>
+The two-dimensional slice can be along any dimensions.
+See the <a href="book/en/developer-guide.html#DataAccess">SIS developer guide</a> for more information.</p>
+<h1 id="accessing-data-on-the-cloud">Accessing data on the cloud</h1>
+<p>Data files can be located on Amazon S3 storage service.
+For accessing those data, add the following dependency to the Maven project:</p>
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependencies&gt;</span>
+  <span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.sis.cloud<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>sis-cloud-aws<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.2<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+  <span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;/dependencies&gt;</span></code></pre></div>
+<p>With above dependency on the classpath, it is possible to instantiate <code>java.nio.Path</code> object
+with a value of the form <code>&quot;S3://bucket/pseudo-directory/file&quot;</code>.
+Login and password can be specified in a <code>~/.aws/credentials</code> file like below
+(Apache SIS does not yet manage credentials by itself).</p>
+<pre><code class="language-config" data-lang="config">[default]
+aws_access_key_id = &lt;some value&gt;
+aws_secret_access_key = &lt;some value&gt;</code></pre>
+<p>An alternative to above configuration is to set the
+<code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code> environment variables.
+See <a href="https://docs.aws.amazon.com/sdkref/latest/guide/file-format.html">AWS developer guide</a> for more information.</p>
 
 
       </article>

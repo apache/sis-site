@@ -86,7 +86,7 @@
     <ul class="nav nav-pills flex-column mb-auto position-fixed">
       <li><a class="nav-link  text-white " href="/index.html">Home</a></li>
       <li><a class="nav-link  text-white " href="standards.html">Standards</a></li>
-      <li><a class="nav-link  text-white " href="formats.html">Formats</a></li>
+      <li><a class="nav-link  text-white " href="formats.html">Data formats</a></li>
       <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
       <li><a class="nav-link  text-white " href="javafx.html">Application (demo)</a></li>
       <li><a class="nav-link  text-white " href="downloads.html">Downloads</a></li>
@@ -481,16 +481,35 @@ Add a new <code>&lt;release&gt;</code> block for the new release with the estima
 <ul>
 <li><code>source/index.md</code></li>
 <li><code>source/command-line.md</code></li>
-<li><code>source/epsg.md</code></li>
+<li><code>source/epsg.md</code> for EPSG dataset version</li>
+<li><code>source/download.md</code> for SIS version and JAXB dependency</li>
+<li><code>source/developer-guide/introduction/Installation.html</code></li>
 </ul>
-<p>Commit:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">svn commit --message <span class="s2">&#34;Prepare documentation for the </span><span class="nv">$NEW_VERSION</span><span class="s2"> release.&#34;</span></code></pre></div>
+<p>Execute <code>hugo</code> and browse the documentation in the <code>target</code> repository.
+If okay, commit and copy to staging repository:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">git commit --message <span class="s2">&#34;Prepare documentation for the </span><span class="nv">$NEW_VERSION</span><span class="s2"> release.&#34;</span>
+
+<span class="c1"># Copy to staging repository</span>
+rm --recursive ../asf-staging/*
+mv target/.htaccess target/* ../asf-staging/
+rmdir target
+<span class="nb">cd</span> ../asf-staging/
+rm fr.html
+
+<span class="c1"># Remove trailing whitespaces</span>
+find . -name <span class="s2">&#34;*.html&#34;</span> -type f -exec sed -i <span class="s1">&#39;s/[[:space:]]*$//&#39;</span> <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
+find . -name <span class="s2">&#34;*.xml&#34;</span> -type f -exec sed -i <span class="s1">&#39;s/[[:space:]]*$//&#39;</span> <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
+
+<span class="c1"># Commit</span>
+git add --all
+git commit --message <span class="s2">&#34;Staging repository for the </span><span class="nv">$NEW_VERSION</span><span class="s2"> release.&#34;</span>
+<span class="sb">```</span></code></pre></div>
 <p>The new web site will be published in the <a href="https://sis.staged.apache.org/">staging area</a>.
 It will not yet be published on <code>https://sis.apache.org</code>.</p>
 <h1 id="vote">Put the release candidate up for a vote   </h1>
 <ul>
 <li>Create a VOTE email thread on <code>dev@</code> to record votes as replies.
-A template is available <a href="templates/release-vote.txt">here</a>.</li>
+A template is available <a href="templates/release-vote.html">here</a>.</li>
 <li>Create a DISCUSS email thread on <code>dev@</code> for any vote questions.
 A template is available <a href="templates/release-discuss.txt">here</a>.</li>
 <li>Perform a review of the release and cast your vote:</li>
