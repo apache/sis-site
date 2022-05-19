@@ -1,113 +1,89 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Licensed to the Apache Software Foundation (ASF)
+ * under one or more contributor license agreements.
  */
 
 /*
  * Table of content, to be shown on the left side.
- * main{left} should be at least equal to nav.toc{width}.
+ * main{left} should be at least equal to nav{width}.
  * We use <p> element for the "Table of content" title instead than <h1>
  * because we don't want those textes to be inserted in the auto-generated TOC.
  */
 nav {
-  font-family: sans-serif;
-  line-height: 100%;
-  color:       #006699;
-}
-
-nav.toc {
-  background-color: #f7f8f9;
-  position:  absolute;
-  overflow:  auto;
-  top:       0;
-  bottom:    0;
-  left:      0;
-  max-width: 80%;
-  width:     20em;
+  position:         absolute;
+  top:              0;
+  left:             0;
+  right:            0;
+  bottom:           0;
+  width:            450px;
+  white-space:      nowrap;
+  overflow:         auto;
+  font-family:      sans-serif;
+  font-size:        smaller;
+  color:            #1a5276;
+  background-color: #f8f9f9;
+  border-right:     #cacfd2 1px solid;
 }
 
 main {
-  left:     20em;
-  right:    0;
-  top:      0;
-  bottom:   0;
-  position: fixed;
-  overflow: auto;
+  position:      fixed;
+  left:          450px;
+  top:           0;
+  right:         0;
+  bottom:        0;
+  overflow:      auto;
+  padding-left:  42px;
+  padding-right: 30px;
+  font-size:     18px;
+  /*
+   * Firefox has a monospace font size different than the proportional font size.
+   * By setting a font size in the main block, we force the same size for both fonts.
+   *
+   * https://bugzilla.mozilla.org/show_bug.cgi?id=328621
+   */
 }
 
 nav a {
+  display:         block;
   text-decoration: none;
-  font-family: sans-serif;
-  font-size: small;
-  color: #006699;
+  font-family:     sans-serif;
+  color:           #5d6d7e;
+  transition:      all 50ms ease-in-out;
 }
 
+nav a:focus,
 nav a:hover {
+  color:           #154360;
   text-decoration: underline;
 }
 
 nav p {
-  font-size:   large;
-  font-weight:  bold;
-  margin-top:    9px;
-  margin-bottom: 6px;
-  margin-left:   6px;
+  font-size:      large;
+  font-weight:    bold;
+  padding-left:   15px;
+  padding-bottom: 4px;
+  margin-bottom:  6px;
+  border-bottom:  #2471a3 1px solid;
 }
 
-/*
- * Table of content items. Note that fragments of TOC are repeated at the beginning
- * of each chapter in the main body. Those fragments have a slightly different layout.
- */
-ul.toc {
-  list-style-type: square;
-  margin-bottom:   30px;
-  padding-left:    21px;
+nav ul {
+  list-style-type: none;
+  padding-left:    15px;
 }
 
-ul.toc ul {
-  list-style-type: square;
-  padding-left:    21px;
-}
-
-nav.toc ul.toc li {
+nav ul li {
   margin-top:    3px;
   margin-bottom: 3px;
 }
 
-/*
- * For the main body, we put a margin for almost everything except the elements to be centered.
- */
-section > header > h2,
-section > h3,
-section > h4,
-section > p,
-section > nav > p,
-section > pre,
-section > div.example,
-section > details {
-  margin-left:  42px;
-  margin-right: 30px;
+nav li.active > a {
+  color: #154360;
+  font-weight: bolder;
 }
 
-li > p {
-  margin-right: 30px;
-}
-
-section > div.example,
-section > article,
-section > aside {
+div.example,
+article,
+aside {
   margin-left:  80px;
   margin-right: 68px;
 }
@@ -118,81 +94,52 @@ dd > div.example {
   margin-right: 60px;
 }
 
-main nav ul.toc,
 section > ul,
+section > ol,
 section > dl {
-  margin-left: 42px;
+  margin-left: 30px;
 }
 
 /*
  * Lists.
  */
 ul.verbose li {
-  margin-top:    4px;
-  margin-bottom: 4px;
-}
-
-/*
- * Links to previous and next chapters.
- */
-div.chapter-links {
-  width:               100%;
-  background-color:    #CCDFFF;
-  border-bottom-color: #0077B3;
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
-  margin-top:          0px;
-  padding-top:         6px;
-  margin-bottom:       18px;
-  padding-bottom:      24px;
-  white-space:         nowrap;
-}
-
-div.previous-chapter {
-  width: 50%;
-  float: left;
-}
-
-div.next-chapter {
-  width:      50%;
-  float:      right;
-  text-align: right;
+  margin-top:    9px;
+  margin-bottom: 9px;
 }
 
 /*
  * Chapters and sections titles (excluding the book titles).
  */
+section > h1,
 section > header > h1 {
   font-family:         sans-serif;
-  margin-top:          160px;
-  text-align:          center;
-  background-color:    #99AAFF;
-  border-top-color:    #0000CC;
-  border-bottom-color: #0000CC;
-  border-top-style:    solid;
+  margin-top:          200px;
   border-bottom-style: solid;
-  border-top-width:    3px;
   border-bottom-width: 3px;
   padding-top:         6px;
-  padding-bottom:      0px;
+  padding-bottom:      6px;
   margin-bottom:       0px;
 }
 
+section > h2,
 section > header > h2 {
   font-family:         sans-serif;
-  margin-top:          60px;
+  margin-top:          160px;
   border-bottom-style: solid;
   border-bottom-width: 2px;
 }
 
-section > h3 {
+section > h3,
+section > header > h3 {
   font-family: sans-serif;
-  margin-top:  50px;
+  margin-top:  100px;
 }
 
-section > h4 {
+section > h4,
+section > header > h4 {
   font-family: sans-serif;
-  margin-top:  30px;
+  margin-top:  60px;
 }
 
 span.section-number {
@@ -288,6 +235,21 @@ table tr td.separator {
   border-bottom-width: 1px;
   padding-top:         6px;
   padding-bottom:      6px;
+}
+
+/*
+ * Table with the first column in monospaced font, used for drawing trees.
+ * Because line-wrap is disabled, the table in HTML may need a `font-size`
+ * style element with a magic number using the `vw` unit.
+ */
+table.monospacedHeaderColumn {
+  white-space: nowrap;
+  line-height: 1;
+  border:      none;
+}
+
+table.monospacedHeaderColumn tr > :nth-child(1) {
+  font-family: monospace;
 }
 
 div.caption {

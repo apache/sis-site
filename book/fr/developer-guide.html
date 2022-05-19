@@ -14,11 +14,12 @@
 <title>Introduction à Apache SIS</title>
 <meta charset="UTF-8"/>
 <link href="../book.css" rel="stylesheet" type="text/css"/>
+<script src="../toc.js">/* highlighter */</script>
 </head>
 <body>
-<nav class="toc">
+<nav>
 <p>Table des matières</p>
-<ul class="toc">
+<ul>
 <li><a href="#Standards">Standards et normes</a><ul>
 <li><a href="#ConceptualModels">Sources des modèles conceptuels de Apache SIS</a></li>
 <li><a href="#GeoAPI">Des modèles conceptuels vers des interfaces Java: GeoAPI</a><ul>
@@ -31,28 +32,21 @@
 <li><a href="#Geometry">Géométries</a><ul>
 <li><a href="#GeometryBase">Classes de base</a><ul>
 <li><a href="#DirectPosition">Points et positions directes</a></li>
-<li><a href="#Envelope">Enveloppes</a><ul>
-<li><a href="#AntiMeridian">Enveloppes traversant l’antiméridien</a></li></ul></li></ul></li></ul></li>
+<li><a href="#Envelope">Enveloppes</a></li></ul></li></ul></li>
 <li><a href="#Referencing">Systèmes de références spatiales</a><ul>
 <li><a href="#ComponentsOfCRS">Composantes d’un système de références par coordonnées</a><ul>
 <li><a href="#Ellipsoid">Géoïde et ellipsoïde</a></li>
 <li><a href="#GeodeticDatum">Référentiel géodésique</a></li>
-<li><a href="#CoordinateSystem">Systèmes de coordonnées</a><ul>
-<li><a href="#AxisOrder">Ordre des axes</a></li></ul></li>
+<li><a href="#CoordinateSystem">Systèmes de coordonnées</a></li>
 <li><a href="#GeographicCRS">Systèmes géographiques</a></li>
 <li><a href="#ProjectedCRS">Projections cartographiques</a></li></ul></li>
 <li><a href="#CoordinateOperations">Opérations sur les coordonnées</a><ul>
 <li><a href="#CRS.findOperation">Obtention d’une opération sur les coordonnées</a></li>
 <li><a href="#MathTransform">Exécution de opérations</a></li>
-<li><a href="#TransformDerivative">Dérivées partielles des opérations</a><ul>
-<li><a href="#DerivativeAndEnvelope">Utilité des dérivées pour la reprojection d’enveloppes</a></li>
-<li><a href="#DerivativeAndRaster">Utilité des dérivées pour la reprojection d’images</a></li>
-<li><a href="#GetDerivative">Obtention de la dérivée en un point</a></li></ul></li></ul></li>
+<li><a href="#TransformDerivative">Dérivées partielles des opérations</a></li></ul></li>
 <li><a href="#Formats">Formats de stockage des données</a></li>
 <li><a href="#XML-ISO">Représentation des objets en XML</a><ul>
-<li><a href="#XML-ISO-19115">Représentation des méta-données selon ISO 19115-3</a><ul>
-<li><a href="#gco-id">Identification d’instances déjà définies</a></li>
-<li><a href="#nilReason">Représentation de valeurs manquantes</a></li></ul></li></ul></li></ul></li>
+<li><a href="#XML-ISO-19115">Représentation des méta-données selon ISO 19115-3</a></li></ul></li></ul></li>
 <li><a href="#Utilities">Classes et méthodes utilitaires</a><ul>
 <li><a href="#ComparisonModes">Modes de comparaisons des objets</a></li>
 <li><a href="#ObjectConverters">Convertisseurs d’objets</a></li>
@@ -60,8 +54,7 @@
 <li><a href="#LocalizedString">Chaînes de caractères distinctes pour chaque conventions locales</a></li>
 <li><a href="#InternationalString">Instance unique pour toutes les conventions locales</a></li>
 <li><a href="#Locale.ROOT">Convention Locale.ROOT</a></li>
-<li><a href="#UnicodePoint">Traitement des caractères</a><ul>
-<li><a href="#Whitespaces">Interprétation des espaces blancs</a></li></ul></li></ul></li></ul></li>
+<li><a href="#UnicodePoint">Traitement des caractères</a></li></ul></li></ul></li>
 <li><a href="#GeoAPI-details">Relation entre GeoAPI et les standards</a><ul>
 <li><a href="#GeoAPI-modules">Les modules de GeoAPI</a></li>
 <li><a href="#SpecificationToInterfaces">Des spécifications de l’OGC aux interfaces Java</a><ul>
@@ -69,8 +62,7 @@
 <li><a href="#MappingToJDK">Correspondances implicites avec le JDK standard</a></li></ul></li>
 <li><a href="#ReduceDependency">Réduire la dépendance directe envers Apache SIS</a><ul>
 <li><a href="#UML-annotation-indep">Correspondances entre GeoAPI et les spécifications abstraites</a></li>
-<li><a href="#ServiceLoader">Obtenir une implémentation des interfaces de GeoAPI</a><ul>
-<li><a href="#GeoAPI-simple">Fournir sa propre implémentation</a></li></ul></li></ul></li></ul></li>
+<li><a href="#ServiceLoader">Obtenir une implémentation des interfaces de GeoAPI</a></li></ul></li></ul></li>
 <li><a href="#Tests">Les suites de tests</a><ul>
 <li><a href="#GeoAPI-conformance">Conformance avec GeoAPI</a><ul>
 <li><a href="#GeoAPI-validators">Validations des instances</a></li>
@@ -88,10 +80,10 @@
 <p style="margin-top:30pt; font-size:30pt; font-weight:900; text-align:center">
 Introduction à Apache SIS™
 </p>
-<div class="warning">
+<div class="warning" style="position:sticky; top:0; font-size:18px; padding:32px; border-width:3px">
 Cette page est une traduction de la version anglaise du guide.
 Cette traduction n’est pas maintenue et peut être obsolète.
-Pour des informations plus à jour, voir la version anglaise.
+Pour des informations plus à jour, voir la <a href="../en/developer-guide.html">version anglaise</a>.
 </div>
 
 
@@ -108,14 +100,7 @@ Pour des informations plus à jour, voir la version anglaise.
 <section>
 <header>
 <h1 id="Standards"><span class="section-number">1.</span> Standards et normes</h1>
-<nav><div class="chapter-links"><div class="next-chapter"><a href="#DataAccess">Chapitre suivant</a> ➡</div></div></nav>
 </header>
-<nav><p>Dans ce chapitre:</p><ul class="toc">
-<li><a href="#ConceptualModels">Sources des modèles conceptuels de Apache SIS</a></li>
-<li><a href="#GeoAPI">Des modèles conceptuels vers des interfaces Java: GeoAPI</a><ul>
-<li><a href="#GeoAPI-implementation">Implémentations fournies par Apache SIS</a></li></ul></li>
-<li><a href="#AboutBook">Conventions utilisées dans ce guide</a><ul>
-<li><a href="#ChosenTerms">Choix des termes</a></li></ul></li></ul></nav>
 <p>
 Une communauté d’informations géospatiales est un ensemble de systèmes ou d’individus capables d’échanger
 leurs données géospatiales grâce à des définitions et des standards communs ainsi qu’une reconnaissance réciproque.
@@ -562,10 +547,7 @@ Mais un soin particulier doit être apporté aux interfaces entre <abbr>SIS</abb
 <section>
 <header>
 <h1 id="DataAccess"><span class="section-number">2.</span> Accès aux données géospatiales</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Standards">Chapitre précédent</a></div><div class="next-chapter"><a href="#Coverage">Chapitre suivant</a> ➡</div></div></nav>
 </header>
-<nav><p>Dans ce chapitre:</p><ul class="toc">
-<li><a href="#GetMetadataElement">Parcourir les méta-données</a></li></ul></nav>
 <p>
 Bien qu’il soit possible de créer des structures de données programmatiquement en mémoire,
 le plus souvent les données sont lues à partir de fichiers ou autres types d’entrepôts.
@@ -767,9 +749,7 @@ et sont associés à un mécanisme permettant de transformer des coordonnées d�
 <section>
 <header>
 <h1 id="Coverage"><span class="section-number">3.</span> Couvertures de données (<i>Coverages</i>)</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#DataAccess">Chapitre précédent</a></div><div class="next-chapter"><a href="#Geometry">Chapitre suivant</a> ➡</div></div></nav>
 </header>
-<nav><p>Dans ce chapitre:</p><ul class="toc"/></nav>
 <p>
 Les images, souvent nommées <i>rasters</i> en anglais, sont des cas particuliers
 d’une structure de données appelée <i>coverages</i>.
@@ -849,13 +829,7 @@ Cette section est incomplète. Voyez la version anglaise pour une version évent
 <section>
 <header>
 <h1 id="Geometry"><span class="section-number">4.</span> Géométries</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Coverage">Chapitre précédent</a></div><div class="next-chapter"><a href="#Referencing">Chapitre suivant</a> ➡</div></div></nav>
 </header>
-<nav><p>Dans ce chapitre:</p><ul class="toc">
-<li><a href="#GeometryBase">Classes de base</a><ul>
-<li><a href="#DirectPosition">Points et positions directes</a></li>
-<li><a href="#Envelope">Enveloppes</a><ul>
-<li><a href="#AntiMeridian">Enveloppes traversant l’antiméridien</a></li></ul></li></ul></li></ul></nav>
 <p>
 Ce chapitre introduit quelques aspects de la norme <abbr title="International Organization for Standardization">ISO</abbr> 19107 (<i>Spatial schema</i>)
 et les classes de Apache <abbr title="Spatial Information System">SIS</abbr> qui les implémentent.
@@ -1040,28 +1014,7 @@ est vrai, alors il est garanti que l’enveloppe est vide.
 <section>
 <header>
 <h1 id="Referencing"><span class="section-number">5.</span> Systèmes de références spatiales</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Geometry">Chapitre précédent</a></div><div class="next-chapter"><a href="#Utilities">Chapitre suivant</a> ➡</div></div></nav>
 </header>
-<nav><p>Dans ce chapitre:</p><ul class="toc">
-<li><a href="#ComponentsOfCRS">Composantes d’un système de références par coordonnées</a><ul>
-<li><a href="#Ellipsoid">Géoïde et ellipsoïde</a></li>
-<li><a href="#GeodeticDatum">Référentiel géodésique</a></li>
-<li><a href="#CoordinateSystem">Systèmes de coordonnées</a><ul>
-<li><a href="#AxisOrder">Ordre des axes</a></li></ul></li>
-<li><a href="#GeographicCRS">Systèmes géographiques</a></li>
-<li><a href="#ProjectedCRS">Projections cartographiques</a></li></ul></li>
-<li><a href="#CoordinateOperations">Opérations sur les coordonnées</a><ul>
-<li><a href="#CRS.findOperation">Obtention d’une opération sur les coordonnées</a></li>
-<li><a href="#MathTransform">Exécution de opérations</a></li>
-<li><a href="#TransformDerivative">Dérivées partielles des opérations</a><ul>
-<li><a href="#DerivativeAndEnvelope">Utilité des dérivées pour la reprojection d’enveloppes</a></li>
-<li><a href="#DerivativeAndRaster">Utilité des dérivées pour la reprojection d’images</a></li>
-<li><a href="#GetDerivative">Obtention de la dérivée en un point</a></li></ul></li></ul></li>
-<li><a href="#Formats">Formats de stockage des données</a></li>
-<li><a href="#XML-ISO">Représentation des objets en XML</a><ul>
-<li><a href="#XML-ISO-19115">Représentation des méta-données selon ISO 19115-3</a><ul>
-<li><a href="#gco-id">Identification d’instances déjà définies</a></li>
-<li><a href="#nilReason">Représentation de valeurs manquantes</a></li></ul></li></ul></li></ul></nav>
 <p>
 Pour donner une position sur la Terre, on peut utiliser des noms tels que celui d’une ville ou une adresse postale
 — on parle alors de références spatiales par <cite>identifiants</cite> —
@@ -2212,17 +2165,7 @@ et dont la méthode <code class="SIS">getNilReason()</code> retournera la consta
 <section>
 <header>
 <h1 id="Utilities"><span class="section-number">6.</span> Classes et méthodes utilitaires</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Referencing">Chapitre précédent</a></div><div class="next-chapter"><a href="#GeoAPI-details">Chapitre suivant</a> ➡</div></div></nav>
 </header>
-<nav><p>Dans ce chapitre:</p><ul class="toc">
-<li><a href="#ComparisonModes">Modes de comparaisons des objets</a></li>
-<li><a href="#ObjectConverters">Convertisseurs d’objets</a></li>
-<li><a href="#Internationalization">Internationalisation</a><ul>
-<li><a href="#LocalizedString">Chaînes de caractères distinctes pour chaque conventions locales</a></li>
-<li><a href="#InternationalString">Instance unique pour toutes les conventions locales</a></li>
-<li><a href="#Locale.ROOT">Convention Locale.ROOT</a></li>
-<li><a href="#UnicodePoint">Traitement des caractères</a><ul>
-<li><a href="#Whitespaces">Interprétation des espaces blancs</a></li></ul></li></ul></li></ul></nav>
 <p>
 Ce chapitre décrit des aspects de Apache <abbr title="Spatial Information System">SIS</abbr> qui s’appliquent à l’ensemble de la bibliothèque.
 La plupart de ces utilitaires ne sont pas spécifiques aux systèmes d’information spatiales.
@@ -2597,18 +2540,8 @@ de la bibliothèque <abbr>SIS</abbr>.
 <section>
 <header>
 <h1 id="GeoAPI-details"><span class="section-number">7.</span> Relation entre GeoAPI et les standards</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Utilities">Chapitre précédent</a></div><div class="next-chapter"><a href="#Tests">Chapitre suivant</a> ➡</div></div></nav>
 </header>
 
-<nav><p>Dans ce chapitre:</p><ul class="toc">
-<li><a href="#GeoAPI-modules">Les modules de GeoAPI</a></li>
-<li><a href="#SpecificationToInterfaces">Des spécifications de l’OGC aux interfaces Java</a><ul>
-<li><a href="#UML-annotation">Correspondances explicites entre GeoAPI et les spécifications abstraites</a></li>
-<li><a href="#MappingToJDK">Correspondances implicites avec le JDK standard</a></li></ul></li>
-<li><a href="#ReduceDependency">Réduire la dépendance directe envers Apache SIS</a><ul>
-<li><a href="#UML-annotation-indep">Correspondances entre GeoAPI et les spécifications abstraites</a></li>
-<li><a href="#ServiceLoader">Obtenir une implémentation des interfaces de GeoAPI</a><ul>
-<li><a href="#GeoAPI-simple">Fournir sa propre implémentation</a></li></ul></li></ul></li></ul></nav>
 <p>
 Le projet GeoAPI a été brièvement présenté <a href="#GeoAPI">en introduction</a> de ce document.
 Cet annexe donne plus de détails à propos de la relation entre GeoAPI et les standards internationaux.
@@ -2648,10 +2581,9 @@ Les versions finales de Apache <abbr>SIS</abbr> dépendent de ce module.
 (non pas une dépendance) avec des ajouts qui n’ont pas encore été approuvés comme un standard <abbr>OGC</abbr>.
 Certains ajouts apparaissent dans des interfaces normalement définies par le module <code class="GeoAPI">geoapi</code>,
 d’où la nécessité de les copier.
-Les branches de développement
-<code>JDK8</code> et <code>JDK9</code> de Apache <abbr>SIS</abbr> dépendent de ce module,
+Les branches de développement de Apache <abbr>SIS</abbr> dépendent de ce module,
 mais cette dépendance est transformée en une dépendance vers le module <code class="GeoAPI">geoapi</code>
-standard au moment de fusionner les branches avec le tronc.
+standard au moment de fusionner les branches avec la branche principale.
 </p></li>
 <li><p>
 <b><code class="GeoAPI">geoapi-conformance</code></b> — contient
@@ -2662,25 +2594,6 @@ une suite de tests JUnit que les développeurs peuvent utiliser pour tester leur
 exemples d’implémentations relativement simples. Ces exemples sont placés dans le domaine public
 afin d’encourager les utilisateurs à les copier et les adapter à leurs besoins si les services
 de Apache <abbr>SIS</abbr> ne conviennent pas.
-</p></li>
-<li><p>
-<b><code class="GeoAPI">geoapi-proj4</code></b> — contient une
-implémentation partielle des paquets <code class="GeoAPI">org.opengis.referencing</code>
-sous forme d’adaptateurs basés sur la bibliothèque C/C++ Proj.4.
-Ce module peut être utilisé comme alternative au module <code class="SIS">sis-referencing</code>
-pour certaines fonctions.
-</p></li>
-<li><p>
-<b><code class="GeoAPI">geoapi-netcdf</code></b> — contient une implémentation partielle des paquets
-<code class="GeoAPI">org.opengis.referencing</code> et <code class="GeoAPI">org.opengis.coverage</code>
-sous forme d’adaptateurs basés sur la bibliothèque <abbr title="Network Common Data Form">netCDF</abbr> de l’<abbr title="University Corporation for Atmospheric Research">UCAR</abbr>.
-La suite de tests de ce module a été conçue de manière à être réutilisable par d’autres projets.
-Apache <abbr>SIS</abbr> l’utilise pour tester son propre module <code class="SIS">sis-netcdf</code>.
-</p></li>
-<li><p>
-<b><code class="GeoAPI">geoapi-openoffice</code></b> — contient
-un <i>add-in</i> pour les suites bureautiques Libre/OpenOffice.org.
-Note: Apache <abbr>SIS</abbr> offre son propre <i>add-in</i> dans le module <code class="SIS">sis-openoffice</code>.
 </p></li>
 </ul>
 </section>
@@ -3226,12 +3139,7 @@ tout en se gardant la possibilité de basculer plus facilement à une autre bibl
 <section>
 <header>
 <h1 id="Tests"><span class="section-number">8.</span> Les suites de tests</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#GeoAPI-details">Chapitre précédent</a></div><div class="next-chapter"><a href="#DesignNotes">Chapitre suivant</a> ➡</div></div></nav>
 </header>
-<nav><p>Dans ce chapitre:</p><ul class="toc">
-<li><a href="#GeoAPI-conformance">Conformance avec GeoAPI</a><ul>
-<li><a href="#GeoAPI-validators">Validations des instances</a></li>
-<li><a href="#GeoAPI-tests">Exécution des tests pré-définis</a></li></ul></li></ul></nav>
 <p>
 En plus des tests propres au projet, Apache SIS utilise aussi des tests définis par GeoAPI.
 Ces tests ont l’avantage d’utiliser une source externe définissant ce que doivent être les résultats
@@ -3413,14 +3321,7 @@ qui sera exécutée après chacun des tests.
 <section>
 <header>
 <h1 id="DesignNotes"><span class="section-number">9.</span> Notes de design</h1>
-<nav><div class="chapter-links"><div class="previous-chapter">⬅ <a href="#Tests">Chapitre précédent</a></div></div></nav>
 </header>
-<nav><p>Dans ce chapitre:</p><ul class="toc">
-<li><a href="#AffineTransform">Utilisation des transformations affines</a><ul>
-<li><a href="#AffineTransformAPI">Intégration avec les bibliothèques graphiques</a></li></ul></li>
-<li><a href="#MatrixLibrary">Particularités d’une bibliothèque de calculs matriciels pour un SIG</a><ul>
-<li><a href="#NonSquareMatrix">Que faire des matrices qui ne sont pas carrées (et pourquoi)</a></li>
-<li><a href="#MatrixLibrarySummary">La bibliothèque matricielle de Apache SIS</a></li></ul></li></ul></nav>
 <p>Les chapitres suivants expliquent les raisons derrières certains choix d’implémentation de Apache <abbr title="Spatial Information System">SIS</abbr>.</p>
 
 
