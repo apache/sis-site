@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
+
 
   <title>Apache SIS - Release management</title>
   <meta charset="utf-8">
@@ -40,6 +40,7 @@
         <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
           <li><a class="dropdown-item" href="apidocs/index.html">Online Javadoc</a></li>
           <li><a class="dropdown-item" href="book/en/developer-guide.html">Developer Guide</a></li>
+          <li><a class="dropdown-item" href="formats.html">Supported formats</a></li>
           <li><a class="dropdown-item" href="tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
           <li><a class="dropdown-item" href="tables/CoordinateOperationMethods.html">Map Projections</a></li>
           <li><a class="dropdown-item" href="code-patterns.html">Code Patterns</a></li>
@@ -51,7 +52,9 @@
         <ul class="dropdown-menu" aria-labelledby="menuContribute">
           <li><a class="dropdown-item" href="contributor.html">New Contributor</a></li>
           <li><a class="dropdown-item" href="coding-conventions.html">Coding Conventions</a></li>
+          <li><a class="dropdown-item" href="mail-lists.html">Mailing Lists</a></li>
           <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+          <li><a class="dropdown-item" href="https://github.com/apache/sis">GitHub mirror</a></li>
           <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="release-management.html">Release management</a></li>
@@ -83,6 +86,7 @@
     <ul class="nav nav-pills flex-column mb-auto position-fixed">
       <li><a class="nav-link  text-white " href="/index.html">Home</a></li>
       <li><a class="nav-link  text-white " href="standards.html">Standards</a></li>
+      <li><a class="nav-link  text-white " href="formats.html">Data formats</a></li>
       <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
       <li><a class="nav-link  text-white " href="javafx.html">Application (demo)</a></li>
       <li><a class="nav-link  text-white " href="downloads.html">Downloads</a></li>
@@ -98,7 +102,7 @@
       <article>
         <img src="images/logo.png" class="sis-logo" align="left"/>
         <p class="page-title">Release management</p>
-        
+
   <p>This page describes how to create and deploy the SIS Maven artifacts, binary bundle, javadoc and list of API changes.
 The <a href="http://www.apache.org/dev/release.html">Release FAQ</a> page describes the foundation wide policies.
 Instructions on this page describe the steps specific to SIS (we do not use the <code>mvn release</code> command).
@@ -169,7 +173,7 @@ number of the previous and the new release respectively, and <code>$RELEASE_CAND
 the current release attempt. Those versions shall be set on the command line like below (Unix):</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">gpg --list-keys                     <span class="c1"># For getting the value to put in &lt;your key ID&gt;</span>
 <span class="nb">unset</span> PATH_TO_FX
-<span class="nb">export</span> <span class="nv">OLD_VERSION</span><span class="o">=</span>1.1
+<span class="nb">export</span> <span class="nv">OLD_VERSION</span><span class="o">=</span>1.2
 <span class="nb">export</span> <span class="nv">NEW_VERSION</span><span class="o">=</span>1.2
 <span class="nb">export</span> <span class="nv">RELEASE_CANDIDATE</span><span class="o">=</span><span class="m">1</span>
 <span class="nb">export</span> <span class="nv">SIGNING_KEY</span><span class="o">=</span>&lt;your key ID&gt;    <span class="c1"># hexadecimal number with 8 or 40 digits.</span></code></pre></div>
@@ -212,7 +216,7 @@ see <a href="./source.html#postgres">PostgreSQL testing configuration</a> for mo
 Then execute the following commands and fix as much warnings as practical:</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">systemctl start postgresql.service        <span class="c1"># Optional — exact command depends on Linux distribution.</span>
 mvn clean install --define org.apache.sis.test.extensive<span class="o">=</span><span class="nb">true</span>
-mvn javadoc:aggregate</code></pre></div>
+mvn javadoc:aggregate --activate-profiles javafx</code></pre></div>
 <p>If the <code>SIS_DATA</code> environment variable was set during above build, unset it a try again.
 Ideally the build should be tested in both conditions (<code>SIS_DATA</code> set and unset).
 That test may be done in a separated shell (console window) in order to preserve
@@ -244,8 +248,8 @@ Update <a href="http://issues.apache.org/jira/browse/SIS">JIRA</a> tasks and pre
 <ul>
 <li>Ensure that the <em>Fix Version</em> in issues resolved since the last release includes this release version correctly.</li>
 <li>Ensure that all open issues are resolved or closed before proceeding further.</li>
-<li>On the <code>site</code> source code repository, create a <code>content/release-notes/$NEW_VERSION.html</code> file with all the features added.</li>
-<li>Use <code>content/release-notes/$OLD_VERSION.html</code> as a template, omitting the old list of issues.</li>
+<li>On the <code>site</code> source code repository, create a <code>static/release-notes/$NEW_VERSION.html</code> file with all the features added.</li>
+<li>Use <code>static/release-notes/$OLD_VERSION.html</code> as a template, omitting the old list of issues.</li>
 <li>The release notes can be obtained from JIRA, by clicking on the <em>Versions</em> tab → the version number → <em>Release notes</em>
 and then configuring the release notes to display HTML format and copying it.
 A suggested approach would be to reorganize the release notes as
@@ -254,9 +258,9 @@ The <em>Sub Tasks</em> can be classified according the category of their parent 
 </ul>
 <p>Commit to staging area (not published immediately):</p>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> ../site/main
-cp static/release-notes/<span class="nv">$OLD_VERSION</span>.html static/content/release-notes/<span class="nv">$NEW_VERSION</span>.html
+cp static/release-notes/<span class="nv">$OLD_VERSION</span>.html static/release-notes/<span class="nv">$NEW_VERSION</span>.html
 <span class="c1"># Edit release notes before to continue.</span>
-git add static/content/release-notes/<span class="nv">$NEW_VERSION</span>.html
+git add static/release-notes/<span class="nv">$NEW_VERSION</span>.html
 git commit --message <span class="s2">&#34;Release notes for Apache SIS </span><span class="nv">$NEW_VERSION</span><span class="s2">.&#34;</span></code></pre></div>
 <h1 id="branch">Create release branch   </h1>
 <p>Execute the following commands.
@@ -267,9 +271,9 @@ git checkout -b <span class="nv">$NEW_VERSION</span>-RC
 <span class="nb">export</span> <span class="nv">SIS_RC_DIR</span><span class="o">=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span></code></pre></div>
 <p>Remove the modules that are not yet ready for a release.
 This may require removing <code>&lt;module&gt;</code> elements in the parent <code>pom.xml</code> file.</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">git rm core/sis-cql
-git rm storage/sis-shapefile
-git rm storage/sis-storage/src/main/java/org/apache/sis/storage/WritableGridCoverageResource.java
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">git rm -r core/sis-cql
+git rm -r storage/sis-shapefile
+git rm -r application/sis-webapp
 git add --update    <span class="c1"># for the removal of &lt;module&gt; elements in pom.xml files.</span>
 git commit --message<span class="o">=</span><span class="s2">&#34;Remove the modules to be excluded from </span><span class="nv">$NEW_VERSION</span><span class="s2"> release.&#34;</span></code></pre></div>
 <p>Open the root <code>pom.xml</code> file in an editor and perform the following changes:</p>
@@ -336,7 +340,7 @@ If there is any issue with this deployment, the staging repository can easily be
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> <span class="nv">$SIS_RC_DIR</span>
 mvn clean deploy --activate-profiles apache-release --define maven.test.skip<span class="o">=</span><span class="nb">true</span>
 <span class="nb">cd</span> ../non-free
-mvn clean deploy --activate-profiles apache-release</code></pre></div>
+mvn clean deploy --activate-profiles apache-release --define maven.test.skip<span class="o">=</span>true</code></pre></div>
 <h2 id="nexus-close">Verify and close the Nexus release artifacts   </h2>
 <p>Verify the staged artifacts in the <a href="https://repository.apache.org/index.html">Nexus repository</a>.
 The artifacts can be found under <em>Build Promotion</em> → <em>Staging repositories</em>, and searching for <code>org.apache.sis</code> in the <em>Repository</em> column.
@@ -345,7 +349,8 @@ Select any <code>*-javadoc.jar</code> file and click on the <cite>Archive Browse
 Select any <code>*.html</code> file which is known to use some of the custom taglets defined in the <code>sis-build-helper</code> module.
 Click on that file and verify that the custom elements are rendered properly.
 In particular, all Java code snippets are missing if the <code>@preformat</code> taglet had not be properly registered,
-so try to see at least one code snippet.</p>
+so try to see at least one code snippet.
+In the <code>sis-epsg-$NEW_VERSION.jar</code> file, verify that <code>META-INF/LICENSE</code> contains the EPSG terms of use.</p>
 <p>Additional cleaning:</p>
 <ul>
 <li>Delete all <code>org/apache/sis/parent/$NEW_VERSION/parent-$NEW_VERSION-source-release.zip.*</code> files on the Nexus repository.
@@ -363,12 +368,6 @@ This will not be done automatically since this field box is not our bash shell!)
 </ul>
 <p>We will announce later (in the <cite>Put the release candidate up for a vote</cite> section) on the <code>dev@</code> mailing list
 the availability of this temporary repository for testing purpose.</p>
-<p>In the Nexus repository used for non-free resources:</p>
-<ul>
-<li>Delete all <code>*-source-release.zip.*</code> files since they duplicate the <code>*-source.zip.*</code> files.</li>
-<li>In the <code>sis-epsg-$NEW_VERSION.jar</code> file, verify that <code>META-INF/LICENSE</code> contain the EPSG terms of use.</li>
-<li>Close the repository and take note of its URL.</li>
-</ul>
 <h2 id="nexus-text">Test the Nexus release artifacts   </h2>
 <p>Go to the test Maven project.
 Open the root <code>pom.xml</code> file and set the <code>&lt;version&gt;</code> number to the SIS release to be tested.
@@ -394,7 +393,7 @@ mvn clean</code></pre></div>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> <span class="nv">$SIS_RC_DIR</span>
 git checkout .            <span class="c1"># Discard local changes, in particular the hack for excluding test files.</span>
 mvn clean install --activate-profiles apache-release
-mvn javadoc:aggregate
+mvn javadoc:aggregate --activate-profiles javafx
 <span class="nb">cd</span> target/site
 zip -9 -r apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip apidocs
 <span class="nb">cd</span> ../..</code></pre></div>
@@ -476,23 +475,41 @@ A copy is found in the <code>non-free</code> group of SIS modules.</li>
 <li>Run <code>mvn package --activate-profiles non-free</code>.</li>
 </ul>
 <h1 id="prepare-website">Prepare Web site   </h1>
-<p>Review and update the <code>content/DOAP.rdf</code> file on the <code>site</code> source code repository.
+<p>Review and update the <code>static/DOAP.rdf</code> file on the <code>site</code> source code repository.
 Add a new <code>&lt;release&gt;</code> block for the new release with the estimated release date.</p>
-<p>Update the version numbers from the old one to <code>$NEW_VERSION</code> in the following files.</p>
+<p>Update the following files (e.g. the release date in <code>index.md</code>):</p>
 <ul>
-<li><code>content/index.mdtext</code></li>
-<li><code>content/downloads.mdtext</code> (need also to update <code>$NEW_VERSION-SNAPSHOT</code> to the next snapshot version)</li>
-<li><code>content/command-line.mdtext</code></li>
-<li><code>content/epsg.mdtext</code> (be aware that the version number may sometime be behind the SIS version number)</li>
+<li><code>source/index.md</code></li>
+<li><code>source/command-line.md</code></li>
+<li><code>source/epsg.md</code> for EPSG dataset version</li>
+<li><code>source/download.md</code> for SIS version and JAXB dependency</li>
+<li><code>source/developer-guide/introduction/Installation.html</code></li>
 </ul>
-<p>Commit:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">svn commit --message <span class="s2">&#34;Prepare documentation for the </span><span class="nv">$NEW_VERSION</span><span class="s2"> release.&#34;</span></code></pre></div>
+<p>Execute <code>hugo</code> and browse the documentation in the <code>target</code> repository.
+If okay, commit and copy to staging repository:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">git commit --message <span class="s2">&#34;Prepare documentation for the </span><span class="nv">$NEW_VERSION</span><span class="s2"> release.&#34;</span>
+
+<span class="c1"># Copy to staging repository</span>
+rm --recursive ../asf-staging/*
+mv target/.htaccess target/* ../asf-staging/
+rmdir target
+<span class="nb">cd</span> ../asf-staging/
+rm fr.html
+
+<span class="c1"># Remove trailing whitespaces</span>
+find . -name <span class="s2">&#34;*.html&#34;</span> -type f -exec sed -i <span class="s1">&#39;s/[[:space:]]*$//&#39;</span> <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
+find . -name <span class="s2">&#34;*.xml&#34;</span> -type f -exec sed -i <span class="s1">&#39;s/[[:space:]]*$//&#39;</span> <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span>
+
+<span class="c1"># Commit</span>
+git add --all
+git commit --message <span class="s2">&#34;Staging repository for the </span><span class="nv">$NEW_VERSION</span><span class="s2"> release.&#34;</span>
+<span class="sb">```</span></code></pre></div>
 <p>The new web site will be published in the <a href="https://sis.staged.apache.org/">staging area</a>.
 It will not yet be published on <code>https://sis.apache.org</code>.</p>
 <h1 id="vote">Put the release candidate up for a vote   </h1>
 <ul>
 <li>Create a VOTE email thread on <code>dev@</code> to record votes as replies.
-A template is available <a href="templates/release-vote.txt">here</a>.</li>
+A template is available <a href="templates/release-vote.html">here</a>.</li>
 <li>Create a DISCUSS email thread on <code>dev@</code> for any vote questions.
 A template is available <a href="templates/release-discuss.txt">here</a>.</li>
 <li>Perform a review of the release and cast your vote:</li>
@@ -553,8 +570,7 @@ svn delete https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERS
 <li>WAIT 24 hours after committing releases for mirrors to replicate.</li>
 <li>Publish the web site updates:
 <ul>
-<li>Login to the <a href="https://cms.apache.org/sis/">ASF Content Management System</a>.</li>
-<li>Click on <em>Publish sis site</em>.</li>
+<li>On the <code>asf-site</code> branch, execute <code>git merge asf-staging</code> and push.</li>
 </ul>
 </li>
 <li>Make an announcement about the release on the <code>dev@</code>, <code>users@</code>, and <code>announce@</code> mailing lists.
@@ -565,16 +581,15 @@ The email needs to be sent from an <code>@apache.org</code> email address.</li>
 <div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">svn delete https://dist.apache.org/repos/dist/release/sis/<span class="nv">$OLD_VERSION</span> <span class="se">\
 </span><span class="se"></span>    --message <span class="s2">&#34;Archive SIS-</span><span class="nv">$OLD_VERSION</span><span class="s2"> after release of SIS-</span><span class="nv">$NEW_VERSION</span><span class="s2">.&#34;</span></code></pre></div>
 <h1 id="next-release">Update master for the next development cycle   </h1>
-<p>On the development branch (usually JDK8),
-update the version numbers in the <code>pom.xml</code> files on master with the following command:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mvn clean
-mvn release:update-versions --define <span class="nv">autoVersionSubmodules</span><span class="o">=</span>true</code></pre></div>
-<p>This change will need to be merged manually on the JDK7 branch and on the master.
-Then on the development branch:</p>
+<p>On the <code>master</code> branch:</p>
 <ul>
-<li>Edit the version number in the <code>application/sis-console/src/main/artifact/README</code> file.</li>
+<li>Update the version numbers in all <code>pom.xml</code> files.</li>
 <li>Edit the value of the <code>MAJOR_VERSION</code> or <code>MINOR_VERSION</code> constant in the
 <code>core/sis-utility/src/main/java/org/apache/sis/internal/system/Modules.java</code> file.</li>
+</ul>
+<p>Then on the development branch:</p>
+<ul>
+<li>Edit the version number in the <code>application/sis-console/src/main/artifact/README</code> file.</li>
 </ul>
 <h2 id="nexus-clean">Delete old artifacts on Maven snapshot repository   </h2>
 <p>Login in the <a href="https://repository.apache.org/index.html">Nexus repository</a>. In the <em>Repositories</em> tag, select <em>Snapshots</em> of type <em>hosted</em>
@@ -587,7 +602,7 @@ all directories starting with the old version number. The sub-directories need t
     <footer class="footer">
     <div class="container">
       <p>
-        Copyright &copy; 2013-2021 The Apache Software Foundation, Licensed under the
+        Copyright &copy; 2013-2022 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
         Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
       </p>

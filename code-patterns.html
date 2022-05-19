@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
+
 
   <title>Apache SIS - Recommended code patterns</title>
   <meta charset="utf-8">
@@ -40,6 +40,7 @@
         <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
           <li><a class="dropdown-item" href="apidocs/index.html">Online Javadoc</a></li>
           <li><a class="dropdown-item" href="book/en/developer-guide.html">Developer Guide</a></li>
+          <li><a class="dropdown-item" href="formats.html">Supported formats</a></li>
           <li><a class="dropdown-item" href="tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
           <li><a class="dropdown-item" href="tables/CoordinateOperationMethods.html">Map Projections</a></li>
           <li><a class="dropdown-item" href="code-patterns.html">Code Patterns</a></li>
@@ -51,7 +52,9 @@
         <ul class="dropdown-menu" aria-labelledby="menuContribute">
           <li><a class="dropdown-item" href="contributor.html">New Contributor</a></li>
           <li><a class="dropdown-item" href="coding-conventions.html">Coding Conventions</a></li>
+          <li><a class="dropdown-item" href="mail-lists.html">Mailing Lists</a></li>
           <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+          <li><a class="dropdown-item" href="https://github.com/apache/sis">GitHub mirror</a></li>
           <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="release-management.html">Release management</a></li>
@@ -83,6 +86,7 @@
     <ul class="nav nav-pills flex-column mb-auto position-fixed">
       <li><a class="nav-link  text-white " href="/index.html">Home</a></li>
       <li><a class="nav-link  text-white " href="standards.html">Standards</a></li>
+      <li><a class="nav-link  text-white " href="formats.html">Data formats</a></li>
       <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
       <li><a class="nav-link  text-white " href="javafx.html">Application (demo)</a></li>
       <li><a class="nav-link  text-white " href="downloads.html">Downloads</a></li>
@@ -98,7 +102,7 @@
       <article>
         <img src="images/logo.png" class="sis-logo" align="left"/>
         <p class="page-title">Recommended code patterns</p>
-        
+
   <p>This page lists some recommended code pattern for developing or using Apache <abbr title="Spatial Information System">SIS</abbr>.</p>
 <nav id="TableOfContents">
   <ul>
@@ -107,9 +111,10 @@
         <li><a href="#axisOrder">Never explicitely swap coordinates for axis order   </a></li>
       </ul>
     </li>
-    <li><a href="#coverage">Coverages   </a>
+    <li><a href="#coverage">Rasters and coverages   </a>
       <ul>
         <li><a href="#gridToCRS">Georeference images with affine transforms, <em>not</em> bounding boxes   </a></li>
+        <li><a href="#do-not-cast-raster-to-writableraster">Do not cast <code>Raster</code> to <code>WritableRaster</code></a></li>
       </ul>
     </li>
     <li><a href="#international">International   </a>
@@ -123,7 +128,7 @@
   </ul>
 </nav>
 <h1 id="referencing">Referencing   </h1>
-<p>Recommended code pattern when using the <code>sis-referencing</code> module.</p>
+<p>This section lists recommended code pattern when using the <code>sis-referencing</code> module.</p>
 <h2 id="axisOrder">Never explicitely swap coordinates for axis order   </h2>
 <p>The <a href="faq.html#axisOrder">axis order issue</a> causes lot of confusion,
 and developers are sometime tempted to swap their coordinate values in order to comply with some expected axis ordering.
@@ -133,8 +138,8 @@ If a code needs to swap coordinates, this is probably an indication that the <ab
 Instead of patching the coordinate values, try to make sure that the <em>Source CRS</em> (associated to the original data)
 and the <em>Target CRS</em> (the coordinate space where to perform the work) are properly defined,
 and let the referencing engine performs the conversion from the source to the target <abbr title="Coordinate Reference System">CRS</abbr>.</p>
-<h1 id="coverage">Coverages   </h1>
-<p>Recommended code pattern when using the <code>sis-coverage</code> module.</p>
+<h1 id="coverage">Rasters and coverages   </h1>
+<p>This section lists recommended code pattern when using the <code>sis-coverage</code> module.</p>
 <h2 id="gridToCRS">Georeference images with affine transforms, <em>not</em> bounding boxes   </h2>
 <p>Many users define the geographic extent of an image by its corner locations.
 This approach may be ambiguous as it does not specify whether the (<var>x</var>,<var>y</var>) axes are interchanged
@@ -142,8 +147,14 @@ This approach may be ambiguous as it does not specify whether the (<var>x</var>,
 All images in SIS shall be georeferenced by at least an affine transform (more complex transforms are also possible),
 never by a rectangle or bounding box.
 In the two-dimensional case, the standard <code>java.awt.geom.Affine­Transform</code> class can be used.</p>
+<h2 id="do-not-cast-raster-to-writableraster">Do not cast <code>Raster</code> to <code>WritableRaster</code></h2>
+<p>Some images are writable. But modifying pixel values should be done by invoking the
+<code>getWritableTile(…)</code> and <code>releaseWritableTile(…)</code> methods of <code>WritableRenderedImage</code> interface.
+Do not cast directly a <code>Raster</code> to <code>WritableRaster</code> even when the cast is safe,
+because some raster data may be shared by many tiles having identical content.
+Furthermore changes in pixel values may be lost if {@code releaseWritableTile(…)} is not invoked.</p>
 <h1 id="international">International   </h1>
-<p>Recommended code pattern for internationalization.</p>
+<p>This section lists recommended code pattern for internationalization.</p>
 <h2 id="timezone">Specify timezone   </h2>
 <p>Geospatial data often cover a wide geographic area, spanning many time zones.
 Timezone are sometime specified as metadata in the header of data files to be read,
@@ -172,9 +183,11 @@ Consequently, when iterating over characters in a string, the following pattern 
 </span><span class="c1"></span>    <span class="n">i</span> <span class="o">+=</span> <span class="n">Character</span><span class="o">.</span><span class="na">charCount</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
 <span class="o">}</span></code></pre></div>
 <h1 id="logging">Logging   </h1>
-<p>Apache <abbr title="Spatial Information System">SIS</abbr> uses the <code>java.util.logging</code> framework, but with a <a href="http://sis.apache.org/apidocs/org/apache/sis/util/logging/LoggerFactory.html">mechanism allowing users to redirect
-to another framework</a>.
-The logger names are usually the package name of the class emitting log messages, but not necessarily.
+<p>Apache <abbr title="Spatial Information System">SIS</abbr> uses the <code>java.util.logging</code> framework.
+It does not necessarily means that all SIS users are forced to use this framework,
+as it is possible to use <code>java.util.logging</code> as an API and have logging redirected to another system.
+For example the logging can be redirect to SLF4J by adding the <code>jul-to-slf4j</code> dependency to a project.</p>
+<p>The logger names are usually the package name of the class emitting log messages, but not necessarily.
 In particular, we do not follow this convention if the class is located in an internal package
 (<code>org.apache.sis.internal.*</code>) since those packages are considered privates.
 In such cases, the logger name should be the package name of the public class invoking the internal methods.
@@ -190,7 +203,7 @@ it shall not be used for exceptions thrown while parsing user data (file or data
     <footer class="footer">
     <div class="container">
       <p>
-        Copyright &copy; 2013-2021 The Apache Software Foundation, Licensed under the
+        Copyright &copy; 2013-2022 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
         Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
       </p>
