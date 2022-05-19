@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>AxisOrder</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="../book.css"/>
+  </head>
+  <body>
+    <!--
+      Content below this point is copied in "/asf-staging/book/en/developer-guide.html" file
+      by the `org.apache.sis.internal.book.Assembler` class in `sis-build-helper` module.
+    -->
+    <section>
+      <header>
+        <h2 id="AxisOrder">Axis order</h2>
+      </header>
+      <p>
+        The axis order is specified by the authority (typically a national agency) defining the <dfn>Coordinate Reference System</dfn> (<abbr>CRS</abbr>).
+        The order depends on the <abbr>CRS</abbr> type and the country defining the <abbr>CRS</abbr>.
+        In the case of geographic <abbr>CRS</abbr>, the (<var>latitude</var>, <var>longitude</var>) axis order is widely used by geographers and pilots for centuries.
+        However software developers tend to consistently use the (<var>x</var>, <var>y</var>) order for every kind of <abbr>CRS</abbr>.
+        Those different practices resulted in contradictory definitions of axis order for almost every <abbr>CRS</abbr> of kind <code>GeographicCRS</code>,
+        for some <code>ProjectedCRS</code> in the South hemisphere (South Africa, Australia, <i>etc.</i>) and for some polar projections among others.
+      </p><p>
+        Recent <abbr>OGC</abbr> standards mandate the use of axis order as defined by the authority.
+        Oldest <abbr>OGC</abbr> standards used the (<var>x</var>, <var>y</var>) axis order instead, ignoring any authority specification.
+        Many software products still use the old (<var>x</var>, <var>y</var>) axis order,
+        maybe because such uniformization makes <abbr>CRS</abbr> implementation and usage <em>apparently</em> easier.
+        Apache <abbr>SIS</abbr> supports both conventions with the following approach:
+        by default, <abbr>SIS</abbr> creates <abbr>CRS</abbr> with axis order <em>as defined by the authority</em>.
+        Those <abbr>CRS</abbr> are created by calls to the <code>CRS.forCode(String)</code> method
+        and the actual axis order can be verified after the <abbr>CRS</abbr> creation with <code>System.out.println(crs)</code>.
+        But if (<var>x</var>, <var>y</var>) axis order is wanted for compatibility with older <abbr>OGC</abbr> specifications or other software products,
+        then <abbr>CRS</abbr> forced to <em>longitude first</em> axis order can be created by a call to the following method:
+      </p>
+
+<pre><code>CoordinateReferenceSystem crs = …;               // CRS obtained by any means.
+crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)</code></pre>
+
+      <p>
+        Among the legacy <abbr>OGC</abbr> standards that used the non-conform axis order,
+        an influent one is version 1 of the <cite>Well Known Text</cite> (<abbr>WKT</abbr>) format specification.
+        According that widely-used format, <abbr>WKT</abbr> 1 definitions without explicit <code>AXIS[…]</code> elements
+        shall default to (<var>longitude</var>, <var>latitude</var>) or (<var>x</var>, <var>y</var>) axis order.
+        In version 2 of <abbr>WKT</abbr> format, <code>AXIS[…]</code> elements are no longer optional
+        and should contain an explicit <code>ORDER[…]</code> sub-element for making the intended order yet more obvious.
+        But if <code>AXIS[…]</code> elements are nevertheless missing in a <abbr>WKT</abbr> 2 definition,
+        Apache <abbr>SIS</abbr> defaults to (<var>latitude</var>, <var>longitude</var>) order.
+        So in summary:
+      </p>
+      <ul>
+        <li>Default <abbr>WKT</abbr> 1 axis order of geographic <abbr>CRS</abbr> is (<var>longitude</var>, <var>latitude</var>) as mandated by <abbr>OGC</abbr> 01-009 specification.</li>
+        <li>Default <abbr>WKT</abbr> 2 axis order of geographic <abbr>CRS</abbr> is (<var>latitude</var>, <var>longitude</var>),
+            but this is <abbr>SIS</abbr>-specific as <abbr>ISO</abbr> 19162 does not mention default axis order.</li>
+      </ul>
+      <p>
+        To avoid ambiguities, users are encouraged to always provide explicit <code>AXIS[…]</code> elements in their <abbr>WKT</abbr>.
+      </p>
+    </section>
+  </body>
+</html>

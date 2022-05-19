@@ -20,7 +20,7 @@
   under the License.
 -->
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
   <head>
     <title>CoordinateOperations</title>
     <meta charset="UTF-8"/>
@@ -28,8 +28,8 @@
   </head>
   <body>
     <!--
-      Content below this point is copied in "/static/book/en/developer-guide.html" file
-      by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
+      Content below this point is copied in "/asf-staging/book/en/developer-guide.html" file
+      by the `org.apache.sis.internal.book.Assembler` class in `sis-build-helper` module.
     -->
     <section>
       <header>
@@ -72,10 +72,10 @@
       <p>
         Among the information provided by <code>CoordinateOperation</code> object, the following are of special interest:
       </p>
-      <ul>
-        <li>The <cite>domain of validity</cite>, either as a textual description (e.g. “Canada – onshore and offshore”)
+      <ul class="verbose">
+        <li>The <dfn>domain of validity</dfn>, either as a textual description (e.g. “Canada – onshore and offshore”)
             or with the coordinates of a geographic bounding box.</li>
-        <li>The <cite>positional accuracy</cite>, which may be anything from 1 centimetre to a few kilometres.</li>
+        <li>The <dfn>positional accuracy</dfn>, which may be anything from 1 centimetre to a few kilometres.</li>
         <li>The coordinate operation subtype. Among them, two sub-types provide the same functionalities but with a significant conceptual difference:
           <ul class="verbose">
             <li>
@@ -96,7 +96,7 @@
       <p>
         If the coordinate operation is an instance of <code>Transformation</code>,
         then the instance selected by <abbr>SIS</abbr> may be one among many possibilities depending on the area of interest.
-        Furthermore its accuracy is certainly less than the centimetric accuracy that we can expect from a <code>Conversion</code>.
+        Furthermore its accuracy is usually less than the centimetric accuracy that we can expect from a <code>Conversion</code>.
         Consequently verifying the domain of validity and the positional accuracy declared in the transformation metadata is of particular importance.
       </p>
 
@@ -156,8 +156,6 @@ public class MyApp {
         Previous section shows how to project a coordinate from one reference system to another one.
         There is another, less known, operation which does not compute the projected coordinates of a given point,
         but instead the derivative of the projection function at that point.
-        This operation was defined in an older Open Geospatial specification,
-        <a href="https://www.ogc.org/standards/ct">OGC 01-009</a>, now considered obsolete but still useful.
         Let <var>P</var> be a map projection converting degrees of latitude and longitude (<var>φ</var>, <var>λ</var>)
         into projected coordinates (<var>x</var>, <var>y</var>) in metres.
         The formula below represents the map projection result as a column matrix
@@ -225,16 +223,13 @@ double dy_dφ = jacobian.getElement(1,0);</code></pre>
       </div>
 
       <p>
-        Remaining equations in this section will abridge
-        ∂<var>x</var>(<var>λ</var>, <var>φ</var>) as ∂<var>x</var> and
-        ∂<var>y</var>(<var>λ</var>, <var>φ</var>) as ∂<var>y</var>,
-        but reader should keep in mind that each of those derivative values depends on the (<var>λ</var>, <var>φ</var>) coordinate given at Jacobian matrix calculation time.
-        The first matrix column tells us that if we apply a small displacement of ∂<var>φ</var> degrees of latitude from the (<var>φ</var>, <var>λ</var>) position,
-        — in other words if we move at the (<var>φ</var> + ∂<var>φ</var>, <var>λ</var>) geographic position —
-        then the projected coordinate will be displaced by (∂<var>x</var>, ∂<var>λ</var>) metres
-        — in other words it will become (<var>x</var> + ∂<var>x</var>, <var>y</var> + ∂<var>λ</var>).
+        The first matrix column tells us that if we apply a displacement of 1° of latitude from the (<var>φ</var>, <var>λ</var>) position,
+        — in other words if we move at the (<var>φ</var> + 1, <var>λ</var>) geographic position —
+        then the projected coordinates would be displaced by (∂<var>x</var>, ∂<var>λ</var>) metres
+        — in other words they would become (<var>x</var> + ∂<var>x</var>, <var>y</var> + ∂<var>y</var>) —
+        if the map projection is approximated by an affine transform valid at the (<var>φ</var>, <var>λ</var>) position.
         Similarly the last matrix column gives us the displacement that happen on the projected coordinate
-        if we apply a small displacement of ∂<var>λ</var> degrees of longitude on the source geographic coordinate.
+        if we apply a displacement of 1° of longitude on the source geographic coordinate under the same assumption.
         We can visualize such displacements in a figure like below.
         This figure shows the derivative at two points, <var>P</var><sub>1</sub> and <var>P</var><sub>2</sub>,
         for emphasing that the result change for every points.
@@ -290,436 +285,12 @@ double dy_dφ = jacobian.getElement(1,0);</code></pre>
         they provide the direction of parallels and meridians at a given location in a map projection.
         One can use that information for determining if axes have been swapped or their direction reversed.
         But the usefulness of map projection derivatives goes further.
-      </p>
-
-      <h4 id="DerivativeAndEnvelope">Transform derivatives applied to envelopes</h4>
-      <p>
-        Geographic information systems often need to transform an envelope from one <abbr>CRS</abbr> to another.
-        But a naive approach transforming the 4 corners is not sufficient.
-        The figure below shows an envelope before a map projection and the geometric shape
-        that we would get if all points (not only the corners) were projected.
-        The resulting geometric shape is more complex than a rectangle because of the curvature caused by the map projection.
-        Computing the envelope that contains the 4 corners of that shape is not enough,
-        because the area in the bottom of the projected shape is lower than the two bottom corners.
-        That surface would be outside the envelope.
-      </p>
-      <div class="row-of-boxes">
-        <div>
-          <div class="caption">Envelope before projection</div>
-          <img style="border: solid 1px; margin-right: 15px" src="../../../static/book/images/GeographicArea.png" alt="Envelope in a geographic CRS"/>
-        </div><div>
-          <div class="caption">Geometric shape after projection</div>
-          <img style="border: solid 1px; margin-left:  15px" src="../../../static/book/images/ConicArea.png" alt="Shape in a projected CRS"/>
-        </div>
-      </div>
-      <p>
-        A simple way to reduce the problem could be to sample a large number of points on each envelope border.
-        For example we could sample 40 points on each border, transform them to the target <abbr>CRS</abbr>
-        and compute an envelope containing all the transformed points.
-        But even with 40 points, the point which is closest to the minimum in above figure can still be above that minimum.
-        Consequently we still miss a small portion of the projected shape.
-        It may be tempting to declare this error is negligible, but a single missing pixel can be enough for
-        causing artifacts such as thin black lines in a mosaic or missing “piece of pie” in a projection over a pole.
-        A workaround could be to arbitrarily increase the envelope size by some percentage,
-        but a percentage too high will cause a larger amount of unnecessary data processing (e.g. more data to load from a file)
-        while a percentage too low will leave some artifacts.
-      </p><p>
-        Map projection derivatives offer a more efficient way to resolve this problem.
-        The figure below reproduces the same projected shape than above figure but with exaggerated deformations.
-        The Apache <abbr>SIS</abbr> algorithm projects the 4 corners as in the naive approach,
-        but opportunistically computes also their derivatives (the Jacobian matrices).
-        Between two corners and using derivative information, there is only one possible cubic curve.
-        We can describe that curve by the
-
-        <i>f(<var>x</var>)</i> = <var>C</var>₀ + <var>C</var>₁<var>x</var> + <var>C</var>₂<var>x</var>² + <var>C</var>₃<var>x</var>³ equation
-
-        with <var>C</var> coefficients computed from corner positions and derivatives.
-        This approximation (shown by the red curve in above figure) does not match exactly the desired curve
-        (shown by the blue shape in above figure) but is close.
-        We do not use directly the cubic curve minimum,
-        but instead we take the longitude λ (for above example) where this minimum is located.
-        This is shown by the green dashed line in above figure.
-        This position is easy to compute when the <var>C</var> coefficients are known.
-        Assuming that the λ coordinate of the cubic curve minimum is close to the λ coordinates of the projected shape minimum,
-        we can project the point on the envelope border at that location instead of projecting blindly 40 points on that border.
-      </p>
-      <div class="row-of-boxes">
-        <div>
-          <img src="../../../static/book/images/Approximation.png" alt="Cubic approximation of an envelope bounds"/>
-        </div><div>
-          Legend:
-          <ul>
-            <li><b>Blue:</b> the geometric shape of the envelope after projection.
-              This is the shape from which to get a new envelope.</li>
-            <li><b>Red</b> (with hash): The
-              <var>y</var> = <var>C</var>₀ + <var>C</var>₁λ + <var>C</var>₂λ² + <var>C</var>₃λ³ approximation.</li>
-            <li><b>Green</b> (dashed line): Position λ<sub>m</sub> of approximation minimum, obtained by resolving
-              0 = <var>C</var>₁ + 2<var>C</var>₂λ<sub>m</sub> + 3<var>C</var>₃λ<sub>m</sub>².
-              The same cubic line can have two minimums.</li>
-          </ul>
-        </div>
-      </div>
-      <p>
-        In practice Apache <abbr>SIS</abbr> uses 8 points:
-        the 4 corners plus one point at the center of each border of the envelope to project.
-        The center points are added as a safety for map projections having symmetric deformations above and below equator.
-        According our tests, using only those 8 points together with derivatives as described above
-        gives more accurate results than “brute force” approach with 160 points on the 4 envelope borders.
-        Saving 150 points seems small compared to computer performances.
-        But above discussion used a two-dimensional envelope as an example.
-        The same discussion applies to <var>n</var>-dimensional envelopes as well.
-        Apache <abbr>SIS</abbr> can apply this algorithm on envelopes with any number of dimensions up to 64.
-        The performance gain offered by this algorithm compared to “brute force” approach
-        increases exponentially with the number of dimensions.
-      </p><p>
-        Apache <abbr>SIS</abbr> implements the algorithm described in this section
-        by the static <code>Envelopes.transform(CoordinateOperation, Envelope)</code> method.
-        An alternative <code>Envelopes.transform(MathTransform, Envelope)</code> method is also available,
-        but should be used only when the <code>CoordinateOperation</code> is unknown.
-        The reason is because <code>MathTransform</code> objects does not contain any information about coordinate system axes,
-        which prevent the <code>Envelopes.transform(…)</code> method to handle special cases such as envelopes containing a pole.
+        The <a href="#JacobianUsage">annex</a> explains how derivatives are used by the Apache <abbr>SIS</abbr>
+        implementation of envelope and raster reprojections.
       </p>
 
 
-      <h4 id="DerivativeAndRaster">Transform derivatives applied to rasters</h4>
-      <p>
-        A raster can be projected by preparing an initially empty raster which will contain the resampled pixel values.
-        Then for each pixel in the <em>destination</em> raster, we use the <em>inverse</em> of the map projection
-        (<var>T</var>⁻¹) for computing the coordinates of the corresponding pixel in source raster.
-        The transformed coordinates may not fall at the center of a source raster pixel,
-        so source pixel values usually need to be interpolated.
-      </p>
-      <div style="display:flex; flex-direction:column; align-items:center">
-        <div style="display:flex; justify-content:space-between; width:564px">
-          <div class="caption">Source image</div>
-          <div class="caption">Destination image</div>
-        </div>
-        <img src="../../../static/book/images/RasterProjection.png" alt="Raster reprojection"/>
-      </div>
-      <p>
-        However applying the inverse transform on all pixel coordinates can be relatively slow.
-        We can accelerate raster reprojections by pre-computing an <cite>interpolation grid</cite>.
-        This grid contains the coordinate values of inverse transform <var>T</var>⁻¹ for only a few points.
-        The coordinate values of other points are obtained by bilinear interpolations between interpolation grid points.
-        Historically, this algorithm was implemented in the <code>WarpGrid</code> object of <cite>Java Advanced Imaging</cite> library.
-        The performance gain is yet better if the same interpolation grid is reused for many rasters having their pixels at the same coordinates.
-      </p><p>
-        A difficulty in using interpolation grids is to determine how many points we need for keeping errors
-        (defined as the difference between interpolated positions and actual positions computed by <var>T</var>⁻¹)
-        below some threshold value (for example ¼ of pixel size).
-        A “brute force” approach is to begin with a grid of size 3×3, then increase the number of points iteratively:
-      </p>
-      <div class="row-of-boxes">
-        <div>
-          <img src="../../../static/book/images/WarpGrid.png" alt="Warp grid"/>
-        </div><div>
-          Legend:
-          <ul>
-            <li><b>Blue dots:</b>  first  iteration (9 points).</li>
-            <li><b>Green dots:</b> second iteration (25 points, including 16 news).</li>
-            <li><b>Red dots:</b>   third  iteration (81 points, including 56 news).</li>
-          </ul>
-          Continuing…
-          <ul>
-            <li>Forth iteration:  289 points, including  208 news.</li>
-            <li>Fifth iteration: 1089 points, including  800 news.</li>
-            <li>Sixth iteration: 4225 points, including 3136 news.</li>
-            <li>…</li>
-          </ul>
-        </div>
-      </div>
-      <p>
-        We could stop dividing the grid when, after having computed new points,
-        we verified that the differences between coordinates computed by <var>T</var>⁻¹ during last iteration
-        and coordinates computed by bilinear interpolations for the same points are lower than the threshold value.
-        Unfortunately this approach can only tell us <strong>after</strong> computing new points… that those new points were unnecessary.
-        This is unfortunate considering that each iteration adds an amount of points approximately equal to
-        3 times the <em>sum</em> of the number of points of all previous iterations.
-      </p><p>
-        Map projection derivatives help to improve the speed of interpolation grid computations.
-        Using the derivatives, we can estimate whether another iteration is necessary <strong>before</strong> to execute it.
-        The basic idea is to check if the derivatives at two neighbor points define two tangent lines that are almost parallel.
-        In such case, we assume that the transform between those two points is almost linear.
-        In order to define numerically the meaning of “almost linear”,
-        we compute the intersection of the two tangent lines as illustrated below (the blue arrows).
-        Then we compute the distance between that intersection and the straight line connecting the two points
-        (the dashed line in the figure below).
-      </p>
-      <p style="text-align:center"><img style="border: solid 1px" src="../../../static/book/images/IntersectionOfDerivatives.png" alt="Intersection of derivatives"/></p>
-      <p>
-        In “brute force” algorithm without derivatives, iteration stops when the distance between interpolated positions (blue dashed line)
-        and actual projected positions (red curve) is less than the threshold value.
-        This criteria requires to compute the projected positions before the decision can be made.
-        But with an algorithm using derivatives, the projected positions (red curve) are replaced by the tangents intersection point.
-        If the actual projected curve does not have too much deformations
-        (which should be the case for pairs of neighbor points close enough),
-        then the red curve stay between the blue dashed line and the tangents intersection point.
-        By using that intersection point, we reduce greatly the number of points to transform
-        (3× the sum of all previous iterations).
-      </p>
-
-      <h4 id="GetDerivative">Getting the derivative at a point</h4>
-      <p>
-        The algorithms discussed in previous section would be irrelevant if map projection derivatives were costly to compute.
-        But analytic derivations of their formulas show that map projection and derivative formulas have many terms in common.
-        Furthermore map projection formulas are simplified by Apache <abbr>SIS</abbr> implementation strategy,
-        which takes out linear terms (delegated to affine transforms)
-        so that <code>NormalizedProjection</code> subclasses can focus on the non-linear terms only.
-        Map projection implementations in Apache <abbr>SIS</abbr> exploit those characteristics
-        for computing Jacobian matrices (if required) together with projected points in a single operation,
-        reusing many common terms between the two set of formulas.
-        Example:</p>
-
-<pre><code>AbstractMathTransform projection = ...;         // An Apache SIS map projection.
-double[] sourcePoint = {longitude, latitude};   // The geographic coordinate to project.
-double[] targetPoint = new double[2];           // Where to store the projection result.
-Matrix   derivative  = projection.<code class="SIS">transform</code>(sourcePoint, 0, targetPoint, 0, true);</code></pre>
-
-      <p>
-        If only the Jacobian matrix is desired (without the projected point),
-        then the <code>MathTransform.derivative(DirectPosition)</code> method offers a more readable alternative.
-      </p><p>
-        Many operations on coordinate transforms can also be applied on transform derivatives:
-        concatenation of a chain of transforms, inversion, taking a subset of the dimensions, <i>etc.</i>
-        Inverse projection formulas are usually more complicated than forward projections formulas,
-        but thankfully their derivatives do not need to be computed:
-        the Jacobian matrix of an inverse transform is the inverse of the Jacobian matrix of the forward transform.
-        Calculation of inverse projections can be implemented as below:
-      </p>
-
-<pre><code>@Override
-public Matrix derivative(DirectPosition p) throws TransformException {
-    Matrix jac = inverse().derivative(transform(p));
-    return Matrices.inverse(jac);
-}</code></pre>
-
-
-      <h3 id="CoordinateOperationSteps">Conceptual versus real chain of coordinate operations</h3>
-      <p>
-        Coordinate operations may include many steps, each with their own set of parameters.
-        For example transformations from one datum (e.g. <abbr>NAD27</abbr>) to another datum (e.g. <abbr>WGS84</abbr>)
-        can be approximated by an affine transform (translation, rotation and scale) applied on the <em>geocentric</em> coordinates.
-        This implies that the coordinates must be converted from <em>geographic</em> to geocentric domain before the affine transform,
-        then back to geographic domain after the affine transform.
-        The result is a three-steps process illustrated in the “Conceptual chain of operations” column of the example below.
-        However because that operation chain is very common, the <abbr>EPSG</abbr> geodetic dataset provides a shortcut
-        named “Geocentric translation <em>in geographic domain</em>”.
-        Using this operation, the conversion steps between geographic and geocentric <abbr>CRS</abbr> are implicit.
-        Consequently the datum shifts as specified by <abbr>EPSG</abbr> appears as if it was a single operation,
-        but this is not the real operation executed by Apache <abbr>SIS</abbr>.
-      </p>
-
-      <div class="example"><p><b>Example:</b>
-        transformation of geographic coordinates from <abbr>NAD27</abbr> to <abbr>WGS84</abbr> in Canada
-        can be approximated by the <abbr>EPSG</abbr>:1172 coordinate operation.
-        This single <abbr>EPSG</abbr> operation is actually a chain of three operations in which two steps are implicit.
-        The operation as specified by <abbr>EPSG</abbr> is shown in the first column below.
-        The same operation with the two hidden steps made explicit is shown in the second column.
-        The last column shows the same operation as implemented by Apache <abbr>SIS</abbr> under the hood,
-        which contains additional operations discussed below.
-        For all columns, input coordinates of the first step and output coordinates of the last step
-        are (<var>latitude</var>, <var>longitude</var>) coordinates in degrees.
-        </p>
-        <div style="display:flex; padding-left:24px">
-          <div style="width:30%; padding-right:15px; border-right:1px solid">
-            <b>Operation specified by <abbr>EPSG</abbr>:</b>
-            <ol>
-              <li><b>Geocentric translation</b> in <em>geographic</em> domain
-                <ul>
-                  <li>X-axis translation = -10 m</li>
-                  <li>Y-axis translation = 158 m</li>
-                  <li>Z-axis translation = 187 m</li>
-                </ul>
-              </li>
-            </ol>
-            Conversions between geographic and geocentric domains are implicit.
-            The semi-major and semi-minor axis lengths required for those conversions
-            are inferred from the source and target datum.
-          </div>
-          <div style="width:30%; padding-left:30px; padding-right:15px; border-right:1px solid">
-            <b>Conceptual chain of operations:</b>
-            <ol>
-              <li><b>Geographic to geocentric</b> conversion
-                <ul>
-                  <li>Source semi-major = 6378206.4 m</li>
-                  <li>Source semi-minor = 6356583.8 m</li>
-                </ul>
-              </li><li><b>Geocentric translation</b>
-                <ul>
-                  <li>X-axis translation = -10 m</li>
-                  <li>Y-axis translation = 158 m</li>
-                  <li>Z-axis translation = 187 m</li>
-                </ul>
-              </li><li><b>Geocentric to geographic</b> conversion
-                <ul>
-                  <li>Target semi-major = 6378137.0 m</li>
-                  <li>Target semi-minor ≈ 6356752.3 m</li>
-                </ul>
-              </li>
-            </ol>
-            Axis order and units are implicitly defined by the source and target <abbr>CRS</abbr>.
-            It is implementation responsibility to perform any needed unit conversions and/or axis swapping.
-          </div>
-          <div style="width:30%; padding-left:30px">
-            <b>Operations actually performed by Apache <abbr>SIS</abbr>:</b>
-            <ol>
-              <li><b>Affine parametric</b> conversion
-                <ul>
-                  <li>Scale factors (λ and φ) = 0</li>
-                  <li>Shear factors (λ and φ) = π/180</li>
-                </ul>
-              </li><li>Ellipsoid (radians domain) to centric conversion
-                <ul>
-                  <li>Eccentricity ≈ 0.08227</li>
-                </ul>
-              </li><li><b>Affine parametric transformation</b>
-                <ul>
-                  <li>Scale factors (X, Y and Z) ≈ 1.00001088</li>
-                  <li>X-axis translation ≈ -1.568 E-6</li>
-                  <li>Y-axis translation ≈ 24.772 E-6</li>
-                  <li>Z-axis translation ≈ 29.319 E-6</li>
-                </ul>
-              </li><li>Centric to ellipsoid (radians domain) conversion
-                <ul>
-                  <li>Eccentricity ≈ 0.08182</li>
-                </ul>
-              </li><li><b>Affine parametric</b> conversion
-                <ul>
-                  <li>Scale factors (λ and φ) = 0</li>
-                  <li>Shear factors (λ and φ) = 180/π</li>
-                </ul>
-              </li>
-            </ol>
-          </div>
-        </div>
-        <p>
-          The operation chain actually performed by Apache <abbr>SIS</abbr> is very different than the conceptual operation chain
-          because the coordinate systems are not the same.
-          Except for the first and last ones, all Apache <abbr>SIS</abbr> steps work on right-handed coordinate systems
-          (as opposed to the left-handed coordinate system when <var>latitude</var> is before <var>longitude</var>),
-          with angular units in radians (instead than degrees) and
-          linear units relative to an ellipsoid of semi-major axis length of 1 (instead than Earth’s size).
-          Working in those coordinate systems requires additional steps for unit conversions and axes swapping
-          at the beginning and at the end of the chain.
-          Apache <abbr>SIS</abbr> uses <cite>affine parametric conversions</cite> for this purpose,
-          which allow to combine axes swapping and unit conversions in a single step
-          (see <a href="#AffineTransform">affine transform</a> for more information).
-          The reason why Apache <abbr>SIS</abbr> splits conceptual operations in such fine-grained operations
-          is to allow more efficient concatenations of operation steps.
-          This approach often allows cancellation of two consecutive affine transforms,
-          for example a conversion from radians to degrees (e.g. after a <cite>geocentric to ellipsoid</cite> conversion)
-          immediately followed by a conversion from degrees to radians (e.g. before a map projection).
-          Another example is the <cite>Affine parametric transformation</cite> step above,
-          which combines both the <cite>geocentric translation</cite> step
-          and a scale factor implied by the ellipsoid change.
-        </p>
-      </div>
-      <p>
-        All those operation chains can be viewed in <cite>Well Known Text</cite> (<abbr>WKT</abbr>) or pseudo-<abbr>WKT</abbr> format.
-        The simplest operation chain, as specified by the authority, is given directly by the
-        <code>String</code> representation of the <code>CoordinateOperation</code> instance.
-        This <abbr>WKT</abbr> 2 representation contains not only a description of operations with their parameter values,
-        but also additional information about the context in which the operation applies (the source and target <abbr>CRS</abbr>)
-        together with some metadata like the accuracy and domain of validity.
-        Some operation steps and parameters may be omitted if they can be inferred from the context.
-      </p>
-      <div class="example">
-        <div style="display:flex; padding-left:24px; padding-right:24px">
-          <div>
-            <p><b>Example:</b>
-              the <abbr>WKT</abbr> 2 representation on the right is for the same coordinate operation than the one used in previous example.
-              This representation can be obtained by a call to <code>System.out.println(cop)</code>
-              where <code>cop</code> is a <code>CoordinateOperation</code> instance.
-              Some characteristics of this representation are:
-            </p>
-            <ul>
-              <li><p>The <code>SourceCRS</code> and <code>TargetCRS</code> elements determine axis order and units.
-                  For this reason, axis swapping and unit conversions do not need to be represented in this <abbr>WKT</abbr>.</p></li>
-              <li><p>The “Geocentric translation in geographic domain” operation implies conversions between geographic and geocentric coordinate reference systems.
-                  Ellipsoid semi-axis lengths are inferred from above <code>SourceCRS</code> and <code>TargetCRS</code> elements,
-                  so they do not need to be specified in this <abbr>WKT</abbr>.</p></li>
-              <li><p>The operation accuracy (20 metres) is much greater than the numerical floating-point precision.
-                  This kind of metadata could hardly be guessed from the mathematical function alone.</p></li>
-            </ul>
-          </div>
-          <div>
-
-<pre><samp>CoordinateOperation["NAD27 to WGS 84 (3)",
-  SourceCRS[<span style="font-family:serif"><i>full CRS definition required here but omitted for brevity</i></span>],
-  TargetCRS[<span style="font-family:serif"><i>full CRS definition required here but omitted for brevity</i></span>],
-  Method["Geocentric translations (geog2D domain)"],
-    Parameter["X-axis translation", -10.0, Unit["metre", 1]],
-    Parameter["Y-axis translation", 158.0, Unit["metre", 1]],
-    Parameter["Z-axis translation", 187.0, Unit["metre", 1]],
-  OperationAccuracy[20.0],
-  Area["Canada - onshore and offshore"],
-  BBox[40.04, -141.01, 86.46, -47.74],
-  Id["EPSG", 1172, "8.9"]]</samp></pre>
-
-          </div>
-        </div>
-      </div>
-      <p>
-        An operation chain closer to what Apache <abbr>SIS</abbr> really performs is given by the
-        <code>String</code> representation of the <code>MathTransform</code> instance.
-        In this <abbr>WKT</abbr> 1 representation, contextual information and metadata are lost;
-        a <code>MathTransform</code> is like a mathematical function with no knowledge about the meaning of the coordinates on which it operates.
-        Since contextual information are lost, implicit operations and parameters become explicit.
-        This representation is useful for debugging since any axis swapping operation (for example) become visible.
-        Apache <abbr>SIS</abbr> constructs this representation from the data structure in memory,
-        but convert them in a more convenient form for human, for example by converting radians to degrees.
-      </p>
-      <div class="example">
-        <div style="display:flex; padding-left:24px; padding-right:24px">
-          <div>
-            <p><b>Example:</b>
-              the <abbr>WKT</abbr> 1 representation on the right is for the same coordinate operation than the one used in previous example.
-              This representation can be obtained by a call to <code>System.out.println(cop.getMathTransform())</code>
-              where <code>cop</code> is a <code>CoordinateOperation</code> instance.
-              Some characteristics of this representation are:
-            </p>
-            <ul>
-              <li><p>Since there is not anymore (on intent) any information about source and target <abbr>CRS</abbr>,
-                  axis swapping (if needed) and unit conversions must be performed explicitly.
-                  This is the task of the first and last affine operations in this <abbr>WKT</abbr>.</p></li>
-              <li><p>The “Geocentric translation” operation is not anymore applied in the geographic domain, but in the geocentric domain.
-                  Consequently conversions between geographic and geocentric coordinate reference systems must be made explicit.
-                  Those explicit steps are also necessary for specifying the ellipsoid semi-axis lengths,
-                  since they can not anymore by inferred for source and target <abbr>CRS</abbr>.</p></li>
-              <li><p>Conversions between geographic and geocentric coordinates are three-dimensional.
-                  Consequently operations for increasing and reducing the number of dimensions are inserted.
-                  By default the ellipsoidal height before conversion is set to zero.</p></li>
-            </ul>
-          </div>
-          <div>
-
-<pre><samp>Concat_MT[
-  Param_MT["Affine parametric transformation",
-    Parameter[<span style="font-family:serif"><i>parameters performing axis swapping omitted for brevity</i></span>]],
-  Inverse_MT[Param_MT["Geographic3D to 2D conversion"]],
-  Param_MT["Geographic/geocentric conversions",
-    Parameter["semi_major", 6378206.4],
-    Parameter["semi_minor", 6356583.8]],
-  Param_MT["Geocentric translations (geocentric domain)",
-    Parameter["X-axis translation", -10.0],
-    Parameter["Y-axis translation", 158.0],
-    Parameter["Z-axis translation", 187.0]],
-  Param_MT["Geocentric_To_Ellipsoid",
-    Parameter["semi_major", 6378137.0],
-    Parameter["semi_minor", 6356752.314245179]],
-  Param_MT["Geographic3D to 2D conversion"],
-  Param_MT["Affine parametric transformation",
-    Parameter[<span style="font-family:serif"><i>parameters performing axis swapping omitted for brevity</i></span>]]]</samp></pre>
-
-          </div>
-        </div>
-      </div>
-      <p>
-        Finally, the raw operation chain can be view by a call to <code>AbstractMathTransform.toString(Convention.INTERNAL)</code>.
-        This pseudo-<abbr>WKT</abbr> representation shows exactly what Apache <abbr>SIS</abbr> does,
-        but is rarely used because difficult to read.
-        It may occasionally be useful for advanced debugging.
-      </p>
+      <xi:include href="CoordinateOperationSteps.html"/>
     </section>
   </body>
 </html>

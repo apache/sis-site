@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
+  <head>
+    <title>XMLTools</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="../../book.css"/>
+  </head>
+  <body>
+    <!--
+      Content below this point is copied in "/asf-staging/book/en/developer-guide.html" file
+      by the `org.apache.sis.internal.book.Assembler` class in `sis-build-helper` module.
+    -->
+    <section>
+      <header>
+        <h3 id="XMLTools">Tools for reading and writing <abbr>XML</abbr> documents</h3>
+      </header>
+      <p>
+        Apache <abbr>SIS</abbr> uses different libraries to read and write different types of objects.
+        The library used depends on the complexity of the object and on performance constraints.
+        For example, <abbr title="Java Architecture for XML Binding">JAXB</abbr> annotations have the advantage of being close to code,
+        which makes it easier to maintain mapping between Java and <abbr>XML</abbr>.
+        On the other hand, <abbr title="Simple API for XML">SAX</abbr> is more efficient.
+        In general, Apache <abbr>SIS</abbr> uses:
+      </p>
+      <ul class="verbose">
+        <li>
+          <abbr>JAXB</abbr> for objects that do not occur very often in <abbr>XML</abbr> documents, but with complex structures and deep hierarchies.
+          The metadata set in <abbr>ISO</abbr> 19115-3 standard is a typical example
+        </li>
+        <li>
+          <abbr>SAX</abbr> for objects that are relatively simple, but which may exist in very large numbers.
+          The set of points in a geometry is a typical example.
+        </li>
+        <li>
+          <abbr title="Document Object Model">DOM</abbr> as an alternative to <abbr>JAXB</abbr>
+          when the <abbr>XML</abbr> elements do not correspond exactly to Java attributes.
+          <i>Features</i> are an example, as their structure is dynamic.
+        </li>
+      </ul>
+    </section>
+  </body>
+</html>

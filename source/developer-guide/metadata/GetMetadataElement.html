@@ -28,8 +28,8 @@
   </head>
   <body>
     <!--
-      Content below this point is copied in "/static/book/en/developer-guide.html"
-      by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
+      Content below this point is copied in "/asf-staging/book/en/developer-guide.html" file
+      by the `org.apache.sis.internal.book.Assembler` class in `sis-build-helper` module.
     -->
     <section>
       <header>
@@ -46,12 +46,13 @@
       <pre><code>GeographicBoundingBox bbox = Extents.getGeographicBoundingBox(extent);</code></pre>
       <p>
         Those conveniences are defined as static methods in order to allow their use with different metadata implementations.
-        Even in Apache <abbr>SIS</abbr> library, the <code>DefaultExtent</code> class is not the only implementation of <code>Extent</code> interface.
-        There is also implementations fetching information on-demand in a database, or implementations for particular data formats.
         Some other classes providing static methods for specific interfaces are
         <code>Citations</code>, <code>Envelopes</code>, <code>Matrices</code> and <code>MathTransforms</code>.
-      </p><p>
-        Those static methods explore fragments of metadata tree in search for requested information,
+      </p>
+
+      <h3 id="MetadataAsMap">View as key-value pairs</h3>
+      <p>
+        Above static methods explore fragments of metadata tree in search for requested information,
         but the searches are still targeted to elements whose types and at least part of their paths are known at compile-time.
         Sometime the element to search is known only at runtime, or sometime there is a need to iterate over all elements.
         In such cases, one can view the metadata as a <code>java.util.Map</code> like below:
@@ -84,15 +85,6 @@ for (String name : elements.keySet()) {
         For more information on metadata views, see
         <a href="../../apidocs/org/apache/sis/metadata/package-summary.html#package.description"><code>org.apache.sis.metadata</code></a>
         package javadoc.
-      </p><p>
-        Among metadata elements introduced in this chapter, there is one which will be the topic of
-        a <a href="#Referencing">dedicated chapter</a>: <code class="OGC">referenceSystemInfo</code>.
-        Its content is essential for accurate data positioning;
-        without this element, even positions given by latitudes and longitudes are ambiguous.
-        Reference systems have many characteristics that make them apart from other metadata:
-        they are immutable, can not be handled by <code class="SIS">MetadataStandard.ISO_19115.asValueMap(…)</code>,
-        have a particular text representation and are associated to an engine
-        performing coordinate transformation from one reference system to an other.
       </p>
     </section>
   </body>

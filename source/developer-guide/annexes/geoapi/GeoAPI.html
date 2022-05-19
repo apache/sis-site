@@ -28,12 +28,12 @@
   </head>
   <body>
     <!--
-      Content below this point is copied in "/static/book/en/developer-guide.html"
-      by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
+      Content below this point is copied in "/asf-staging/book/en/developer-guide.html" file
+      by the `org.apache.sis.internal.book.Assembler` class in `sis-build-helper` module.
     -->
     <section>
       <header>
-        <h2 id="GeoAPI">From conceptual models to Java interfaces: GeoAPI</h2>
+        <h3 id="GeoAPI">From conceptual models to Java interfaces: GeoAPI</h3>
       </header>
       <p>
         The <a href="http://www.geoapi.org">GeoAPI</a> project offers a set of Java interfaces for geospatial applications.
@@ -111,60 +111,6 @@
           </p>
         </article>
       </details>
-
-      <p id="GeoAPI-core">
-        GeoAPI is composed of many modules.
-        The <code>geoapi</code> and <code>geoapi-pending</code> modules
-        provide interfaces derived from <abbr>UML</abbr> schemas of international standards.
-        The conceptual model will be explained in detail in the chapters describing Apache <abbr>SIS</abbr> implementation.
-        However, we can get an overview of its content by consulting the page listing the mapping between
-        <a href="http://www.geoapi.org/3.0/javadoc/content.html">GeoAPI methods and the standards where they come from</a>.
-        Those modules and the mapping between GeoAPI and international standards are described in more details <a href="#SpecificationToInterfaces">in annex</a>.
-      </p>
-
-
-
-      <h3 id="GeoAPI-implementation">Implementations provided by Apache SIS</h3>
-      <p>
-        Apache SIS implements most GeoAPI interfaces by a class of the same name than the interface
-        but prefixed by “<code>Abstract</code>”, “<code>Default</code>” or “<code>General</code>”.
-        Apache SIS classes prefixed by “<code>Default</code>” can be instantiated directly by a
-        <code>new DefaultXXX(…)</code> statement or by a call to the <code>createXXX(…)</code> method in a factory.
-      </p>
-      <div class="example"><b>Example:</b> to represent a projected coordinate reference system (Mercator, Lambert, <i>etc</i>):
-        <ul>
-          <li><code>org.opengis.referencing.crs.ProjectedCRS</code> is the GeoAPI interface derived from ISO 19111 standard, and</li>
-          <li><code>org.apache.sis.referencing.crs.DefaultProjectedCRS</code> is the implementation provided by Apache SIS.</li>
-        </ul>
-        An instance can be created by:
-        <ul>
-          <li><code>ProjectedCRS crs = new DefaultProjectedCRS(…)</code>, ou</li>
-          <li><code>ProjectedCRS crs = CRSFactory.createProjectedCRS(…)</code>.</li>
-        </ul>
-        Both approaches expect the same arguments (omitted in this example for brevity).
-      </div>
-      <p>
-        In the default Apache SIS configuration, using <code>FooFactory.createXXX(…)</code> or <code>new DefaultXXX(…)</code>
-        is almost the same except that <code>FooFactory</code> may return existing instances instead than creating new instances,
-        and that exceptions thrown in case of invalid arguments are different types.
-        In more advanced configurations, using <code>Factory</code> reduces the
-        <a href="#ServiceLoader">direct dependencies toward Apache SIS</a>
-        and allows inversion of control.
-      </p><p>
-        The “<code>General</code>” prefix is sometime used instead than “<code>Default</code>”
-        to indicate that alternative implementations are available for some specific cases.
-        For example the <code>Envelope</code> interface is implemented by at least two Apache SIS classes:
-        <code>GeneralEnvelope</code> and <code>Envelope2D</code>.
-        The first implementation can represent envelopes with any number of dimensions
-        while the second implementation is specialized for two-dimensional envelopes.
-      </p><p>
-        Apache SIS classes prefixed by “<code>Abstract</code>” should not – in principle – be instantiated.
-        Users should instantiate a non-abstract subclass instead.
-        But many SIS classes are only conceptually abstract, without <code>abstract</code> Java keyword in class definition.
-        Such classes can be instantiated by a <code>new AbstractXXX(…)</code> statement
-        – but not by <code>Factory</code> – despite being conceptually abstract.
-        However such instantiations should be done only in last resort, when it is not possible to determine the exact subtype.
-      </p>
     </section>
   </body>
 </html>

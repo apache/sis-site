@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>Installation</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="../book.css"/>
+  </head>
+  <body>
+    <!--
+      Content below this point is copied in "/asf-staging/book/en/developer-guide.html" file
+      by the `org.apache.sis.internal.book.Assembler` class in `sis-build-helper` module.
+    -->
+    <section>
+      <header>
+        <h2 id="Installation">Installation</h2>
+      </header>
+      <p>
+        The easiest way to use Apache <abbr>SIS</abbr> is to declare Maven dependencies in the application project.
+        <abbr>SIS</abbr> is divided in about 20 modules, which allow applications to import a subset of the library.
+        The <a href="../../downloads.html">Apache SIS downloads</a> page lists the main modules.
+        The <code>pom.xml</code> fragment below gives all dependencies needed by the code snippets in this document
+        (ignoring core modules such as <code>sis-referencing</code> which are inherited by transitive dependencies).
+        <em>Note that the <code>sis-epsg</code> optional module is not under Apache license.</em>
+        Inclusion of that module is subject to acceptation of <a href="https://epsg.org/terms-of-use.html">EPSG terms of use</a>.
+        It is optional but recommended;
+        see <a href="../../epsg.html">How to use EPSG geodetic dataset</a> page for more information.
+      </p>
+<pre>&lt;properties&gt;
+  &lt;sis.version&gt;1.2&lt;/sis.version&gt;
+&lt;/properties&gt;
+&lt;dependencies&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;org.apache.sis.storage&lt;/groupId&gt;
+    &lt;artifactId&gt;sis-geotiff&lt;/artifactId&gt;
+    &lt;version&gt;${sis.version}&lt;/version&gt;
+  &lt;/dependency&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;org.apache.sis.storage&lt;/groupId&gt;
+    &lt;artifactId&gt;sis-netcdf&lt;/artifactId&gt;
+    &lt;version&gt;${sis.version}&lt;/version&gt;
+  &lt;/dependency&gt;
+
+  &lt;!-- Specialization of GeoTIFF reader for Landsat data. --&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;org.apache.sis.storage&lt;/groupId&gt;
+    &lt;artifactId&gt;sis-earth-observation&lt;/artifactId&gt;
+    &lt;version&gt;${sis.version}&lt;/version&gt;
+  &lt;/dependency&gt;
+
+  &lt;!-- The following dependency can be omitted if XML support is not desired. --&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;org.glassfish.jaxb&lt;/groupId&gt;
+    &lt;artifactId&gt;jaxb-runtime&lt;/artifactId&gt;
+    &lt;version&gt;2.3.6&lt;/version&gt;
+    &lt;scope&gt;runtime&lt;/scope&gt;
+  &lt;/dependency&gt;
+
+  &lt;!-- <b>This optional dependency requires agreement with EPSG terms of use.</b> --&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;org.apache.sis.non-free&lt;/groupId&gt;
+    &lt;artifactId&gt;sis-epsg&lt;/artifactId&gt;
+    &lt;version&gt;${sis.version}&lt;/version&gt;
+    &lt;scope&gt;runtime&lt;/scope&gt;
+  &lt;/dependency&gt;
+&lt;/dependencies&gt;</pre>
+
+      <p>
+       The <code>sis-epsg</code> optional module needs a directory where it will install the geodetic database.
+       That directory can be anywhere on the local machine, it shall exist (but should be initially empty),
+       and its location should be specified by the <code>SIS_DATA</code> environment variable.
+       For example on a Unix system
+       (replace <code>user</code> by the actual user name and <code>some_directory</code> by anything):
+      </p>
+<pre>export SIS_DATA=/home/user/some_directory
+mkdir $SIS_DATA</pre>
+      <p>
+        It is possible to avoid the need to setup <code>SIS_DATA</code> directory
+        if the <code>sis-epsg</code> dependency is replaced by <code>sis-embedded-data</code>.
+        However the latter is slower, and an <code>SIS_DATA</code> directory is still needed
+        for other purposes such as the installation of datum shift grids.
+      </p>
+    </section>
+  </body>
+</html>

@@ -28,12 +28,12 @@
   </head>
   <body>
     <!--
-      Content below this point is copied in "/static/book/en/developer-guide.html" file
-      by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
+      Content below this point is copied in "/asf-staging/book/en/developer-guide.html" file
+      by the `org.apache.sis.internal.book.Assembler` class in `sis-build-helper` module.
     -->
     <section>
       <header>
-        <h1 id="DataAccess">Geospatial data access</h1>
+        <h2 id="DataAccess">Data access overview</h2>
       </header>
       <p>
         It is possible to instantiate data structures programmatically in memory.
@@ -47,10 +47,9 @@
         or other kinds of object specific to the data source.
         The <code class="SIS">DataStores.open(Object)</code> method detects data formats
         and returns a <code>DataStore</code> instance for that format.
-      </p>
-      <p>
+      </p><p>
         <code>DataStore</code> functionalities depend on the kind of data (coverage, feature set, time series, <i>etc.</i>).
-        But in any cases, there is always some metadata that can be obtained.
+        But in all cases, there is always some metadata that can be obtained.
         Metadata allows to identify the phenomenon or features described by the data
         (temperature, land occupation, <i>etc.</i>),
         the geographic area or temporal period covered by the data, together with their resolution.
@@ -59,33 +58,28 @@
         legal or technical constraints on data usage,
         the history of processing apply on the data,
         expected updates schedule, <i>etc.</i>
-      </p>
-      <p>
+      </p><p>
         Various data formats have their own metadata model, but Apache <abbr>SIS</abbr> translates all of them
         in a unique metadata model in order to hide this heterogeneity.
-        This approach — to select a single metadata model as the <em>pivot model</em> — is often used by other libraries.
-        For example Apache Tika uses <cite>Dublin Core</cite> as the pivot metadata model,
-        while Java Image I/O defines its own standard metadata model in its <code>javax.imageio.metadata</code> package.
-        For Apache <abbr>SIS</abbr>, the chosen pivot model is the <abbr>ISO</abbr> <cite>19115-1:2014 — Fundamentals</cite>
-        international standard, completed by <abbr>ISO</abbr> 19115-2 — <cite>Extensions for imagery and gridded data</cite>.
+        This <em>pivot model</em> approach is often used by various libraries,
+        with <cite>Dublin Core</cite> as a popular choice.
+        For Apache <abbr>SIS</abbr>, the chosen pivot model is the <abbr>ISO</abbr> <cite>19115</cite> international standard.
         This model organizes metadata in a tree structure where each information is accessible by a well-defined path,
         regardless the origin of that information.
         For example if a data format can provides a geographic bounding box encompassing all data,
         then that information will always be accessible (regardless the data format) from the root <code>Metadata</code> object
-        under the <code class="OGC">identificationInfo</code> node, <code class="OGC">extent</code> sub-node,
-        <code class="OGC">geographicElement</code> sub-node.
+        under the <code class="OGC">identification­Info</code> node, <code class="OGC">extent</code> sub-node,
+        <code class="OGC">geographic­Element</code> sub-node.
       </p>
       <div class="example"><p><b>Example:</b>
           following code read a metadata file from a Landsat-8 image and prints the declared geographic bounding box:
         </p>
 
-<pre><code>try (DataStore ds = DataStores.open(new File("LC81230522014071LGN00_MTL.txt"))) {
-    Metadata md = ds.<code class="SIS">getMetadata()</code>;
+<pre><code>try (DataStore store = DataStores.open(new File("LC81230522014071LGN00_MTL.txt"))) {
+    Metadata overview = store.<code class="SIS">getMetadata()</code>;
 
-    // In order to make this example simpler, null values and empty collection checks are omited.
-    Identification   idInfo = md    .<code class="GeoAPI">getIdentificationInfo()</code>.iterator().next();
-    Extent           extent = idInfo.<code class="GeoAPI">getExtents()</code>           .iterator().next();
-    GeographicExtent bbox   = extent.<code class="GeoAPI">getGeographicElements()</code>.iterator().next();
+    // Convenience method for fetching the geographic bounding box at the right location in metadata tree.
+    GeographicBoundingBox bbox = <code class="SIS">Extents.getGeographicBoundingBox</code>(overview);
 
     System.out.println("The geographic bounding box is:");
     System.out.println(bbox);
@@ -101,12 +95,6 @@ Geographic Bounding Box
   ├─East bound longitude…………………………… 110°26′39.66″E
   ├─South bound latitude…………………………… 10°29′59.604″N
   └─North bound latitude…………………………… 12°37′25.716″N</samp></pre>
-
-        <p>
-          The Java code in this example extracts metadata elements by Java method invocations like <code class="GeoAPI">getExtents()</code>,
-          but the next chapters will introduce another way using paths given as character strings.
-          That later approach is more convenient when the methods to invoke are not known at compile-time.
-        </p>
       </div>
 
       <p>
@@ -117,9 +105,9 @@ Geographic Bounding Box
         For example the <code class="OGC">extent</code> node may contain many geographic areas.
       </p>
 
-      <table style="line-height:1">
+      <table class="monospacedHeaderColumn" style="font-size:0.82vw">
         <caption>Extract of a few metadata elements from ISO 19115</caption>
-        <tr><th>Élément</th>                                <th>Description</th></tr>
+        <tr><th>Element</th>                                <th>Description</th></tr>
         <tr><td style="padding-top:9px">Metadata</td>       <td style="padding-top:9px">Metadata about a dataset, service or other resources.</td></tr>
         <tr><td>  ├─Reference system info</td>              <td>Description of the spatial and temporal reference systems used in the dataset.</td></tr>
         <tr><td>  ├─Identification info</td>                <td>Basic information about the resource(s) to which the metadata applies.</td></tr>
@@ -156,7 +144,16 @@ Geographic Bounding Box
         <tr><td>      ├─Source</td>                         <td>Information about the source data used in creating the data specified by the scope.</td></tr>
         <tr><td>      └─Process step</td>                   <td>Information about events in the life of a resource specified by the scope.</td></tr>
       </table>
-      <xi:include href="GetMetadataElement.html"/>
+      <p>
+        Among metadata elements introduced in this chapter, there is one which will be the topic of
+        a <a href="#Referencing">dedicated chapter</a>: <code class="OGC">reference­System­Info</code>.
+        Its content is essential for accurate data positioning;
+        without this element, even positions given by latitudes and longitudes are ambiguous.
+        Reference systems have many characteristics that make them apart from other metadata:
+        they are immutable, can not be handled by <code class="SIS">MetadataStandard.ISO_19115.asValueMap(…)</code>,
+        have a particular text representation and are associated to an engine
+        performing coordinate transformation from one reference system to an other.
+      </p>
     </section>
   </body>
 </html>

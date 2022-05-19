@@ -28,19 +28,34 @@
   </head>
   <body>
     <!--
-      Content below this point is copied in "/static/book/en/developer-guide.html"
-      by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
+      Content below this point is copied in "/asf-staging/book/en/developer-guide.html" file
+      by the `org.apache.sis.internal.book.Assembler` class in `sis-build-helper` module.
     -->
     <section>
       <header>
         <h1 id="Geometry">Geometries</h1>
       </header>
       <p>
-        This chapter introduces a few aspects of <abbr>ISO</abbr> 19107 standard (<i>Spatial schema</i>)
-        and the Apache <abbr>SIS</abbr> classes that implement them.
+        Each geometric object is considered as an infinite set of points
+        (except the <code>Point</code> object which contains only itself).
+        To better represent this concept, the <code>TransfiniteSet</code> interface
+        can be seen as a <code>Set</code> of potentially infinite size in which the elements are points.
+        All geometries are specializations of <code>TransfiniteSet</code>.
+      </p><p>
+        There is two types of structures to represent a point: <code>Point</code> and <code>DirectPosition</code>.
+        The first type is a true geometry and may therefore be relatively cumbersome, depending on the implementation.
+        The second type is not formally considered to be a geometry;
+        it extends neither <code>Geometry</code> nor <code>TransfiniteSet</code>.
+        It barely defines any operations besides the storing of a sequence of numbers representing a coordinate.
+        It may therefore be a more lightweight object.
+      </p><p>
+        In order to allow the <abbr>API</abbr> to work equally with these two types of positions,
+        <code>Position</code> is defined as a common interface implemented by <code>DirectPosition</code> and <code>Point</code>.
+        In practice, the great majority of Apache <abbr>SIS</abbr>’s <abbr>API</abbr> works on <code>DirectPosition</code>s,
+        and occasionally on <code>Position</code>s when it seems useful to also allow geometric points.
       </p>
 
-      <xi:include href="GeometryBase.html"/>
+      <xi:include href="Envelope.html"/>
     </section>
   </body>
 </html>

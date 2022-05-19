@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>SampleDimension</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="../book.css"/>
+  </head>
+  <body>
+    <!--
+      Content below this point is copied in "/asf-staging/book/en/developer-guide.html" file
+      by the `org.apache.sis.internal.book.Assembler` class in `sis-build-helper` module.
+    -->
+    <section>
+      <header>
+        <h2 id="SampleDimension">Sample dimensions</h2>
+      </header>
+      <p>
+        The range of a coverage is the set of valid output values.
+        In Apache <abbr>SIS</abbr>, the distinction between ranges of numerical values and range of any types of values is represented by
+        <code>Number­Range</code> and <code>Range</code> classes respectively.
+        The <code>Number­Range</code> is used more often, and is also the one that most closely approaches the
+        <a href="http://en.wikipedia.org/wiki/Interval_%28mathematics%29">the common mathematical concept of an interval</a>.
+        This textual representation approaches the specifications of <abbr>ISO</abbr> 31-11 standard,
+        except that the comma is replaced by the character “…” as the separator of minimal and maximal values.
+        For example, “[0 … 256)” represents the range of values from 0 inclusive to 256 exclusive.
+      </p><p>
+        <code>Range</code> objects are only indirectly associated with coverages.
+        In <abbr>SIS</abbr>, the values that can return coverages are described by objects of the
+        <code>Sample­Dimension</code> type.
+        It is these that contain instances of <code>Range</code>,
+        as well as other information such as <i>transfer function</i> (described later).
+      </p>
+      <div class="warning">
+        This section is incomplete. See Javadoc for more details.
+      </div>
+
+      <p>
+        The <code class="SIS">SampleDimension.Builder</code> provides convenience methods for building the sample dimensions of a coverage.
+        The usage pattern is to invoke the following methods:
+      </p>
+      <ul>
+        <li><code>setName(…)</code> for giving a name to a band.</li>
+        <li><code>addQuantitative(…)</code> for declaring a range of sample values to convert to units of measurement.</li>
+        <li><code>addQualitative(…)</code> for declaring "no data" values.</li>
+        <li><code>setBackground(…)</code> for declaring a "no data" value which can also be used for filling empty space.</li>
+      </ul>
+    </section>
+  </body>
+</html>

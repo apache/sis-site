@@ -28,12 +28,12 @@
   </head>
   <body>
     <!--
-      Content below this point is copied in "/static/book/en/developer-guide.html" file
-      by the 'org.apache.sis.internal.book.Assembler' class in 'sis-build-helper' module.
+      Content below this point is copied in "/asf-staging/book/en/developer-guide.html" file
+      by the `org.apache.sis.internal.book.Assembler` class in `sis-build-helper` module.
     -->
     <section>
       <header>
-        <h2 id="ComponentsOfCRS">Components of a reference system by coordinates</h2>
+        <h2 id="ComponentsOfCRS">Coordinate reference systems</h2>
       </header>
       <p>
         Spatial reference systems by coordinates provide necessary information for mapping numerical coordinate values
@@ -55,7 +55,105 @@
         and the <cite>Well-Known Text</cite> (<abbr>WKT</abbr>) — a text format easier to read by humans.
       </p>
 
-      <h3 id="Ellipsoid">Geoid et ellipsoid</h3>
+      <h3 id="ProjectedCRS">Map projections</h3>
+      <p>
+        Map projections represent a curved surface (the Earth surface) on a plane surface (a map or a computer screen).
+        Every rendering of geospatial data on a flat screen uses some kind of map projection, sometime implicitly.
+        Well-designed map projections provide some control over deformations:
+        one can preserve the angles, another projection can preserve the areas,
+        but none can preserve both in same time.
+        The geometric properties to preserve depend on the feature to represent and the work to do on that feature.
+        For example countries elongated along the East-West axis often use a Lambert projection,
+        while countries elongated along the North-South axis prefer a Transverse Mercator projection.
+      </p><p>
+        There is thousands of projected <abbr>CRS</abbr> in use around the world.
+        Many of them are published in the <a href="../../epsg.html"><abbr>EPSG</abbr> geodetic database</a>.
+        The easiest way to get a projected <abbr>CRS</abbr> with Apache <abbr>SIS</abbr> is to use its <abbr>EPSG</abbr> code.
+        For example the following code gets the definition of the <cite>JGD2000 / UTM zone 54N</cite> <abbr>CRS</abbr>
+        (for Japan from 138°E to 144°E):
+      </p>
+      <pre><code>CoordinateReferenceSystem crs = CRS.forCode("EPSG:3100");</code></pre>
+      <p>
+        Other ways to get a coordinate reference system will be given in a <a href="#GetCRS">next section</a>.
+      </p>
+
+      <h3 id="GeographicCRS">Geographic reference systems</h3>
+      <p>
+        All map projections are based on a geodetic (usually geographic) <abbr>CRS</abbr>.
+        A geodetic <abbr>CRS</abbr> is a coordinate reference system with latitude, longitude and sometime height axes.
+        There is many kinds of latitudes and longitudes,
+        but two common kinds supported by Apache <abbr>SIS</abbr> are <dfn>geodetic</dfn> and <dfn>geocentric</dfn> latitudes.
+        Those two angles differ slightly in the way they intersect the ellipsoid surface.
+        On Earth surface, the difference between those two kinds of latitude varies between 0 and about 20 km.
+      </p><p>
+        When peoples talk about latitudes and longitudes, they usually mean <em>geodetic</em> latitudes and longitudes.
+        A coordinate reference system using such latitudes and longitudes is said <dfn>geographic</dfn>
+        and is represented by the <code>GeographicCRS</code> interface.
+        Systems using the other kinds of latitude are represented by other <abbr>CRS</abbr> interfaces.
+      </p><p>
+        Theoretically, data expressed in a geographic <abbr>CRS</abbr> can never be rendered directly on a flat screen
+        (they could be rendered directly on a planetarium dome however).
+        In practice we allow data rendering in a geographic <abbr>CRS</abbr>,
+        but this process implicitly uses a <cite>Plate Carrée</cite> projection.
+      </p>
+
+      <h3 id="CompoundCRS">Vertical and temporal dimensions</h3>
+      <p style="color: red">TODO</p>
+
+      <h3 id="CoordinateSystem">Coordinate systems</h3>
+      <p>
+        A Coordinate System (<abbr>CS</abbr>) defines the set of axes that spans a given coordinate space.
+        Each axis defines an approximative direction (north, south, east, west, up, down, port, starboard, past, future, <i>etc.</i>),
+        units of measurement, minimal and maximal values, and what happen after reaching those extremum.
+        For example in longitude case, after +180° the coordinate values continue at −180°.
+        Axes having such behavior are flagged by the <code>RangeMeaning.WRAPAROUND</code> code.
+      </p>
+      <aside>
+        <h4>Generalizing to other types of axes</h4>
+        <p>
+          Wraparound can also exist in time axis. For example in climatological data defining normal temperatures,
+          after December the data sequence restarts to January; those months are associated to no particular year.
+          Apache <abbr>SIS</abbr> allows wraparound to happen on any axis, as long as it is flagged by <code>RangeMeaning</code> code.
+          It is possible to have many wraparound axes in the same coordinate system.
+        </p>
+      </aside>
+      <p>
+        Each Coordinate Reference System (<abbr>CRS</abbr>)
+        is associated with exactly one Coordinate System (<abbr>CS</abbr>).
+        Some properties that we can get from a coordinate system and its axes are shown below.
+        Axes are numbered from 0 to <code>cs.getDimension()-1</code> inclusive.
+      </p>
+
+<pre><code>CoordinateSystem cs = crs.getCoordinateSystem();
+CoordinateSystemAxis secondAxis = cs.getAxis(1);            // For a geographic CRS, this is usually geodetic longitude.
+String        abbreviation = secondAxis.getAbbreviation();  // For a longitude axis, this is usually "λ", "L" or "lon".
+AxisDirection direction    = secondAxis.getDirection();     // For a longitude axis, this is usually EAST. Another occasional value is WEST.
+Unit&lt;?&gt;       units        = secondAxis.getUnit();          // For a longitude axis, this is usually Units.DEGREE.
+double        minimum      = secondAxis.getMinimumValue();  // For a longitude axis, this is usually −180°. Another common value is 0°.
+double        maximum      = secondAxis.getMaximumValue();  // For a longitude axis, this is usually +180°. Another common value is 360°.
+RangeMeaning  atEnds       = secondAxis.getRangeMeaning();  // For a longitude axis, this is WRAPAROUND.
+</code></pre>
+      <p>
+
+        In addition to axis definitions, another important coordinate system characteristic is their type
+        (<code>CartesianCS</code>, <code>SphericalCS</code>, <i>etc.</i>).
+        The <abbr>CS</abbr> type implies the set of mathematical rules for calculating geometric quantities like angles, distances and surfaces.
+        Usually the various <abbr>CS</abbr> subtypes do not define any new Java methods compared to the parent type,
+        but are nevertheless important for type safety.
+        For example many calculations or associations are legal only when all axes are perpendicular to each other.
+        In such case the coordinate system type is restricted to <code>CartesianCS</code> in method signatures.
+      </p><p>
+        Coordinate systems are mathematical concepts; they do <strong>not</strong> contain any information
+        about where on Earth is located the system origin.
+        Consequently coordinate systems alone are not sufficient for describing a location;
+        they must be combined with a <dfn>datum</dfn> (or <dfn>reference frame</dfn>).
+        Those combinations form the <dfn>coordinate reference systems</dfn> described in previous sections.
+      </p>
+
+
+
+
+      <h3 id="GeodeticDatum">Geodetic datum</h3>
       <p>
         Since the real topographic surface is difficult to represent mathematically, it is not used directly.
         A slightly more convenient surface is the geoid,
@@ -68,7 +166,7 @@
         caused by the uneven distribution of mass inside Earth.
         For more convenient mathematical operations, the geoid surface is approximated by an ellipsoid.
         This “figure of Earth” is represented in GeoAPI by the <code>Ellipsoid</code> interface,
-        a fundamental component in coordinate reference systems of kind <code>GeographicCRS</code> and <code>ProjectedCRS</code>.
+        which is a fundamental component in coordinate reference systems of type <code>GeographicCRS</code> and <code>ProjectedCRS</code>.
         Tenth of ellipsoids are commonly used for datum definitions.
         Some of them provide a very good approximation for a particular geographic area
         at the expense of the rest of the world for which the datum was not designed.
@@ -98,8 +196,6 @@ double semiMinor   = ellipsoid.<code class="GeoAPI">getSemiMinorAxis()</code>;  
 double ivf         = ellipsoid.<code class="GeoAPI">getInverseFlattening()</code>;      // = semiMajor / (semiMajor - semiMinor).
 </code></pre>
 
-
-      <h3 id="GeodeticDatum">Geodetic datum</h3>
       <p>
         For defining a geodetic system in a country, a national authority selects an ellipsoid matching closely the country surface.
         Differences between that ellipsoid and the geoid’s hollows and bumps are usually less than 100 metres.
@@ -147,126 +243,6 @@ double ivf         = ellipsoid.<code class="GeoAPI">getInverseFlattening()</code
         has different coordinate values when using those different datums, even if the ellipsoid is identical in both cases.
         Coordinate transformations between datums require some kind of database.
       </p>
-
-      <h3 id="CoordinateSystem">Coordinate systems</h3>
-      <p>
-        A Coordinate System (<abbr>CS</abbr>) defines the set of axes that spans a given coordinate space.
-        Each axis defines an approximative direction (north, south, east, west, up, down, port, starboard, past, future, <i>etc.</i>),
-        units of measurement, minimal and maximal values, and what happen after reaching those extremum.
-        For example in longitude case, after +180° the coordinate values continue at −180°.
-        But such loops may also exist in time axis. For example in climatological data defining normal temperatures,
-        after December the data sequence restarts to January; those months are associated to no particular year.
-        Axes having such behavior are associated to the <code>RangeMeaning.WRAPAROUND</code> code.
-      </p><p>
-        Some properties that we can get from a coordinate system and its axes are shown below.
-        Axes are numbered from 0 to <code>cs.getDimension()-1</code> inclusive.
-      </p>
-
-<pre><code>CoordinateSystem cs = crs.getCoordinateSystem();
-CoordinateSystemAxis secondAxis = cs.getAxis(1);            // For a geographic CRS, this is usually geodetic longitude.
-String        abbreviation = secondAxis.getAbbreviation();  // For a longitude axis, this is usually "λ", "L" or "lon".
-AxisDirection direction    = secondAxis.getDirection();     // For a longitude axis, this is usually EAST. Another occasional value is WEST.
-Unit&lt;?&gt;       units        = secondAxis.getUnit();          // For a longitude axis, this is usually Units.DEGREE.
-double        minimum      = secondAxis.getMinimumValue();  // For a longitude axis, this is usually −180°. Another common value is 0°.
-double        maximum      = secondAxis.getMaximumValue();  // For a longitude axis, this is usually +180°. Another common value is 360°.
-RangeMeaning  atEnds       = secondAxis.getRangeMeaning();  // For a longitude axis, this is WRAPAROUND.
-</code></pre>
-      <p>
-
-        In addition to axis definitions, another important coordinate system characteristic is their type
-        (<code>CartesianCS</code>, <code>SphericalCS</code>, <i>etc.</i>).
-        The <abbr>CS</abbr> type implies the set of mathematical rules for calculating geometric quantities like angles, distances and surfaces.
-        Usually the various <abbr>CS</abbr> subtypes do not define any new Java methods compared to the parent type,
-        but are nevertheless important for type safety.
-        For example many calculations or associations are legal only when all axes are perpendicular to each other.
-        In such case the coordinate system type is restricted to <code>CartesianCS</code> in method signatures.
-      </p><p>
-        Coordinate systems are mathematical concepts; they do <strong>not</strong> contain any information
-        about where on Earth is located the system origin.
-        Consequently coordinate systems alone are not sufficient for describing a location;
-        they must be combined with a <cite>datum</cite> (or <cite>reference frame</cite>).
-        Those combinations form the <cite>coordinate reference systems</cite> described in next sections.
-      </p>
-
-      <h4 id="AxisOrder">Axis order</h4>
-      <p>
-        The axis order is specified by the authority (typically a national agency) defining the <cite>Coordinate Reference System</cite> (<abbr>CRS</abbr>).
-        The order depends on the <abbr>CRS</abbr> type and the country defining the <abbr>CRS</abbr>.
-        In the case of geographic <abbr>CRS</abbr>, the (<var>latitude</var>, <var>longitude</var>) axis order is widely used by geographers and pilots for centuries.
-        However software developers tend to consistently use the (<var>x</var>, <var>y</var>) order for every kind of <abbr>CRS</abbr>.
-        Those different practices resulted in contradictory definitions of axis order for almost every <abbr>CRS</abbr> of kind <code>GeographicCRS</code>,
-        for some <code>ProjectedCRS</code> in the South hemisphere (South Africa, Australia, <i>etc.</i>) and for some polar projections among others.
-      </p><p>
-        Recent <abbr>OGC</abbr> standards mandate the use of axis order as defined by the authority.
-        Oldest <abbr>OGC</abbr> standards used the (<var>x</var>, <var>y</var>) axis order instead, ignoring any authority specification.
-        Many software products still use the old (<var>x</var>, <var>y</var>) axis order,
-        maybe because such uniformization makes <abbr>CRS</abbr> implementation and usage <em>apparently</em> easier.
-        Apache <abbr>SIS</abbr> supports both conventions with the following approach:
-        by default, <abbr>SIS</abbr> creates <abbr>CRS</abbr> with axis order <em>as defined by the authority</em>.
-        Those <abbr>CRS</abbr> are created by calls to the <code>CRS.forCode(String)</code> method
-        and the actual axis order can be verified after the <abbr>CRS</abbr> creation with <code>System.out.println(crs)</code>.
-        But if (<var>x</var>, <var>y</var>) axis order is wanted for compatibility with older <abbr>OGC</abbr> specifications or other software products,
-        then <abbr>CRS</abbr> forced to <cite>longitude first</cite> axis order can be created by a call to the following method:
-      </p>
-
-<pre><code>CoordinateReferenceSystem crs = …;               // CRS obtained by any means.
-crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)</code></pre>
-
-      <p>
-        Among the legacy <abbr>OGC</abbr> standards that used the non-conform axis order,
-        an influent one is version 1 of the <cite>Well Known Text</cite> (<abbr>WKT</abbr>) format specification.
-        According that widely-used format, <abbr>WKT</abbr> 1 definitions without explicit <code>AXIS[…]</code> elements
-        shall default to (<var>longitude</var>, <var>latitude</var>) or (<var>x</var>, <var>y</var>) axis order.
-        In version 2 of <abbr>WKT</abbr> format, <code>AXIS[…]</code> elements are no longer optional
-        and should contain an explicit <code>ORDER[…]</code> sub-element for making the intended order yet more obvious.
-        But if <code>AXIS[…]</code> elements are nevertheless missing in a <abbr>WKT</abbr> 2 definition,
-        Apache <abbr>SIS</abbr> defaults to (<var>latitude</var>, <var>longitude</var>) order.
-        So in summary:
-      </p>
-      <ul>
-        <li>Default <abbr>WKT</abbr> 1 axis order of geographic <abbr>CRS</abbr> is (<var>longitude</var>, <var>latitude</var>) as mandated by <abbr>OGC</abbr> 01-009 specification.</li>
-        <li>Default <abbr>WKT</abbr> 2 axis order of geographic <abbr>CRS</abbr> is (<var>latitude</var>, <var>longitude</var>),
-            but this is <abbr>SIS</abbr>-specific as <abbr>ISO</abbr> 19162 does not mention default axis order.</li>
-      </ul>
-      <p>
-        To avoid ambiguities, users are encouraged to always provide explicit <code>AXIS[…]</code> elements in their <abbr>WKT</abbr>.
-        The <abbr>WKT</abbr> format will be presented in more details in the next sections.
-      </p>
-
-      <h3 id="GeographicCRS">Geographic reference systems</h3>
-      <p>
-        There is many kinds of latitudes and longitudes. Two common kinds supported by Apache <abbr>SIS</abbr>
-        are <cite>geodetic</cite> and <cite>geocentric</cite> latitudes.
-        Those two angles differ slightly in the way they intersect the ellipsoid surface.
-        On Earth surface, the difference between those two kinds of latitude varies between 0 and about 20 km.
-      </p><p>
-        When peoples talk about latitudes and longitudes, they usually mean <em>geodetic</em> latitudes and longitudes.
-        A coordinate reference systems using such latitudes and longitudes is said <cite>geographic</cite>
-        and is represented by the <code>GeographicCRS</code> interface.
-        Systems using the other kinds of latitude are represented by other <abbr>CRS</abbr> interfaces.
-      </p>
-
-      <h4 id="GeographicWKT"><i>Well-Known Text</i> format</h4>
-      <p style="color: red">TODO</p>
-
-      <h3 id="ProjectedCRS">Map projections</h3>
-      <p>
-        Map projections represent a curved surface (the Earth) on a plane surface (a map or a computer screen)
-        with some control over deformations: one can preserve either the angles or the areas, but not both in same time.
-        The geometric properties to preserve depend on the feature to represent and the work to do on that feature.
-        For example countries elongated along the East-West axis often use a Lambert projection,
-        while countries elongated along the North-South axis prefer a Transverse Mercator projection.
-      </p>
-      <p style="color: red">TODO</p>
-
-      <h4 id="ProjectedWKT"><i>Well-Known Text</i> format</h4>
-      <p style="color: red">TODO</p>
-
-      <h3 id="CompoundCRS">Vertical and temporal dimensions</h3>
-      <p style="color: red">TODO</p>
-
-      <h4 id="CompoundWKT"><i>Well-Known Text</i> format</h4>
-      <p style="color: red">TODO</p>
     </section>
   </body>
 </html>
