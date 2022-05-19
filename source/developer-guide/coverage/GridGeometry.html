@@ -38,10 +38,22 @@
       <p>
         The domain of a coverage is the set of valid input values.
         In Apache <abbr>SIS</abbr>, the domain of grid coverages is described by the <code>Grid­Geometry</code> class.
+        This class contains the following information:
       </p>
-      <div class="warning">
-        This section is incomplete. See Javadoc for more details.
-      </div>
+      <ul>
+        <li>A grid extent (a.k.a. <dfn>grid envelope</dfn>), often inferred from the image size in pixels.</li>
+        <li>A <dfn>grid to <abbr>CRS</abbr></dfn> conversion, typically as a scale followed by a translation.</li>
+        <li>A georeferenced envelope, which can be inferred from the grid extent and the <dfn>grid to <abbr>CRS</abbr></dfn> conversion.</li>
+        <li>A Coordinate Reference System (<abbr>CRS</abbr>) which is the target of the <dfn>grid to CRS</dfn> conversion.</li>
+        <li>An <em>estimation</em> of grid resolution along each <abbr>CRS</abbr> axes.</li>
+        <li>An indication of whether conversion for some axes is linear or not.</li>
+      </ul>
+      <p>
+        One of the most important property listed above is the <dfn>grid to <abbr>CRS</abbr></dfn> conversion,
+        which defines how to map pixel coordinates to "real world" coordinates such as latitudes and longitudes.
+        This relationship is often linear (an affine transform), but not necessarily;
+        <code>GridGeometry</code> accepts non-linear conversions as well.
+      </p>
 
       <xi:include href="AffineTransform.html"/>
     </section>

@@ -69,8 +69,8 @@
       <p>
         Minimums and maximums are the values most often assigned to <code class="OGC">lowerCorner</code>
         and <code class="OGC">upperCorner</code>.
-        But the situation becomes complicated when an envelope crosses the antimeridian (-180° or 180° longitude).
-        For example, an envelope 10° in size may begin at 175° longitude and end at -175°.
+        But the situation becomes complicated when an envelope crosses the antimeridian (−180° or 180° longitude).
+        For example, an envelope 10° in size may begin at 175° longitude and end at −175°.
         In this case, the longitude value assigned to <code class="OGC">lowerCorner</code> is greater than that assigned to <code class="OGC">upperCorner</code>.
         Apache <abbr>SIS</abbr> therefore uses a slightly different definition of these two corners:
       </p>
@@ -96,18 +96,18 @@
              alt="Envelope example with and without anti-meridian spanning."/>
       </p>
       <p>
-        The notions of inclusion and intersection, however, interpreted slightly differently in these two cases.
-        In the usual case where we do not cross the antimeridian, the green rectangle covers a region of inclusion.
+        The notions of inclusion and intersection, however, are interpreted slightly differently in these two cases.
+        In the usual case where the envelope does not cross the antimeridian, the green rectangle covers a region of inclusion.
         The regions excluded from this rectangle continue on to infinity in all directions.
         In other words, the region of inclusion is not repeated every 360°.
         But in the case of the red rectangle, the information provided by the envelope actually covers a region of exclusion
         between the two edges of the rectangle. The region of inclusion extends to infinity to the left and right.
-        We could stipulate that all longitudes below -180° or above 180° are considered excluded,
+        We could stipulate that all longitudes below −180° or above 180° are considered excluded,
         but this would be an arbitrary decision that would not be an exact counterpart to the usual case (green rectangle).
         A developer may wish to use these values, for example, in a mosaic where the map of the world is repeated several times
         horizontally and each repetition is considered distinct.
         If developers wish to perform operations as though the regions of inclusion or exclusion were repeated every 360°,
-        they themselves will have to bring the longitudinal values between -180° and 180° in advance.
+        they themselves will have to bring the longitudinal values between −180° and 180° in advance.
         All the <code class="SIS">add(…)</code>, <code class="SIS">contains(…)</code>,
         <code class="SIS">intersect(…)</code>, etc. functions of all the envelopes defined in the
         <code>org.apache.sis.geometry</code> package perform their calculations according to this convention.
@@ -125,33 +125,33 @@
           the same treatment as does longitude.
           For example, this could be a time axis for climatological data (one “year” represents the average temperature in all the
           months of January, followed by the average of all the months of February, etc.)
-          This generalization also applies to longitude axes defined by a range of 0° to 360° rather than -180° to 180°.
+          This generalization also applies to longitude axes defined by a range of 0° to 360° rather than −180° to 180°.
         </p>
       </aside>
       <p>
         In order for functions such as <code class="SIS">add(…)</code> to work correctly,
         all objects involved must use the same coordinate reference system, including the same range of values.
-        Thus an envelope that expresses longitudes in the range [-180 … +180]° is not compatible with an envelope that expresses
+        Thus an envelope that expresses longitudes in the range [−180 … +180]° is not compatible with an envelope that expresses
         longitudes in the range [0 … 360]°.
         The conversions, if necessary, are up to the user
         (the <code>Envelopes</code> class provides convenience methods to do this).
         Moreover, the envelope’s coordinates must be included within the system of coordinates,
-        unless the developer explicitly decides to consider (for example) 300° longitude as a position distinct from -60°.
+        unless the developer explicitly decides to consider (for example) 300° longitude as a position distinct from −60°.
         The <code>GeneralEnvelope</code> class provides a <code class="SIS">normalize()</code> method to bring
         coordinates within the desired limits, sometimes at the cost of <var>lower</var> values being higher than
         <var>upper</var> values.
       </p>
       <aside>
-        <h5>The special case of [+0 … -0] range</h5>
+        <h5>The special case of [+0 … −0] range</h5>
         <p>
           Java (or more generally, IEEE Standard 754) defines two zero values:
           a positive zero and a negative zero. These two values are considered equal when we compare them with the <code>==</code> operator in Java.
           But in <abbr>SIS</abbr> envelopes, they may actually return opposite results for axes using <code>RangeMeaning.WRAPAROUND</code>.
-          An envelope whose range is [0 … 0], [-0 … -0] or [-0 … +0] would normally be considered an empty envelope,
-          but the [+0 … -0] range would in fact be considered to include the entire set of values all around the world.
+          An envelope whose range is [0 … 0], [−0 … −0] or [−0 … +0] would normally be considered an empty envelope,
+          but the [+0 … −0] range would in fact be considered to include the entire set of values all around the world.
           This behaviour conforms to the definition of <code class="SIS">lowerCorner</code> and <code class="SIS">upperCorner</code>,
-          which considers +0 as the starting point, and -0 as the end-point after cycling through all possible values.
-          Such behaviour only occurs for the pair of values +0 and -0, and only in that order.
+          which considers +0 as the starting point, and −0 as the end-point after cycling through all possible values.
+          Such behaviour only occurs for the pair of values +0 and −0, and only in that order.
           For all other real values, if the condition <code>lower</code> <code>==</code> <code>upper</code> is true,
           then it is guaranteed that the envelope is empty.
         </p>

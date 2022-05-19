@@ -58,6 +58,25 @@
           <i>Features</i> are an example, as their structure is dynamic.
         </li>
       </ul>
+
+      <h4 id="XML-SIS">Implementation strategy in Apache <abbr>SIS</abbr></h4>
+      <p>
+        <code>org.apache.sis.internal.jaxb.*</code> packages (non-public) define <abbr>JAXB</abbr> adaptors for all types of <abbr>ISO</abbr> objects.
+        These adaptors are required anyway to allow <abbr>JAXB</abbr> to get <abbr>SIS</abbr> classes while implementing GeoAPI interfaces.
+        Conveniently, <abbr>SIS</abbr> made both <abbr>JAXB</abbr> adaptors and objects wrapping the “real” object to be read or written.
+        This double usage avoids having to double the number of classes (already quite high) present in the internal packages.
+      </p>
+      <h4>Naming conventions in <abbr>XSD</abbr> schemas</h4>
+      <p>
+        For each element of the first group listed above, the <abbr>XSD</abbr> schemas of the <abbr>OGC</abbr>
+        define a type whose name ends with “<code class="OGC">_PropertyType</code>”.
+        For the second group, each element has a type whose name ends with “<code class="OGC">_Type</code>”.
+        The “<code class="OGC">_PropertyType</code>” elements may have a group of attributes
+        (such as <code>gco:uuidref</code> and <code>xlink:href</code>)
+        which the <abbr>XSD</abbr> schemas collectively name <code>gco:ObjectIdentification</code>.
+        These attributes do not have dedicated Java methods, but are accessible indirectly via the
+        <code class="SIS">IdentifiedObject</code> interface described in the following subsection.
+      </p>
     </section>
   </body>
 </html>
