@@ -25,17 +25,25 @@ However in the later case, all relative paths in the _release management_ page w
 │  └─ integration-test
 │     └─ maven
 └─ site
+   ├─ main
+   ├─ asf-staging
+   ├─ asf-site
+   └─ javadoc
 {{< / highlight >}}
 
 Create the above directory structure as below:
 
 {{< highlight bash >}}
+mkdir site
 mkdir releases
-git clone    https://gitbox.apache.org/repos/asf/sis.git master
+git clone https://gitbox.apache.org/repos/asf/sis.git master
+git clone https://gitbox.apache.org/repos/asf/sis-site.git site/main
 svn checkout https://svn.apache.org/repos/asf/sis/data/non-free
-svn checkout https://svn.apache.org/repos/asf/sis/site/trunk site
 svn checkout https://svn.apache.org/repos/asf/sis/release-test releases/integration-test
 svn checkout https://dist.apache.org/repos/dist/dev/sis releases/distribution
+cd site/main
+git worktree add ../asf-staging asf-staging
+git worktree add ../asf-site asf-site
 {{< / highlight >}}
 
 # Generate GPG key    {#generate-key}

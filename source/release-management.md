@@ -50,6 +50,8 @@ in this page shall be adjusted accordingly.
     │     └─ maven
     └─ site
        ├─ main
+       ├─ asf-staging
+       ├─ asf-site
        └─ javadoc
 {{< / highlight >}}
 

@@ -27,27 +27,27 @@ All downloads can be verified using the Apache {{% SIS %}} code signing [KEYS][k
 The PGP (_Pretty Good Privacy_) signatures can be verified using any OpenPGP implementation, for example GPG (_GNU Privacy Guard_).
 First download the [KEYS][keys] file and the `.asc` signature files for the relevant release packages.
 Make sure you get these files from the main distribution directory, rather than from a mirror.
-Then verify the signatures using the following:
+Then verify the signatures using the following (replace `src` by `bin` or `doc` if needed):
 
 Using GNU Privacy Guard:
 
 {{< highlight bash >}}
 gpg --import KEYS
-gpg --verify apache-sis-X.Y.Z.zip.asc
+gpg --verify apache-sis-{{% version %}}-src.zip.asc
 {{< / highlight >}}
 
 Using PGP version 6:
 
 {{< highlight bash >}}
 pgp -ka KEYS
-pgp apache-sis-X.Y.Z.zip.asc
+pgp apache-sis-{{% version %}}-src.zip.asc
 {{< / highlight >}}
 
 Using PGP version 5:
 
 {{< highlight bash >}}
 pgpk -a KEYS
-pgpv apache-sis-X.Y.Z.zip.asc
+pgpv apache-sis-{{% version %}}-src.zip.asc
 {{< / highlight >}}
 
 # Download as Maven dependencies    {#maven}
