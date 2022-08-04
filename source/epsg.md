@@ -151,7 +151,7 @@ the JAR file is distributed on the Maven repository in its compressed form.
 If desired, better performance can be achieved by using one of the other configurations described in this page,
 or by uncompressing the `sis-embedded-data.jar` file locally.
 
-# Manually setup an EPSG database
+# Use an existing EPSG database    {#existing}
 
 Applications can use their own EPSG database.
 In addition of Derby, Apache {{% SIS %}} is also tested on HSQL and PostgreSQL.
