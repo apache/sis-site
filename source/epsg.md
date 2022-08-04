@@ -31,6 +31,9 @@ In order to use the EPSG geodetic dataset with Apache {{% SIS %}}, apply *one* o
 
 # Install a local copy with command-line tool    {#command-line}
 
+The installation process described in this section makes clear that EPSG dataset
+is distributed under a different license and asks users for their agreement.
+This process can be used with the [Apache SIS {{% version %}} binary bundle](downloads.html#bundles).
 If the [command-line tool](command-line.html) has been downloaded and installed, just query any CRS.
 For example:
 
@@ -38,33 +41,38 @@ For example:
 sis crs EPSG:6676
 {{< / highlight >}}
 
-The first time that the command-line tool needs to query EPSG, it will prompt the user for authorization
-to download EPSG geodetic dataset from Maven Central. If the user accepts EPSG terms of use, then a local
-copy of the EPSG geodetic dataset will be created and stored in the `apache-sis-{{% version %}}/data` sub-directory.
+Alternatively if the [JavaFX application](javafx.html) is used, just start the application.
+It may be necessary to open a random data file for triggering the EPSG dataset initialization.
+In both cases, the first time that the command-line tool or JavaFX application needs to query EPSG,
+it will prompt the user for authorization to download EPSG geodetic dataset from Maven Central.
+If the user accepts EPSG terms of use, then a local copy of the EPSG geodetic dataset will be created
+and stored in the `apache-sis-{{% version %}}/data` sub-directory.
 
-## Use the local copy in other applications    {#use-local}
+## How to use the local copy in other applications    {#use-local}
 
+The EPSG dataset installed by the command-line tools or the JavaFX application can also be used with other applications.
 For using the installed EPSG geodetic dataset in your own application, apply *one* of the following choices:
 
 * Set the `SIS_DATA` environment variable to the path of `apache-sis-{{% version %}}/data` directory _(recommended)_.
 * Set the `derby.system.home` Java property to the path of `apache-sis-{{% version %}}/data/Databases` directory.
 
-Alternatively `SIS_DATA` or `derby.system.home` can be set to the path of any other directory which contain the same files.
 Examples are shown below for Unix systems, assuming that the current directory is the directory where `apache-sis-{{% version %}}-bin.zip`
-has been unzipped:
+has been unzipped (replace `myApp` and `MyMainClass` by the application to launch):
 
 {{< highlight bash >}}
 export SIS_DATA=apache-sis-{{% version %}}/data
-java -classpath apache-sis-{{% version %}}/lib/sis-referencing.jar:myApp.jar myMainClass
+java --class-path apache-sis-{{% version %}}/lib/sis-referencing.jar:myApp.jar MyMainClass
 {{< / highlight >}}
 
 If the `SIS_DATA` environment variable can not be set, Java property can be used as a fallback:
 
 {{< highlight bash >}}
 java -Dderby.system.home=apache-sis-{{% version %}}/data/Databases \
-     -classpath apache-sis-{{% version %}}/lib/sis-referencing.jar:myApp.jar \
-     myMainClass
+     --class-path apache-sis-{{% version %}}/lib/sis-referencing.jar:myApp.jar \
+     MyMainClass
 {{< / highlight >}}
+
+Alternatively `SIS_DATA` or `derby.system.home` can be set to the path of any other directory which contain the same files.
 
 # Add a Maven dependency    {#maven}
 
@@ -143,17 +151,42 @@ the JAR file is distributed on the Maven repository in its compressed form.
 If desired, better performance can be achieved by using one of the other configurations described in this page,
 or by uncompressing the `sis-embedded-data.jar` file locally.
 
-# Use Java Naming and Directory Interface    {#jndi}
+# Manually setup an EPSG database
 
-While Apache {{% SIS %}} uses Apache Derby by default, it is also possible to use another database software like HSQL or PostgreSQL.
-For using an arbitrary database, register a `javax.sql.DataSource` instance through the Java Naming and Directory Interface (JNDI).
-That registration can be done programmatically (by Java code) or by configuring XML files in some environments.
+Applications can use their own EPSG database.
+In addition of Derby, Apache {{% SIS %}} is also tested on HSQL and PostgreSQL.
+For using an arbitrary database, register a `javax.sql.DataSource` instance through one of the methods described below.
 The database must exist but can be empty, in which case it will be populated with an EPSG schema when first needed
 if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​{{% version %}}</code> dependency is on the classpath
 (see [above section](#maven-epsg)).
+If non-empty, the database should contain the tables created by SQL scripts downloaded from [EPSG][EPSG].
+**Note thas as of Apache SIS 1.2, only EPSG dataset version 9 is supported.
+EPSG datasets version 10 and later are not yet supported.**
 
-## Registration by Java code    {#jndi-java}
+## Registration by Java code    {#setup}
 
+The data source can be specified by Java code as below
+(replace the `main` method by any method where initialization occurs):
+
+{{< highlight java >}}
+import javax.sql.DataSource;
+import org.apache.sis.setup.Configuration;
+
+public void MyApp {
+    public static void main(String[] args) {
+        Configuration.current().setDatabase(MyApp::createDataSource);
+    }
+
+    private static DataSource createDataSource() {
+        DataSource ds = ...;        // Initialize the data source here.
+        return ds;
+    }
+}
+{{< / highlight >}}
+
+## Registration by Java Naming and Directory Interface    {#jndi-java}
+
+Registration in JNDI can be done programmatically (by Java code) or by configuring XML files in some environments.
 Registration can be done by the following Java code, provided that a JNDI implementation is available on the classpath:
 
 {{< highlight java >}}
