@@ -178,16 +178,16 @@ throught the <code>DataStore</code> API. They require the use of specific API.</
 <p>The easiest way to open a file in read-only mode is as below.
 The <code>input</code> argument can be a <code>File</code>, <code>Path</code>, <code>URI</code>, <code>URL</code>, <code>InputStream</code>, <code>ReadableByteChannel</code>
 or a <abbr title="Java DataBase Connectivity">JDBC</abbr> <code>DataSource</code> (non-exhaustive list).</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="k">try</span> <span class="o">(</span><span class="n">DataStore</span> <span class="n">store</span> <span class="o">=</span> <span class="n">DataStores</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="n">input</span><span class="o">))</span> <span class="o">{</span>
-    <span class="c1">// Assuming that we know that the data is a single raster:
-</span><span class="c1"></span>    <span class="n">GridCoverageResource</span> <span class="n">r</span> <span class="o">=</span> <span class="o">(</span><span class="n">GridCoverageResource</span><span class="o">)</span> <span class="n">store</span><span class="o">;</span>
-
-    <span class="c1">// Subset of data could be specified here (no subset in this example):
-</span><span class="c1"></span>    <span class="n">GridCoverage</span> <span class="n">coverage</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-
-    <span class="c1">// Assuming that we know that the data is two-dimensional:
-</span><span class="c1"></span>    <span class="n">RenderedImage</span> <span class="n">image</span> <span class="o">=</span> <span class="n">coverage</span><span class="o">.</span><span class="na">render</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
-<span class="o">}</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="k">try</span> <span class="o">(</span><span class="n">DataStore</span> <span class="n">store</span> <span class="o">=</span> <span class="n">DataStores</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="n">input</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Assuming that we know that the data is a single raster:
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">GridCoverageResource</span> <span class="n">r</span> <span class="o">=</span> <span class="o">(</span><span class="n">GridCoverageResource</span><span class="o">)</span> <span class="n">store</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Subset of data could be specified here (no subset in this example):
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">GridCoverage</span> <span class="n">coverage</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Assuming that we know that the data is two-dimensional:
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">RenderedImage</span> <span class="n">image</span> <span class="o">=</span> <span class="n">coverage</span><span class="o">.</span><span class="na">render</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
 <p>Most of Apache <abbr title="Spatial Information System">SIS</abbr> API is designed for multi-dimensional data.
 When requesting a <code>RenderedImage</code>, a two-dimensional slice must be specified,
 unless the data are already two-dimensional.
@@ -196,19 +196,19 @@ See the <a href="book/en/developer-guide.html#DataAccess">SIS developer guide</a
 <h1 id="accessing-data-on-the-cloud">Accessing data on the cloud</h1>
 <p>Data files can be located on Amazon S3 storage service.
 For accessing those data, add the following dependency to the Maven project:</p>
-<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependencies&gt;</span>
-  <span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>org.apache.sis.cloud<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>sis-cloud-aws<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.2<span class="nt">&lt;/version&gt;</span>
-    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
-  <span class="nt">&lt;/dependency&gt;</span>
-<span class="nt">&lt;/dependencies&gt;</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependencies&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.apache.sis.cloud<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>sis-cloud-aws<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>1.2<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependencies&gt;</span></span></span></code></pre></div>
 <p>With above dependency on the classpath, it is possible to instantiate <code>java.nio.Path</code> object
 with a value of the form <code>&quot;S3://bucket/pseudo-directory/file&quot;</code>.
 Login and password can be specified in a <code>~/.aws/credentials</code> file like below
 (Apache SIS does not yet manage credentials by itself).</p>
-<pre><code class="language-config" data-lang="config">[default]
+<pre tabindex="0"><code class="language-config" data-lang="config">[default]
 aws_access_key_id = &lt;some value&gt;
 aws_secret_access_key = &lt;some value&gt;</code></pre>
 <p>An alternative to above configuration is to set the

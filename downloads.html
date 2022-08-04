@@ -136,39 +136,39 @@ Optional dependencies (JAXB implementation, UCAR netCDF library, Amazon SDK) are
 The PGP (<em>Pretty Good Privacy</em>) signatures can be verified using any OpenPGP implementation, for example GPG (<em>GNU Privacy Guard</em>).
 First download the <a href="https://www.apache.org/dist/sis/KEYS">KEYS</a> file and the <code>.asc</code> signature files for the relevant release packages.
 Make sure you get these files from the main distribution directory, rather than from a mirror.
-Then verify the signatures using the following:</p>
+Then verify the signatures using the following (replace <code>src</code> by <code>bin</code> or <code>doc</code> if needed):</p>
 <p>Using GNU Privacy Guard:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">gpg --import KEYS
-gpg --verify apache-sis-X.Y.Z.zip.asc</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gpg --import KEYS
+</span></span><span class="line"><span class="cl">gpg --verify apache-sis-1.2-src.zip.asc</span></span></code></pre></div>
 <p>Using PGP version 6:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">pgp -ka KEYS
-pgp apache-sis-X.Y.Z.zip.asc</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">pgp -ka KEYS
+</span></span><span class="line"><span class="cl">pgp apache-sis-1.2-src.zip.asc</span></span></code></pre></div>
 <p>Using PGP version 5:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">pgpk -a KEYS
-pgpv apache-sis-X.Y.Z.zip.asc</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">pgpk -a KEYS
+</span></span><span class="line"><span class="cl">pgpv apache-sis-1.2-src.zip.asc</span></span></code></pre></div>
 <h1 id="maven">Download as Maven dependencies   </h1>
 <p>An easy approach to integrate Apache <abbr title="Spatial Information System">SIS</abbr> into a Java project uses the <a href="http://maven.apache.org/">Apache Maven</a>
 dependency management tool to automatically obtain the required Java Archives (JAR) files from the network.
 Below are examples of declarations in a <code>pom.xml</code> file for building a project with a SIS core module.</p>
-<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;properties&gt;</span>
-  <span class="nt">&lt;sis.version&gt;</span>1.2<span class="nt">&lt;/sis.version&gt;</span>
-<span class="nt">&lt;/properties&gt;</span>
-
-<span class="nt">&lt;dependencies&gt;</span>
-  <span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>org.apache.sis.core<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>sis-referencing<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>${sis.version}<span class="nt">&lt;/version&gt;</span>
-  <span class="nt">&lt;/dependency&gt;</span>
-
-  <span class="c">&lt;!-- The following dependency can be omitted if XML support is not desired. --&gt;</span>
-  <span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>org.glassfish.jaxb<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>jaxb-runtime<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>2.3.6<span class="nt">&lt;/version&gt;</span>
-    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
-  <span class="nt">&lt;/dependency&gt;</span>
-<span class="nt">&lt;/dependencies&gt;</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;properties&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;sis.version&gt;</span>1.2<span class="nt">&lt;/sis.version&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/properties&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;dependencies&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.apache.sis.core<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>sis-referencing<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>${sis.version}<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c">&lt;!-- The following dependency can be omitted if XML support is not desired. --&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.glassfish.jaxb<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>jaxb-runtime<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>2.3.6<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependencies&gt;</span></span></span></code></pre></div>
 <p>The <code>sis-referencing</code> module in above example can be replaced by one or many of the following modules:</p>
 <table>
   <tr><th>Service</th>                          <th>Group</th>                                   <th>Artifact</th></tr>
@@ -193,14 +193,14 @@ The EPSG dataset is a de-facto standard providing
 together with information about how to perform coordinate operations, their accuracies and their domains of validity.
 However usage of EPSG dataset requires acceptation of <a href="https://epsg.org/terms-of-use.html">EPSG terms of use</a>.
 If you accept those terms of use, then the following dependency can be added:</p>
-<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependencies&gt;</span>
-  <span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>org.apache.sis.non-free<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>sis-embedded-data<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>${sis.version}<span class="nt">&lt;/version&gt;</span>
-    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
-  <span class="nt">&lt;/dependency&gt;</span>
-<span class="nt">&lt;/dependencies&gt;</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependencies&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.apache.sis.non-free<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>sis-embedded-data<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>${sis.version}<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependencies&gt;</span></span></span></code></pre></div>
 <p>Above dependency uses a read-only embedded Derby database.
 Note that the need to uncompress the <code>sis-embedded-data.jar</code> file
 slows down <code>CRS​.forCode(…)</code> and <code>CRS​.findCoordinateOperation(…)</code> method executions.

@@ -106,18 +106,18 @@
   <p>Apache <abbr title="Spatial Information System">SIS</abbr> is built by Maven.
 For installing the JAR files in the local Maven repository, execute the following command
 from the SIS project root:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mvn install</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mvn install</span></span></code></pre></div>
 <p>The JavaFX application is excluded by default because it depends on
 the <a href="https://openjfx.io/">JavaFX platform</a> which is distributed under GPL license
 (note that the SIS module stay under Apache 2 licence).
 Likewise the <a href="epsg.html">EPSG geodetic dataset</a> is excluded by default for licensing reasons.
 For including the JavaFX module and the use of EPSG dataset in the build:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mvn install --activate-profiles javafx,non-free</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mvn install --activate-profiles javafx,non-free</span></span></code></pre></div>
 <p>For signing the artifacts and producing distribution files (<code>apache-sis-bin.zip</code> and <code>apache-sis.oxt</code>),
 execute the following command.
 Note that it requires an OpenPGP (<em>Open Pretty Good Privacy</em>) software for cryptography signatures
 (more information on the <a href="release-management-setup.html#generate-key">release management setup</a> page):</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mvn install --activate-profiles apache-release</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mvn install --activate-profiles apache-release</span></span></code></pre></div>
 <p>The remaining of this page provides more advanced tips for SIS developers.</p>
 <nav id="TableOfContents">
   <ul>
@@ -139,8 +139,8 @@ Note that it requires an OpenPGP (<em>Open Pretty Good Privacy</em>) software fo
 (because Web applications use an other packaging) together with their dependencies.
 However for users convenience, we provide shell scripts launching the SIS command line tool or the JavaFX application.
 Those shell scripts, together with other files (<code>README</code>, <code>LICENSE</code>, <i>etc.</i>) are bundled in a ZIP file created as below:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> application/sis-console
-mvn package org.apache.sis.core:sis-build-helper:dist</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> application/sis-console
+</span></span><span class="line"><span class="cl">mvn package org.apache.sis.core:sis-build-helper:dist</span></span></code></pre></div>
 <p>This task is executed automatically if the <code>apache-release</code> profile is activated at build time.
 Above command is for the cases where the developer wants the distribution file without rebuilding the whole project.
 The result will be created in the <code>target/​distribution/​apache-​sis-​&lt;version&gt;.zip</code> file.
@@ -168,27 +168,27 @@ and contains a public static inner class named <code>Keys</code>, then the compi
 with the list of keys found in the <code>Vocabulary*.properties</code> files.</p>
 <p>The resource compiler is executed at Maven build time if the <code>pom.xml</code> file contains the following declaration. Note that current
 implementation looks only for resources in any package ending with the <code>resources</code> name; all other packages are ignored.</p>
-<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;build&gt;</span>
-  <span class="nt">&lt;plugins&gt;</span>
-    <span class="nt">&lt;plugin&gt;</span>
-      <span class="nt">&lt;groupId&gt;</span>org.apache.sis.core<span class="nt">&lt;/groupId&gt;</span>
-      <span class="nt">&lt;artifactId&gt;</span>sis-build-helper<span class="nt">&lt;/artifactId&gt;</span>
-      <span class="nt">&lt;version&gt;</span>${sis.plugin.version}<span class="nt">&lt;/version&gt;</span>
-      <span class="nt">&lt;executions&gt;</span>
-        <span class="nt">&lt;execution&gt;</span>
-          <span class="nt">&lt;goals&gt;</span>
-            <span class="nt">&lt;goal&gt;</span>compile-resources<span class="nt">&lt;/goal&gt;</span>
-          <span class="nt">&lt;/goals&gt;</span>
-        <span class="nt">&lt;/execution&gt;</span>
-      <span class="nt">&lt;/executions&gt;</span>
-    <span class="nt">&lt;/plugin&gt;</span>
-  <span class="nt">&lt;/plugins&gt;</span>
-<span class="nt">&lt;/build&gt;</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;build&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;plugins&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;plugin&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;groupId&gt;</span>org.apache.sis.core<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;artifactId&gt;</span>sis-build-helper<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;version&gt;</span>${sis.plugin.version}<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;executions&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;execution&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;goals&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;goal&gt;</span>compile-resources<span class="nt">&lt;/goal&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/goals&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/execution&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/executions&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/plugin&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/plugins&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/build&gt;</span></span></span></code></pre></div>
 <p>The resources compilation is part of the build process and does not need to be run explicitly.
 However, if necessary the resources compiler can be invoked alone by the following command line
 in the module containing the resources to recompile. This is sometime useful for regenerating
 the constants in the <code>Keys</code> inner class in a feaster way than building the project.</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mvn org.apache.sis.core:sis-build-helper:compile-resources</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mvn org.apache.sis.core:sis-build-helper:compile-resources</span></span></code></pre></div>
 <h2 id="jar-collect">JAR files collector   </h2>
 <p>Links or lists all JAR files (including dependencies) in the <code>target/​binaries</code> directory of the parent project.
 This plugin performs a work similar to the standard Maven assembly plugin work, with the following differences:</p>
@@ -202,22 +202,22 @@ so execution of this plugin should be very cheap and consume few disk space.</li
 are not overwritten. Only artifacts produced by the Maven build are unconditionally overwritten.</li>
 </ul>
 <p>This plugin can be activated by the following fragment in the parent <code>pom.xml</code> file:</p>
-<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;build&gt;</span>
-  <span class="nt">&lt;plugins&gt;</span>
-    <span class="nt">&lt;plugin&gt;</span>
-      <span class="nt">&lt;groupId&gt;</span>org.apache.sis.core<span class="nt">&lt;/groupId&gt;</span>
-      <span class="nt">&lt;artifactId&gt;</span>sis-build-helper<span class="nt">&lt;/artifactId&gt;</span>
-      <span class="nt">&lt;version&gt;</span>${sis.plugin.version}<span class="nt">&lt;/version&gt;</span>
-      <span class="nt">&lt;executions&gt;</span>
-        <span class="nt">&lt;execution&gt;</span>
-          <span class="nt">&lt;goals&gt;</span>
-            <span class="nt">&lt;goal&gt;</span>collect-jars<span class="nt">&lt;/goal&gt;</span>
-          <span class="nt">&lt;/goals&gt;</span>
-        <span class="nt">&lt;/execution&gt;</span>
-      <span class="nt">&lt;/executions&gt;</span>
-    <span class="nt">&lt;/plugin&gt;</span>
-  <span class="nt">&lt;/plugins&gt;</span>
-<span class="nt">&lt;/build&gt;</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;build&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;plugins&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;plugin&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;groupId&gt;</span>org.apache.sis.core<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;artifactId&gt;</span>sis-build-helper<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;version&gt;</span>${sis.plugin.version}<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;executions&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;execution&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;goals&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;goal&gt;</span>collect-jars<span class="nt">&lt;/goal&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/goals&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/execution&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/executions&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/plugin&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/plugins&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/build&gt;</span></span></span></code></pre></div>
 
 
       </article>

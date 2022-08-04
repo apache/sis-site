@@ -158,32 +158,32 @@
 In order to make the example a little bit simpler, this code uses predefined constants given by the <code>CommonCRS</code> convenience class.
 But more advanced applications will typically use EPSG codes instead.
 Note that all geographic coordinates below express latitude <em>before</em> longitude.</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">org.opengis.geometry.DirectPosition</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.opengis.referencing.crs.CoordinateReferenceSystem</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.opengis.referencing.operation.CoordinateOperation</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.opengis.referencing.operation.TransformException</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.opengis.util.FactoryException</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CRS</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CommonCRS</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.apache.sis.geometry.DirectPosition2D</span><span class="o">;</span>
-
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyApp</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">FactoryException</span><span class="o">,</span> <span class="n">TransformException</span> <span class="o">{</span>
-        <span class="n">CoordinateReferenceSystem</span> <span class="n">sourceCRS</span> <span class="o">=</span> <span class="n">CommonCRS</span><span class="o">.</span><span class="na">WGS84</span><span class="o">.</span><span class="na">geographic</span><span class="o">();</span>
-        <span class="n">CoordinateReferenceSystem</span> <span class="n">targetCRS</span> <span class="o">=</span> <span class="n">CommonCRS</span><span class="o">.</span><span class="na">WGS84</span><span class="o">.</span><span class="na">universal</span><span class="o">(</span><span class="n">40</span><span class="o">,</span> <span class="n">14</span><span class="o">);</span>  <span class="c1">// Get whatever zone is valid for 14°E.
-</span><span class="c1"></span>        <span class="n">CoordinateOperation</span> <span class="n">operation</span> <span class="o">=</span> <span class="n">CRS</span><span class="o">.</span><span class="na">findOperation</span><span class="o">(</span><span class="n">sourceCRS</span><span class="o">,</span> <span class="n">targetCRS</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-        <span class="cm">/*
-</span><span class="cm">         * The above lines are costly and should be performed only once before to project many points.
-</span><span class="cm">         * In this example, the operation that we got is valid for coordinates in geographic area from
-</span><span class="cm">         * 12°E to 18°E (UTM zone 33) and 0°N to 84°N.
-</span><span class="cm">         */</span>
-        <span class="n">DirectPosition</span> <span class="n">ptSrc</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DirectPosition2D</span><span class="o">(</span><span class="n">40</span><span class="o">,</span> <span class="n">14</span><span class="o">);</span>           <span class="c1">// 40°N 14°E
-</span><span class="c1"></span>        <span class="n">DirectPosition</span> <span class="n">ptDst</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="na">getMathTransform</span><span class="o">().</span><span class="na">transform</span><span class="o">(</span><span class="n">ptSrc</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Source: &#34;</span> <span class="o">+</span> <span class="n">ptSrc</span><span class="o">);</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Target: &#34;</span> <span class="o">+</span> <span class="n">ptDst</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.geometry.DirectPosition</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.referencing.crs.CoordinateReferenceSystem</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.referencing.operation.CoordinateOperation</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.referencing.operation.TransformException</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.util.FactoryException</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CRS</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CommonCRS</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.geometry.DirectPosition2D</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyApp</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">FactoryException</span><span class="o">,</span> <span class="n">TransformException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">CoordinateReferenceSystem</span> <span class="n">sourceCRS</span> <span class="o">=</span> <span class="n">CommonCRS</span><span class="o">.</span><span class="na">WGS84</span><span class="o">.</span><span class="na">geographic</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">CoordinateReferenceSystem</span> <span class="n">targetCRS</span> <span class="o">=</span> <span class="n">CommonCRS</span><span class="o">.</span><span class="na">WGS84</span><span class="o">.</span><span class="na">universal</span><span class="o">(</span><span class="n">40</span><span class="o">,</span> <span class="n">14</span><span class="o">);</span>  <span class="c1">// Get whatever zone is valid for 14°E.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">CoordinateOperation</span> <span class="n">operation</span> <span class="o">=</span> <span class="n">CRS</span><span class="o">.</span><span class="na">findOperation</span><span class="o">(</span><span class="n">sourceCRS</span><span class="o">,</span> <span class="n">targetCRS</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * The above lines are costly and should be performed only once before to project many points.
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * In this example, the operation that we got is valid for coordinates in geographic area from
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * 12°E to 18°E (UTM zone 33) and 0°N to 84°N.
+</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
+</span></span><span class="line"><span class="cl">        <span class="n">DirectPosition</span> <span class="n">ptSrc</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DirectPosition2D</span><span class="o">(</span><span class="n">40</span><span class="o">,</span> <span class="n">14</span><span class="o">);</span>           <span class="c1">// 40°N 14°E
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">DirectPosition</span> <span class="n">ptDst</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="na">getMathTransform</span><span class="o">().</span><span class="na">transform</span><span class="o">(</span><span class="n">ptSrc</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Source: &#34;</span> <span class="o">+</span> <span class="n">ptSrc</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Target: &#34;</span> <span class="o">+</span> <span class="n">ptDst</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
 <h3 id="operation-methods">Which map projections are supported?   </h3>
 <p>The operation <em>methods</em> (including, but not limited to, map projections) supported by
 Apache <abbr title="Spatial Information System">SIS</abbr> are listed in the <a href="tables/CoordinateOperationMethods.html">Coordinate Operation Methods</a> page.
@@ -222,8 +222,8 @@ and should contain an explicit <code>ORDER[…]</code> sub-element for making th
 But Apache <abbr title="Spatial Information System">SIS</abbr> rather defaults to axis order <em>as defined by the authority</em> (except when parsing a <abbr title="Well Known Text">WKT</abbr> 1 definition),
 but allows changing axis order to the (<em>x</em>, <em>y</em>) order after <abbr title="Coordinate Reference System">CRS</abbr> creation.
 This change can be done with the following code:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">CoordinateReferenceSystem</span> <span class="n">crs</span> <span class="o">=</span> <span class="o">...;</span> <span class="c1">// CRS obtained by any means.
-</span><span class="c1"></span><span class="n">crs</span> <span class="o">=</span> <span class="n">AbstractCRS</span><span class="o">.</span><span class="na">castOrCopy</span><span class="o">(</span><span class="n">crs</span><span class="o">).</span><span class="na">forConvention</span><span class="o">(</span><span class="n">AxesConvention</span><span class="o">.</span><span class="na">RIGHT_HANDED</span><span class="o">)</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">CoordinateReferenceSystem</span> <span class="n">crs</span> <span class="o">=</span> <span class="o">...;</span> <span class="c1">// CRS obtained by any means.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">crs</span> <span class="o">=</span> <span class="n">AbstractCRS</span><span class="o">.</span><span class="na">castOrCopy</span><span class="o">(</span><span class="n">crs</span><span class="o">).</span><span class="na">forConvention</span><span class="o">(</span><span class="n">AxesConvention</span><span class="o">.</span><span class="na">RIGHT_HANDED</span><span class="o">)</span></span></span></code></pre></div>
 <h2 id="crs">Coordinate Reference Systems   </h2>
 <h3 id="UTM">How do I instantiate a Universal Transverse Mercator (UTM) projection?   </h3>
 <p>If the UTM zone is unknown, an easy way is to invoke the <code>universal(…)</code> method on one of the <code>CommonCRS</code> pre-defined constants.
@@ -242,8 +242,8 @@ The EPSG code of some UTM projections can be determined as below, where <em>zone
 <p>Note that the above list is incomplete. See the EPSG database for additional UTM definitions
 (WGS 72BE, SIRGAS 2000, SIRGAS 1995, SAD 69, ETRS 89, <em>etc.</em>, most of them defined only for a few zones).
 Once the EPSG code of the UTM projection has been determined, the <abbr title="Coordinate Reference System">CRS</abbr> can be obtained as in the example below:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kt">int</span> <span class="n">code</span> <span class="o">=</span> <span class="n">32600</span> <span class="o">+</span> <span class="n">zone</span><span class="o">;</span>    <span class="c1">// For WGS84 northern hemisphere
-</span><span class="c1"></span><span class="n">CoordinateReferenceSystem</span> <span class="n">crs</span> <span class="o">=</span> <span class="n">CRS</span><span class="o">.</span><span class="na">forCode</span><span class="o">(</span><span class="s">&#34;EPSG:&#34;</span> <span class="o">+</span> <span class="n">code</span><span class="o">);</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">code</span> <span class="o">=</span> <span class="n">32600</span> <span class="o">+</span> <span class="n">zone</span><span class="o">;</span>    <span class="c1">// For WGS84 northern hemisphere
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">CoordinateReferenceSystem</span> <span class="n">crs</span> <span class="o">=</span> <span class="n">CRS</span><span class="o">.</span><span class="na">forCode</span><span class="o">(</span><span class="s">&#34;EPSG:&#34;</span> <span class="o">+</span> <span class="n">code</span><span class="o">);</span></span></span></code></pre></div>
 <h3 id="google">How do I instantiate a Google projection?   </h3>
 <p>The Google projection is a Mercator projection that pretends to be defined on the WGS84 datum,
 but actually ignores the ellipsoidal nature of that datum and uses the simpler spherical formulas instead.
@@ -251,7 +251,7 @@ Since version 6.15 of EPSG geodetic dataset, the preferred way to get that proje
 Note that the use of that projection is <strong>not</strong> recommended, unless needed for compatibility with other data.</p>
 <p>The EPSG:3857 definition uses a map projection method named <em>&ldquo;Popular Visualisation Pseudo Mercator&rdquo;</em>.
 The EPSG geodetic dataset provides also some other map projections that use spherical formulas.
-Those methods have &ldquo;(Spherical)&rdquo; in their name, for example <em>&ldquo;Mercator (Spherical)&quot;</em>
+Those methods have &ldquo;(Spherical)&rdquo; in their name, for example <em>&ldquo;Mercator (Spherical)&rdquo;</em>
 (which differs from <em>&ldquo;Popular Visualisation Pseudo Mercator&rdquo;</em> by the use of a more appropriate sphere radius).
 Those projection methods can be used in Well Known Text (WKT) definitions.</p>
 <p>If there is a need to use spherical formulas with a projection that does not have a &ldquo;(Spherical)&rdquo; counterpart,
@@ -279,11 +279,11 @@ In the following example, the call to <code>lookupEPSG(…)</code> will scan the
 (ignoring metadata) to the given one. <em>Note that this scan is sensitive to axis order.</em>
 Most geographic <abbr title="Coordinate Reference System">CRS</abbr> in the EPSG database are declared with (<em>latitude</em>, <em>longitude</em>) axis order.
 Consequently if the given <abbr title="Coordinate Reference System">CRS</abbr> has (<em>longitude</em>, <em>latitude</em>) axis order, then the scan is likely to find no match.</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">CoordinateReferenceSystem</span> <span class="n">myCRS</span> <span class="o">=</span> <span class="o">...;</span>
-<span class="n">Integer</span> <span class="n">identifier</span> <span class="o">=</span> <span class="n">IdentifiedObjects</span><span class="o">.</span><span class="na">lookupEPSG</span><span class="o">(</span><span class="n">myCRS</span><span class="o">);</span>
-<span class="k">if</span> <span class="o">(</span><span class="n">identifier</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;The EPSG code has been found: &#34;</span> <span class="o">+</span> <span class="n">identifier</span><span class="o">);</span>
-<span class="o">}</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">CoordinateReferenceSystem</span> <span class="n">myCRS</span> <span class="o">=</span> <span class="o">...;</span>
+</span></span><span class="line"><span class="cl"><span class="n">Integer</span> <span class="n">identifier</span> <span class="o">=</span> <span class="n">IdentifiedObjects</span><span class="o">.</span><span class="na">lookupEPSG</span><span class="o">(</span><span class="n">myCRS</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="o">(</span><span class="n">identifier</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;The EPSG code has been found: &#34;</span> <span class="o">+</span> <span class="n">identifier</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
 <h3 id="lookupURN">How do I get the &ldquo;urn:ogc:def:crs:…&rdquo; URN of an existing CRS?   </h3>
 <p><abbr title="Open Geospatial Consortium">OGC</abbr> defines URN for <abbr title="Coordinate Reference System">CRS</abbr> identifiers, for example <code>&quot;urn:​ogc:​def:​crs:​epsg:​7.1:​4326&quot;</code>
 where <code>&quot;7.1&quot;</code> is the version of the EPSG database used.
@@ -291,8 +291,8 @@ URN may or may not be present in the set of identifiers returned by <code>crs.ge
 In many cases (especially if the <abbr title="Coordinate Reference System">CRS</abbr> was parsed from a Well Known Text), only simple identifiers like <code>&quot;EPSG:​4326&quot;</code> are provided.
 An easy way to build the full URN is to use the code below.
 That example may scan the EPSG database for finding the information if it was not explicitely provided in the given <abbr title="Coordinate Reference System">CRS</abbr>.</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">CoordinateReferenceSystem</span> <span class="n">myCRS</span> <span class="o">=</span> <span class="o">...;</span>
-<span class="n">String</span> <span class="n">urn</span> <span class="o">=</span> <span class="n">IdentifiedObjects</span><span class="o">.</span><span class="na">lookupURN</span><span class="o">(</span><span class="n">myCRS</span><span class="o">);</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">CoordinateReferenceSystem</span> <span class="n">myCRS</span> <span class="o">=</span> <span class="o">...;</span>
+</span></span><span class="line"><span class="cl"><span class="n">String</span> <span class="n">urn</span> <span class="o">=</span> <span class="n">IdentifiedObjects</span><span class="o">.</span><span class="na">lookupURN</span><span class="o">(</span><span class="n">myCRS</span><span class="o">);</span></span></span></code></pre></div>
 <h3 id="lookupReliability">Is IdentifiedObjects.lookupEPSG(…) a reliable inverse of CRS.forCode(…)?  </h3>
 <p>For <abbr title="Coordinate Reference System">CRS</abbr> created from the EPSG geodetic dataset, usually yes.
 Note however that <code>IdentifiedObjects.getIdentifier(…)</code> is cheaper and insensitive to the details of <abbr title="Coordinate Reference System">CRS</abbr> definition,
@@ -318,17 +318,17 @@ But geographers and pilots are using (<em>latitude</em>, <em>longitude</em>) axi
 and the EPSG geodetic dataset defines geographic Coordinate Reference Systems that way.
 If a coordinate transformation seems to produce totally wrong values,
 the first thing to do should be to print the source and target Coordinate Reference Systems:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">sourceCRS</span><span class="o">);</span>
-<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">targetCRS</span><span class="o">);</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">sourceCRS</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">targetCRS</span><span class="o">);</span></span></span></code></pre></div>
 <p>Attention should be paid to the order of <code>AXIS</code> elements.
 In the example below, the Coordinate Reference System clearly uses (<em>latitude</em>, <em>longitude</em>) axis order:</p>
-<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">GeodeticCRS[&#34;WGS 84&#34;,
-  Datum[&#34;World Geodetic System 1984&#34;,
-    Ellipsoid[&#34;WGS 84&#34;, 6378137.0, 298.257223563]],
-  CS[ellipsoidal, 2],
-    Axis[&#34;Geodetic latitude (Lat)&#34;, north],
-    Axis[&#34;Geodetic longitude (Lon)&#34;, east],
-    Unit[&#34;degree&#34;, 0.017453292519943295]]</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">GeodeticCRS[&#34;WGS 84&#34;,
+</span></span><span class="line"><span class="cl">  Datum[&#34;World Geodetic System 1984&#34;,
+</span></span><span class="line"><span class="cl">    Ellipsoid[&#34;WGS 84&#34;, 6378137.0, 298.257223563]],
+</span></span><span class="line"><span class="cl">  CS[ellipsoidal, 2],
+</span></span><span class="line"><span class="cl">    Axis[&#34;Geodetic latitude (Lat)&#34;, north],
+</span></span><span class="line"><span class="cl">    Axis[&#34;Geodetic longitude (Lon)&#34;, east],
+</span></span><span class="line"><span class="cl">    Unit[&#34;degree&#34;, 0.017453292519943295]]</span></span></code></pre></div>
 <p>If (<em>longitude</em>, <em>latitude</em>) axis order is really wanted, Apache <abbr title="Spatial Information System">SIS</abbr> can be forced to that order <a href="#axisOrder">as described above</a>.</p>
 <h3 id="projectionName">I have correct axis order but my transformed coordinates are still wrong.  </h3>
 <p>Make sure that the right projection is used. Some projection names are confusing.
@@ -345,12 +345,12 @@ then the longitude units will match those of the geographic coordinate system&rd
 However ESRI and GDAL among others unconditionally use decimal degrees, ignoring this part of the <abbr title="Well Known Text">WKT</abbr> 1 specification
 (note: this remark does not apply to <abbr title="Well Known Text">WKT</abbr> 2).
 This problem can be identified by <abbr title="Well Known Text">WKT</abbr> inspection as in the following extract:</p>
-<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">PROJCS[&#34;Lambert II étendu&#34;,
-  GEOGCS[&#34;Nouvelle Triangulation Française&#34;, ...,
-    PRIMEM[&#34;Paris&#34;, 2.337229167],
-    UNIT[&#34;grad&#34;, 0.01570796326794897]]
-  PROJECTION[&#34;Lambert_Conformal_Conic_1SP&#34;],
-  PARAMETER[&#34;latitude_of_origin&#34;, 46.8], ...]</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">PROJCS[&#34;Lambert II étendu&#34;,
+</span></span><span class="line"><span class="cl">  GEOGCS[&#34;Nouvelle Triangulation Française&#34;, ...,
+</span></span><span class="line"><span class="cl">    PRIMEM[&#34;Paris&#34;, 2.337229167],
+</span></span><span class="line"><span class="cl">    UNIT[&#34;grad&#34;, 0.01570796326794897]]
+</span></span><span class="line"><span class="cl">  PROJECTION[&#34;Lambert_Conformal_Conic_1SP&#34;],
+</span></span><span class="line"><span class="cl">  PARAMETER[&#34;latitude_of_origin&#34;, 46.8], ...]</span></span></code></pre></div>
 <p>The Paris prime meridian is located at approximatively 2.597 gradians from Greenwich, which is 2.337 degrees.
 From this fact, we can see that the above <abbr title="Well Known Text">WKT</abbr> uses decimal degrees despite its <code>UNIT[&quot;grad&quot;]</code> declaration.
 This mismatch applies also to the parameter value, which declare 46.8° in the above example while the official value is 52 gradians.
@@ -406,17 +406,17 @@ or <abbr title="International Organization for Standardization">ISO</abbr>/<abbr
 Java Virtual Machine implements the GeoAPI interfaces on-the-fly, using the <code>java.lang.reflect.Proxy</code> class.
 See the <code>Proxy</code> Javadoc for details, keeping in mind that the <abbr title="International Organization for Standardization">ISO</abbr>/<abbr title="Open Geospatial Consortium">OGC</abbr> name of a <code>java.lang.Class</code> or
 <code>java.lang.reflect.Method</code> object can be obtained as below:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">UML</span> <span class="n">uml</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="na">getAnnotation</span><span class="o">(</span><span class="n">UML</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-<span class="k">if</span> <span class="o">(</span><span class="n">uml</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">String</span> <span class="n">name</span> <span class="o">=</span> <span class="n">uml</span><span class="o">.</span><span class="na">identifier</span><span class="o">();</span>
-    <span class="c1">// Fetch the metadata here.
-</span><span class="c1"></span><span class="o">}</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">UML</span> <span class="n">uml</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="na">getAnnotation</span><span class="o">(</span><span class="n">UML</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="o">(</span><span class="n">uml</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">String</span> <span class="n">name</span> <span class="o">=</span> <span class="n">uml</span><span class="o">.</span><span class="na">identifier</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Fetch the metadata here.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">}</span></span></span></code></pre></div>
 <p>This is indeed the approach taken by the <code>org.apache.sis.metadata.sql</code> package for providing an implementation
 of all GeoAPI metadata interfaces reading their values directly from a SQL database.</p>
 <h3 id="metadata-unknownClass">I can not marshall my custom implementation.   </h3>
 <p>The classes given to the JAXB marshaller shall contain JAXB annotations,
 otherwise the following exception is thrown:</p>
-<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">javax.xml.bind.JAXBException: class MyCustomClass nor any of its super class is known to this context.</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">javax.xml.bind.JAXBException: class MyCustomClass nor any of its super class is known to this context.</span></span></code></pre></div>
 <p>The easiest workaround is to wrap the custom implementation into one of the implementations
 provided in the <code>org.apache.metadata.iso</code> package.
 All those SIS implementation classes provide shallow copy constructor for making that easy.
