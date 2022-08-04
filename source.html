@@ -137,15 +137,15 @@ We use <code>ApacheSIS</code> directory name in this page, but that name can be 
 replace that name in the shell commands below if another name is used.
 The Apache <abbr title="Spatial Information System">SIS</abbr> source code can be cloned in that directory as below
 (lines starting with <code>#</code> are comments and can be ignored):</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mkdir ApacheSIS
-<span class="nb">cd</span> ApacheSIS
-git clone https://gitbox.apache.org/repos/asf/sis
-<span class="c1">#</span>
-<span class="c1"># Alternatively, GitHub mirror can also be used:</span>
-<span class="c1"># git clone https://github.com/apache/sis</span>
-<span class="c1">#</span>
-<span class="c1"># or Subversion (read-only):</span>
-<span class="c1"># svn checkout https://github.com/apache/sis/trunk</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mkdir ApacheSIS
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> ApacheSIS
+</span></span><span class="line"><span class="cl">git clone https://gitbox.apache.org/repos/asf/sis
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Alternatively, GitHub mirror can also be used:</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># git clone https://github.com/apache/sis</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># or Subversion (read-only):</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># svn checkout https://github.com/apache/sis/trunk</span></span></span></code></pre></div>
 <p>That is all. Apache <abbr title="Spatial Information System">SIS</abbr> can be built by running <code>mvn install</code> in the <code>sis</code> subdirectory.
 At this stage, the <code>ApacheSIS</code> parent directory is redundant with the <code>sis</code> subdirectory,
 but we recommend to create that parent directory anyway in anticipation
@@ -161,14 +161,14 @@ because some other optional services depend on it.</p>
 That directory is specified by the <code>SIS_DATA</code> environment variable and can be located anywhere.
 A convenient location is a subdirectory of the <code>ApacheSIS</code> directory created in the &ldquo;basic checkout&rdquo; section.
 For example (with <code>ApacheSIS</code> as the current directory):</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mkdir Data
-<span class="nb">export</span> <span class="nv">SIS_DATA</span><span class="o">=</span><span class="nv">$PWD</span>/Data
-<span class="c1">#</span>
-<span class="c1"># For making that environment variable available in future shell sessions,</span>
-<span class="c1"># the output of following command can be added to .bash_profile or .bashrc</span>
-<span class="c1"># file in user home directory.</span>
-<span class="c1">#</span>
-<span class="nb">echo</span> <span class="nb">export</span> <span class="nv">SIS_DATA</span><span class="o">=</span><span class="nv">$SIS_DATA</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mkdir Data
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SIS_DATA</span><span class="o">=</span><span class="nv">$PWD</span>/Data
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># For making that environment variable available in future shell sessions,</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># the output of following command can be added to .bash_profile or .bashrc</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># file in user home directory.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="nb">export</span> <span class="nv">SIS_DATA</span><span class="o">=</span><span class="nv">$SIS_DATA</span></span></span></code></pre></div>
 <h2 id="non-free">Checkout non-free data   </h2>
 <p>The EPSG geodetic dataset is recommended for operations related to Coordinate Reference Systems.
 Without the EPSG database, only a <a href="apidocs/org/apache/sis/referencing/CRS.html#forCode-java.lang.String-">small subset</a>
@@ -177,18 +177,18 @@ The EPSG database can be <a href="epsg.html">installed in various ways</a>,
 but this section describes an alternative way more suitable to Apache <abbr title="Spatial Information System">SIS</abbr> development.
 Before to continue, make sure to agree with <a href="https://epsg.org/terms-of-use.html">EPSG terms of use</a>.
 Then following command can be executed with <code>ApacheSIS</code> as the current directory:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># Executing this command imply agreement with EPSG terms of use.</span>
-svn checkout https://svn.apache.org/repos/asf/sis/data/non-free/</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Executing this command imply agreement with EPSG terms of use.</span>
+</span></span><span class="line"><span class="cl">svn checkout https://svn.apache.org/repos/asf/sis/data/non-free/</span></span></code></pre></div>
 <p>Then copy or link the EPSG scripts in the directory where Apache <abbr title="Spatial Information System">SIS</abbr> looks for optional data.
 Adjust the relative paths as needed if the <code>SIS_DATA</code> environment variable
 points to another location than the one used in above section:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">mkdir <span class="nv">$SIS_DATA</span>/Databases
-mkdir <span class="nv">$SIS_DATA</span>/Databases/ExternalSources
-<span class="nb">cd</span> <span class="nv">$SIS_DATA</span>/Databases/ExternalSources
-ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/Data.sql    EPSG_Data.sql
-ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/FKeys.sql   EPSG_FKeys.sql
-ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/Tables.sql  EPSG_Tables.sql
-<span class="nb">cd</span> -</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mkdir <span class="nv">$SIS_DATA</span>/Databases
+</span></span><span class="line"><span class="cl">mkdir <span class="nv">$SIS_DATA</span>/Databases/ExternalSources
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> <span class="nv">$SIS_DATA</span>/Databases/ExternalSources
+</span></span><span class="line"><span class="cl">ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/Data.sql    EPSG_Data.sql
+</span></span><span class="line"><span class="cl">ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/FKeys.sql   EPSG_FKeys.sql
+</span></span><span class="line"><span class="cl">ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/Tables.sql  EPSG_Tables.sql
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> -</span></span></code></pre></div>
 <p>This is sufficient for allowing Apache <abbr title="Spatial Information System">SIS</abbr> to create the geodetic database
 without the need for <code>sis-epsg</code> or <code>sis-embedded-data</code> module on the classpath.
 This setting is not done automatically because Apache projects can not introduce
@@ -213,15 +213,15 @@ because Apache <abbr title="Spatial Information System">SIS</abbr> always delete
 regardless if the tests were successful or not.
 The role and database can be created by the following SQL instructions
 (replace <code>my_unix_user_name</code> by your actual user name):</p>
-<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">CREATE</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">my_unix_user_name</span><span class="w"> </span><span class="n">LOGIN</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="s2">&#34;SpatialMetadataTest&#34;</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="k">OWNER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">my_unix_user_name</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">COMMENT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="s2">&#34;SpatialMetadataTest&#34;</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="s1">&#39;For Apache SIS tests only.&#39;</span><span class="p">;</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">my_unix_user_name</span><span class="w"> </span><span class="n">LOGIN</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="s2">&#34;SpatialMetadataTest&#34;</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="k">OWNER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">my_unix_user_name</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">COMMENT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="s2">&#34;SpatialMetadataTest&#34;</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="s1">&#39;For Apache SIS tests only.&#39;</span><span class="p">;</span></span></span></code></pre></div>
 <p>For opening access to that database without password, it may be necessary
 to add following line (ignoring comment lines) in the <code>pg_hba.conf</code> file.
 Location of this file is system-dependent; it may be <code>/var/​lib/​pgsql/​data</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text"># IPv4 local connections:
-# TYPE  DATABASE               USER                 ADDRESS         METHOD
-host    SpatialMetadataTest    my_unix_user_name    127.0.0.1/32    trust</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl"># IPv4 local connections:
+</span></span><span class="line"><span class="cl"># TYPE  DATABASE               USER                 ADDRESS         METHOD
+</span></span><span class="line"><span class="cl">host    SpatialMetadataTest    my_unix_user_name    127.0.0.1/32    trust</span></span></code></pre></div>
 <p>The last step for allowing Apache <abbr title="Spatial Information System">SIS</abbr> to run tests on PostgreSQL is to set the
 <code>org.apache.sis.test.extensive</code> Java property to <code>true</code> (see next section).
 This requirement has been added for avoiding undesired interference with host.
@@ -233,8 +233,8 @@ Some tests are skipped by default, either because they would have some effects o
 the <code>sis</code> directory (for example writing in <code>SpatialMetadataTest</code> database on PostgreSQL),
 or because those tests take a long time to execute.
 For enabling all tests, use the following command:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> sis
-mvn install -Dorg.apache.sis.test.extensive<span class="o">=</span>true</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> sis
+</span></span><span class="line"><span class="cl">mvn install -Dorg.apache.sis.test.extensive<span class="o">=</span>true</span></span></code></pre></div>
 <h2 id="branches">Switch to development branch   </h2>
 <p>The source code repository contains <code>master</code>, <code>geoapi-3.1</code> and <code>geoapi-4.0</code> branches.
 Apache <abbr title="Spatial Information System">SIS</abbr> releases are created from <code>master</code>, which depends on the latest GeoAPI version
@@ -251,8 +251,8 @@ In summary:</p>
 <p>Developments on <code>geoapi-4.0</code> branch are merged to <code>geoapi-3.1</code> branch, which is then merged to <code>master</code>.
 When commits reach <code>master</code> they become unmodifiable; the <code>git push --force</code> command is not allowed on that branch.
 Contributors to Apache <abbr title="Spatial Information System">SIS</abbr> project should switch to the current development branch before submitting patches:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> sis
-git checkout geoapi-4.0</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> sis
+</span></span><span class="line"><span class="cl">git checkout geoapi-4.0</span></span></code></pre></div>
 <p>Note that those <code>geoapi-xxx</code> branches may disappear or be replaced by something else
 after <abbr title="Open Geospatial Consortium">OGC</abbr> releases the corresponding GeoAPI versions.</p>
 <h1 id="netbeans">Opening Apache SIS in NetBeans   </h1>
@@ -270,8 +270,8 @@ before opening the project and after any change in the project dependencies or i
 The <code>private</code> directory is excluded by the versioning system, so it okay to put user-specific information there.
 For example in order to overwrite the default location of the local Maven repository and to define a system property at execution time,
 one can use:</p>
-<div class="highlight"><pre class="chroma"><code class="language-ini" data-lang="ini"><span class="na">maven.repository</span> <span class="o">=</span> <span class="s">/path/to/my/local/repository</span>
-<span class="na">run.jvmargs</span> <span class="o">=</span> <span class="s">-DmyProperty=myValue</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ini" data-lang="ini"><span class="line"><span class="cl"><span class="na">maven.repository</span> <span class="o">=</span> <span class="s">/path/to/my/local/repository</span>
+</span></span><span class="line"><span class="cl"><span class="na">run.jvmargs</span> <span class="o">=</span> <span class="s">-DmyProperty=myValue</span></span></span></code></pre></div>
 <h1 id="history">History   </h1>
 <p>All developments and tags prior Apache <abbr title="Spatial Information System">SIS</abbr> 1.0 were done on a <a href="http://subversion.apache.org">Subversion</a> repository
 and can be <a href="http://svn.apache.org/viewvc/sis/">browsed online</a>.

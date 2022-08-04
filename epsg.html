@@ -130,7 +130,7 @@ of the information provided that numeric equivalence is achieved.</li>
   <ul>
     <li><a href="#command-line">Install a local copy with command-line tool   </a>
       <ul>
-        <li><a href="#use-local">Use the local copy in other applications   </a></li>
+        <li><a href="#use-local">How to use the local copy in other applications   </a></li>
       </ul>
     </li>
     <li><a href="#maven">Add a Maven dependency   </a>
@@ -139,36 +139,44 @@ of the information provided that numeric equivalence is achieved.</li>
         <li><a href="#maven-embedded">As embedded database    </a></li>
       </ul>
     </li>
-    <li><a href="#jndi">Use Java Naming and Directory Interface   </a>
+    <li><a href="#manually-setup-an-epsg-database">Manually setup an EPSG database</a>
       <ul>
-        <li><a href="#jndi-java">Registration by Java code   </a></li>
+        <li><a href="#setup">Registration by Java code   </a></li>
+        <li><a href="#jndi-java">Registration by Java Naming and Directory Interface   </a></li>
         <li><a href="#jndi-webapp">Registration in web application containers   </a></li>
       </ul>
     </li>
   </ul>
 </nav>
 <h1 id="command-line">Install a local copy with command-line tool   </h1>
-<p>If the <a href="command-line.html">command-line tool</a> has been downloaded and installed, just query any CRS.
+<p>The installation process described in this section makes clear that EPSG dataset
+is distributed under a different license and asks users for their agreement.
+This process can be used with the <a href="downloads.html#bundles">Apache SIS 1.2 binary bundle</a>.
+If the <a href="command-line.html">command-line tool</a> has been downloaded and installed, just query any CRS.
 For example:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">sis crs EPSG:6676</code></pre></div>
-<p>The first time that the command-line tool needs to query EPSG, it will prompt the user for authorization
-to download EPSG geodetic dataset from Maven Central. If the user accepts EPSG terms of use, then a local
-copy of the EPSG geodetic dataset will be created and stored in the <code>apache-sis-1.2/data</code> sub-directory.</p>
-<h2 id="use-local">Use the local copy in other applications   </h2>
-<p>For using the installed EPSG geodetic dataset in your own application, apply <em>one</em> of the following choices:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis crs EPSG:6676</span></span></code></pre></div>
+<p>Alternatively if the <a href="javafx.html">JavaFX application</a> is used, just start the application.
+It may be necessary to open a random data file for triggering the EPSG dataset initialization.
+In both cases, the first time that the command-line tool or JavaFX application needs to query EPSG,
+it will prompt the user for authorization to download EPSG geodetic dataset from Maven Central.
+If the user accepts EPSG terms of use, then a local copy of the EPSG geodetic dataset will be created
+and stored in the <code>apache-sis-1.2/data</code> sub-directory.</p>
+<h2 id="use-local">How to use the local copy in other applications   </h2>
+<p>The EPSG dataset installed by the command-line tools or the JavaFX application can also be used with other applications.
+For using the installed EPSG geodetic dataset in your own application, apply <em>one</em> of the following choices:</p>
 <ul>
 <li>Set the <code>SIS_DATA</code> environment variable to the path of <code>apache-sis-1.2/data</code> directory <em>(recommended)</em>.</li>
 <li>Set the <code>derby.system.home</code> Java property to the path of <code>apache-sis-1.2/data/Databases</code> directory.</li>
 </ul>
-<p>Alternatively <code>SIS_DATA</code> or <code>derby.system.home</code> can be set to the path of any other directory which contain the same files.
-Examples are shown below for Unix systems, assuming that the current directory is the directory where <code>apache-sis-1.2-bin.zip</code>
-has been unzipped:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">export</span> <span class="nv">SIS_DATA</span><span class="o">=</span>apache-sis-1.2/data
-java -classpath apache-sis-1.2/lib/sis-referencing.jar:myApp.jar myMainClass</code></pre></div>
+<p>Examples are shown below for Unix systems, assuming that the current directory is the directory where <code>apache-sis-1.2-bin.zip</code>
+has been unzipped (replace <code>myApp</code> and <code>MyMainClass</code> by the application to launch):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SIS_DATA</span><span class="o">=</span>apache-sis-1.2/data
+</span></span><span class="line"><span class="cl">java --class-path apache-sis-1.2/lib/sis-referencing.jar:myApp.jar MyMainClass</span></span></code></pre></div>
 <p>If the <code>SIS_DATA</code> environment variable can not be set, Java property can be used as a fallback:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">java -Dderby.system.home<span class="o">=</span>apache-sis-1.2/data/Databases <span class="se">\
-</span><span class="se"></span>     -classpath apache-sis-1.2/lib/sis-referencing.jar:myApp.jar <span class="se">\
-</span><span class="se"></span>     myMainClass</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">java -Dderby.system.home<span class="o">=</span>apache-sis-1.2/data/Databases <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>     --class-path apache-sis-1.2/lib/sis-referencing.jar:myApp.jar <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>     MyMainClass</span></span></code></pre></div>
+<p>Alternatively <code>SIS_DATA</code> or <code>derby.system.home</code> can be set to the path of any other directory which contain the same files.</p>
 <h1 id="maven">Add a Maven dependency   </h1>
 <p>Maven projects can get the EPSG geodetic dataset automatically, <em>without any prompt for terms of use agreement</em>,
 if they add a <code>sis-epsg</code> or <code>sis-embedded-data</code> dependency (from <code>org.apache.sis.non-free</code> group) in their project.
@@ -189,20 +197,20 @@ or a directory that contain other Derby databases. The specified directory must 
 </ul>
 <p>The Maven dependency is as below (the Derby dependency can be replaced by another database driver
 if that database is specified by JNDI):</p>
-<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependencies&gt;</span>
-  <span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>org.apache.sis.non-free<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>sis-epsg<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.2<span class="nt">&lt;/version&gt;</span>
-    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
-  <span class="nt">&lt;/dependency&gt;</span>
-  <span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>org.apache.derby<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>derby<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>10.14.2.0<span class="nt">&lt;/version&gt;</span>
-    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
-  <span class="nt">&lt;/dependency&gt;</span>
-<span class="nt">&lt;/dependencies&gt;</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependencies&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.apache.sis.non-free<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>sis-epsg<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>1.2<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.apache.derby<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>derby<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>10.14.2.0<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependencies&gt;</span></span></span></code></pre></div>
 <p>See the <a href="downloads.html#epsg">download</a> page for more information about Maven dependency declaration.</p>
 <h2 id="maven-embedded">As embedded database    </h2>
 <p>With <code>sis-embedded-data</code> artifact on the classpath, there is no need to setup environment variable, Java property or JNDI.
@@ -217,14 +225,14 @@ However this simplicity come with the following inconvenient:</p>
 <p>This dependency can be declared as below
 (see the <a href="downloads.html#epsg">download</a> page for more information about Maven dependency declaration).
 Note that <code>sis-epsg</code> and <code>sis-embedded-data</code> should not be specified in the same project; only one is needed:</p>
-<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;dependencies&gt;</span>
-  <span class="nt">&lt;dependency&gt;</span>
-    <span class="nt">&lt;groupId&gt;</span>org.apache.sis.non-free<span class="nt">&lt;/groupId&gt;</span>
-    <span class="nt">&lt;artifactId&gt;</span>sis-embedded-data<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>1.2<span class="nt">&lt;/version&gt;</span>
-    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
-  <span class="nt">&lt;/dependency&gt;</span>
-<span class="nt">&lt;/dependencies&gt;</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependencies&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.apache.sis.non-free<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>sis-embedded-data<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>1.2<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependencies&gt;</span></span></span></code></pre></div>
 <p>The performance issue can be avoided if the JAR file is uncompressed.
 But uncompressed <code>sis-embedded-data.jar</code> file is more than 5 times larger than the compressed file.
 Given that <code>CRS​.forCode(…)</code> and <code>CRS​.findCoordinateOperation(…)</code> should not be invoked too often,
@@ -232,26 +240,46 @@ and that performance degradation does not apply to the <code>CoordinateOperation
 the JAR file is distributed on the Maven repository in its compressed form.
 If desired, better performance can be achieved by using one of the other configurations described in this page,
 or by uncompressing the <code>sis-embedded-data.jar</code> file locally.</p>
-<h1 id="jndi">Use Java Naming and Directory Interface   </h1>
-<p>While Apache <abbr title="Spatial Information System">SIS</abbr> uses Apache Derby by default, it is also possible to use another database software like HSQL or PostgreSQL.
-For using an arbitrary database, register a <code>javax.sql.DataSource</code> instance through the Java Naming and Directory Interface (JNDI).
-That registration can be done programmatically (by Java code) or by configuring XML files in some environments.
+<h1 id="manually-setup-an-epsg-database">Manually setup an EPSG database</h1>
+<p>Applications can use their own EPSG database.
+In addition of Derby, Apache <abbr title="Spatial Information System">SIS</abbr> is also tested on HSQL and PostgreSQL.
+For using an arbitrary database, register a <code>javax.sql.DataSource</code> instance through one of the methods described below.
 The database must exist but can be empty, in which case it will be populated with an EPSG schema when first needed
 if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​1.2</code> dependency is on the classpath
-(see <a href="#maven-epsg">above section</a>).</p>
-<h2 id="jndi-java">Registration by Java code   </h2>
-<p>Registration can be done by the following Java code, provided that a JNDI implementation is available on the classpath:</p>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="c1">// Example using PostgreSQL data source (org.postgresql.ds.PGSimpleDataSource)
-</span><span class="c1"></span><span class="n">PGSimpleDataSource</span> <span class="n">ds</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PGSimpleDataSource</span><span class="o">();</span>
-<span class="n">ds</span><span class="o">.</span><span class="na">setDatabaseName</span><span class="o">(</span><span class="s">&#34;SpatialMetadata&#34;</span><span class="o">);</span>
-<span class="c1">// Server default to &#34;localhost&#34;.
-</span><span class="c1"></span>
-<span class="c1">// Registration assuming that a JNDI implementation is available
-</span><span class="c1"></span><span class="n">Context</span> <span class="n">env</span> <span class="o">=</span> <span class="o">(</span><span class="n">Context</span><span class="o">)</span> <span class="n">InitialContext</span><span class="o">.</span><span class="na">doLookup</span><span class="o">(</span><span class="s">&#34;java:comp/env&#34;</span><span class="o">);</span>
-<span class="n">env</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="s">&#34;jdbc/SpatialMetadata&#34;</span><span class="o">,</span> <span class="n">ds</span><span class="o">);</span></code></pre></div>
+(see <a href="#maven-epsg">above section</a>).
+If non-empty, the database should contain the tables created by SQL scripts downloaded from <a href="https://epsg.org/">EPSG</a>.
+<strong>Note thas as of Apache SIS 1.2, only EPSG dataset version 9 is supported.
+EPSG datasets version 10 and later are not yet supported.</strong></p>
+<h2 id="setup">Registration by Java code   </h2>
+<p>The data source can be specified by Java code as below
+(replace the <code>main</code> method by any method where initialization occurs):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">javax.sql.DataSource</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.setup.Configuration</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kt">void</span> <span class="n">MyApp</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Configuration</span><span class="o">.</span><span class="na">current</span><span class="o">().</span><span class="na">setDatabase</span><span class="o">(</span><span class="n">MyApp</span><span class="o">::</span><span class="n">createDataSource</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="n">DataSource</span> <span class="nf">createDataSource</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">DataSource</span> <span class="n">ds</span> <span class="o">=</span> <span class="o">...;</span>        <span class="c1">// Initialize the data source here.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">return</span> <span class="n">ds</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
+<h2 id="jndi-java">Registration by Java Naming and Directory Interface   </h2>
+<p>Registration in JNDI can be done programmatically (by Java code) or by configuring XML files in some environments.
+Registration can be done by the following Java code, provided that a JNDI implementation is available on the classpath:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// Example using PostgreSQL data source (org.postgresql.ds.PGSimpleDataSource)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">PGSimpleDataSource</span> <span class="n">ds</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PGSimpleDataSource</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="n">ds</span><span class="o">.</span><span class="na">setDatabaseName</span><span class="o">(</span><span class="s">&#34;SpatialMetadata&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Server default to &#34;localhost&#34;.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Registration assuming that a JNDI implementation is available
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">Context</span> <span class="n">env</span> <span class="o">=</span> <span class="o">(</span><span class="n">Context</span><span class="o">)</span> <span class="n">InitialContext</span><span class="o">.</span><span class="na">doLookup</span><span class="o">(</span><span class="s">&#34;java:comp/env&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">env</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span><span class="s">&#34;jdbc/SpatialMetadata&#34;</span><span class="o">,</span> <span class="n">ds</span><span class="o">);</span></span></span></code></pre></div>
 <p>If there is no JNDI environment, the <code>org.apache.sis.setup.Configuration</code> class can be used as a fallback:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">// Fallback <span class="k">if</span> no JNDI environment is available.
-Configuration.current<span class="o">()</span>.setDatabase<span class="o">(()</span> -&gt; ds<span class="o">)</span><span class="p">;</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">// Fallback <span class="k">if</span> no JNDI environment is available.
+</span></span><span class="line"><span class="cl">Configuration.current<span class="o">()</span>.setDatabase<span class="o">(()</span> -&gt; ds<span class="o">)</span><span class="p">;</span></span></span></code></pre></div>
 <h2 id="jndi-webapp">Registration in web application containers   </h2>
 <p>JNDI implementations are provided by web application containers like Apache Tomcat.
 When Apache <abbr title="Spatial Information System">SIS</abbr> is used in a JavaEE container, the data source can be configured as below:</p>
@@ -265,30 +293,30 @@ On Tomcat, this is accomplished by installing the driver&rsquo;s JAR files into 
 the Derby databases are located (skip this step if another database is used):</p>
 </li>
 </ol>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">export</span> <span class="nv">JAVA_OPTS</span><span class="o">=</span>-Dderby.system.home<span class="o">=</span><span class="nv">$SIS_DATA</span>/Databases</code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">JAVA_OPTS</span><span class="o">=</span>-Dderby.system.home<span class="o">=</span><span class="nv">$SIS_DATA</span>/Databases</span></span></code></pre></div>
 <ol start="3">
 <li>Declare the JNDI name in application <code>WEB-INF/web.xml</code> file:</li>
 </ol>
-<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;resource-ref&gt;</span>
-  <span class="nt">&lt;description&gt;</span>EPSG dataset and other metadata used by Apache SIS.<span class="nt">&lt;/description&gt;</span>
-  <span class="nt">&lt;res-ref-name&gt;</span>jdbc/SpatialMetadata<span class="nt">&lt;/res-ref-name&gt;</span>
-  <span class="nt">&lt;res-type&gt;</span>javax.sql.DataSource<span class="nt">&lt;/res-type&gt;</span>
-  <span class="nt">&lt;res-auth&gt;</span>Container<span class="nt">&lt;/res-auth&gt;</span>
-<span class="nt">&lt;/resource-ref&gt;</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;resource-ref&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;description&gt;</span>EPSG dataset and other metadata used by Apache SIS.<span class="nt">&lt;/description&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;res-ref-name&gt;</span>jdbc/SpatialMetadata<span class="nt">&lt;/res-ref-name&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;res-type&gt;</span>javax.sql.DataSource<span class="nt">&lt;/res-type&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;res-auth&gt;</span>Container<span class="nt">&lt;/res-auth&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/resource-ref&gt;</span></span></span></code></pre></div>
 <ol start="4">
 <li>Configure the data source in <code>$CATALINA_HOME/conf/context.xml</code> or in application <code>META-INF/context.xml</code> file
 (change attribute values as needed for the chosen JDBC driver):</li>
 </ol>
-<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;Context</span> <span class="na">crossContext=</span><span class="s">&#34;true&#34;</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;WatchedResource&gt;</span>WEB-INF/web.xml<span class="nt">&lt;/WatchedResource&gt;</span>
-  <span class="nt">&lt;Resource</span> <span class="na">name            =</span> <span class="s">&#34;jdbc/SpatialMetadata&#34;</span>
-            <span class="na">auth            =</span> <span class="s">&#34;Container&#34;</span>
-            <span class="na">type            =</span> <span class="s">&#34;javax.sql.DataSource&#34;</span>
-            <span class="na">username        =</span> <span class="s">&#34;sa&#34;</span>
-            <span class="na">password        =</span> <span class="s">&#34;sa&#34;</span>
-            <span class="na">driverClassName =</span> <span class="s">&#34;org.apache.derby.jdbc.EmbeddedDriver&#34;</span>
-            <span class="na">url             =</span> <span class="s">&#34;jdbc:derby:SpatialMetadata&#34;</span><span class="nt">/&gt;</span>
-<span class="nt">&lt;/Context&gt;</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;Context</span> <span class="na">crossContext=</span><span class="s">&#34;true&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;WatchedResource&gt;</span>WEB-INF/web.xml<span class="nt">&lt;/WatchedResource&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;Resource</span> <span class="na">name            =</span> <span class="s">&#34;jdbc/SpatialMetadata&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="na">auth            =</span> <span class="s">&#34;Container&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="na">type            =</span> <span class="s">&#34;javax.sql.DataSource&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="na">username        =</span> <span class="s">&#34;sa&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="na">password        =</span> <span class="s">&#34;sa&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="na">driverClassName =</span> <span class="s">&#34;org.apache.derby.jdbc.EmbeddedDriver&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="na">url             =</span> <span class="s">&#34;jdbc:derby:SpatialMetadata&#34;</span><span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/Context&gt;</span></span></span></code></pre></div>
 <ol start="5">
 <li>If using Derby, verify on the <code>localhost:8080/derby/derbynet</code> page (skip this step if another database is used).</li>
 </ol>
