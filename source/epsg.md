@@ -11,7 +11,7 @@ without that geodetic dataset, only a small subset of CRS definitions will be av
 (basically the constants enumerated in the [`CommonCRS`](apidocs/org/apache/sis/referencing/CommonCRS.html) Java class)
 unless full definitions are provided in _Well Known Text_ (WKT) or _Geographic Markup Language_ (GML) formats.
 Furthermore, coordinate operations between any given pair of CRS may be less accurate
-and their domains of validity may be unspecified if Apache {{% SIS %}} can not query EPSG.
+and their domains of validity may be unspecified if Apache {{% SIS %}} cannot query EPSG.
 
 The EPSG geodetic dataset is not distributed with Apache {{% SIS %}} because the [EPSG terms of use][EPSG-ToU]
 are incompatible with Apache license. The following items are quoted from those terms of use:
@@ -64,7 +64,7 @@ export SIS_DATA=apache-sis-{{% version %}}/data
 java --class-path apache-sis-{{% version %}}/lib/sis-referencing.jar:myApp.jar MyMainClass
 {{< / highlight >}}
 
-If the `SIS_DATA` environment variable can not be set, Java property can be used as a fallback:
+If the `SIS_DATA` environment variable cannot be set, Java property can be used as a fallback:
 
 {{< highlight bash >}}
 java -Dderby.system.home=apache-sis-{{% version %}}/data/Databases \
@@ -79,7 +79,7 @@ Alternatively `SIS_DATA` or `derby.system.home` can be set to the path of any ot
 Maven projects can get the EPSG geodetic dataset automatically, _without any prompt for terms of use agreement_,
 if they add a `sis-epsg` or `sis-embedded-data` dependency (from `org.apache.sis.non-free` group) in their project.
 Those two approaches have advantages and inconvenient described in following sub-sections.
-In both cases, we assume that developers who add those dependencies explicitely in their project agree with
+In both cases, we assume that developers who add those dependencies explicitly in their project agree with
 [EPSG terms of use][EPSG-ToU].
 
 ## As database installer     {#maven-epsg}

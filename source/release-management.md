@@ -118,7 +118,7 @@ Those steps are also useful as additional tests, since failure to generate those
 
 ## Prepare release notes    {#release-notes}
 
-We update JIRA soon because doing so is sometime a reminder of uncompleted tasks in source code.
+We update JIRA soon because doing so is sometimes a reminder of uncompleted tasks in source code.
 Update [JIRA][JIRA] tasks and prepare release notes as below:
 
 * Ensure that the _Fix Version_ in issues resolved since the last release includes this release version correctly.
@@ -276,7 +276,7 @@ In the `sis-epsg-$NEW_VERSION.jar` file, verify that `META-INF/LICENSE` contains
 Additional cleaning:
 
 * Delete all `org/apache/sis/parent/$NEW_VERSION/parent-$NEW_VERSION-source-release.zip.*` files on the Nexus repository.
-  They should not be there - source release will be deployed on an other repository later.
+  They should not be there - source release will be deployed on another repository later.
 * Delete all `org/apache/sis/non-free/$NEW_VERSION/non-free-$NEW_VERSION-source-release.zip.*` files.
 * Delete all `org/apache/sis/non-free/sis-epsg/$NEW_VERSION/sis-epsg-$NEW_VERSION-source.jar.*` files.
 

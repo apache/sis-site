@@ -6,7 +6,7 @@ Apache {{% SIS %}} implements the following standards from
 the Open Geospatial Consortium (OGC),
 the International Organization for Standardization (ISO) or
 the Java Community Process (JCP).
-The same standard is sometime published jointly by both {{% OGC %}} and {{% ISO %}} organizations.
+The same standard is sometimes published jointly by both {{% OGC %}} and {{% ISO %}} organizations.
 Links to free versions of the standards are given when available.
 The _Upgrade needed_ column indicates that a more recent version of the standard
 is available but that Apache {{% SIS %}} has not yet been upgraded to that version.

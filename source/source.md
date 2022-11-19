@@ -99,7 +99,7 @@ cd -
 
 This is sufficient for allowing Apache {{% SIS %}} to create the geodetic database
 without the need for `sis-epsg` or `sis-embedded-data` module on the classpath.
-This setting is not done automatically because Apache projects can not introduce
+This setting is not done automatically because Apache projects cannot introduce
 non-free dependencies without explicit action from user.
 If this action is not taken, some JUnit tests requiring EPSG data may be skipped.
 If any EPSG file is updated, deleting the `$SIS_DATA/​Databases/​SpatialMetadata` directory

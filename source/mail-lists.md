@@ -14,7 +14,7 @@ See [Public Forum Archive Policy][policy] for more information.
 ## Geospatial mailing list    {#geospatial}
 
 This is where peoples can ask questions or discuss about geospatial topics that are not specific to Apache {{% SIS %}}.
-Those topics can include questions about international standards, participation to upcomming geospatial events
+Those topics can include questions about international standards, participation to upcoming geospatial events
 or collaboration with communities outside Apache.
 
 - Subscribe:   [geospatial-subscribe@apache.org][geo-sub]

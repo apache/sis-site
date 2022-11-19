@@ -36,7 +36,7 @@ The remaining of this page provides more advanced tips for SIS developers.
 # Distribution file   {#dist}
 
 The distribution archive is a file with the `.zip` extension containing most SIS modules except `sis-webapp`
-(because Web applications use an other packaging) together with their dependencies.
+(because Web applications use another packaging) together with their dependencies.
 However for users convenience, we provide shell scripts launching the SIS command line tool or the JavaFX application.
 Those shell scripts, together with other files (`README`, `LICENSE`, <i>etc.</i>) are bundled in a ZIP file created as below:
 
@@ -101,7 +101,7 @@ implementation looks only for resources in any package ending with the `resource
 
 The resources compilation is part of the build process and does not need to be run explicitly.
 However, if necessary the resources compiler can be invoked alone by the following command line
-in the module containing the resources to recompile. This is sometime useful for regenerating
+in the module containing the resources to recompile. This is sometimes useful for regenerating
 the constants in the `Keys` inner class in a feaster way than building the project.
 
 {{< highlight bash >}}

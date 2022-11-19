@@ -12,7 +12,7 @@ If those steps have already been done, jump directly to the [Release Management]
 
 The steps described in the _release management_ page assume the following directory layout.
 Some directories are Git checkout, other are ordinary directories. Any other layout can be used.
-However in the later case, all relative paths in the _release management_ page will need to be adjusted accordingly.
+However in the latter case, all relative paths in the _release management_ page will need to be adjusted accordingly.
 
 {{< highlight text >}}
 <any root directory for SIS>

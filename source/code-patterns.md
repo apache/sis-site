@@ -10,10 +10,10 @@ This page lists some recommended code pattern for developing or using Apache {{%
 
 This section lists recommended code pattern when using the `sis-referencing` module.
 
-## Never explicitely swap coordinates for axis order    {#axisOrder}
+## Never explicitly swap coordinates for axis order    {#axisOrder}
 
 The [axis order issue](faq.html#axisOrder) causes lot of confusion,
-and developers are sometime tempted to swap their coordinate values in order to comply with some expected axis ordering.
+and developers are sometimes tempted to swap their coordinate values in order to comply with some expected axis ordering.
 It should never be necessary, since the Apache {{% SIS %}} referencing engine manages axis order transparently —
 provided that the Coordinate Reference System (CRS) definition is accurate.
 If a code needs to swap coordinates, this is probably an indication that the {{% CRS %}} has not been properly defined.
@@ -50,8 +50,8 @@ This section lists recommended code pattern for internationalization.
 ## Specify timezone    {#timezone}
 
 Geospatial data often cover a wide geographic area, spanning many time zones.
-Timezone are sometime specified as metadata in the header of data files to be read,
-or is sometime fixed to {{% UTC %}} by applications managing world-wide data.
+Timezone are sometimes specified as metadata in the header of data files to be read,
+or is sometimes fixed to {{% UTC %}} by applications managing world-wide data.
 Some Apache {{% SIS %}} objects have `Locale` and `TimeZone` information.
 Such locale and timezone are given to `java.text.DateFormat` or `java.util.Calendar` constructors among others.
 
@@ -64,7 +64,7 @@ The `Calendar` object should has been created with the appropriate timezone.
 
 Before to sort programmatic names for human reading, consider replacing all occurrences of the underscore character
 (`'_'`) by the space character (`' '`). The ASCII value of the underscore character is greater than `'Z'` but lower
-than `'a'`, which sometime produce unexpected sort results.
+than `'a'`, which sometimes produce unexpected sort results.
 For example `"Foo_bar"` is sorted _between_ `"FooBar"` and `"Foobar"`.
 The space character produces more consistent sort results because its ASCII value is less than any printable character,
 so `"Foo bar"` is sorted before both `"FooBar"` and `"Foobar"`.

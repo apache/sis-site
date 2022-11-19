@@ -56,7 +56,7 @@ For example with only three family of methods (_Cylindrical Mercator_, _Transver
 used with different parameter values, we can cover thousands of projected {{% CRS %}} listed in the EPSG geodetic dataset.
 
 In order to use a map projection method, we need to know the value to assign to the projection parameters.
-For convenience, thousands of projected {{% CRS %}} with pre-defined parameter values are are assigned a unique identifier.
+For convenience, thousands of projected {{% CRS %}} with predefined parameter values are are assigned a unique identifier.
 A well-known source of such definitions is the EPSG geodetic dataset, but other authorities also exist.
 The predefined {{% CRS %}} known to Apache {{% SIS %}} are listed in the
 [Coordinate Reference Systems](tables/CoordinateReferenceSystems.html) page.
@@ -87,7 +87,7 @@ shall default to (_longitude_, _latitude_) or (_x_, _y_) axis order.
 In version 2 of the {{% WKT %}} format, `AXIS[…]` elements are no longer optional
 and should contain an explicit `ORDER[…]` sub-element for making the intended order yet more obvious.
 
-Many software products still use the old (_x_, _y_) axis order, sometime because it is easier to implement.
+Many software products still use the old (_x_, _y_) axis order, sometimes because it is easier to implement.
 But Apache {{% SIS %}} rather defaults to axis order _as defined by the authority_ (except when parsing a {{% WKT %}} 1 definition),
 but allows changing axis order to the (_x_, _y_) order after {{% CRS %}} creation.
 This change can be done with the following code:
@@ -101,7 +101,7 @@ crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)
 
 ### How do I instantiate a Universal Transverse Mercator (UTM) projection?    {#UTM}
 
-If the UTM zone is unknown, an easy way is to invoke the `universal(…)` method on one of the `CommonCRS` pre-defined constants.
+If the UTM zone is unknown, an easy way is to invoke the `universal(…)` method on one of the `CommonCRS` predefined constants.
 That method receives in argument a geographic coordinate in (_latitude_, _longitude_) order and computes the UTM zone from it.
 See the [above Java code example](#transform-point).
 
@@ -183,7 +183,7 @@ where `"7.1"` is the version of the EPSG database used.
 URN may or may not be present in the set of identifiers returned by `crs.getIdentifiers()`.
 In many cases (especially if the {{% CRS %}} was parsed from a Well Known Text), only simple identifiers like `"EPSG:​4326"` are provided.
 An easy way to build the full URN is to use the code below.
-That example may scan the EPSG database for finding the information if it was not explicitely provided in the given {{% CRS %}}.
+That example may scan the EPSG database for finding the information if it was not explicitly provided in the given {{% CRS %}}.
 
 {{< highlight java >}}
 CoordinateReferenceSystem myCRS = ...;
@@ -273,7 +273,7 @@ PROJCS["Lambert II étendu",
   PARAMETER["latitude_of_origin", 46.8], ...]
 {{< / highlight >}}
 
-The Paris prime meridian is located at approximatively 2.597 gradians from Greenwich, which is 2.337 degrees.
+The Paris prime meridian is located at approximately 2.597 gradians from Greenwich, which is 2.337 degrees.
 From this fact, we can see that the above {{% WKT %}} uses decimal degrees despite its `UNIT["grad"]` declaration.
 This mismatch applies also to the parameter value, which declare 46.8° in the above example while the official value is 52 gradians.
 By default, Apache {{% SIS %}} interprets those angular values as gradians when parsing such {{% WKT %}}, resulting in a large error.
@@ -282,10 +282,10 @@ In order to get the intended result, there is a choice:
 * Replace `UNIT["grad", 0.01570796326794897]` by `UNIT["degree", 0.017453292519943295]`,
   which ensure that Apache {{% SIS %}}, GDAL and ESRI understand that {{% WKT %}} 1 in the same way.
 
-* Or ask explicitely Apache {{% SIS %}} to parse the {{% WKT %}} using the ESRI or GDAL conventions, by specifying the
+* Or ask explicitly Apache {{% SIS %}} to parse the {{% WKT %}} using the ESRI or GDAL conventions, by specifying the
   `Convention.WKT1_COMMON_UNITS` enumeration value to `WKTFormat` in the `org.apache.sis.io.wkt` package.
 
-Note that the GeoPackage standard explicitely requires {{% OGC %}} 01-009 compliant {{% WKT %}}
+Note that the GeoPackage standard explicitly requires {{% OGC %}} 01-009 compliant {{% WKT %}}
 and the new {{% WKT %}} 2 standard also follows the {{% OGC %}} 01-009 interpretation.
 The default Apache {{% SIS %}} behavior is consistent with those two standards.
 
@@ -349,7 +349,7 @@ if (uml != null) {
 This is indeed the approach taken by the `org.apache.sis.metadata.sql` package for providing an implementation
 of all GeoAPI metadata interfaces reading their values directly from a SQL database.
 
-### I can not marshall my custom implementation.    {#metadata-unknownClass}
+### I cannot marshall my custom implementation.    {#metadata-unknownClass}
 
 The classes given to the JAXB marshaller shall contain JAXB annotations,
 otherwise the following exception is thrown:

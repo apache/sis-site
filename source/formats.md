@@ -6,7 +6,7 @@ Apache {{% SIS %}} can read data from the formats listed below.
 Some formats are supported in read-only mode, others in read/write modes.
 Data may be structured as vectors or rasters,
 which in Apache {{% SIS %}} are mapped to the `FeatureSet` and `GridCoverageResource` interfaces respectively.
-Some formats can contain an arbitrary amount of feature types or rasters,
+Some formats can contain an arbitrary number of feature types or rasters,
 in which case the root resource will be `Aggregate`.
 
 <table>
@@ -65,12 +65,12 @@ in which case the root resource will be `Aggregate`.
   </tr><tr>
     <td>World File</td>
     <td>Read/write</td>
-    <td><code>GridCoverageResource</code>, sometime <code>Aggregate<code></td>
+    <td><code>GridCoverageResource</code>, sometimes <code>Aggregate<code></td>
   </tr>
 </table>
 
 **Notes:**
-1. {{% GML %}}, {{% WKT %}} and {{% ISO %}} 19115 can not yet be written
+1. {{% GML %}}, {{% WKT %}} and {{% ISO %}} 19115 cannot yet be written
 throught the `DataStore` API. They require the use of specific API.
 2. {{% SQL %}} is not a file format but rather a connection to a database throught {{% JDBC %}} driver.
 

@@ -45,7 +45,7 @@ However users can add other JAR files in that directory for the following option
 * **UCAR netCDF library —**
   by default, SIS uses its own embedded netCDF reader which supports only the classical netCDF format, as standardized by OGC.
   If there is a need to read files encoded in GRID or HDF formats, then copy the UCAR netCDF library in the `lib` sub-directory.
-  If presents, the UCAR library should be detected and used automatically when SIS can not read a netCDF file by itself.
+  If presents, the UCAR library should be detected and used automatically when SIS cannot read a netCDF file by itself.
 
 # Usage    {#usage}
 
@@ -187,7 +187,7 @@ Such codes can be written in different ways. For example all the following strin
 In a _Well Known Text_ (WKT) string, the code can appear at the bottom of the definition
 in an optional element like `ID["EPSG", 4326]` or `AUTHORITY["EPSG", "4326"]`.
 However in many cases the code is missing.
-Sometime Apache {{% SIS %}} can find a missing code by comparing a given {{% CRS %}} against the definitions in the EPSG database.
+Sometimes Apache {{% SIS %}} can find a missing code by comparing a given {{% CRS %}} against the definitions in the EPSG database.
 The following example reads a {{% WKT %}} for the _“NTF (Paris) / Lambert zone II”_ Coordinate Reference System,
 but in which the `ID["EPSG", 27572]` element has been intentionally omitted.
 Furthermore, the _“NTF (Paris) / Lambert zone II”_ name has been replaced by _“NTF (Paris) / zone to be discovered by the demo”_ name.
@@ -205,7 +205,7 @@ urn:ogc:def:crs:EPSG:9.7:27572    | NTF (Paris) / Lambert zone II
 
 As we can see, Apache {{% SIS %}} has been able to find back the identifier code and the actual {{% CRS %}} name.
 
-Sometime a {{% WKT %}} declares wrongly an EPSG code.
+Sometimes a {{% WKT %}} declares wrongly an EPSG code.
 The most frequent case is a {{% WKT %}} that defines a Coordinate Reference System with (_longitude_, _latitude_) axes,
 but declare an EPSG code for a {{% CRS %}} with (_latitude_, _longitude_) axes.
 Apache {{% SIS %}} can detect such mismatches.
