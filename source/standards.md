@@ -44,6 +44,11 @@ Some standards are implemented partially, others almost fully.
     <td></td>
     <td>Metadata {{% XML %}} schema implementation</td>
   </tr><tr>
+    <td>ISO 19157:2013/Amd 1:2018</td>
+    <td></td>
+    <td></td>
+    <td>Data quality</td>
+  </tr><tr>
     <td>ISO 19111:2007</td>
     <td>OGC Topic 2</td>
     <td>ISO 19111:2019</td>
