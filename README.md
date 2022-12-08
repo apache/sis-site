@@ -36,7 +36,7 @@ See [Hugo](https://gohugo.io/) for more info and for details how to install Hugo
 
 ## Generate the website
 
-To generate the static website, execute `hugo` to generate in the `target/` directory.
+To generate the static website, execute `hugo` to generate in the `public/` directory.
 
 During development, it may be useful to run an incremental build. For this to work,
 execute `hugo server -D` to continuously generate and serve the website on `localhost:1313`.

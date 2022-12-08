@@ -472,13 +472,13 @@ Add a new `<release>` block for the new release with the estimated release date.
 
 Update the following files (e.g. the release date in `index.md`):
 
-* `source/index.md`
-* `source/command-line.md`
-* `source/epsg.md` for EPSG dataset version
-* `source/download.md` for SIS version and JAXB dependency
-* `source/developer-guide/introduction/Installation.html`
+* `content/index.md`
+* `content/command-line.md`
+* `content/epsg.md` for EPSG dataset version
+* `content/download.md` for SIS version and JAXB dependency
+* `content/developer-guide/introduction/Installation.html`
 
-Execute `hugo` and browse the documentation in the `target` repository.
+Execute `hugo` and browse the documentation in the `public` repository.
 If okay, commit and copy to staging repository:
 
 {{< highlight bash >}}
@@ -486,8 +486,8 @@ git commit --message "Prepare documentation for the $NEW_VERSION release."
 
 # Copy to staging repository
 rm --recursive ../asf-staging/*
-mv target/.htaccess target/* ../asf-staging/
-rmdir target
+mv public/.htaccess public/* ../asf-staging/
+rmdir public
 cd ../asf-staging/
 rm fr.html
 

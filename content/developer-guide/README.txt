@@ -10,7 +10,7 @@ Assuming the following directory structure:
 │       └─ sis-build-helper
 └─ site
     ├─ main
-    │   └─ source
+    │   └─ content
     └─ asf-staging
         └─ book
 
