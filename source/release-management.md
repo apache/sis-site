@@ -24,8 +24,8 @@ the current release attempt. Those versions shall be set on the command line lik
 {{< highlight bash >}}
 gpg --list-keys                     # For getting the value to put in <your key ID>
 unset PATH_TO_FX
-export OLD_VERSION={{% version %}}
-export NEW_VERSION=1.2
+export OLD_VERSION=1.2
+export NEW_VERSION={{% version %}}
 export RELEASE_CANDIDATE=1
 export SIGNING_KEY=<your key ID>    # hexadecimal number with 8 or 40 digits.
 {{< / highlight >}}
@@ -62,7 +62,7 @@ Replace the `$OLD_VERSION` number by `$NEW_VERSION` in the values of following p
 * `DOWNLOAD_URL` in `core/sis-utility/src/main/java/org/apache/sis/setup/OptionalInstallations.java` file.
 * `<sis.non-free.version>` in root `pom.xml` file.
 * Review the `README` and `NOTICE` files in root directory.
-* Review the `README` files in `application/sis-console/src/main/artifact/` and subdirectories.
+* Review the `README` files in `application/sis-javafx/src/main/artifact/` and subdirectories.
 
 Commit and merge with other branches up to master.
 
@@ -153,10 +153,11 @@ git checkout -b $NEW_VERSION-RC
 export SIS_RC_DIR=`pwd`
 {{< / highlight >}}
 
-Remove the modules that are not yet ready for a release.
+Remove the files and modules that are not yet ready for a release.
 This may require removing `<module>` elements in the parent `pom.xml` file.
 
 {{< highlight bash >}}
+git rm .asf.yaml
 git rm -r core/sis-cql
 git rm -r storage/sis-shapefile
 git rm -r application/sis-webapp

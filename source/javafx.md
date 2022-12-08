@@ -26,6 +26,15 @@ On first execution, the application will ask user to download the [JavaFX framew
 That framework is not included in the Apache {{% SIS %}} binaries for licensing reasons (it is under GPL license).
 Later on, the application will offer to download the [EPSG geodetic dataset](epsg.html) when first needed.
 That dataset is not included neither again for licensing reasons.
+
+## Troubleshooting
+
+If the application fails to start and the error message said _"Error initializing QuantumRenderer: no suitable pipeline found"_,
+then the JavaFX SDK is probably for the wrong platform.
+For example users on Intel platforms need to choose `x64` (not `aarch64`) on the download page.
+
+## First look
+
 After those two steps are completed, user can see an application like below:
 
 <div id="carousel" class="carousel slide" data-bs-ride="carousel">

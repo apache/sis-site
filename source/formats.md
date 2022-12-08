@@ -40,7 +40,7 @@ in which case the root resource will be `Aggregate`.
     <td><code>Resource</code></td>
   </tr><tr>
     <td>{{% GPX %}}</td>
-    <td>Read</td>
+    <td>Read/write</td>
     <td><code>FeatureSet</code></td>
   </tr><tr>
     <td>{{% ISO %}} 19115 {{% XML %}}</td>

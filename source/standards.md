@@ -24,7 +24,7 @@ Some standards are implemented partially, others almost fully.
     <td></td>
     <td>Conceptual schema language</td>
   </tr><tr>
-    <td>ISO 19115-1:2014</td>
+    <td>ISO 19115-1:2014/Amd 1:2018</td>
     <td>OGC Topic 11</td>
     <td></td>
     <td>Metadata — fundamentals</td>
