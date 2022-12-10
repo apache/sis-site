@@ -541,7 +541,7 @@ It will not yet be published on `https://sis.apache.org`.
 * Create a VOTE email thread on `dev@` to record votes as replies.
   A template is available [here](templates/release-vote.html).
 * Create a DISCUSS email thread on `dev@` for any vote questions.
-  A template is available [here](templates/release-discuss.txt).
+  A template is available [here](templates/release-discuss.html).
 * Perform a review of the release and cast your vote:
 * a -1 vote does not necessarily mean that the vote must be redone, however it is usually a good idea
   to rollback the release if a -1 vote is received. See _Recovering from a vetoed release_ below.
