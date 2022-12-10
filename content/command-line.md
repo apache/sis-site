@@ -138,7 +138,7 @@ sis crs EPSG:6676
   Scope["Large and medium scale topographic mapping, cadastral and engineering survey."],
   Area["Japan - onshore - Honshu between approximately 137°45'E and 139°E - Niigata-ken; Nagano-ken; Yamanashi-ken; Shizuoka-ken."],
   BBox[34.54, 137.32, 38.58, 139.91],
-  Id["EPSG", 6676, "9.7", URI["urn:ogc:def:crs:EPSG:9.7:6676"]],
+  Id["EPSG", 6676, "9.9.1", URI["urn:ogc:def:crs:EPSG:9.9.1:6676"]],
   Remark["Replaces JGD2000 / Japan Plane Rectangular CS VIII (CRS code 2450) with effect from 21st October 2011."]]</pre>
 </details>
 <br/>
@@ -200,7 +200,7 @@ sis identifier https://sis.apache.org/examples/crs/MissingIdentifier.wkt
 produces an output like below:
 
 {{< highlight text >}}
-urn:ogc:def:crs:EPSG:9.7:27572    | NTF (Paris) / Lambert zone II
+urn:ogc:def:crs:EPSG:9.9.1:27572  | NTF (Paris) / Lambert zone II
 {{< / highlight >}}
 
 As we can see, Apache {{% SIS %}} has been able to find back the identifier code and the actual {{% CRS %}} name.
@@ -256,7 +256,7 @@ sis identifier https://sis.apache.org/examples/crs/EquivalentDefinition.wkt
 produces an output like below:
 
 {{< highlight text >}}
-urn:ogc:def:crs:EPSG:9.7:3994    | WGS 84 / Mercator 41
+urn:ogc:def:crs:EPSG:9.9.1:3994  | WGS 84 / Mercator 41
 {{< / highlight >}}
 
 In above example, Apache {{% SIS %}} used the fact that a
