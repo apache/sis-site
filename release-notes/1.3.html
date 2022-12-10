@@ -3,7 +3,7 @@
 <head>
 
 
-  <title>Apache SIS - SIS 1.2 Release notes</title>
+  <title>Apache SIS - SIS 1.3 Release notes</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
@@ -101,61 +101,57 @@
     <main class="container">
       <article>
         <img src="../images/logo.png" class="sis-logo" align="left"/>
-        <p class="page-title">SIS 1.2 Release notes</p>
+        <p class="page-title">SIS 1.3 Release notes</p>
 
   <ul>
-<li>Release date: <strong>2022-05-18</strong></li>
-<li><a href="1.3.html">Next release</a></li>
-<li><a href="1.1.html">Previous release</a></li>
+<li>Release date: <strong>2022-12-23</strong></li>
+<li>Next release</li>
+<li><a href="1.2.html">Previous release</a></li>
 <li><a href="#compatibility">Incompatible changes</a></li>
 <li><a href="#issues">Noticeable changes</a></li>
 </ul>
-<p>Apache SIS 1.2 can read World Files and ESRI ASCII grid and BIL/BIP/BSQ rasters,
-in addition to GeoTIFF support added in SIS 1.1,
-and in addition to netCDF support added in previous releases.
-This release also contains various bug fixes improving the stability.</p>
+<p>This release contains an upgrade of the <code>org.apache.sis.metadata.iso.quality</code> package
+to the ISO 19157:2013 international standard.
+This release contains also various bug fixes improving the stability.</p>
 <h1 id="compatibility">Incompatible changes   </h1>
-<p>None.</p>
+<p>The following changes in Apache SIS 1.3 are incompatibles with the previous release (SIS 1.2):</p>
+<ul>
+<li>In the <code>org.apache.sis.coverage.grid</code> package, the <code>GridEvaluator</code> class has been replaced by the <code>GridCoverage.Evaluator</code> interface.</li>
+<li>In the <code>org.apache.sis.gui.map</code> package, the <code>ValuesUnderCursor.evaluate(DirectPosition)</code> method has been replaced by
+<code>evaluateLater(DirectPosition)</code> for computing values in a background thread.</li>
+</ul>
 <h1 id="issues">Noticeable changes   </h1>
 <h2 id="features">New Features   </h2>
 <ul>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-529">SIS-529</a>] — Provide native GeoTIFF metadata</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-541">SIS-541</a>] — Add &ldquo;World File&rdquo; reader and writer</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-540">SIS-540</a>] — Add an ESRI ASCII Grid reader and writer</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-543">SIS-543</a>] — Add a BIL/BIP/BSQ data store</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-524">SIS-524</a>] — Image masking based on a geometry</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-528">SIS-528</a>] — Add a &ldquo;system monitor&rdquo; with visual indication of seek operations</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-533">SIS-533</a>] — Add &ldquo;Rotated Latitude/Longitude&rdquo; coordinate operation</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-228">SIS-228</a>] — Lambert Azimuthal Equal Area (EPSG:9820)</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-229">SIS-229</a>] — Lambert Azimuthal Equal Area (Spherical) (EPSG:1027)</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-542">SIS-542</a>] — Mercator auxiliary sphere</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-538">SIS-538</a>] — Support ESRI WKT element GEOGTRAN</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-539">SIS-539</a>] — Create a &ldquo;cloud&rdquo; group of modules, starting with AWS S3</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-394">SIS-394</a>] — Implement data quality (ISO 19157) in metadata package</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-558">SIS-558</a>] — Allow instantiation of temporal CRS by identifiers</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-342">SIS-342</a>] — Support temporal CRS in URL</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-550">SIS-550</a>] — Give estimation of MathTransform domain</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-553">SIS-553</a>] — Add &ldquo;Pseudo sinusoidal equal area&rdquo; projection</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-258">SIS-258</a>] — Geocentric/topocentric conversions (EPSG:9836)</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-259">SIS-259</a>] — Geographic/topocentric conversions (EPSG:9837)</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-559">SIS-559</a>] — Allow aggregation of coverages in a data cube</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-549">SIS-549</a>] — Add notification when a data store is closed</li>
 </ul>
 <h2 id="improvements">Improvements   </h2>
 <ul>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-300">SIS-300</a>] — Complete the information provided in Citations constants</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-520">SIS-520</a>] — SQLStore should avoid creating features with cyclic associations</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-514">SIS-514</a>] — GridGeometry.subgrid(…) should accept an area of interest with less dimensions than the base grid</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-535">SIS-535</a>] — Search for coordinate operations create too many CRS</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-336">SIS-336</a>] — URL to EPSG installation instructions should be customizable</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-393">SIS-393</a>] — Missing META-INF service declarations for authority factories</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-547">SIS-547</a>] — Mercator projection should wraparound longitude values</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-411">SIS-411</a>] — GPX data store should implement WritableFeatureSet</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-419">SIS-419</a>] — Implement (un)marshalling of gco:Record</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-552">SIS-552</a>] — Better identification of latitude/longitude axes in netCDF</li>
 </ul>
 <h2 id="bugs">Bug fixes   </h2>
 <ul>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-523">SIS-523</a>] — Download of EPSG data must use https</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-527">SIS-527</a>] — Improve stability of JavaFX application</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-519">SIS-519</a>] — Never-ending loop in AbstractFeature.equals/hashCode</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-532">SIS-532</a>] — NaN from unhandled case in reverse Oblique Mercator calculations</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-537">SIS-537</a>] — Oblique Stereographic: Wrong longitude in reverse transform + suggested fix</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-522">SIS-522</a>] — IllegalArgumentException in GridExtent.toEnvelope(…)</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-521">SIS-521</a>] — Malformed SQL query in SQLStore</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-555">SIS-555</a>] — Some isolines are missing</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-551">SIS-551</a>] — GeoTIFF uncompression bug fixes</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-548">SIS-548</a>] — Unexpected wraparound during intersection of grid geometries</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-556">SIS-556</a>] — Memory leak in tile cache</li>
 </ul>
 <h2 id="tasks">Tasks   </h2>
 <ul>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-525">SIS-525</a>] — Remove AccessController usage</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-530">SIS-530</a>] — Change Interpolation interface to an abstract class</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-531">SIS-531</a>] — Deprecate (for removal) LoggerFactory</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-546">SIS-546</a>] — Remove LoggerFactory</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-554">SIS-554</a>] — Replace GridEvaluator by an interface</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-398">SIS-398</a>] — MI_PolarizationOrientationCode as an alias of MI_PolarisationOrientationCode</li>
 </ul>
 
 

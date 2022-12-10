@@ -5,7 +5,7 @@
       http://www.apache.org/licenses/LICENSE-2.0
 
   This is an automatically generated file. DO NOT EDIT.
-  See the files in the `source/developer-guide` directory instead.
+  See the files in the `content/developer-guide` directory instead.
 
 --><!DOCTYPE html SYSTEM "about:legacy-compat">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -163,7 +163,7 @@ and <code class="SIS">org.​apache.​sis.​referencing.​crs.​<b>DefaultPr
 </p><p>
 Apache SIS implements most GeoAPI interfaces by a classes of the same name than the interface
 but prefixed by <code>Abstract</code>, <code>Default</code> or <code>General</code> word.
-The <code>General</code> prefix is sometime used instead of <code>Default</code>
+The <code>General</code> prefix is sometimes used instead of <code>Default</code>
 to indicate that alternative implementations are available for some specific cases.
 For example the <code class="GeoAPI">Envelope</code> interface is implemented by at least two Apache SIS classes:
 <code class="SIS">GeneralEnvelope</code> and <code class="SIS">Envelope2D</code>.
@@ -225,7 +225,7 @@ It is optional but recommended;
 see <a href="../../epsg.html">How to use EPSG geodetic dataset</a> page for more information.
 </p>
 <pre>&lt;properties&gt;
-  &lt;sis.version&gt;1.2&lt;/sis.version&gt;
+  &lt;sis.version&gt;1.3&lt;/sis.version&gt;
 &lt;/properties&gt;
 &lt;dependencies&gt;
   &lt;dependency&gt;
@@ -351,7 +351,7 @@ Geographic Bounding Box
 The <abbr>ISO</abbr> 19115 standard defines hundreds of elements.
 Some of them will be introduced progressively in next chapters.
 But in order to give some idea about what is available, the following table lists a few metadata elements.
-Most of the nodes accept an arbitrary amount of values.
+Most of the nodes accept an arbitrary number of values.
 For example the <code class="OGC">extent</code> node may contain many geographic areas.
 </p>
 
@@ -400,9 +400,9 @@ a <a href="#Referencing">dedicated chapter</a>: <code class="OGC">reference­Sys
 Its content is essential for accurate data positioning;
 without this element, even positions given by latitudes and longitudes are ambiguous.
 Reference systems have many characteristics that make them apart from other metadata:
-they are immutable, can not be handled by <code class="SIS">MetadataStandard.ISO_19115​.asValueMap(…)</code>,
+they are immutable, cannot be handled by <code class="SIS">MetadataStandard.ISO_19115​.asValueMap(…)</code>,
 have a particular text representation and are associated to an engine
-performing coordinate transformation from one reference system to an other.
+performing coordinate transformation from one reference system to another.
 </p>
 </section>
 </section>
@@ -481,7 +481,7 @@ Among the many kinds of operations performed by <abbr>GIS</abbr> software produc
 <dfn>affine transforms</dfn> are both relatively simple and very common.
 Affine transforms can represent any combination of scales, shears, flips, rotations and translations,
 which are <em>linear</em> operations.
-Affine transforms can not handle <em>non-linear</em> operations like map projections,
+Affine transforms cannot handle <em>non-linear</em> operations like map projections,
 but the affine transform capabilities nevertheless cover many other cases:
 </p>
 <ul>
@@ -1014,7 +1014,7 @@ an additional complication is that each envelope may use a <abbr>CRS</abbr> with
 The union operation needs to find a <abbr>CRS</abbr> valid in a domain large enough for containing all envelopes.
 It may be a <abbr>CRS</abbr> different than all <abbr>CRS</abbr> used by the source envelopes.
 Apache <abbr>SIS</abbr> has an utility method for handling this additional complexity.
-This method accepts an arbitrary amount of envelopes that may be in different <abbr>CRS</abbr>:
+This method accepts an arbitrary number of envelopes that may be in different <abbr>CRS</abbr>:
 </p>
 <pre><code><code class="GeoAPI">Envelope</code> union = <code class="SIS">Envelopes</code>.union(envelope1, envelope2, envelope3);</code></pre>
 </section>
@@ -1081,7 +1081,7 @@ Those objects contain:
 <ul>
 <li>A <i>datum</i>, which specifies among other things which ellipsoid to use as an Earth shape approximation.</li>
 <li>A description for each axis: name, direction, units of measurement, range of values.</li>
-<li>Sometime a list of parameters, especially when using map projections.</li>
+<li>Sometimes a list of parameters, especially when using map projections.</li>
 </ul>
 <p>
 Those systems are described by the <abbr title="International Organization for Standardization">ISO</abbr> 19111 standard (<i>Referencing by Coordinates</i>),
@@ -1095,7 +1095,7 @@ and the <cite>Well-Known Text</cite> (<abbr>WKT</abbr>) — a text format easie
 <h3 id="ProjectedCRS"><span class="section-number">4.1.1.</span> Map projections</h3>
 <p>
 Map projections represent a curved surface (the Earth surface) on a plane surface (a map or a computer screen).
-Every rendering of geospatial data on a flat screen uses some kind of map projection, sometime implicitly.
+Every rendering of geospatial data on a flat screen uses some kind of map projection, sometimes implicitly.
 Well-designed map projections provide some control over deformations:
 one can preserve the angles, another projection can preserve the areas,
 but none can preserve both in same time.
@@ -1117,7 +1117,7 @@ Other ways to get a coordinate reference system will be given in a <a href="#Get
 <h3 id="GeographicCRS"><span class="section-number">4.1.2.</span> Geographic reference systems</h3>
 <p>
 All map projections are based on a geodetic (usually geographic) <abbr>CRS</abbr>.
-A geodetic <abbr>CRS</abbr> is a coordinate reference system with latitude, longitude and sometime height axes.
+A geodetic <abbr>CRS</abbr> is a coordinate reference system with latitude, longitude and sometimes height axes.
 There is many kinds of latitudes and longitudes,
 but two common kinds supported by Apache <abbr title="Spatial Information System">SIS</abbr> are <dfn>geodetic</dfn> and <dfn>geocentric</dfn> latitudes.
 Those two angles differ slightly in the way they intersect the ellipsoid surface.
@@ -1221,7 +1221,7 @@ This modification aimed to take in account the average state height above mean s
 
 <p>
 The main properties that we can get from an ellipsoid are given below.
-The semi-major axis length is sometime called <cite>equatorial radius</cite> and
+The semi-major axis length is sometimes called <cite>equatorial radius</cite> and
 the semi-minor axis length the <cite>polar radius</cite>.
 The inverse flattening factor is apparently superfluous since it can be derived from other quantities,
 but many ellipsoid definitions provide this factor instead of semi-minor axis length.
@@ -1803,7 +1803,7 @@ This is the task of the first and last affine operations in this <abbr>WKT</abbr
 <li><p>The “Geocentric translation” operation is not anymore applied in the geographic domain, but in the geocentric domain.
 Consequently conversions between geographic and geocentric coordinate reference systems must be made explicit.
 Those explicit steps are also necessary for specifying the ellipsoid semi-axis lengths,
-since they can not anymore by inferred for source and target <abbr>CRS</abbr>.</p></li>
+since they cannot anymore by inferred for source and target <abbr>CRS</abbr>.</p></li>
 <li><p>Conversions between geographic and geocentric coordinates are three-dimensional.
 Consequently operations for increasing and reducing the number of dimensions are inserted.
 By default the ellipsoidal height before conversion is set to zero.</p></li>
@@ -1856,7 +1856,7 @@ about common causes of coordinate transformation errors.
 <p>
 Methods like <code class="GeoAPI">getExtents()</code> are efficient when looking for a particular element known at compile-time.
 But those elements may be deep in the tree structure and may require traversal of many optional elements and collection members,
-which is sometime tedious. For a few frequently-used elements, some convenience methods are provided.
+which is sometimes tedious. For a few frequently-used elements, some convenience methods are provided.
 Those conveniences are generally defined as static methods in classes having a name in plural form.
 For example the <code class="SIS">Extents</code> class defines static methods for fetching more easily some information from <code class="GeoAPI">Extent</code> metadata elements.
 For example the following method navigates through different branches where North, South, East and West data bounds may be found:
@@ -1872,7 +1872,7 @@ Some other classes providing static methods for specific interfaces are
 <p>
 Above static methods explore fragments of metadata tree in search for requested information,
 but the searches are still targeted to elements whose types and at least part of their paths are known at compile-time.
-Sometime the element to search is known only at runtime, or sometime there is a need to iterate over all elements.
+Sometimes the element to search is known only at runtime, or sometimes there is a need to iterate over all elements.
 In such cases, one can view the metadata as a <code>java.util.Map</code> like below:
 </p>
 
@@ -2270,7 +2270,7 @@ regardless of whether <code>B</code> knows more.
 <h2 id="ObjectConverters"><span class="section-number">7.2.</span> Object converters</h2>
 </header>
 <p>
-There is sometime a need to convert instances from a <var>source</var> Java type to a <var>target</var> Java type
+There is sometimes a need to convert instances from a <var>source</var> Java type to a <var>target</var> Java type
 while those types are unknown at compile time.
 Various projects (Apache Common Convert, Spring, <i>etc.</i>)
 have created their own interface for performing object conversions between types known only at runtime.
@@ -2307,7 +2307,7 @@ For example converting the "42", "+42" and "0042" character strings all result i
 the <code>String</code> → <code>Integer</code> conversion performed by <code>Integer​.valueOf(String)</code>
 is a <dfn>surjective</dfn> function because every <code>Integer</code> value can be created from at least one <code>String</code> value.
 However the <code>Integer</code> → <code>String</code> conversion performed by <code>Integer​.toString()</code>
-is <strong>not</strong> a surjective function because it can not produce all possible <code>String</code> values.
+is <strong>not</strong> a surjective function because it cannot produce all possible <code>String</code> values.
 For example there is no way to produce the "ABC" value with the <code>Integer​.toString()</code> method.
 </p></div>
 </dd>
@@ -2911,7 +2911,7 @@ Apache <abbr>SIS</abbr> services are unsuitable.
 <h3 id="SpecificationToInterfaces"><span class="section-number">8.1.4.</span> From <abbr title="Open Geospatial Consortium">OGC</abbr> specifications to Java interfaces</h3>
 </header>
 <p>
-GeoAPI interfaces are sometime generated from other files provided by <abbr>OGC</abbr>, like <abbr title="XML Schema Definition">XSD</abbr> files.
+GeoAPI interfaces are sometimes generated from other files provided by <abbr>OGC</abbr>, like <abbr title="XML Schema Definition">XSD</abbr> files.
 But there is always a manual revision, and often modifications compared to automatically generated Java files.
 It would have been possible to automatically generate Java interfaces from <abbr>OGC</abbr> standards using existing tools.
 For example one of the most commonly-used approaches is to transform <a href="http://schemas.opengis.net/gml/3.3/"><abbr>XSD</abbr> schemas</a>
@@ -3470,7 +3470,7 @@ since <code class="GeoAPI">geoapi-conformance</code> has its own test suite and 
 <h4 id="GeoAPI-validators"><span class="section-number">8.2.1.1.</span> Instance validations</h4>
 <p>
 GeoAPI can validate an instance of its interfaces by checking that certain constraints are observed.
-Many constraints can not be expressed in the method signature. Those constraints
+Many constraints cannot be expressed in the method signature. Those constraints
 are usually described textually in the abstract specifications or in the javadoc.
 </p>
 <div class="example"><p><b>Example:</b>
@@ -3494,7 +3494,7 @@ All <code class="GeoAPI">validate(…)</code> functions follow a chain of depend
 meaning that they will also validate each component of the object to be validated.
 For example, the validation of a <code class="GeoAPI">GeographicCRS</code> implies the validation of its component
 <code class="GeoAPI">GeodeticDatum</code>, which itself implies the validation of its component <code class="GeoAPI">Ellipsoid</code>, and so on.
-Thus it is unnecessary to validate the components explicitely, unless the developer wishes to isolate the test for a particular item known to cause problems.
+Thus it is unnecessary to validate the components explicitly, unless the developer wishes to isolate the test for a particular item known to cause problems.
 </p>
 <p>
 By default, validations are as strict as possible. It is always possible to relax certain rules.
@@ -3553,7 +3553,7 @@ This approach requires the creation of a new instance of the validator that we w
 
 
 
-<h4 id="GeoAPI-tests"><span class="section-number">8.2.1.2.</span> Executing pre-defined tests</h4>
+<h4 id="GeoAPI-tests"><span class="section-number">8.2.1.2.</span> Executing predefined tests</h4>
 <p>
 JUnit tests are defined in the <code class="GeoAPI">org.opengis.test</code> sub-packages.
 All test classes bear a name ending in "<code>Test</code>".
@@ -3720,12 +3720,12 @@ because it increases the chances to correctly detect which operations cancel eac
 This investment can save execution time at the place where it matters most:
 in the code looping over millions of coordinates to transform.
 </p><p>
-However matrix libraries are often designed for high performances with large matrices, sometime containing thousands of rows and columns.
+However matrix libraries are often designed for high performances with large matrices, sometimes containing thousands of rows and columns.
 Those libraries can efficiently resolve systems of linear equations with hundreds of unknown variables.
 Those libraries resolve difficult problems, but not of the same kind than the problems that Apache <abbr>SIS</abbr> needs to solve.
 For that reason, and also for another reason described in next paragraphs, Apache <abbr>SIS</abbr> uses its own matrix implementation.
 This implementation addresses the accuracy issue by using “double-double” arithmetic
-(a technic for simulating the accuracy of approximatively 120 bits wide floating point numbers)
+(a technic for simulating the accuracy of approximately 120 bits wide floating point numbers)
 at the cost of performance in a phase (transform <em>preparation</em>) where performance is not considered critical.
 </p>
 
@@ -3797,9 +3797,9 @@ The <var>φ</var> terms are latitudes, the <var>λ</var> terms are longitudes an
 </math>
 </p><p>
 For linear algebra libraries, the above non-square matrix represents an under-determined system of equations and may be considered unresolvable.
-Indeed the above coordinate operation can not be inverted as a (<var>φ₂</var>, <var>λ₂</var>) → (<var>φ₁</var>, <var>λ₁</var>, <var>h</var>)
+Indeed the above coordinate operation cannot be inverted as a (<var>φ₂</var>, <var>λ₂</var>) → (<var>φ₁</var>, <var>λ₁</var>, <var>h</var>)
 operation because we do not know which value to assign to <var>h</var>.
-Ignoring <var>h</var> implies that we can not assign values to (<var>φ₁</var>, <var>λ₁</var>) neither since those values may depend on <var>h</var>.
+Ignoring <var>h</var> implies that we cannot assign values to (<var>φ₁</var>, <var>λ₁</var>) neither since those values may depend on <var>h</var>.
 However in <abbr>GIS</abbr> case, the ellipsoidal <var>h</var> axis is perpendicular to the ellipsoid surface
 on which the <em>geodetic</em> latitudes and longitudes (<var>φ</var>, <var>λ</var>) are represented
 (note that this statement is not true for <em>geocentric</em> latitudes and longitudes).
@@ -4032,10 +4032,10 @@ then the <code class="GeoAPI">MathTransform​.derivative(DirectPosition)</code>
 </p><p>
 Many operations on coordinate transforms can also be applied on transform derivatives:
 concatenation of a chain of transforms, inversion, taking a subset of the dimensions, <i>etc.</i>
-Inverse projection formulas are usually more complicated than forward projections formulas,
+reverse projection formulas are usually more complicated than forward projections formulas,
 but thankfully their derivatives do not need to be computed:
 the Jacobian matrix of an inverse transform is the inverse of the Jacobian matrix of the forward transform.
-Calculation of inverse projections can be implemented as below:
+Calculation of reverse projections can be implemented as below:
 </p>
 
 <pre><code>@Override
@@ -4068,10 +4068,10 @@ Each library defines its own <abbr title="Application Programming Interface">API
 <p>
 However in many cases, affine or perspective transforms are the only kind of coordinate operations supported by the graphical library.
 Apache <abbr>SIS</abbr> needs to handle a wider range of operations, in which affine transforms are only special cases.
-In particular most map projections and datum shifts can not be represented by affine transforms.
+In particular most map projections and datum shifts cannot be represented by affine transforms.
 <abbr>SIS</abbr> also needs to support arbitrary number of dimensions,
 while above-cited <abbr>API</abbr> restrict the use to a fixed number of dimensions.
-For those reasons <abbr>SIS</abbr> can not use directly the above-cited <abbr>API</abbr>.
+For those reasons <abbr>SIS</abbr> cannot use directly the above-cited <abbr>API</abbr>.
 Instead, <abbr>SIS</abbr> uses the more abstract <code class="GeoAPI">org.opengis.referencing.transform.MathTransform</code> interface.
 But in the special case where the transform is actually affine, <abbr>SIS</abbr> may try to use an existing implementation,
 in particular Java2D. The following Java code can be used in situations where the Java2D object is desired:
