@@ -3,6 +3,7 @@ title: Build from source
 ---
 
 Apache {{% SIS %}} is built by Maven.
+It requires Java 17 or higher for building, but the compilation result can be executed on Java 8 or higher.
 For installing the JAR files in the local Maven repository, execute the following command
 from the SIS project root:
 

@@ -4,6 +4,7 @@ title: Apache SIS downloads
 
 Apache {{% SIS %}} {{% version %}} is now available.
 See the [release notes](release-notes/{{% version %}}.html) for a list of changes since the previous version.
+See the [build instruction](build.html) for compiling from the sources.
 
 Apache {{% SIS %}} releases are available under the [Apache License, Version 2.0][license].
 See the `NOTICE` file contained in each release artifact for applicable copyright attribution notices.
@@ -17,7 +18,7 @@ For convenience, an aggregated Javadoc and pre-compiled JAR files are available 
 The precompiled JAR files contain most modules and mandatory dependencies.
 Optional dependencies (JAXB implementation, UCAR netCDF library, Amazon SDK) are not included.
 
-* [Apache SIS {{% version %}} sources][src] \[[PGP][src-PGP]\] \[[SHA 512][src-SHA]\]
+* [Apache SIS {{% version %}} sources][src] \[[PGP][src-PGP]\] \[[SHA 512][src-SHA]\] ([build from source](build.html))
 * [Apache SIS {{% version %}} javadoc][doc] \[[PGP][doc-PGP]\] \[[SHA 512][doc-SHA]\]
 * [Apache SIS {{% version %}} binary][bin]  \[[PGP][bin-PGP]\] \[[SHA 512][bin-SHA]\]
 

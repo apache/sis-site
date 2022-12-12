@@ -636,7 +636,7 @@ On the `master` branch:
 
 Then on the development branch:
 
-* Edit the version number in the `application/sis-console/src/main/artifact/README` file.
+* Edit the version number in the `application/sis-javafx/src/main/artifact/README` file.
 
 ## Delete old artifacts on Maven snapshot repository    {#nexus-clean}
 
