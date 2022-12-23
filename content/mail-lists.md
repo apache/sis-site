@@ -78,4 +78,4 @@ any changes to the sis code and documentation.
 [dev-arch]:  https://lists.apache.org/list.html?dev@sis.apache.org
 [iss-arch]:  https://lists.apache.org/list.html?issues@sis.apache.org
 [com-arch]:  https://lists.apache.org/list.html?commits@sis.apache.org
-[policy]:    http://www.apache.org/foundation/public-archives.html
+[policy]:    https://www.apache.org/foundation/public-archives.html

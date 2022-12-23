@@ -60,4 +60,4 @@ Emeritus status indicates interest but not activity, as opposed to having resign
 * Joe Schaefer
 
 [chrisweb]: http://sunset.usc.edu/~mattmann/
-[sureshweb]: http://people.apache.org/~smarru/
+[sureshweb]: https://people.apache.org/~smarru/

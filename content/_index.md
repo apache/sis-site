@@ -73,13 +73,13 @@ However a [command-line tool](command-line.html) and a [JavaFX application](java
 are also provided for allowing users to experiment some SIS functionalities before writing code.
 
 
-[geoapi]:    http://www.geoapi.org/
+[geoapi]:    https://www.geoapi.org/
 [GML]:       https://www.ogc.org/standards/gml
 [SF_SQL]:    https://www.ogc.org/standards/sfs
 [filter]:    https://www.ogc.org/standards/filter
 [geoTIFF]:   https://www.ogc.org/standards/geotiff
 [netCDF]:    https://www.ogc.org/standards/netcdf
-[netCDF_MF]: http://docs.opengeospatial.org/bp/16-114r3/16-114r3.html
-[MF_CSV]:    http://docs.opengeospatial.org/is/14-084r2/14-084r2.html
+[netCDF_MF]: https://docs.opengeospatial.org/bp/16-114r3/16-114r3.html
+[MF_CSV]:    https://docs.opengeospatial.org/is/14-084r2/14-084r2.html
 [JSR_363]:   https://jcp.org/en/jsr/detail?id=363
 [seshat]:    https://unitsofmeasurement.github.io/seshat/

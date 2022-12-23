@@ -644,6 +644,6 @@ Login in the [Nexus repository][repository]. In the _Repositories_ tag, select _
 (not to be confused with _Snapshots_ of type _group_). Navigate to the `org/apache/sis` directory and delete
 all directories starting with the old version number. The sub-directories need to be cleaned too.
 
-[release-faq]:      http://www.apache.org/dev/release.html
-[JIRA]:             http://issues.apache.org/jira/browse/SIS
+[release-faq]:      https://www.apache.org/dev/release.html
+[JIRA]:             https://issues.apache.org/jira/browse/SIS
 [repository]:       https://repository.apache.org/index.html
