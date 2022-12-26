@@ -1,84 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>SIS 0.7 Release notes</title>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-  </head>
-  <body>
-    <table style="border-style: solid; border-width: 1pt; background: lightgray"><tr>
-      <td><a href="0.6.html">Previous release</a></td>
-      <td style="padding-left: 9pt"><a href="0.8.html">Next release</a></td>
-    </tr></table>
-    <h1>SIS 0.7 Release notes</h1>
+<head>
 
-<h2>Summary</h2>
+
+  <title>Apache SIS - SIS 0.7 Release notes</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+        rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" media="screen" href="../syntax.css">
+  <link rel="stylesheet" type="text/css" media="screen" href="../sis.css">
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="../index.html"> Apache SIS™</a>
+    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuAbout" data-bs-toggle="dropdown" aria-expanded="false">About</a>
+        <ul class="dropdown-menu" aria-labelledby="menuAbout">
+          <li><a class="dropdown-item" href="http://www.apache.org/licenses/">License</a></li>
+          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
+          <li><a class="dropdown-item" href="../team-list.html">Project Team</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuDownload" data-bs-toggle="dropdown" aria-expanded="false">Download</a>
+        <ul class="dropdown-menu" aria-labelledby="menuDownload">
+          <li><a class="dropdown-item" href="../downloads.html">Downloads</a></li>
+          <li><a class="dropdown-item" href="../source.html">Checkout Sources</a></li>
+          <li><a class="dropdown-item" href="../build.html">Build from Sources</a></li>
+          <li><a class="dropdown-item" href="../epsg.html">EPSG Database</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuDocumentation" data-bs-toggle="dropdown" aria-expanded="false">Documentation</a>
+        <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
+          <li><a class="dropdown-item" href="../apidocs/index.html">Online Javadoc</a></li>
+          <li><a class="dropdown-item" href="../book/en/developer-guide.html">Developer Guide</a></li>
+          <li><a class="dropdown-item" href="../formats.html">Supported formats</a></li>
+          <li><a class="dropdown-item" href="../tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
+          <li><a class="dropdown-item" href="../tables/CoordinateOperationMethods.html">Map Projections</a></li>
+          <li><a class="dropdown-item" href="../code-patterns.html">Code Patterns</a></li>
+          <li><a class="dropdown-item" href="../faq.html">FAQ</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuContribute" data-bs-toggle="dropdown" aria-expanded="false">Contribute</a>
+        <ul class="dropdown-menu" aria-labelledby="menuContribute">
+          <li><a class="dropdown-item" href="../contributor.html">New Contributor</a></li>
+          <li><a class="dropdown-item" href="../coding-conventions.html">Coding Conventions</a></li>
+          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
+          <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+          <li><a class="dropdown-item" href="https://github.com/apache/sis">GitHub mirror</a></li>
+          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="../release-management.html">Release management</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuASF" data-bs-toggle="dropdown" aria-expanded="false">The Foundation</a>
+        <ul class="dropdown-menu" aria-labelledby="menuASF">
+          <li><a class="dropdown-item" href="http://www.apache.org">The Foundation</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/foundation/sponsorship.html">Donate</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/security/">Security</a></li>
+        </ul>
+      </li>
+    </ul>
+    <ul class="navbar-nav ml-auto mb-2 mb-md-0">
+      <li class="nav-item">
+        <a href="https://www.apache.org/events/current-event.html">
+           <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+
+<div class="row flex-nowrap">
+  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width:13rem; min-height:40rem">
+    <ul class="nav nav-pills flex-column mb-auto position-fixed">
+      <li><a class="nav-link  text-white " href="../index.html">Home</a></li>
+      <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
+      <li><a class="nav-link  text-white " href="../downloads.html">Downloads</a></li>
+      <li><a class="nav-link  text-white " href="../standards.html">Standards</a></li>
+      <li><a class="nav-link  text-white " href="../formats.html">Data formats</a></li>
+      <li><a class="nav-link  text-white " href="../epsg.html">EPSG Database</a></li>
+      <li><a class="nav-link  text-white " href="../javafx.html">Application (demo)</a></li>
+      <li><a class="nav-link text-white" href="../apidocs/index.html">Online Javadoc</a></li>
+      <li><a class="nav-link text-white" href="../book/en/developer-guide.html">Developer Guide</a></li>
+      <li><a class="nav-link  text-white " href="../code-patterns.html">Code patterns</a></li>
+      <li><a class="nav-link  text-white " href="../faq.html">FAQ</a></li>
+    </ul>
+  </div>
+  <div class="col">
+    <main class="container">
+      <article>
+        <img src="../images/logo.png" class="sis-logo" align="left"/>
+        <p class="page-title">SIS 0.7 Release notes</p>
+
+  <ul>
+<li>Release date: <strong>2016-05-27</strong></li>
+<li><a href="0.8.html">Next release</a></li>
+<li><a href="0.6.html">Previous release</a></li>
+<li><a href="#compatibility">Incompatible changes</a></li>
+<li><a href="#issues">Noticeable changes</a></li>
+<li>Requirement: Java 6</li>
+</ul>
 <p>The main new features of Apache SIS 0.7 are:</p>
 <ul>
-  <li>Creation of Coordinate Reference System (CRS) objects from an <a href="https://epsg.org/">EPSG</a> code.
-      The list of EPSG codes supported by latest SIS release can be viewed <a href="../tables/CoordinateReferenceSystems.html">here</a>.
-  <li>Find coordinate operation paths from a pair of CRS, using the EPSG geodetic dataset if possible.</li>
-  <li>Completion of <cite>Geographic Markup Language</cite> (GML) version 3.2 (ISO 19136) for
-    <code>DerivedCRS</code>, <code>ConcatenatedOperation</code> and <code>PassThroughOperation</code> objects.</li>
+<li>Creation of Coordinate Reference System (CRS) objects from an <a href="../epsg.html">EPSG</a> code.
+The list of EPSG codes supported by latest SIS release can be viewed <a href="../tables/CoordinateReferenceSystems.html">here</a>.</li>
+<li>Find coordinate operation paths from a pair of CRS, using the EPSG geodetic dataset if possible.</li>
+<li>Completion of <em>Geographic Markup Language</em> (GML) version 3.2 (ISO 19136) for
+<code>DerivedCRS</code>, <code>ConcatenatedOperation</code> and <code>PassThroughOperation</code> objects.</li>
 </ul>
-
-<h2>New features</h2>
+<h1 id="compatibility">Incompatible changes   </h1>
+<p>Not determined.</p>
+<h1 id="issues">Noticeable changes   </h1>
+<h2 id="features">New Features   </h2>
 <ul>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-131'>SIS-131</a>] - Database backend for CRS definitions</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-224'>SIS-224</a>] - Oblique and Equatorial Stereographic (EPSG:9809)</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-257'>SIS-257</a>] - Geographic/Geocentric conversions (EPSG:9602)</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-260'>SIS-260</a>] - Geographic 3D to 2D conversions (EPSG:9659)</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-270'>SIS-270</a>] - Vertical Offset (EPSG:9616)</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-274'>SIS-274</a>] - Position Vector transformation geocentric domain (EPSG:1033)</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-275'>SIS-275</a>] - Coordinate Frame Rotation geocentric domain (EPSG:1032)</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-278'>SIS-278</a>] - 3-parameter geocentric translations (EPSG:1031)</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-279'>SIS-279</a>] - France geocentric interpolation (EPSG:9655)</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-280'>SIS-280</a>] - Abridged Molodensky transformation (EPSG:9605)</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-281'>SIS-281</a>] - Geographic Offsets (EPSG:9660)</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-282'>SIS-282</a>] - Geographic Offset by Interpolation of Gridded Data (EPSG:9613, 9615, 9633)</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-211'>SIS-211</a>] - Support parsing and formatting of ParametricCRS</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-131">SIS-131</a>] — Database backend for CRS definitions</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-224">SIS-224</a>] — Oblique and Equatorial Stereographic (EPSG:9809)</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-257">SIS-257</a>] — Geographic/Geocentric conversions (EPSG:9602)</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-260">SIS-260</a>] — Geographic 3D to 2D conversions (EPSG:9659)</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-270">SIS-270</a>] — Vertical Offset (EPSG:9616)</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-274">SIS-274</a>] — Position Vector transformation geocentric domain (EPSG:1033)</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-275">SIS-275</a>] — Coordinate Frame Rotation geocentric domain (EPSG:1032)</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-278">SIS-278</a>] — 3-parameter geocentric translations (EPSG:1031)</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-279">SIS-279</a>] — France geocentric interpolation (EPSG:9655)</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-280">SIS-280</a>] — Abridged Molodensky transformation (EPSG:9605)</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-281">SIS-281</a>] — Geographic Offsets (EPSG:9660)</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-282">SIS-282</a>] — Geographic Offset by Interpolation of Gridded Data (EPSG:9613, 9615, 9633)</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-211">SIS-211</a>] — Support parsing and formatting of ParametricCRS</li>
 </ul>
-
-<h2>Improvements</h2>
+<h2 id="improvements">Improvements   </h2>
 <ul>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-292'>SIS-292</a>] - Complete JAXB annotations for ConcatenatedOperation</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-293'>SIS-293</a>] - Complete JAXB annotations for PassThroughOperation</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-294'>SIS-294</a>] - Complete JAXB annotations for DerivedCRS</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-173'>SIS-173</a>] - Support references from xlink:href to gml:id</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-124'>SIS-124</a>] - PT_FreeText should be able to marshall a CodeList instead than the CharacterString</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-286'>SIS-286</a>] - Add @XmlSchemaType annotations where appropriate</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-295'>SIS-295</a>] - Verify validity of unmarshalled CRS</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-326'>SIS-326</a>] - ISO 19111-2 : parametric CRS,CS,Datum and WKT parser implementations</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-317'>SIS-317</a>] - On-the-fly Geographic3D ↔ CompoundCRS conversion when parsing/formatting WKT 1</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-176'>SIS-176</a>] - Provide an optimized MathTransform implementation for diagonal matrices</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-322'>SIS-322</a>] - Non affine 1D transform patch</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-179'>SIS-179</a>] - Extract Database class from Shapefile class to allow reading DBF without shapefile</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-180'>SIS-180</a>] - Place a crude JDBC driver over Dbase files</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-305'>SIS-305</a>] - Shapefile reader should be able to use .SHX (shapefile index)</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-323'>SIS-323</a>] - Quadruple precision float point number to java double method</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-75'>SIS-75</a>] - Replace javadoc annotation by JDK5 annotations in Mojo</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-292">SIS-292</a>] — Complete JAXB annotations for ConcatenatedOperation</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-293">SIS-293</a>] — Complete JAXB annotations for PassThroughOperation</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-294">SIS-294</a>] — Complete JAXB annotations for DerivedCRS</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-173">SIS-173</a>] — Support references from xlink:href to gml:id</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-124">SIS-124</a>] — PT_FreeText should be able to marshall a CodeList instead of the CharacterString</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-286">SIS-286</a>] — Add @XmlSchemaType annotations where appropriate</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-295">SIS-295</a>] — Verify validity of unmarshalled CRS</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-326">SIS-326</a>] — ISO 19111-2 : parametric CRS,CS,Datum and WKT parser implementations</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-317">SIS-317</a>] — On-the-fly Geographic3D ↔ CompoundCRS conversion when parsing/formatting WKT 1</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-176">SIS-176</a>] — Provide an optimized MathTransform implementation for diagonal matrices</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-322">SIS-322</a>] — Non affine 1D transform patch</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-179">SIS-179</a>] — Extract Database class from Shapefile class to allow reading DBF without shapefile</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-180">SIS-180</a>] — Place a crude JDBC driver over Dbase files</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-305">SIS-305</a>] — Shapefile reader should be able to use .SHX (shapefile index)</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-323">SIS-323</a>] — Quadruple precision float point number to java double method</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-75">SIS-75</a>] — Replace javadoc annotation by JDK5 annotations in Mojo</li>
 </ul>
-
-<h2>Bug fixes</h2>
+<h2 id="bugs">Bug fixes   </h2>
 <ul>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-107'>SIS-107</a>] - Hole in metadata &quot;unmodifiable&quot; mode</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-111'>SIS-111</a>] - Can not upgrade jetty-maven-plugin past 8.0.1</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-301'>SIS-301</a>] - Wrong elements order in RS_ and MD_Identifier</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-308'>SIS-308</a>] - InputStream provided by StorageConnector not always at the beginning of the stream</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-309'>SIS-309</a>] - URI in the ID element of WKT 2 wrongly taken as ID version number</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-310'>SIS-310</a>] - WKT parser fails to parse UNIT[&quot;grade&quot;, 0.015707963267948967]</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-311'>SIS-311</a>] - WKT parser ignores AREA and BBOX elements</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-312'>SIS-312</a>] - Axis abbreviation with nested parenthesis confuse the WKT parser</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-313'>SIS-313</a>] - Formatter should tell that &quot;North along 130°W&quot; axis direction requires version 2 of WKT</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-107">SIS-107</a>] — Hole in metadata &ldquo;unmodifiable&rdquo; mode</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-111">SIS-111</a>] — Can not upgrade jetty-maven-plugin past 8.0.1</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-301">SIS-301</a>] — Wrong elements order in RS_ and MD_Identifier</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-308">SIS-308</a>] — InputStream provided by StorageConnector not always at the beginning of the stream</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-309">SIS-309</a>] — URI in the ID element of WKT 2 wrongly taken as ID version number</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-310">SIS-310</a>] — WKT parser fails to parse UNIT[&ldquo;grade&rdquo;, 0.015707963267948967]</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-311">SIS-311</a>] — WKT parser ignores AREA and BBOX elements</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-312">SIS-312</a>] — Axis abbreviation with nested parenthesis confuse the WKT parser</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-313">SIS-313</a>] — Formatter should tell that &ldquo;North along 130°W&rdquo; axis direction requires version 2 of WKT</li>
 </ul>
-
-<h2>Tasks</h2>
+<h2 id="tasks">Tasks   </h2>
 <ul>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-191'>SIS-191</a>] - Declare relocation of 0.2-incubating artifacts</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-212'>SIS-212</a>] - Coordinate operation methods to implement</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-187'>SIS-187</a>] - Reduce visibility of Shapefile fields</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-188'>SIS-188</a>] - Hide FieldDescriptor (a DBase3 internal format structure)</li>
-<li>[<a href='https://issues.apache.org/jira/browse/SIS-189'>SIS-189</a>] - InvalidDbaseFileFormatException should extend DataStoreException</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-191">SIS-191</a>] — Declare relocation of 0.2-incubating artifacts</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-212">SIS-212</a>] — Coordinate operation methods to implement</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-187">SIS-187</a>] — Reduce visibility of Shapefile fields</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-188">SIS-188</a>] — Hide FieldDescriptor (a DBase3 internal format structure)</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-189">SIS-189</a>] — InvalidDbaseFileFormatException should extend DataStoreException</li>
 </ul>
 
-  </body>
+
+      </article>
+    </main>
+    <footer class="footer">
+    <div class="container">
+      <p>
+        Copyright &copy; 2013-2022 The Apache Software Foundation, Licensed under the
+        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
+        Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
+      </p>
+    </div>
+</footer>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+
+</body>
 </html>

@@ -1,76 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>SIS 0.3 Release notes</title>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-  </head>
-  <body>
-    <table style="border-style: solid; border-width: 1pt; background: lightgray"><tr>
-      <td><a href="0.2.html">Previous release</a></td>
-      <td style="padding-left: 9pt"><a href="0.4.html">Next release</a></td>
-    </tr></table>
-    <h1>SIS 0.3 Release notes</h1>
+<head>
 
-<h2>New Features</h2>
+
+  <title>Apache SIS - SIS 0.3 Release notes</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+        rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" media="screen" href="../syntax.css">
+  <link rel="stylesheet" type="text/css" media="screen" href="../sis.css">
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="../index.html"> Apache SIS™</a>
+    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuAbout" data-bs-toggle="dropdown" aria-expanded="false">About</a>
+        <ul class="dropdown-menu" aria-labelledby="menuAbout">
+          <li><a class="dropdown-item" href="http://www.apache.org/licenses/">License</a></li>
+          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
+          <li><a class="dropdown-item" href="../team-list.html">Project Team</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuDownload" data-bs-toggle="dropdown" aria-expanded="false">Download</a>
+        <ul class="dropdown-menu" aria-labelledby="menuDownload">
+          <li><a class="dropdown-item" href="../downloads.html">Downloads</a></li>
+          <li><a class="dropdown-item" href="../source.html">Checkout Sources</a></li>
+          <li><a class="dropdown-item" href="../build.html">Build from Sources</a></li>
+          <li><a class="dropdown-item" href="../epsg.html">EPSG Database</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuDocumentation" data-bs-toggle="dropdown" aria-expanded="false">Documentation</a>
+        <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
+          <li><a class="dropdown-item" href="../apidocs/index.html">Online Javadoc</a></li>
+          <li><a class="dropdown-item" href="../book/en/developer-guide.html">Developer Guide</a></li>
+          <li><a class="dropdown-item" href="../formats.html">Supported formats</a></li>
+          <li><a class="dropdown-item" href="../tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
+          <li><a class="dropdown-item" href="../tables/CoordinateOperationMethods.html">Map Projections</a></li>
+          <li><a class="dropdown-item" href="../code-patterns.html">Code Patterns</a></li>
+          <li><a class="dropdown-item" href="../faq.html">FAQ</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuContribute" data-bs-toggle="dropdown" aria-expanded="false">Contribute</a>
+        <ul class="dropdown-menu" aria-labelledby="menuContribute">
+          <li><a class="dropdown-item" href="../contributor.html">New Contributor</a></li>
+          <li><a class="dropdown-item" href="../coding-conventions.html">Coding Conventions</a></li>
+          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
+          <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+          <li><a class="dropdown-item" href="https://github.com/apache/sis">GitHub mirror</a></li>
+          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="../release-management.html">Release management</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuASF" data-bs-toggle="dropdown" aria-expanded="false">The Foundation</a>
+        <ul class="dropdown-menu" aria-labelledby="menuASF">
+          <li><a class="dropdown-item" href="http://www.apache.org">The Foundation</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/foundation/sponsorship.html">Donate</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/security/">Security</a></li>
+        </ul>
+      </li>
+    </ul>
+    <ul class="navbar-nav ml-auto mb-2 mb-md-0">
+      <li class="nav-item">
+        <a href="https://www.apache.org/events/current-event.html">
+           <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+
+<div class="row flex-nowrap">
+  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width:13rem; min-height:40rem">
+    <ul class="nav nav-pills flex-column mb-auto position-fixed">
+      <li><a class="nav-link  text-white " href="../index.html">Home</a></li>
+      <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
+      <li><a class="nav-link  text-white " href="../downloads.html">Downloads</a></li>
+      <li><a class="nav-link  text-white " href="../standards.html">Standards</a></li>
+      <li><a class="nav-link  text-white " href="../formats.html">Data formats</a></li>
+      <li><a class="nav-link  text-white " href="../epsg.html">EPSG Database</a></li>
+      <li><a class="nav-link  text-white " href="../javafx.html">Application (demo)</a></li>
+      <li><a class="nav-link text-white" href="../apidocs/index.html">Online Javadoc</a></li>
+      <li><a class="nav-link text-white" href="../book/en/developer-guide.html">Developer Guide</a></li>
+      <li><a class="nav-link  text-white " href="../code-patterns.html">Code patterns</a></li>
+      <li><a class="nav-link  text-white " href="../faq.html">FAQ</a></li>
+    </ul>
+  </div>
+  <div class="col">
+    <main class="container">
+      <article>
+        <img src="../images/logo.png" class="sis-logo" align="left"/>
+        <p class="page-title">SIS 0.3 Release notes</p>
+
+  <ul>
+<li>Release date: <strong>2013-08-17</strong></li>
+<li><a href="0.4.html">Next release</a></li>
+<li><a href="0.2.html">Previous release</a></li>
+<li><a href="#compatibility">Incompatible changes</a></li>
+<li><a href="#issues">Noticeable changes</a></li>
+<li>Requirement: Java 6</li>
+</ul>
+<p>This is the first Apache SIS release as a graduated project (outside incubator).</p>
+<h1 id="compatibility">Incompatible changes   </h1>
+<p>Not determined.</p>
+<h1 id="issues">Noticeable changes   </h1>
+<h2 id="features">New Features   </h2>
 <ul>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-62'>SIS-62</a>] - Create a sis-utility module</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-52'>SIS-52</a>] - Create a sis-metadata module</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-55'>SIS-55</a>] - Skeleton implementation of GeoAPI Citation</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-46'>SIS-46</a>] - Add sis-console module to current SIS project</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-66'>SIS-66</a>] - Create new Range class to avoid licensing issues</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-77'>SIS-77</a>] - Provide an IDE build for Eclipse</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-62">SIS-62</a>] — Create a sis-utility module</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-52">SIS-52</a>] — Create a sis-metadata module</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-55">SIS-55</a>] — Skeleton implementation of GeoAPI Citation</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-46">SIS-46</a>] — Add sis-console module to current SIS project</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-66">SIS-66</a>] — Create new Range class to avoid licensing issues</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-77">SIS-77</a>] — Provide an IDE build for Eclipse</li>
+</ul>
+<h2 id="improvements">Improvements   </h2>
+<ul>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-57">SIS-57</a>] — A Logo for SIS</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-31">SIS-31</a>] — Website needs a facelift</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-38">SIS-38</a>] — Add the missing documentation comments for SIS-core storage</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-40">SIS-40</a>] — Add the missing documentation comments for SIS WS layer</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-41">SIS-41</a>] — Improve the demo.jsp CSS</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-44">SIS-44</a>] — Update the &lsquo;demo.jsp&rsquo; file in the SIS webapp to use an open source maps API</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-56">SIS-56</a>] — Merge parent-sis with root pom.xml and configure</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-72">SIS-72</a>] — Find some clean way to put Anchor functionality in public API</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-78">SIS-78</a>] — Replace null locale by Locale.ROOT</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-82">SIS-82</a>] — Metadata implementations could use a single field for union</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-85">SIS-85</a>] — Consider removing metadata synchronization</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-87">SIS-87</a>] — Provide copy constructors in metadata objects</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-88">SIS-88</a>] — Reduce side of public API</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-90">SIS-90</a>] — Metadata objects should use EnumSet and CodeListSet when appropriate</li>
+</ul>
+<h2 id="bugs">Bug fixes   </h2>
+<ul>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-37">SIS-37</a>] — LICENSE and NOTICE files are in incorrect location in sis-core-0.3-incubating-SNAPSHOT.jar</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-60">SIS-60</a>] — Duplicated LICENSE and NOTICE files</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-53">SIS-53</a>] — &ldquo;svn:ignore&rdquo; property missing on the &ldquo;sis-app&rdquo; directory</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-49">SIS-49</a>] — ArrayIndexOutOfBoundsException caused by method getCircularRegionApproximation(int numberOfPoints) in LatLonPointRadius class</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-58">SIS-58</a>] — Fix SIS Jetty Webapp definition to pick random port</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-70">SIS-70</a>] — Make QuadTreeNode and associated classes package private</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-95">SIS-95</a>] — Explicitly specify Typed extends Object parameters in FallbackConverterTest</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-99">SIS-99</a>] — Change URL (or any reference to incubator in Jira)</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-103">SIS-103</a>] — Fix Eclipse errors in SIS</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-120">SIS-120</a>] — AngleFormat: Missing minus sign when the degrees field is zero</li>
+</ul>
+<h2 id="tasks">Tasks   </h2>
+<ul>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-54">SIS-54</a>] — Remove the definition of the sis.version property</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-59">SIS-59</a>] — Move large test file outside code area</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-61">SIS-61</a>] — Create a sis-build-helper module</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-63">SIS-63</a>] — Fix <prerequisites> in sis-build-helper after Apache upgrated the Maven used by Jenkins</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-65">SIS-65</a>] — Remove the version number overwriting of maven-project-info-reports-plugin</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-73">SIS-73</a>] — Remove the automatic mapping of UUIDs to objects</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-80">SIS-80</a>] — PropertyDescriptor to implement ExtendedElementInformation</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-89">SIS-89</a>] — Move DefaultReferencingIdentifier out of org.apache.sis.referencing package</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-101">SIS-101</a>] — Move QuadTree and GeoRSSData in their own packages</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-105">SIS-105</a>] — Rename the sis-app module as sis-console</li>
+</ul>
+<h2 id="tests">Tests   </h2>
+<ul>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-48">SIS-48</a>] — Create unit tests for the core classes in the sis-core</li>
+<li>[<a href="http://issues.apache.org/jira/browse/SIS-50">SIS-50</a>] — Create unit tests for the GeoHashUtils utility class in sis-core</li>
 </ul>
 
-<h2>Improvements</h2>
-<ul>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-57'>SIS-57</a>] - A Logo for SIS</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-31'>SIS-31</a>] - Website needs a facelift</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-38'>SIS-38</a>] - Add the missing documentation comments for SIS-core storage</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-40'>SIS-40</a>] - Add the missing documentation comments for SIS WS layer</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-41'>SIS-41</a>] - Improve the demo.jsp CSS</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-44'>SIS-44</a>] - Update the &#39;demo.jsp&#39; file in the SIS webapp to use an open source maps API</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-56'>SIS-56</a>] - Merge parent-sis with root pom.xml and configure</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-72'>SIS-72</a>] - Find some clean way to put Anchor functionality in public API</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-78'>SIS-78</a>] - Replace null locale by Locale.ROOT</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-82'>SIS-82</a>] - Metadata implementations could use a single field for union</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-85'>SIS-85</a>] - Consider removing metadata synchronization</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-87'>SIS-87</a>] - Provide copy constructors in metadata objects</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-88'>SIS-88</a>] - Reduce side of public API</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-90'>SIS-90</a>] - Metadata objects should use EnumSet and CodeListSet when appropriate</li>
-</ul>
 
-<h2>Bug fixes</h2>
-<ul>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-37'>SIS-37</a>] - LICENSE and NOTICE files are in incorrect location in sis-core-0.3-incubating-SNAPSHOT.jar</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-60'>SIS-60</a>] - Duplicated LICENSE and NOTICE files</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-53'>SIS-53</a>] - &quot;svn:ignore&quot; property missing on the &quot;sis-app&quot; directory</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-49'>SIS-49</a>] - ArrayIndexOutOfBoundsException caused by method getCircularRegionApproximation(int numberOfPoints) in LatLonPointRadius class</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-58'>SIS-58</a>] - Fix SIS Jetty Webapp definition to pick random port</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-70'>SIS-70</a>] - Make QuadTreeNode and associated classes package private</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-95'>SIS-95</a>] - Explicitly specify Typed extends Object parameters in FallbackConverterTest</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-99'>SIS-99</a>] - Change URL (or any reference to incubator in Jira)</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-103'>SIS-103</a>] - Fix Eclipse errors in SIS</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-120'>SIS-120</a>] - AngleFormat: Missing minus sign when the degrees field is zero</li>
-</ul>
+      </article>
+    </main>
+    <footer class="footer">
+    <div class="container">
+      <p>
+        Copyright &copy; 2013-2022 The Apache Software Foundation, Licensed under the
+        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
+        Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
+      </p>
+    </div>
+</footer>
+  </div>
+</div>
 
-<h2>Tasks</h2>
-<ul>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-54'>SIS-54</a>] - Remove the definition of the sis.version property</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-59'>SIS-59</a>] - Move large test file outside code area</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-61'>SIS-61</a>] - Create a sis-build-helper module</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-63'>SIS-63</a>] - Fix &lt;prerequisites&gt; in sis-build-helper after Apache upgrated the Maven used by Jenkins</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-65'>SIS-65</a>] - Remove the version number overwriting of maven-project-info-reports-plugin</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-73'>SIS-73</a>] - Remove the automatic mapping of UUIDs to objects</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-80'>SIS-80</a>] - PropertyDescriptor to implement ExtendedElementInformation</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-89'>SIS-89</a>] - Move DefaultReferencingIdentifier out of org.apache.sis.referencing package</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-101'>SIS-101</a>] - Move QuadTree and GeoRSSData in their own packages</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-105'>SIS-105</a>] - Rename the sis-app module as sis-console</li>
-</ul>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
 
-<h2>Tests</h2>
-<ul>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-48'>SIS-48</a>] - Create unit tests for the core classes in the sis-core</li>
-  <li>[<a href='http://issues.apache.org/jira/browse/SIS-50'>SIS-50</a>] - Create unit tests for the GeoHashUtils utility class in sis-core</li>
-</ul>
-  </body>
+</body>
 </html>

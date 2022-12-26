@@ -1,57 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>SIS 0.4 Release notes</title>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-  </head>
-  <body>
-    <table style="border-style: solid; border-width: 1pt; background: lightgray"><tr>
-      <td><a href="0.3.html">Previous release</a></td>
-      <td style="padding-left: 9pt"><a href="0.5.html">Next release</a></td>
-    </tr></table>
-    <h1>SIS 0.4 Release notes</h1>
+<head>
 
-<h2>New Features</h2>
+
+  <title>Apache SIS - SIS 0.4 Release notes</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+        rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" media="screen" href="../syntax.css">
+  <link rel="stylesheet" type="text/css" media="screen" href="../sis.css">
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="../index.html"> Apache SIS™</a>
+    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuAbout" data-bs-toggle="dropdown" aria-expanded="false">About</a>
+        <ul class="dropdown-menu" aria-labelledby="menuAbout">
+          <li><a class="dropdown-item" href="http://www.apache.org/licenses/">License</a></li>
+          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
+          <li><a class="dropdown-item" href="../team-list.html">Project Team</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuDownload" data-bs-toggle="dropdown" aria-expanded="false">Download</a>
+        <ul class="dropdown-menu" aria-labelledby="menuDownload">
+          <li><a class="dropdown-item" href="../downloads.html">Downloads</a></li>
+          <li><a class="dropdown-item" href="../source.html">Checkout Sources</a></li>
+          <li><a class="dropdown-item" href="../build.html">Build from Sources</a></li>
+          <li><a class="dropdown-item" href="../epsg.html">EPSG Database</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuDocumentation" data-bs-toggle="dropdown" aria-expanded="false">Documentation</a>
+        <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
+          <li><a class="dropdown-item" href="../apidocs/index.html">Online Javadoc</a></li>
+          <li><a class="dropdown-item" href="../book/en/developer-guide.html">Developer Guide</a></li>
+          <li><a class="dropdown-item" href="../formats.html">Supported formats</a></li>
+          <li><a class="dropdown-item" href="../tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
+          <li><a class="dropdown-item" href="../tables/CoordinateOperationMethods.html">Map Projections</a></li>
+          <li><a class="dropdown-item" href="../code-patterns.html">Code Patterns</a></li>
+          <li><a class="dropdown-item" href="../faq.html">FAQ</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuContribute" data-bs-toggle="dropdown" aria-expanded="false">Contribute</a>
+        <ul class="dropdown-menu" aria-labelledby="menuContribute">
+          <li><a class="dropdown-item" href="../contributor.html">New Contributor</a></li>
+          <li><a class="dropdown-item" href="../coding-conventions.html">Coding Conventions</a></li>
+          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
+          <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+          <li><a class="dropdown-item" href="https://github.com/apache/sis">GitHub mirror</a></li>
+          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="../release-management.html">Release management</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuASF" data-bs-toggle="dropdown" aria-expanded="false">The Foundation</a>
+        <ul class="dropdown-menu" aria-labelledby="menuASF">
+          <li><a class="dropdown-item" href="http://www.apache.org">The Foundation</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/foundation/sponsorship.html">Donate</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/security/">Security</a></li>
+        </ul>
+      </li>
+    </ul>
+    <ul class="navbar-nav ml-auto mb-2 mb-md-0">
+      <li class="nav-item">
+        <a href="https://www.apache.org/events/current-event.html">
+           <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+
+<div class="row flex-nowrap">
+  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width:13rem; min-height:40rem">
+    <ul class="nav nav-pills flex-column mb-auto position-fixed">
+      <li><a class="nav-link  text-white " href="../index.html">Home</a></li>
+      <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
+      <li><a class="nav-link  text-white " href="../downloads.html">Downloads</a></li>
+      <li><a class="nav-link  text-white " href="../standards.html">Standards</a></li>
+      <li><a class="nav-link  text-white " href="../formats.html">Data formats</a></li>
+      <li><a class="nav-link  text-white " href="../epsg.html">EPSG Database</a></li>
+      <li><a class="nav-link  text-white " href="../javafx.html">Application (demo)</a></li>
+      <li><a class="nav-link text-white" href="../apidocs/index.html">Online Javadoc</a></li>
+      <li><a class="nav-link text-white" href="../book/en/developer-guide.html">Developer Guide</a></li>
+      <li><a class="nav-link  text-white " href="../code-patterns.html">Code patterns</a></li>
+      <li><a class="nav-link  text-white " href="../faq.html">FAQ</a></li>
+    </ul>
+  </div>
+  <div class="col">
+    <main class="container">
+      <article>
+        <img src="../images/logo.png" class="sis-logo" align="left"/>
+        <p class="page-title">SIS 0.4 Release notes</p>
+
+  <ul>
+<li>Release date: <strong>2014-04-07</strong></li>
+<li><a href="0.5.html">Next release</a></li>
+<li><a href="0.3.html">Previous release</a></li>
+<li><a href="#compatibility">Incompatible changes</a></li>
+<li><a href="#issues">Noticeable changes</a></li>
+<li>Requirement: Java 6</li>
+</ul>
+<h1 id="compatibility">Incompatible changes   </h1>
+<p>Not determined.</p>
+<h1 id="issues">Noticeable changes   </h1>
+<h2 id="features">New Features   </h2>
 <ul>
-  <li>Partial implementation of ISO 19111 - Referencing by coordinates.</li>
-  <li>Partial implementation of ISO 19162 - Well Known Text 2.</li>
+<li>Partial implementation of ISO 19111 — Referencing by coordinates.</li>
+<li>Partial implementation of ISO 19162 — Well Known Text 2.</li>
+</ul>
+<h2 id="improvements">Improvements   </h2>
+<ul>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-68">SIS-68</a>] — Remove LatLon class and replace with DirectPosition</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-69">SIS-69</a>] — Remove LatLonRect and replace with Envelope class</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-88">SIS-88</a>] — Reduce size of public API</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-115">SIS-115</a>] — Ability to set NilReason on Boolean, Integer, Double and String objects</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-119">SIS-119</a>] — Support <a href="gmx:FileName">gmx:FileName</a> and <a href="gmx:MimeFileType">gmx:MimeFileType</a> elements</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-121">SIS-121</a>] — AngleFormat should be able to optionally omit zero fields</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-143">SIS-143</a>] — DefaultGeographicBoundingBox should support spanning of anti-meridian</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-158">SIS-158</a>] — Complete JAXB annotations for datum objects</li>
+</ul>
+<h2 id="bugs">Bug fixes   </h2>
+<ul>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-112">SIS-112</a>] — Maven site on Jenkins has broken links</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-122">SIS-122</a>] — DefaultRepresentativeFraction needs to implement IdentifiedObject</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-132">SIS-132</a>] — Better support for eclipse IDE</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-133">SIS-133</a>] — ResourceCompilerMojo should execute only when properties files are modified</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-134">SIS-134</a>] — ClassCastException in org.apache.sis.util.collection.Cache</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-135">SIS-135</a>] — [Foo]Name.compareTo(GenericName) should be case-sensitive</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-138">SIS-138</a>] — XML output ignore the &ndash;encoding argument</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-139">SIS-139</a>] — NullPointerException during unmarshalling of an empty collection</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-140">SIS-140</a>] — IndexOutOfBoundsException in LineAppender</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-141">SIS-141</a>] — MathFunctions.fractionDigitsForDelta(…) ignores the &lsquo;strict&rsquo; argument</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-142">SIS-142</a>] — Angle(89 + 1./60).toString() produces 89°00′60″ instead of 89°01′00″</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-144">SIS-144</a>] — Metadata properties ignore orderering declared in parent classes</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-151">SIS-151</a>] — xmlns:gml value should depend on XML.GML_VERSION value</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-153">SIS-153</a>] — XML marshalling of country codes shall use ISO 3166 alpha-2 (not alpha-3)</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-156">SIS-156</a>] — @ThreadSafe and @Immutable annotation usages are misleading</li>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-157">SIS-157</a>] — NullPointerException during unmarshalling of an empty codeListValue attribute</li>
+</ul>
+<h2 id="tasks">Tasks   </h2>
+<ul>
+<li>[<a href="https://issues.apache.org/jira/browse/SIS-109">SIS-109</a>] — Replace the boolean value of DataStore.canOpen(&hellip;) by an enum</li>
 </ul>
 
-<h2>Improvements</h2>
-<ul>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-68'>SIS-68</a>]   - Remove LatLon class and replace with DirectPosition</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-69'>SIS-69</a>]   - Remove LatLonRect and replace with Envelope class</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-88'>SIS-88</a>]   - Reduce size of public API</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-115'>SIS-115</a>] - Ability to set NilReason on Boolean, Integer, Double and String objects</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-119'>SIS-119</a>] - Support &lt;gmx:FileName&gt; and &lt;gmx:MimeFileType&gt; elements</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-121'>SIS-121</a>] - AngleFormat should be able to optionally omit zero fields</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-143'>SIS-143</a>] - DefaultGeographicBoundingBox should support spanning of anti-meridian</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-158'>SIS-158</a>] - Complete JAXB annotations for datum objects</li>
-</ul>
 
-<h2>Bug fixes</h2>
-<ul>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-112'>SIS-112</a>] - Maven site on Jenkins has broken links</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-122'>SIS-122</a>] - DefaultRepresentativeFraction needs to implement IdentifiedObject</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-132'>SIS-132</a>] - Better support for eclipse IDE</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-133'>SIS-133</a>] - ResourceCompilerMojo should execute only when properties files are modified</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-134'>SIS-134</a>] - ClassCastException in org.apache.sis.util.collection.Cache</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-135'>SIS-135</a>] - [Foo]Name.compareTo(GenericName) should be case-sensitive</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-138'>SIS-138</a>] - XML output ignore the --encoding argument</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-139'>SIS-139</a>] - NullPointerException during unmarshalling of an empty collection</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-140'>SIS-140</a>] - IndexOutOfBoundsException in LineAppender</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-141'>SIS-141</a>] - MathFunctions.fractionDigitsForDelta(…) ignores the &#39;strict&#39; argument</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-142'>SIS-142</a>] - Angle(89 + 1./60).toString() produces 89°00′60″ instead of 89°01′00″</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-144'>SIS-144</a>] - Metadata properties ignore orderering declared in parent classes</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-151'>SIS-151</a>] - xmlns:gml value should depend on XML.GML_VERSION value</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-153'>SIS-153</a>] - XML marshalling of country codes shall use ISO 3166 alpha-2 (not alpha-3)</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-156'>SIS-156</a>] - @ThreadSafe and @Immutable annotation usages are misleading</li>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-157'>SIS-157</a>] - NullPointerException during unmarshalling of an empty codeListValue attribute</li>
-</ul>
+      </article>
+    </main>
+    <footer class="footer">
+    <div class="container">
+      <p>
+        Copyright &copy; 2013-2022 The Apache Software Foundation, Licensed under the
+        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
+        Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
+      </p>
+    </div>
+</footer>
+  </div>
+</div>
 
-<h2>Tasks</h2>
-<ul>
-  <li>[<a href='https://issues.apache.org/jira/browse/SIS-109'>SIS-109</a>] - Replace the boolean value of DataStore.canOpen(...) by an enum</li>
-</ul>
-  </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+
+</body>
 </html>
