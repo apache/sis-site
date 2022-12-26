@@ -617,7 +617,8 @@ The output shall report only good signatures.
   * On the `asf-site` branch, execute `git merge asf-staging` and push.
 * Make an announcement about the release on the `dev@`, `users@`, and `announce@` mailing lists.
   A template is available [here](templates/release-announce.html).
-  The email needs to be sent from an `@apache.org` email address.
+  The email needs to be sent from an `@apache.org` email address
+  and the message format must be RAW text only (no HTML).
 
 Delete the prior version:
 
@@ -640,10 +641,13 @@ Then on the development branch:
 
 ## Delete old artifacts on Maven snapshot repository    {#nexus-clean}
 
-Login in the [Nexus repository][repository]. In the _Repositories_ tag, select _Snapshots_ of type _hosted_
-(not to be confused with _Snapshots_ of type _group_). Navigate to the `org/apache/sis` directory and delete
-all directories starting with the old version number. The sub-directories need to be cleaned too.
+Login in the [Nexus repository][repository].
+In the _Repositories_ tag, select _Snapshots_ of type _hosted_
+(not to be confused with _Snapshots_ of type _group_).
+Delete the whole `org/apache/sis` directory.
+It will be recreated the next time that [Jenkins][jenkins] is run.
 
 [release-faq]:      http://www.apache.org/dev/release.html
 [JIRA]:             http://issues.apache.org/jira/browse/SIS
 [repository]:       https://repository.apache.org/index.html
+[jenkins]:          https://ci-builds.apache.org/job/SIS/
