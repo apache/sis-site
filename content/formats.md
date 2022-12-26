@@ -117,7 +117,13 @@ See the [SIS developer guide](book/en/developer-guide.html#DataAccess) for more 
 
 # Accessing data on the cloud
 
-Data files can be located on Amazon S3 storage service.
+Most above-cited formats can be read from an HTTP connection.
+If the server supports HTTP ranges and if the data file is tiled
+(such as Cloud Optimized GeoTIFF),
+Apache SIS will try to minimize the amount of bytes downloaded.
+HTTP is supported by the base SIS storage modules with no need for additional dependencies.
+
+Data files can also be located on Amazon S3 storage service.
 For accessing those data, add the following dependency to the Maven project:
 
 {{< highlight xml >}}
