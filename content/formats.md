@@ -31,7 +31,7 @@ in which case the root resource will be `Aggregate`.
     <td>Read/write</td>
     <td><code>Aggregate</code>, <code>FeatureSet</code>, <code>GridCoverageResource</code></td>
   </tr><tr>
-    <td>GeoTIFF</td>
+    <td>(Big) GeoTIFF</td>
     <td>Read</td>
     <td><code>Aggregate</code>, <code>GridCoverageResource</code></td>
   </tr><tr>

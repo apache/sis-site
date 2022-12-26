@@ -121,7 +121,7 @@ Some standards are implemented partially, others almost fully.
   </tr><tr>
     <td></td>
     <td><a href="https://portal.ogc.org/files/?artifact_id=71648">OGC 09-083</a></td>
-    <td></td>
+    <td>3.0.2</td>
     <td>GeoAPI 3.0.1</td>
   </tr><tr>
     <td></td>
