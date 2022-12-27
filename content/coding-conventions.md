@@ -40,6 +40,13 @@ Those classes are excluded from Javadoc and normally not accessible to users.
 Contrarily to previous SIS versions, there is no longer any particular convention for internal package names.
 They may or may not have `internal` in their name.
 
+### Substitution for non-existent classes    {#substitutions}
+
+When using a JDK 12+ class that does not exist on JDK 11, define a class of the same name in a
+`org.apache.sis.pending.jdk` sub-package with the minimal amount of needed functionalities,
+provided that it can be done with reasonable effort.
+Those packages are internal (non-exported).
+
 # Code formatting    {#formatting}
 
 Apache {{% SIS %}} uses the standard Java conventions, except for the 80 characters line length restriction.
@@ -200,7 +207,7 @@ Firefox users can optionally install the [fonts for Mozilla's MathML engine][mat
 Note that a [JavaScript display engine][mathml-mathjax] is available for all browsers, but not yet used by SIS.
 
 [srcheaders]:       http://www.apache.org/legal/src-headers.html
-[JLS-order]:        https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.1
+[JLS-order]:        https://docs.oracle.com/javase/specs/jls/se11/html/jls-8.html#jls-8.1.1
 [mathml-W3C]:       https://www.w3.org/Math/
 [mathml-wolfram]:   https://reference.wolfram.com/language/XML/tutorial/MathML.html
 [mathml-fonts]:     https://developer.mozilla.org/en-US/docs/Web/MathML/Fonts
