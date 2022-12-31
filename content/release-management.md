@@ -30,6 +30,9 @@ export RELEASE_CANDIDATE=1
 export SIGNING_KEY=<your key ID>    # hexadecimal number with 8 or 40 digits.
 {{< / highlight >}}
 
+Make sure that the code signing key is the defauly key declared in `~/.gnupg/gpg.conf`
+during the Maven deployment phase.
+
 ## Directory layout    {#directory-layout}
 
 The steps described in this page assume the following directory layout (some directories will be created as
@@ -592,16 +595,7 @@ svn delete https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION \
     --message "Delete SIS $NEW_VERSION staging repository after release."
 {{< / highlight >}}
 
-Update [JIRA][JIRA]:
-
-* Update the JIRA versions to mark the version as "released".
-* Set the date to the date that the release was approved.
-* Prepare for the next release:
-  + Make a new release entry in JIRA for the next release.
-  + Update the [Roadmap](https://cwiki.apache.org/confluence/display/SIS/Roadmap) wiki page.
-
-## Verify release signatures    {#verify}
-
+Verify release signatures.
 Download all source and binary artifacts into a new directory, then execute in that directory:
 
 {{< highlight bash >}}
@@ -609,6 +603,15 @@ find . -name "*.asc" -exec gpg --verify '{}' \;
 {{< / highlight >}}
 
 The output shall report only good signatures.
+
+## Update other web sites (JIRA, GitHub, Wiki):
+
+* Update the [JIRA][JIRA]:
+  + Update the versions to mark the version as "released".
+  + Set the date to the date that the release was approved.
+  + Make a new release entry in JIRA for the next release.
+* Create a new [GitHub release](https://github.com/apache/sis/releases).
+* Update the [Roadmap](https://cwiki.apache.org/confluence/display/SIS/Roadmap) wiki page.
 
 ## Announce the release    {#announce}
 
