@@ -40,6 +40,7 @@
         <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
           <li><a class="dropdown-item" href="./apidocs/index.html">Online Javadoc</a></li>
           <li><a class="dropdown-item" href="./book/en/developer-guide.html">Developer Guide</a></li>
+          <li><a class="dropdown-item" href="./howto.html">How to…</a></li>
           <li><a class="dropdown-item" href="./formats.html">Supported formats</a></li>
           <li><a class="dropdown-item" href="./tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
           <li><a class="dropdown-item" href="./tables/CoordinateOperationMethods.html">Map Projections</a></li>
@@ -87,6 +88,7 @@
       <li><a class="nav-link  text-white " href="./index.html">Home</a></li>
       <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
       <li><a class="nav-link  text-white " href="./downloads.html">Downloads</a></li>
+      <li><a class="nav-link  text-white " href="./howto.html">How to…</a></li>
       <li><a class="nav-link  text-white " href="./standards.html">Standards</a></li>
       <li><a class="nav-link  text-white " href="./formats.html">Data formats</a></li>
       <li><a class="nav-link  text-white " href="./epsg.html">EPSG Database</a></li>
@@ -150,7 +152,7 @@ The intended audiences are SIS release managers.</p>
     </li>
     <li><a href="#finalize">Finalize the release   </a>
       <ul>
-        <li><a href="#verify">Verify release signatures   </a></li>
+        <li><a href="#update-other-web-sites-jira-github-wiki">Update other web sites (JIRA, GitHub, Wiki):</a></li>
         <li><a href="#announce">Announce the release   </a></li>
       </ul>
     </li>
@@ -177,6 +179,8 @@ the current release attempt. Those versions shall be set on the command line lik
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">NEW_VERSION</span><span class="o">=</span>1.3
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">RELEASE_CANDIDATE</span><span class="o">=</span><span class="m">1</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SIGNING_KEY</span><span class="o">=</span>&lt;your key ID&gt;    <span class="c1"># hexadecimal number with 8 or 40 digits.</span></span></span></code></pre></div>
+<p>Make sure that the code signing key is the defauly key declared in <code>~/.gnupg/gpg.conf</code>
+during the Maven deployment phase.</p>
 <h2 id="directory-layout">Directory layout   </h2>
 <p>The steps described in this page assume the following directory layout (some directories will be created as
 a result of the steps). Any other layout can be used. However if the layout differs, then the relative paths
@@ -580,21 +584,22 @@ From any directory:</p>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">svn delete https://dist.apache.org/repos/dist/dev/sis/<span class="nv">$NEW_VERSION</span> <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>    --message <span class="s2">&#34;Delete SIS </span><span class="nv">$NEW_VERSION</span><span class="s2"> staging repository after release.&#34;</span></span></span></code></pre></div>
-<p>Update <a href="http://issues.apache.org/jira/browse/SIS">JIRA</a>:</p>
-<ul>
-<li>Update the JIRA versions to mark the version as &ldquo;released&rdquo;.</li>
-<li>Set the date to the date that the release was approved.</li>
-<li>Prepare for the next release:
-<ul>
-<li>Make a new release entry in JIRA for the next release.</li>
-<li>Update the <a href="https://cwiki.apache.org/confluence/display/SIS/Roadmap">Roadmap</a> wiki page.</li>
-</ul>
-</li>
-</ul>
-<h2 id="verify">Verify release signatures   </h2>
-<p>Download all source and binary artifacts into a new directory, then execute in that directory:</p>
+<p>Verify release signatures.
+Download all source and binary artifacts into a new directory, then execute in that directory:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">find . -name <span class="s2">&#34;*.asc&#34;</span> -exec gpg --verify <span class="s1">&#39;{}&#39;</span> <span class="se">\;</span></span></span></code></pre></div>
 <p>The output shall report only good signatures.</p>
+<h2 id="update-other-web-sites-jira-github-wiki">Update other web sites (JIRA, GitHub, Wiki):</h2>
+<ul>
+<li>Update the <a href="http://issues.apache.org/jira/browse/SIS">JIRA</a>:
+<ul>
+<li>Update the versions to mark the version as &ldquo;released&rdquo;.</li>
+<li>Set the date to the date that the release was approved.</li>
+<li>Make a new release entry in JIRA for the next release.</li>
+</ul>
+</li>
+<li>Create a new <a href="https://github.com/apache/sis/releases">GitHub release</a>.</li>
+<li>Update the <a href="https://cwiki.apache.org/confluence/display/SIS/Roadmap">Roadmap</a> wiki page.</li>
+</ul>
 <h2 id="announce">Announce the release   </h2>
 <ul>
 <li>WAIT 24 hours after committing releases for mirrors to replicate.</li>
@@ -605,7 +610,8 @@ From any directory:</p>
 </li>
 <li>Make an announcement about the release on the <code>dev@</code>, <code>users@</code>, and <code>announce@</code> mailing lists.
 A template is available <a href="templates/release-announce.html">here</a>.
-The email needs to be sent from an <code>@apache.org</code> email address.</li>
+The email needs to be sent from an <code>@apache.org</code> email address
+and the message format must be RAW text only (no HTML).</li>
 </ul>
 <p>Delete the prior version:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">svn delete https://dist.apache.org/repos/dist/release/sis/<span class="nv">$OLD_VERSION</span> <span class="se">\
@@ -622,9 +628,11 @@ The email needs to be sent from an <code>@apache.org</code> email address.</li>
 <li>Edit the version number in the <code>application/sis-javafx/src/main/artifact/README</code> file.</li>
 </ul>
 <h2 id="nexus-clean">Delete old artifacts on Maven snapshot repository   </h2>
-<p>Login in the <a href="https://repository.apache.org/index.html">Nexus repository</a>. In the <em>Repositories</em> tag, select <em>Snapshots</em> of type <em>hosted</em>
-(not to be confused with <em>Snapshots</em> of type <em>group</em>). Navigate to the <code>org/apache/sis</code> directory and delete
-all directories starting with the old version number. The sub-directories need to be cleaned too.</p>
+<p>Login in the <a href="https://repository.apache.org/index.html">Nexus repository</a>.
+In the <em>Repositories</em> tag, select <em>Snapshots</em> of type <em>hosted</em>
+(not to be confused with <em>Snapshots</em> of type <em>group</em>).
+Delete the whole <code>org/apache/sis</code> directory.
+It will be recreated the next time that <a href="https://ci-builds.apache.org/job/SIS/">Jenkins</a> is run.</p>
 
 
       </article>
@@ -632,7 +640,7 @@ all directories starting with the old version number. The sub-directories need t
     <footer class="footer">
     <div class="container">
       <p>
-        Copyright &copy; 2013-2022 The Apache Software Foundation, Licensed under the
+        Copyright &copy; 2013-2023 The Apache Software Foundation, Licensed under the
         <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
         Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
       </p>
