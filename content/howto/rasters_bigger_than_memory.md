@@ -13,7 +13,7 @@ It integrates well with operations provided by Apache {{% SIS %}} such as
 
 The example in this page works with pixel coordinates.
 For working with geographic coordinates, see
-[values at geographic coordinates](raster_values_at_geographic_coordinates.html) snippet.
+[values at geographic coordinates](raster_values_at_geographic_coordinates.html) code example.
 
 
 # Direct dependencies
@@ -27,9 +27,9 @@ The [EPSG dependency](../epsg.html) may or may not be needed,
 depending how the Coordinate Reference System (CRS) is encoded in the GeoTIFF file.
 
 
-# Code snippet
+# Code example
 
-The file name in following snippet need to be updated for yours data.
+The file name in following code need to be updated for yours data.
 
 {{< highlight java >}}
 import java.io.File;

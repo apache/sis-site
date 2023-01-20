@@ -20,13 +20,16 @@ But it would also be possible to specify a CRS without EPSG code,
 for example using Well Known Text (WKT) format.
 
 
-# Code snippet
+# Code example
 
-The file name in following snippet need to be updated for yours data.
+The file name in following code need to be updated for yours data.
 
 {{< highlight java >}}
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Collection;
+import javax.imageio.ImageIO;
 import java.awt.image.ImagingOpException;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.Aggregate;
@@ -51,7 +54,7 @@ public class ResampleAndSaveRaster {
      * @throws TransformException if an error occurred while transforming coordinates to the target CRS.
      * @throws ImagingOpException unchecked exception thrown if an error occurred while resampling a tile.
      */
-    public static void main(String[] args) throws DataStoreException, FactoryException, TransformException {
+    public static void main(String[] args) throws DataStoreException, FactoryException, TransformException, IOException {
         try (DataStore store = DataStores.open(Paths.get("Airport.tiff"))) {
             /*
              * This data store is an aggregate because a GeoTIFF file may contain many images.
@@ -77,10 +80,12 @@ public class ResampleAndSaveRaster {
             data = processor.resample(data, CRS.forCode("EPSG::3395"));
             System.out.printf("Information about the image after reprojection:%n%s%n", data);
             /*
-             * TODO: Apache SIS is missing an `DataStores.write(…)` convenience method.
+             * TODO: Apache SIS is missing a `DataStores.write(…)` convenience method.
              * Writing a TIFF World File is possible but requires use of internal API.
              * A public convenience method will be added in next version.
+             * For now we use Java I/O API.
              */
+            ImageIO.write(data.render(null), "png", new File("test.png"));
         }
     }
 }

@@ -30,13 +30,13 @@ Maven coordinates                   | Module info                     | Remarks
 The `cdm-core` dependency can be omitted for netCDF-3 (a.k.a. "classic"),
 GeoTIFF or any other [formats supported by Apache SIS](../formats.html).
 For the dependencies required for reading GeoTIFF instead of netCDF files,
-see the [rasters bigger than memory](rasters_bigger_than_memory.html) snippet.
+see the [rasters bigger than memory](rasters_bigger_than_memory.html) code example.
 
 
-# Code snippet
+# Code example
 
 The file name, resource name and geographic coordinates
-in following snippet need to be updated for yours data.
+in following code need to be updated for yours data.
 
 {{< highlight java >}}
 import java.io.File;

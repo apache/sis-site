@@ -10,41 +10,21 @@ This page lists some Frequently Asked Questions (FAQ) when using Apache {{% SIS 
 
 ## Getting started    {#referencing-intro}
 
+### How do I get a Coordinate Reference System?    {#getCRS}
+
+The `CRS` class in the `org.apache.sis.referencing.crs` package provides static convenience methods.
+The most notable methods are:
+
+* `CRS.forCode(String)` for fetching a {{% CRS %}} from an authority code in a database.
+   Some supported authorities are [EPSG](epsg.html), AUTO, AUTO2 and CRS.
+* `CRS.fromWKT(String)` for parsing a {{% CRS %}} definition from a character string in Well-Known Text (WKT) format.
+* `CRS.fromXML(String)` for parsing a {{% CRS %}} definition from a character string in Geographic Markup Language (GML) format.
+
 ### How do I transform a coordinate?    {#transform-point}
 
-The following Java code projects a geographic coordinate from the _World Geodetic System 1984_ (WGS84) to _WGS 84 / UTM zone 33N_.
-In order to make the example a little bit simpler, this code uses predefined constants given by the `CommonCRS` convenience class.
-But more advanced applications will typically use EPSG codes instead.
-Note that all geographic coordinates below express latitude *before* longitude.
-
-  {{< highlight java >}}
-import org.opengis.geometry.DirectPosition;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.geometry.DirectPosition2D;
-
-public class MyApp {
-    public static void main(String[] args) throws FactoryException, TransformException {
-        CoordinateReferenceSystem sourceCRS = CommonCRS.WGS84.geographic();
-        CoordinateReferenceSystem targetCRS = CommonCRS.WGS84.universal(40, 14);  // Get whatever zone is valid for 14°E.
-        CoordinateOperation operation = CRS.findOperation(sourceCRS, targetCRS, null);
-        /*
-         * The above lines are costly and should be performed only once before to project many points.
-         * In this example, the operation that we got is valid for coordinates in geographic area from
-         * 12°E to 18°E (UTM zone 33) and 0°N to 84°N.
-         */
-        DirectPosition ptSrc = new DirectPosition2D(40, 14);           // 40°N 14°E
-        DirectPosition ptDst = operation.getMathTransform().transform(ptSrc, null);
-
-        System.out.println("Source: " + ptSrc);
-        System.out.println("Target: " + ptDst);
-    }
-}
-{{< / highlight >}}
+See the ["How to…"](howto.html#referencing) page for Java code examples.
+Those examples get Coordinate Reference Systems (CRS) instances in various ways
+and apply coordinate operations between two reference systems.
 
 ### Which map projections are supported?    {#operation-methods}
 
@@ -60,6 +40,27 @@ For convenience, thousands of projected {{% CRS %}} with predefined parameter va
 A well-known source of such definitions is the EPSG geodetic dataset, but other authorities also exist.
 The predefined {{% CRS %}} known to Apache {{% SIS %}} are listed in the
 [Coordinate Reference Systems](tables/CoordinateReferenceSystems.html) page.
+
+## Coordinate Reference Systems    {#crs}
+
+### What is the Google projection?    {#google}
+
+The Google projection is a Mercator projection that pretends to be defined on the WGS84 datum,
+but actually ignores the ellipsoidal nature of that datum and uses the simpler spherical formulas instead.
+Since version 6.15 of EPSG geodetic dataset, the preferred way to get that projection is to invoke `CRS.forCode("EPSG:3857")`.
+Note that the use of that projection is **not** recommended, unless needed for compatibility with other data.
+
+The EPSG:3857 definition uses a map projection method named _"Popular Visualisation Pseudo Mercator"_.
+The EPSG geodetic dataset provides also some other map projections that use spherical formulas.
+Those methods have "(Spherical)" in their name, for example _"Mercator (Spherical)"_,
+and differs from _"Popular Visualisation Pseudo Mercator"_ by the use of a more appropriate sphere radius.
+Those projection methods can be used in Well Known Text (WKT) definitions.
+
+If there is a need to use spherical formulas with a projection that does not have a spherical counterpart,
+this can be done with explicit declarations of `"semi_major"` and `"semi_minor"` parameter values in the {{% WKT %}} definition.
+Those parameter values are usually inferred from the datum, but Apache {{% SIS %}} allows explicit declarations to override the inferred values.
+This hack is provided for making possible to use data that ignore the ellipsoid flattening factor
+(which are unfortunately not uncommon), but it should be used in last resort only.
 
 ### What is the axis order issue and how is it addressed?    {#axisOrder}
 
@@ -97,99 +98,6 @@ CoordinateReferenceSystem crs = ...; // CRS obtained by any means.
 crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)
 {{< / highlight >}}
 
-## Coordinate Reference Systems    {#crs}
-
-### How do I instantiate a Universal Transverse Mercator (UTM) projection?    {#UTM}
-
-If the UTM zone is unknown, an easy way is to invoke the `universal(…)` method on one of the `CommonCRS` predefined constants.
-That method receives in argument a geographic coordinate in (_latitude_, _longitude_) order and computes the UTM zone from it.
-See the [above Java code example](#transform-point).
-
-If the UTM zone is know, one way is to use the "EPSG" or "AUTO" authority factory.
-The EPSG code of some UTM projections can be determined as below, where _zone_ is a number from 1 to 60 inclusive (unless otherwise specified):
-
-* WGS 84 (northern hemisphere): 32600 + _zone_
-* WGS 84 (southern hemisphere): 32700 + _zone_
-* WGS 72 (northern hemisphere): 32200 + _zone_
-* WGS 72 (southern hemisphere): 32300 + _zone_
-* NAD 83 (northern hemisphere): 26900 + _zone_ (zone 1 to 23 only)
-* NAD 27 (northern hemisphere): 26700 + _zone_ (zone 1 to 22 only)
-
-Note that the above list is incomplete. See the EPSG database for additional UTM definitions
-(WGS 72BE, SIRGAS 2000, SIRGAS 1995, SAD 69, ETRS 89, _etc._, most of them defined only for a few zones).
-Once the EPSG code of the UTM projection has been determined, the {{% CRS %}} can be obtained as in the example below:
-
-{{< highlight java >}}
-int code = 32600 + zone;    // For WGS84 northern hemisphere
-CoordinateReferenceSystem crs = CRS.forCode("EPSG:" + code);
-{{< / highlight >}}
-
-### How do I instantiate a Google projection?    {#google}
-
-The Google projection is a Mercator projection that pretends to be defined on the WGS84 datum,
-but actually ignores the ellipsoidal nature of that datum and uses the simpler spherical formulas instead.
-Since version 6.15 of EPSG geodetic dataset, the preferred way to get that projection is to invoke `CRS.forCode("EPSG:3857")`.
-Note that the use of that projection is **not** recommended, unless needed for compatibility with other data.
-
-The EPSG:3857 definition uses a map projection method named _"Popular Visualisation Pseudo Mercator"_.
-The EPSG geodetic dataset provides also some other map projections that use spherical formulas.
-Those methods have "(Spherical)" in their name, for example _"Mercator (Spherical)"_
-(which differs from _"Popular Visualisation Pseudo Mercator"_ by the use of a more appropriate sphere radius).
-Those projection methods can be used in Well Known Text (WKT) definitions.
-
-If there is a need to use spherical formulas with a projection that does not have a "(Spherical)" counterpart,
-this can be done with explicit declarations of `"semi_major"` and `"semi_minor"` parameter values in the {{% WKT %}} definition.
-Those parameter values are usually inferred from the datum, but Apache {{% SIS %}} allows explicit declarations to override the inferred values.
-
-### How can I identify the projection kind of a CRS?    {#projectionKind}
-
-The "kind of projection" (Mercator, Lambert Conformal, _etc._) is called _Operation Method_ in {{% ISO %}} 19111 terminology.
-One approach is to check the value of `OperationMethod.getName()` and compare them against the {{% OGC %}} or EPSG names
-listed in the [Coordinate Operation Methods](tables/CoordinateOperationMethods.html) page.
-
-### How do I get the EPSG code of an existing CRS?    {#lookupEPSG}
-
-The _identifier_ of a Coordinate Reference System (CRS) object can be obtained by the `getIdentifiers()` method,
-which usually return a collection of zero or one element.
-If the {{% CRS %}} has been created from a Well Known Text (WKT) parsing
-and the {{% WKT %}} ends with an `AUTHORITY["EPSG", "xxxx"]` ({{% WKT %}} version 1)
-or `ID["EPSG", xxxx]` ({{% WKT %}} version 2) element,
-then the identifier (an EPSG numerical code in this example) is the _xxxx_ value in that element.
-If the {{% CRS %}} has been created from the EPSG geodetic dataset (for example by a call to `CRS.forCode("EPSG:xxxx")`),
-then the identifier is the _xxxx_ code given to that method.
-If the {{% CRS %}} has been created in another way, then the collection returned by the `getIdentifiers()` method
-may or may not be empty depending if the program that created the {{% CRS %}} took the responsibility of providing identifiers.
-
-If the collection of identifiers is empty, the most effective fix is to make sure that the {{% WKT %}}
-contains an `AUTHORITY` or `ID` element (assuming that the {{% CRS %}} was parsed from a {{% WKT %}}).
-If this is not possible, then the `org.apache.sis.referencing.IdentifiedObjects` class contains some convenience methods which may help.
-In the following example, the call to `lookupEPSG(…)` will scan the EPSG database for a {{% CRS %}} equals
-(ignoring metadata) to the given one. *Note that this scan is sensitive to axis order.*
-Most geographic {{% CRS %}} in the EPSG database are declared with (_latitude_, _longitude_) axis order.
-Consequently if the given {{% CRS %}} has (_longitude_, _latitude_) axis order, then the scan is likely to find no match.
-
-{{< highlight java >}}
-CoordinateReferenceSystem myCRS = ...;
-Integer identifier = IdentifiedObjects.lookupEPSG(myCRS);
-if (identifier != null) {
-    System.out.println("The EPSG code has been found: " + identifier);
-}
-{{< / highlight >}}
-
-### How do I get the "urn:ogc:def:crs:…" URN of an existing CRS?    {#lookupURN}
-
-{{% OGC %}} defines URN for {{% CRS %}} identifiers, for example `"urn:​ogc:​def:​crs:​epsg:​7.1:​4326"`
-where `"7.1"` is the version of the EPSG database used.
-URN may or may not be present in the set of identifiers returned by `crs.getIdentifiers()`.
-In many cases (especially if the {{% CRS %}} was parsed from a Well Known Text), only simple identifiers like `"EPSG:​4326"` are provided.
-An easy way to build the full URN is to use the code below.
-That example may scan the EPSG database for finding the information if it was not explicitly provided in the given {{% CRS %}}.
-
-{{< highlight java >}}
-CoordinateReferenceSystem myCRS = ...;
-String urn = IdentifiedObjects.lookupURN(myCRS);
-{{< / highlight >}}
-
 ### Is IdentifiedObjects.lookupEPSG(…) a reliable inverse of CRS.forCode(…)?   {#lookupReliability}
 
 For {{% CRS %}} created from the EPSG geodetic dataset, usually yes.
@@ -200,12 +108,6 @@ The `lookupEPSG(…)` method on the other hand is robust to erroneous code decla
 since it always compares the {{% CRS %}} with the database content.
 But it may fail if there is slight mismatch (for example rounding errors in projection parameters)
 between the supplied {{% CRS %}} and the {{% CRS %}} found in the database.
-
-### How can I determine if two CRS are "functionally" equal?    {#equalsIgnoreMetadata}
-
-Two Coordinate Reference Systems may not be considered equal if they are associated to different metadata
-(name, identifiers, scope, domain of validity, remarks), even though they represent the same logical {{% CRS %}}.
-In order to test if two {{% CRS %}} are functionally equivalent, use `Utilities​.equals­Ignore­Metadata(myFirstCRS, mySecondCRS)`.
 
 ### Are CRS objects safe for use as keys in HashMap?    {#crsHashCode}
 
