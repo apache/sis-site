@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+  <title>Apache SIS - Get the EPSG code or URN of an existing CRS</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+        rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" media="screen" href="../syntax.css">
+  <link rel="stylesheet" type="text/css" media="screen" href="../sis.css">
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="../index.html"> Apache SIS™</a>
+    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuAbout" data-bs-toggle="dropdown" aria-expanded="false">About</a>
+        <ul class="dropdown-menu" aria-labelledby="menuAbout">
+          <li><a class="dropdown-item" href="http://www.apache.org/licenses/">License</a></li>
+          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
+          <li><a class="dropdown-item" href="../team-list.html">Project Team</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuDownload" data-bs-toggle="dropdown" aria-expanded="false">Download</a>
+        <ul class="dropdown-menu" aria-labelledby="menuDownload">
+          <li><a class="dropdown-item" href="../downloads.html">Downloads</a></li>
+          <li><a class="dropdown-item" href="../source.html">Checkout Sources</a></li>
+          <li><a class="dropdown-item" href="../build.html">Build from Sources</a></li>
+          <li><a class="dropdown-item" href="../epsg.html">EPSG Database</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuDocumentation" data-bs-toggle="dropdown" aria-expanded="false">Documentation</a>
+        <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
+          <li><a class="dropdown-item" href="../apidocs/index.html">Online Javadoc</a></li>
+          <li><a class="dropdown-item" href="../book/en/developer-guide.html">Developer Guide</a></li>
+          <li><a class="dropdown-item" href="../howto.html">How to…</a></li>
+          <li><a class="dropdown-item" href="../formats.html">Supported formats</a></li>
+          <li><a class="dropdown-item" href="../tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
+          <li><a class="dropdown-item" href="../tables/CoordinateOperationMethods.html">Map Projections</a></li>
+          <li><a class="dropdown-item" href="../code-patterns.html">Code Patterns</a></li>
+          <li><a class="dropdown-item" href="../faq.html">FAQ</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuContribute" data-bs-toggle="dropdown" aria-expanded="false">Contribute</a>
+        <ul class="dropdown-menu" aria-labelledby="menuContribute">
+          <li><a class="dropdown-item" href="../contributor.html">New Contributor</a></li>
+          <li><a class="dropdown-item" href="../coding-conventions.html">Coding Conventions</a></li>
+          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
+          <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+          <li><a class="dropdown-item" href="https://github.com/apache/sis">GitHub mirror</a></li>
+          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="../release-management.html">Release management</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuASF" data-bs-toggle="dropdown" aria-expanded="false">The Foundation</a>
+        <ul class="dropdown-menu" aria-labelledby="menuASF">
+          <li><a class="dropdown-item" href="http://www.apache.org">The Foundation</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/foundation/sponsorship.html">Donate</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/security/">Security</a></li>
+        </ul>
+      </li>
+    </ul>
+    <ul class="navbar-nav ml-auto mb-2 mb-md-0">
+      <li class="nav-item">
+        <a href="https://www.apache.org/events/current-event.html">
+           <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+
+<div class="row flex-nowrap">
+  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width:13rem; min-height:40rem">
+    <ul class="nav nav-pills flex-column mb-auto position-fixed">
+      <li><a class="nav-link  text-white " href="../index.html">Home</a></li>
+      <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
+      <li><a class="nav-link  text-white " href="../downloads.html">Downloads</a></li>
+      <li><a class="nav-link  active " href="../howto.html">How to…</a></li>
+      <li><a class="nav-link  text-white " href="../standards.html">Standards</a></li>
+      <li><a class="nav-link  text-white " href="../formats.html">Data formats</a></li>
+      <li><a class="nav-link  text-white " href="../epsg.html">EPSG Database</a></li>
+      <li><a class="nav-link  text-white " href="../javafx.html">Application (demo)</a></li>
+      <li><a class="nav-link text-white" href="../apidocs/index.html">Online Javadoc</a></li>
+      <li><a class="nav-link text-white" href="../book/en/developer-guide.html">Developer Guide</a></li>
+      <li><a class="nav-link  text-white " href="../code-patterns.html">Code patterns</a></li>
+      <li><a class="nav-link  text-white " href="../faq.html">FAQ</a></li>
+    </ul>
+  </div>
+  <div class="col">
+    <main class="container">
+      <article>
+        <img src="../images/logo.png" class="sis-logo" align="left"/>
+        <p class="page-title">Get the EPSG code or URN of an existing CRS</p>
+
+  <p>The <em>identifier</em> of a Coordinate Reference System (CRS) object can be obtained by the <code>getIdentifiers()</code> method,
+which usually return a collection of zero or one element.
+If the <abbr title="Coordinate Reference System">CRS</abbr> has been created from a Well Known Text (WKT) parsing
+and the <abbr title="Well Known Text">WKT</abbr> ends with an <code>AUTHORITY[&quot;EPSG&quot;, &quot;xxxx&quot;]</code> (<abbr title="Well Known Text">WKT</abbr> version 1)
+or <code>ID[&quot;EPSG&quot;, xxxx]</code> (<abbr title="Well Known Text">WKT</abbr> version 2) element,
+then the identifier (an EPSG numerical code in this example) is the <em>xxxx</em> value in that element.
+If the <abbr title="Coordinate Reference System">CRS</abbr> has been created from the EPSG geodetic dataset (for example by a call to <code>CRS.forCode(&quot;EPSG:xxxx&quot;)</code>),
+then the identifier is the <em>xxxx</em> code given to that method.
+If the <abbr title="Coordinate Reference System">CRS</abbr> has been created in another way, then the collection returned by the <code>getIdentifiers()</code> method
+may or may not be empty depending if the program that created the <abbr title="Coordinate Reference System">CRS</abbr> took the responsibility of providing identifiers.</p>
+<p>If the collection of identifiers is empty, the most effective fix is to make sure that the <abbr title="Well Known Text">WKT</abbr>
+contains an <code>AUTHORITY</code> or <code>ID</code> element (assuming that the <abbr title="Coordinate Reference System">CRS</abbr> was parsed from a <abbr title="Well Known Text">WKT</abbr>).
+If this is not possible, then the <code>org.apache.sis.referencing.IdentifiedObjects</code> class contains some convenience methods which may help.
+In the following example, the call to <code>lookupEPSG(…)</code> will scan the EPSG database for a <abbr title="Coordinate Reference System">CRS</abbr> equals
+(ignoring metadata) to the given one. <em>Note that this scan is sensitive to axis order.</em>
+Most geographic <abbr title="Coordinate Reference System">CRS</abbr> in the EPSG database are declared with (<em>latitude</em>, <em>longitude</em>) axis order.
+Consequently if the given <abbr title="Coordinate Reference System">CRS</abbr> has (<em>longitude</em>, <em>latitude</em>) axis order, then the scan is likely to find no match.</p>
+<h1 id="direct-dependencies">Direct dependencies</h1>
+<table>
+<thead>
+<tr>
+<th>Maven coordinates</th>
+<th>Module info</th>
+<th>Remarks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>org.apache.sis.storage:sis-referencing</code></td>
+<td><code>org.apache.sis.referencing</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>org.apache.sis.non-free:sis-embedded-data</code></td>
+<td><code>org.apache.sis.referencing.database</code></td>
+<td>Optional. Non-Apache license.</td>
+</tr>
+</tbody>
+</table>
+<p>The <a href="../epsg.html">EPSG dependency</a> is not needed if the <abbr title="Well Known Text">WKT</abbr> string declares an <code>AUTHORITY</code> element.
+But it is required if the <code>AUTHORITY</code> element is absent and Apache <abbr title="Spatial Information System">SIS</abbr> needs to scan the EPSG database
+for finding its value.</p>
+<h1 id="code-example">Code example</h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.referencing.crs.CoordinateReferenceSystem</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.util.FactoryException</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CRS</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.IdentifiedObjects</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">LookupAuthorityCode</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * Demo entry point.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     *
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @param  args  ignored.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws FactoryException if an error occurred while creating the CRS or searching in EPSG database.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">FactoryException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">CoordinateReferenceSystem</span> <span class="n">crs</span> <span class="o">=</span> <span class="n">CRS</span><span class="o">.</span><span class="na">fromWKT</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">        <span class="s">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">        PROJCRS[&#34;</span><span class="n">NTF</span> <span class="o">(</span><span class="n">Paris</span><span class="o">)</span> <span class="o">/</span> <span class="n">zone</span> <span class="n">to</span> <span class="n">be</span> <span class="n">discovered</span> <span class="n">by</span> <span class="n">the</span> <span class="n">demo</span><span class="s">&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">          BASEGEODCRS[&#34;</span><span class="n">NTF</span> <span class="o">(</span><span class="n">Paris</span><span class="o">)</span><span class="s">&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">            DATUM[&#34;</span><span class="n">Nouvelle</span> <span class="n">Triangulation</span> <span class="n">Francaise</span><span class="s">&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">              ELLIPSOID[&#34;</span><span class="n">Clarke</span> <span class="nf">1880</span> <span class="o">(</span><span class="n">IGN</span><span class="o">)</span><span class="s">&#34;, 6378249.2, 293.4660212936269]],
+</span></span></span><span class="line"><span class="cl"><span class="s">              PRIMEM[&#34;</span><span class="n">Paris</span><span class="s">&#34;, 2.5969213],
+</span></span></span><span class="line"><span class="cl"><span class="s">            UNIT[&#34;</span><span class="n">grade</span><span class="s">&#34;, 0.015707963267948967]],
+</span></span></span><span class="line"><span class="cl"><span class="s">          CONVERSION[&#34;</span><span class="n">Lambert</span> <span class="n">zone</span> <span class="n">II</span><span class="s">&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">            METHOD[&#34;</span><span class="n">Lambert</span> <span class="n">Conic</span> <span class="nf">Conformal</span> <span class="o">(</span><span class="n">1SP</span><span class="o">)</span><span class="s">&#34;],
+</span></span></span><span class="line"><span class="cl"><span class="s">            PARAMETER[&#34;</span><span class="n">Latitude</span> <span class="n">of</span> <span class="n">natural</span> <span class="n">origin</span><span class="s">&#34;, 52.0],
+</span></span></span><span class="line"><span class="cl"><span class="s">            PARAMETER[&#34;</span><span class="n">Longitude</span> <span class="n">of</span> <span class="n">natural</span> <span class="n">origin</span><span class="s">&#34;, 0.0],
+</span></span></span><span class="line"><span class="cl"><span class="s">            PARAMETER[&#34;</span><span class="n">Scale</span> <span class="n">factor</span> <span class="n">at</span> <span class="n">natural</span> <span class="n">origin</span><span class="s">&#34;, 0.99987742],
+</span></span></span><span class="line"><span class="cl"><span class="s">            PARAMETER[&#34;</span><span class="n">False</span> <span class="n">easting</span><span class="s">&#34;, 600000.0],
+</span></span></span><span class="line"><span class="cl"><span class="s">            PARAMETER[&#34;</span><span class="n">False</span> <span class="n">northing</span><span class="s">&#34;, 2200000.0]],
+</span></span></span><span class="line"><span class="cl"><span class="s">          CS[Cartesian, 2],
+</span></span></span><span class="line"><span class="cl"><span class="s">            AXIS[&#34;</span><span class="n">Easting</span> <span class="o">(</span><span class="n">E</span><span class="o">)</span><span class="s">&#34;, east],
+</span></span></span><span class="line"><span class="cl"><span class="s">            AXIS[&#34;</span><span class="n">Northing</span> <span class="o">(</span><span class="n">N</span><span class="o">)</span><span class="s">&#34;, north],
+</span></span></span><span class="line"><span class="cl"><span class="s">            LENGTHUNIT[&#34;</span><span class="n">metre</span><span class="s">&#34;, 1],
+</span></span></span><span class="line"><span class="cl"><span class="s">          REMARK[&#34;</span><span class="n">EPSG</span><span class="o">:</span><span class="n">27572</span> <span class="n">identifier</span> <span class="n">intentionally</span> <span class="n">omitted</span><span class="o">.</span><span class="s">&#34;]]
+</span></span></span><span class="line"><span class="cl"><span class="s">        &#34;&#34;&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Identifier declared in the CRS: &#34;</span>
+</span></span><span class="line"><span class="cl">                <span class="o">+</span> <span class="n">IdentifiedObjects</span><span class="o">.</span><span class="na">getIdentifier</span><span class="o">(</span><span class="n">crs</span><span class="o">,</span> <span class="kc">null</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Searching in EPSG database: &#34;</span>
+</span></span><span class="line"><span class="cl">                <span class="o">+</span> <span class="n">IdentifiedObjects</span><span class="o">.</span><span class="na">lookupEPSG</span><span class="o">(</span><span class="n">crs</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Same, but more generic: &#34;</span>
+</span></span><span class="line"><span class="cl">                <span class="o">+</span> <span class="n">IdentifiedObjects</span><span class="o">.</span><span class="na">lookupURN</span><span class="o">(</span><span class="n">crs</span><span class="o">,</span> <span class="kc">null</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
+<h1 id="output">Output</h1>
+<pre tabindex="0"><code>Identifier declared in the CRS: null
+Searching in EPSG database: 27572
+Same, but more generic: urn:ogc:def:crs:EPSG:9.9.1:27572
+</code></pre>
+
+      </article>
+    </main>
+    <footer class="footer">
+    <div class="container">
+      <p>
+        Copyright &copy; 2013-2023 The Apache Software Foundation, Licensed under the
+        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
+        Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
+      </p>
+    </div>
+</footer>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+
+</body>
+</html>

@@ -134,10 +134,13 @@ The result is saved as a World File in PNG format.</p>
 because a Coordinate Reference System (CRS) is instantiated from its EPSG code.
 But it would also be possible to specify a CRS without EPSG code,
 for example using Well Known Text (WKT) format.</p>
-<h1 id="code-snippet">Code snippet</h1>
-<p>The file name in following snippet need to be updated for yours data.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.nio.file.Paths</span><span class="o">;</span>
+<h1 id="code-example">Code example</h1>
+<p>The file name in following code need to be updated for yours data.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.File</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.nio.file.Paths</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.util.Collection</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">javax.imageio.ImageIO</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.awt.image.ImagingOpException</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.Resource</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.Aggregate</span><span class="o">;</span>
@@ -162,7 +165,7 @@ for example using Well Known Text (WKT) format.</p>
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws TransformException if an error occurred while transforming coordinates to the target CRS.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws ImagingOpException unchecked exception thrown if an error occurred while resampling a tile.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
-</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">DataStoreException</span><span class="o">,</span> <span class="n">FactoryException</span><span class="o">,</span> <span class="n">TransformException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">DataStoreException</span><span class="o">,</span> <span class="n">FactoryException</span><span class="o">,</span> <span class="n">TransformException</span><span class="o">,</span> <span class="n">IOException</span> <span class="o">{</span>
 </span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">(</span><span class="n">DataStore</span> <span class="n">store</span> <span class="o">=</span> <span class="n">DataStores</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="n">Paths</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">&#34;Airport.tiff&#34;</span><span class="o">)))</span> <span class="o">{</span>
 </span></span><span class="line"><span class="cl">            <span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * This data store is an aggregate because a GeoTIFF file may contain many images.
@@ -188,10 +191,12 @@ for example using Well Known Text (WKT) format.</p>
 </span></span><span class="line"><span class="cl">            <span class="n">data</span> <span class="o">=</span> <span class="n">processor</span><span class="o">.</span><span class="na">resample</span><span class="o">(</span><span class="n">data</span><span class="o">,</span> <span class="n">CRS</span><span class="o">.</span><span class="na">forCode</span><span class="o">(</span><span class="s">&#34;EPSG::3395&#34;</span><span class="o">));</span>
 </span></span><span class="line"><span class="cl">            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Information about the image after reprojection:%n%s%n&#34;</span><span class="o">,</span> <span class="n">data</span><span class="o">);</span>
 </span></span><span class="line"><span class="cl">            <span class="cm">/*
-</span></span></span><span class="line"><span class="cl"><span class="cm">             * TODO: Apache SIS is missing an `DataStores.write(…)` convenience method.
+</span></span></span><span class="line"><span class="cl"><span class="cm">             * TODO: Apache SIS is missing a `DataStores.write(…)` convenience method.
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * Writing a TIFF World File is possible but requires use of internal API.
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * A public convenience method will be added in next version.
+</span></span></span><span class="line"><span class="cl"><span class="cm">             * For now we use Java I/O API.
 </span></span></span><span class="line"><span class="cl"><span class="cm">             */</span>
+</span></span><span class="line"><span class="cl">            <span class="n">ImageIO</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">data</span><span class="o">.</span><span class="na">render</span><span class="o">(</span><span class="kc">null</span><span class="o">),</span> <span class="s">&#34;png&#34;</span><span class="o">,</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&#34;test.png&#34;</span><span class="o">));</span>
 </span></span><span class="line"><span class="cl">        <span class="o">}</span>
 </span></span><span class="line"><span class="cl">    <span class="o">}</span>
 </span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>

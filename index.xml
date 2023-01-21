@@ -68,13 +68,23 @@ mvn install The JavaFX application is excluded by default because it depends on 
     </item>
 
     <item>
+      <title>Determine if two CRS are functionally equal</title>
+      <link>https://sis.apache.org/howto/crs_equality.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+
+      <guid>https://sis.apache.org/howto/crs_equality.html</guid>
+      <description>Two Coordinate Reference Systems may not be considered equal if they are associated to different metadata (name, identifiers, scope, domain of validity, remarks), even though they represent the same logical CRS. In order to test if two CRS are functionally equivalent, Utilities​.equals­Ignore­Metadata(myFirstCRS, mySecondCRS) can be used.
+In some cases, equals­Ignore­Metadata(…) may fail to see that two reference systems are equal. It may happen for example when two map projections are defined with different parameters, but are mathematically equivalent.</description>
+    </item>
+
+    <item>
       <title>Frequently asked questions</title>
       <link>https://sis.apache.org/faq.html</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
 
       <guid>https://sis.apache.org/faq.html</guid>
       <description>This page lists some Frequently Asked Questions (FAQ) when using Apache SIS.
- Referencing   Getting started   How do I transform a coordinate?  Which map projections are supported?  What is the axis order issue and how is it addressed?    Coordinate Reference Systems   How do I instantiate a Universal Transverse Mercator (UTM) projection?  How do I instantiate a Google projection?  How can I identify the projection kind of a CRS?</description>
+ Referencing   Getting started   How do I get a Coordinate Reference System?  How do I transform a coordinate?  Which map projections are supported?    Coordinate Reference Systems   What is the Google projection?  What is the axis order issue and how is it addressed?  Is IdentifiedObjects.lookupEPSG(…) a reliable inverse of CRS.</description>
     </item>
 
     <item>
@@ -85,6 +95,15 @@ mvn install The JavaFX application is excluded by default because it depends on 
       <guid>https://sis.apache.org/howto/raster_values_at_geographic_coordinates.html</guid>
       <description>This example reads a netCDF file and fetches values at given coordinates. The coordinates can be expressed in different Coordinate Reference System (CRS). Conversions from geographic coordinates to pixel coordinates, followed by conversions from raster data to units of measurement, are done automatically. Raster rata and spatiotemporal coordinates can have more than two dimensions.
 This example uses data in netCDF format. A netCDF file can contain an arbitrary amount of variables.</description>
+    </item>
+
+    <item>
+      <title>Get the EPSG code or URN of an existing CRS</title>
+      <link>https://sis.apache.org/howto/lookup_crs_urn.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+
+      <guid>https://sis.apache.org/howto/lookup_crs_urn.html</guid>
+      <description>The identifier of a Coordinate Reference System (CRS) object can be obtained by the getIdentifiers() method, which usually return a collection of zero or one element. If the CRS has been created from a Well Known Text (WKT) parsing and the WKT ends with an AUTHORITY[&amp;quot;EPSG&amp;quot;, &amp;quot;xxxx&amp;quot;] (WKT version 1) or ID[&amp;quot;EPSG&amp;quot;, xxxx] (WKT version 2) element, then the identifier (an EPSG numerical code in this example) is the xxxx value in that element.</description>
     </item>
 
     <item>
@@ -103,6 +122,16 @@ This example uses data in netCDF format. A netCDF file can contain an arbitrary 
 
       <guid>https://sis.apache.org/epsg.html</guid>
       <description>The EPSG geodetic dataset is a de-facto standard providing thousands of Coordinate Reference System (CRS) definitions together with information about how to perform coordinate operations, their accuracies and their domains of validity. The EPSG dataset is owned and maintained by the International Association of Oil &amp;amp; Gas producers. Usage of EPSG dataset with Apache SIS is optional but strongly recommended: without that geodetic dataset, only a small subset of CRS definitions will be available (basically the constants enumerated in the CommonCRS Java class) unless full definitions are provided in Well Known Text (WKT) or Geographic Markup Language (GML) formats.</description>
+    </item>
+
+    <item>
+      <title>Instantiate a UTM projection</title>
+      <link>https://sis.apache.org/howto/instantiate_utm_projection.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+
+      <guid>https://sis.apache.org/howto/instantiate_utm_projection.html</guid>
+      <description>The Universal Transverse Mercator (UTM) projection divides the world in 60 zones. If the UTM zone is unknown, an easy way to instantiate the projection is to invoke the universal(…) method on one of the CommonCRS predefined constants. That method receives in argument a geographic coordinate in (latitude, longitude) order and computes the UTM zone from it. It takes in account the special cases of Norway and Svalbard.
+An alternative, more standard, way using geographic coordinates is to format an &amp;ldquo;AUTO&amp;rdquo; authority code.</description>
     </item>
 
     <item>
@@ -325,6 +354,16 @@ Incompatible changes  The following changes in Apache SIS 1.3 are incompatibles 
 
       <guid>https://sis.apache.org/standards.html</guid>
       <description>Apache SIS implements the following standards from the Open Geospatial Consortium (OGC), the International Organization for Standardization (ISO) or the Java Community Process (JCP). The same standard is sometimes published jointly by both OGC and ISO organizations. Links to free versions of the standards are given when available. The Upgrade needed column indicates that a more recent version of the standard is available but that Apache SIS has not yet been upgraded to that version.</description>
+    </item>
+
+    <item>
+      <title>Transform coordinates</title>
+      <link>https://sis.apache.org/howto/transform_coordinates.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+
+      <guid>https://sis.apache.org/howto/transform_coordinates.html</guid>
+      <description>The following Java code projects geographic coordinates from the World Geodetic System 1984 (WGS84) to WGS 84 / UTM zone 33N. In order to make the example a little bit simpler, this code uses predefined constants given by the CommonCRS convenience class. But more advanced applications may use EPSG codes or definitions in Well-Known Text (WKT) instead.
+Note: if the result of a coordinate transformation seems wrong, see the FAQ page.</description>
     </item>
 
   </channel>
