@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+  <title>Apache SIS - Transform envelopes (bounding boxes)</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+        rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" media="screen" href="../syntax.css">
+  <link rel="stylesheet" type="text/css" media="screen" href="../sis.css">
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="../index.html"> Apache SIS™</a>
+    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuAbout" data-bs-toggle="dropdown" aria-expanded="false">About</a>
+        <ul class="dropdown-menu" aria-labelledby="menuAbout">
+          <li><a class="dropdown-item" href="http://www.apache.org/licenses/">License</a></li>
+          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
+          <li><a class="dropdown-item" href="../team-list.html">Project Team</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuDownload" data-bs-toggle="dropdown" aria-expanded="false">Download</a>
+        <ul class="dropdown-menu" aria-labelledby="menuDownload">
+          <li><a class="dropdown-item" href="../downloads.html">Downloads</a></li>
+          <li><a class="dropdown-item" href="../source.html">Checkout Sources</a></li>
+          <li><a class="dropdown-item" href="../build.html">Build from Sources</a></li>
+          <li><a class="dropdown-item" href="../epsg.html">EPSG Database</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuDocumentation" data-bs-toggle="dropdown" aria-expanded="false">Documentation</a>
+        <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
+          <li><a class="dropdown-item" href="../apidocs/index.html">Online Javadoc</a></li>
+          <li><a class="dropdown-item" href="../book/en/developer-guide.html">Developer Guide</a></li>
+          <li><a class="dropdown-item" href="../howto.html">How to…</a></li>
+          <li><a class="dropdown-item" href="../formats.html">Supported formats</a></li>
+          <li><a class="dropdown-item" href="../tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
+          <li><a class="dropdown-item" href="../tables/CoordinateOperationMethods.html">Map Projections</a></li>
+          <li><a class="dropdown-item" href="../code-patterns.html">Code Patterns</a></li>
+          <li><a class="dropdown-item" href="../faq.html">FAQ</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuContribute" data-bs-toggle="dropdown" aria-expanded="false">Contribute</a>
+        <ul class="dropdown-menu" aria-labelledby="menuContribute">
+          <li><a class="dropdown-item" href="../contributor.html">New Contributor</a></li>
+          <li><a class="dropdown-item" href="../coding-conventions.html">Coding Conventions</a></li>
+          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
+          <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+          <li><a class="dropdown-item" href="https://github.com/apache/sis">GitHub mirror</a></li>
+          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="../release-management.html">Release management</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuASF" data-bs-toggle="dropdown" aria-expanded="false">The Foundation</a>
+        <ul class="dropdown-menu" aria-labelledby="menuASF">
+          <li><a class="dropdown-item" href="http://www.apache.org">The Foundation</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/foundation/sponsorship.html">Donate</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/security/">Security</a></li>
+        </ul>
+      </li>
+    </ul>
+    <ul class="navbar-nav ml-auto mb-2 mb-md-0">
+      <li class="nav-item">
+        <a href="https://www.apache.org/events/current-event.html">
+           <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+
+<div class="row flex-nowrap">
+  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width:13rem; min-height:40rem">
+    <ul class="nav nav-pills flex-column mb-auto position-fixed">
+      <li><a class="nav-link  text-white " href="../index.html">Home</a></li>
+      <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
+      <li><a class="nav-link  text-white " href="../downloads.html">Downloads</a></li>
+      <li><a class="nav-link  active " href="../howto.html">How to…</a></li>
+      <li><a class="nav-link  text-white " href="../standards.html">Standards</a></li>
+      <li><a class="nav-link  text-white " href="../formats.html">Data formats</a></li>
+      <li><a class="nav-link  text-white " href="../epsg.html">EPSG Database</a></li>
+      <li><a class="nav-link  text-white " href="../javafx.html">Application (demo)</a></li>
+      <li><a class="nav-link text-white" href="../apidocs/index.html">Online Javadoc</a></li>
+      <li><a class="nav-link text-white" href="../book/en/developer-guide.html">Developer Guide</a></li>
+      <li><a class="nav-link  text-white " href="../code-patterns.html">Code patterns</a></li>
+      <li><a class="nav-link  text-white " href="../faq.html">FAQ</a></li>
+    </ul>
+  </div>
+  <div class="col">
+    <main class="container">
+      <article>
+        <img src="../images/logo.png" class="sis-logo" align="left"/>
+        <p class="page-title">Transform envelopes (bounding boxes)</p>
+
+  <p>The transformation of envelopes (or bounding boxes) is a much more difficult task
+than transforming the four corners of a rectangle.
+The rectangle straight lines in source <abbr title="Coordinate Reference System">CRS</abbr> may become curves in the target <abbr title="Coordinate Reference System">CRS</abbr>
+with minimum and maximum values that are not located in any corner.
+The calculation is also more complicated if the envelope contains a pole or crosses the anti-meridian.
+Apache <abbr title="Spatial Information System">SIS</abbr> handles those complexities in convenience static methods.
+This is demonstrated by comparing the result of using Apache <abbr title="Spatial Information System">SIS</abbr> methods
+with the result of transforming the four corners.
+The latter naive approach has an error of 40 kilometres in this example.</p>
+<p>While the example below uses a two-dimensional envelope,
+the same Apache <abbr title="Spatial Information System">SIS</abbr> methods can transform efficiently <em>N</em>-dimensional envelopes.</p>
+<h1 id="direct-dependencies">Direct dependencies</h1>
+<table>
+<thead>
+<tr>
+<th>Maven coordinates</th>
+<th>Module info</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>org.apache.sis.storage:sis-referencing</code></td>
+<td><code>org.apache.sis.referencing</code></td>
+</tr>
+</tbody>
+</table>
+<h1 id="code-example">Code example</h1>
+<p>Note that all geographic coordinates below express latitude <em>before</em> longitude.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.geometry.Envelope</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.referencing.crs.CoordinateReferenceSystem</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.referencing.operation.CoordinateOperation</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.referencing.operation.TransformException</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.util.FactoryException</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CRS</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CommonCRS</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.geometry.Envelopes</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.geometry.GeneralEnvelope</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.geometry.DirectPosition2D</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransformEnvelopes</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * Demo entry point.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     *
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @param  args  ignored.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws FactoryException   if an error occurred while creating a Coordinate Reference System (CRS).
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws TransformException if an error occurred while transforming coordinates to the target CRS.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">FactoryException</span><span class="o">,</span> <span class="n">TransformException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">CoordinateReferenceSystem</span> <span class="n">sourceCRS</span> <span class="o">=</span> <span class="n">CommonCRS</span><span class="o">.</span><span class="na">WGS84</span><span class="o">.</span><span class="na">geographic</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">CoordinateReferenceSystem</span> <span class="n">targetCRS</span> <span class="o">=</span> <span class="n">CommonCRS</span><span class="o">.</span><span class="na">WGS84</span><span class="o">.</span><span class="na">universal</span><span class="o">(</span><span class="n">90</span><span class="o">,</span> <span class="n">0</span><span class="o">);</span>  <span class="c1">// Polar stereographic.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">        <span class="n">GeneralEnvelope</span> <span class="n">bbox</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GeneralEnvelope</span><span class="o">(</span><span class="n">sourceCRS</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">bbox</span><span class="o">.</span><span class="na">setRange</span><span class="o">(</span><span class="n">0</span><span class="o">,</span>  <span class="n">84</span><span class="o">,</span> <span class="n">88</span><span class="o">);</span>             <span class="c1">// Latitudes.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">bbox</span><span class="o">.</span><span class="na">setRange</span><span class="o">(</span><span class="n">1</span><span class="o">,</span> <span class="o">-</span><span class="n">20</span><span class="o">,</span> <span class="n">50</span><span class="o">);</span>             <span class="c1">// Longitudes.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">        <span class="n">Envelope</span> <span class="n">transformed</span> <span class="o">=</span> <span class="n">Envelopes</span><span class="o">.</span><span class="na">transform</span><span class="o">(</span><span class="n">bbox</span><span class="o">,</span> <span class="n">targetCRS</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Envelope</span> <span class="n">corners</span> <span class="o">=</span> <span class="n">transformCorners</span><span class="o">(</span><span class="n">bbox</span><span class="o">,</span> <span class="n">CRS</span><span class="o">.</span><span class="na">findOperation</span><span class="o">(</span><span class="n">sourceCRS</span><span class="o">,</span> <span class="n">targetCRS</span><span class="o">,</span> <span class="kc">null</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Source:  &#34;</span> <span class="o">+</span> <span class="n">bbox</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Result:  &#34;</span> <span class="o">+</span> <span class="n">transformed</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Corners: &#34;</span> <span class="o">+</span> <span class="n">corners</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Errors on Y axis: &#34;</span>
+</span></span><span class="line"><span class="cl">                <span class="o">+</span> <span class="o">(</span><span class="n">corners</span><span class="o">.</span><span class="na">getMinimum</span><span class="o">(</span><span class="n">1</span><span class="o">)</span> <span class="o">-</span> <span class="n">transformed</span><span class="o">.</span><span class="na">getMinimum</span><span class="o">(</span><span class="n">1</span><span class="o">))</span> <span class="o">+</span> <span class="s">&#34; metres.&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * Transforms the 4 corners of a two-dimensional envelope. This is not recommended.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * This method is provided only for demonstrating that this approach is not sufficient.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     *
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @param  bbox       the bounding box to transform.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @param  operation  the coordinate operation to use for transforming corners.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @return the result of transforming the 4 corners of the provided bounding box.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws TransformException if a coordinate can not be converted.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="n">Envelope</span> <span class="nf">transformCorners</span><span class="o">(</span><span class="n">Envelope</span> <span class="n">bbox</span><span class="o">,</span> <span class="n">CoordinateOperation</span> <span class="n">operation</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">TransformException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">double</span><span class="o">[]</span> <span class="n">corners</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">bbox</span><span class="o">.</span><span class="na">getMinimum</span><span class="o">(</span><span class="n">0</span><span class="o">),</span> <span class="n">bbox</span><span class="o">.</span><span class="na">getMinimum</span><span class="o">(</span><span class="n">1</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">            <span class="n">bbox</span><span class="o">.</span><span class="na">getMaximum</span><span class="o">(</span><span class="n">0</span><span class="o">),</span> <span class="n">bbox</span><span class="o">.</span><span class="na">getMinimum</span><span class="o">(</span><span class="n">1</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">            <span class="n">bbox</span><span class="o">.</span><span class="na">getMaximum</span><span class="o">(</span><span class="n">0</span><span class="o">),</span> <span class="n">bbox</span><span class="o">.</span><span class="na">getMaximum</span><span class="o">(</span><span class="n">1</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">            <span class="n">bbox</span><span class="o">.</span><span class="na">getMinimum</span><span class="o">(</span><span class="n">0</span><span class="o">),</span> <span class="n">bbox</span><span class="o">.</span><span class="na">getMaximum</span><span class="o">(</span><span class="n">1</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="o">};</span>
+</span></span><span class="line"><span class="cl">        <span class="n">operation</span><span class="o">.</span><span class="na">getMathTransform</span><span class="o">().</span><span class="na">transform</span><span class="o">(</span><span class="n">corners</span><span class="o">,</span> <span class="n">0</span><span class="o">,</span> <span class="n">corners</span><span class="o">,</span> <span class="n">0</span><span class="o">,</span> <span class="n">4</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">GeneralEnvelope</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GeneralEnvelope</span><span class="o">(</span><span class="n">operation</span><span class="o">.</span><span class="na">getTargetCRS</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">result</span><span class="o">.</span><span class="na">getDimension</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">result</span><span class="o">.</span><span class="na">setRange</span><span class="o">(</span><span class="n">i</span><span class="o">,</span> <span class="n">corners</span><span class="o">[</span><span class="n">i</span><span class="o">],</span> <span class="n">corners</span><span class="o">[</span><span class="n">i</span><span class="o">]);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">corners</span><span class="o">.</span><span class="na">length</span><span class="o">;)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">result</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">DirectPosition2D</span><span class="o">(</span><span class="n">corners</span><span class="o">[</span><span class="n">i</span><span class="o">++],</span> <span class="n">corners</span><span class="o">[</span><span class="n">i</span><span class="o">++]));</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
+<h1 id="output">Output</h1>
+<pre tabindex="0"><code>Source:  BOX(84 -20, 88 50)
+Result:  BOX(1771965.695226812 1333272.44494046, 2510743.0524805877 1857256.625440407)
+Corners: BOX(1771965.695226812 1373480.89677463, 2510743.0524805877 1857256.625440407)
+Errors on Y axis: 40208.451834172476 metres.
+</code></pre>
+
+      </article>
+    </main>
+    <footer class="footer">
+    <div class="container">
+      <p>
+        Copyright &copy; 2013-2023 The Apache Software Foundation, Licensed under the
+        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
+        Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
+      </p>
+    </div>
+</footer>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+
+</body>
+</html>

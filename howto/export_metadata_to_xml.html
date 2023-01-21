@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+  <title>Apache SIS - Geographic bounding box of a data file</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+        rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" media="screen" href="../syntax.css">
+  <link rel="stylesheet" type="text/css" media="screen" href="../sis.css">
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="../index.html"> Apache SIS™</a>
+    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuAbout" data-bs-toggle="dropdown" aria-expanded="false">About</a>
+        <ul class="dropdown-menu" aria-labelledby="menuAbout">
+          <li><a class="dropdown-item" href="http://www.apache.org/licenses/">License</a></li>
+          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
+          <li><a class="dropdown-item" href="../team-list.html">Project Team</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuDownload" data-bs-toggle="dropdown" aria-expanded="false">Download</a>
+        <ul class="dropdown-menu" aria-labelledby="menuDownload">
+          <li><a class="dropdown-item" href="../downloads.html">Downloads</a></li>
+          <li><a class="dropdown-item" href="../source.html">Checkout Sources</a></li>
+          <li><a class="dropdown-item" href="../build.html">Build from Sources</a></li>
+          <li><a class="dropdown-item" href="../epsg.html">EPSG Database</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuDocumentation" data-bs-toggle="dropdown" aria-expanded="false">Documentation</a>
+        <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
+          <li><a class="dropdown-item" href="../apidocs/index.html">Online Javadoc</a></li>
+          <li><a class="dropdown-item" href="../book/en/developer-guide.html">Developer Guide</a></li>
+          <li><a class="dropdown-item" href="../howto.html">How to…</a></li>
+          <li><a class="dropdown-item" href="../formats.html">Supported formats</a></li>
+          <li><a class="dropdown-item" href="../tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
+          <li><a class="dropdown-item" href="../tables/CoordinateOperationMethods.html">Map Projections</a></li>
+          <li><a class="dropdown-item" href="../code-patterns.html">Code Patterns</a></li>
+          <li><a class="dropdown-item" href="../faq.html">FAQ</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuContribute" data-bs-toggle="dropdown" aria-expanded="false">Contribute</a>
+        <ul class="dropdown-menu" aria-labelledby="menuContribute">
+          <li><a class="dropdown-item" href="../contributor.html">New Contributor</a></li>
+          <li><a class="dropdown-item" href="../coding-conventions.html">Coding Conventions</a></li>
+          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
+          <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
+          <li><a class="dropdown-item" href="https://github.com/apache/sis">GitHub mirror</a></li>
+          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="../release-management.html">Release management</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="menuASF" data-bs-toggle="dropdown" aria-expanded="false">The Foundation</a>
+        <ul class="dropdown-menu" aria-labelledby="menuASF">
+          <li><a class="dropdown-item" href="http://www.apache.org">The Foundation</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/foundation/sponsorship.html">Donate</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
+          <li><a class="dropdown-item" href="http://www.apache.org/security/">Security</a></li>
+        </ul>
+      </li>
+    </ul>
+    <ul class="navbar-nav ml-auto mb-2 mb-md-0">
+      <li class="nav-item">
+        <a href="https://www.apache.org/events/current-event.html">
+           <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+
+<div class="row flex-nowrap">
+  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width:13rem; min-height:40rem">
+    <ul class="nav nav-pills flex-column mb-auto position-fixed">
+      <li><a class="nav-link  text-white " href="../index.html">Home</a></li>
+      <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
+      <li><a class="nav-link  text-white " href="../downloads.html">Downloads</a></li>
+      <li><a class="nav-link  active " href="../howto.html">How to…</a></li>
+      <li><a class="nav-link  text-white " href="../standards.html">Standards</a></li>
+      <li><a class="nav-link  text-white " href="../formats.html">Data formats</a></li>
+      <li><a class="nav-link  text-white " href="../epsg.html">EPSG Database</a></li>
+      <li><a class="nav-link  text-white " href="../javafx.html">Application (demo)</a></li>
+      <li><a class="nav-link text-white" href="../apidocs/index.html">Online Javadoc</a></li>
+      <li><a class="nav-link text-white" href="../book/en/developer-guide.html">Developer Guide</a></li>
+      <li><a class="nav-link  text-white " href="../code-patterns.html">Code patterns</a></li>
+      <li><a class="nav-link  text-white " href="../faq.html">FAQ</a></li>
+    </ul>
+  </div>
+  <div class="col">
+    <main class="container">
+      <article>
+        <img src="../images/logo.png" class="sis-logo" align="left"/>
+        <p class="page-title">Geographic bounding box of a data file</p>
+
+  <p>This example prints the metadata of a netCDF file in the XML format
+defined by the ISO 19115-3 international standard.
+The coverage values are not read, only the netCDF file header is read.</p>
+<h1 id="direct-dependencies">Direct dependencies</h1>
+<table>
+<thead>
+<tr>
+<th>Maven coordinates</th>
+<th>Module info</th>
+<th>Remarks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>org.apache.sis.storage:sis-netcdf</code></td>
+<td><code>org.apache.sis.storage.netcdf</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>edu.ucar:cdm-core</code></td>
+<td></td>
+<td>For netCDF-4 or HDF5</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cdm-core</code> dependency can be omitted for netCDF-3 (a.k.a. &ldquo;classic&rdquo;),
+GeoTIFF or any other <a href="../formats.html">formats supported by Apache SIS</a>.
+For the dependencies required for reading GeoTIFF instead of netCDF files,
+see the <a href="geographic_bounding_box.html">geographic bounding box</a> code example.</p>
+<h1 id="code-example">Code example</h1>
+<p>The file name in following code need to be updated for yours data.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.util.Map</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.File</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.StringWriter</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">javax.xml.bind.JAXBException</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">javax.xml.transform.stream.StreamResult</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.metadata.Metadata</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.DataStore</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.DataStores</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.DataStoreException</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.xml.XML</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExportMetadata</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * Demo entry point.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     *
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @param  args  ignored.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws DataStoreException if an error occurred while reading the data file.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws JAXBException if an error occurred while marshalling metadata to XML.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">DataStoreException</span><span class="o">,</span> <span class="n">JAXBException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">(</span><span class="n">DataStore</span> <span class="n">store</span> <span class="o">=</span> <span class="n">DataStores</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&#34;CMEMS.nc&#34;</span><span class="o">)))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">Metadata</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="na">getMetadata</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">XML</span><span class="o">.</span><span class="na">marshal</span><span class="o">(</span><span class="n">metadata</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">            <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">             * By default the XML schema is the most recent version of the standard supported
+</span></span></span><span class="line"><span class="cl"><span class="cm">             * by Apache SIS. But the legacy version published in 2007 is still in wide use.
+</span></span></span><span class="line"><span class="cl"><span class="cm">             * The legacy version can be requested with the `METADATA_VERSION` property.
+</span></span></span><span class="line"><span class="cl"><span class="cm">             */</span>
+</span></span><span class="line"><span class="cl">            <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">config</span> <span class="o">=</span> <span class="n">Map</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">XML</span><span class="o">.</span><span class="na">METADATA_VERSION</span><span class="o">,</span> <span class="s">&#34;2007&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">StringWriter</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringWriter</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="n">XML</span><span class="o">.</span><span class="na">marshal</span><span class="o">(</span><span class="n">metadata</span><span class="o">,</span> <span class="k">new</span> <span class="n">StreamResult</span><span class="o">(</span><span class="n">result</span><span class="o">),</span> <span class="n">config</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// Result is in `result.toString()`.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
+<h1 id="output">Output</h1>
+<p>The output depends on the data and the locale.
+Below is an example:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34; standalone=&#34;yes&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;mdb:MD_Metadata</span> <span class="na">xmlns:cit=</span><span class="s">&#34;http://standards.iso.org/iso/19115/-3/cit/1.0&#34;</span>
+</span></span><span class="line"><span class="cl">                 <span class="na">xmlns:gco=</span><span class="s">&#34;http://standards.iso.org/iso/19115/-3/gco/1.0&#34;</span>
+</span></span><span class="line"><span class="cl">                 <span class="na">xmlns:mcc=</span><span class="s">&#34;http://standards.iso.org/iso/19115/-3/mcc/1.0&#34;</span>
+</span></span><span class="line"><span class="cl">                 <span class="na">xmlns:mdb=</span><span class="s">&#34;http://standards.iso.org/iso/19115/-3/mdb/1.0&#34;</span>
+</span></span><span class="line"><span class="cl">                 <span class="na">xmlns:mrc=</span><span class="s">&#34;http://standards.iso.org/iso/19115/-3/mrc/1.0&#34;</span>
+</span></span><span class="line"><span class="cl">                 <span class="na">xmlns:mrd=</span><span class="s">&#34;http://standards.iso.org/iso/19115/-3/mrd/1.0&#34;</span>
+</span></span><span class="line"><span class="cl">                 <span class="na">xmlns:mri=</span><span class="s">&#34;http://standards.iso.org/iso/19115/-3/mri/1.0&#34;</span>
+</span></span><span class="line"><span class="cl">                 <span class="na">xmlns:mrl=</span><span class="s">&#34;http://standards.iso.org/iso/19115/-3/mrl/1.0&#34;</span>
+</span></span><span class="line"><span class="cl">                 <span class="na">xmlns:mrs=</span><span class="s">&#34;http://standards.iso.org/iso/19115/-3/mrs/1.0&#34;</span>
+</span></span><span class="line"><span class="cl">                 <span class="na">xmlns:msr=</span><span class="s">&#34;http://standards.iso.org/iso/19115/-3/msr/1.0&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;mdb:metadataStandard&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="c">&lt;!-- Omitted for brevity --&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/mdb:metadataStandard&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;mdb:spatialRepresentationInfo&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;msr:MD_GridSpatialRepresentation&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;msr:numberOfDimensions&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;gco:Integer&gt;</span>3<span class="nt">&lt;/gco:Integer&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/msr:numberOfDimensions&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;msr:axisDimensionProperties&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;msr:MD_Dimension&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;msr:dimensionName&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;msr:MD_DimensionNameTypeCode</span> <span class="na">codeList=</span><span class="s">&#34;(…snip…)#MD_DimensionNameTypeCode&#34;</span> <span class="na">codeListValue=</span><span class="s">&#34;column&#34;</span><span class="nt">&gt;</span>Column<span class="nt">&lt;/msr:MD_DimensionNameTypeCode&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/msr:dimensionName&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;msr:dimensionSize&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;gco:Integer&gt;</span>865<span class="nt">&lt;/gco:Integer&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/msr:dimensionSize&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/msr:MD_Dimension&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/msr:axisDimensionProperties&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;msr:axisDimensionProperties&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;msr:MD_Dimension&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;msr:dimensionName&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;msr:MD_DimensionNameTypeCode</span> <span class="na">codeList=</span><span class="s">&#34;(…snip…)#MD_DimensionNameTypeCode&#34;</span> <span class="na">codeListValue=</span><span class="s">&#34;row&#34;</span><span class="nt">&gt;</span>Row<span class="nt">&lt;/msr:MD_DimensionNameTypeCode&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/msr:dimensionName&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;msr:dimensionSize&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;gco:Integer&gt;</span>1081<span class="nt">&lt;/gco:Integer&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/msr:dimensionSize&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/msr:MD_Dimension&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/msr:axisDimensionProperties&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;msr:axisDimensionProperties&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;msr:MD_Dimension&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;msr:dimensionName&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;msr:MD_DimensionNameTypeCode</span> <span class="na">codeList=</span><span class="s">&#34;(…snip…)#MD_DimensionNameTypeCode&#34;</span> <span class="na">codeListValue=</span><span class="s">&#34;time&#34;</span><span class="nt">&gt;</span>Time<span class="nt">&lt;/msr:MD_DimensionNameTypeCode&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/msr:dimensionName&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;msr:dimensionSize&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;gco:Integer&gt;</span>96<span class="nt">&lt;/gco:Integer&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/msr:dimensionSize&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/msr:MD_Dimension&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/msr:axisDimensionProperties&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;msr:cellGeometry&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;msr:MD_CellGeometryCode</span> <span class="na">codeList=</span><span class="s">&#34;(…snip…)#MD_CellGeometryCode&#34;</span> <span class="na">codeListValue=</span><span class="s">&#34;area&#34;</span><span class="nt">&gt;</span>Area<span class="nt">&lt;/msr:MD_CellGeometryCode&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/msr:cellGeometry&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;msr:transformationParameterAvailability&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;gco:Boolean&gt;</span>false<span class="nt">&lt;/gco:Boolean&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/msr:transformationParameterAvailability&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/msr:MD_GridSpatialRepresentation&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/mdb:spatialRepresentationInfo&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;mdb:referenceSystemInfo&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;mrs:MD_ReferenceSystem&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;mrs:referenceSystemIdentifier&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;mcc:MD_Identifier&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;mcc:code&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;gco:CharacterString&gt;</span>time latitude longitude<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/mcc:code&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/mcc:MD_Identifier&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/mrs:referenceSystemIdentifier&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/mrs:MD_ReferenceSystem&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/mdb:referenceSystemInfo&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;mdb:identificationInfo&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;mri:MD_DataIdentification&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;mri:citation&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;cit:CI_Citation&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;cit:title&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;gco:CharacterString&gt;</span>Ocean surface 15-minutes mean fields for the Iberia-Biscay-Ireland (IBI) region<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/cit:title&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;cit:identifier&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;mcc:MD_Identifier&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mcc:code&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;gco:CharacterString&gt;</span>CMEMS_v5r1_IBI_PHY_NRT_PdE_15minav_20220516_20220516_R20220516_FC01<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/mcc:code&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;/mcc:MD_Identifier&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/cit:identifier&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;cit:citedResponsibleParty&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;cit:CI_Responsibility&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;cit:role&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;cit:CI_RoleCode</span> <span class="na">codeList=</span><span class="s">&#34;(…snip…)#CI_RoleCode&#34;</span> <span class="na">codeListValue=</span><span class="s">&#34;originator&#34;</span><span class="nt">&gt;</span>Originator<span class="nt">&lt;/cit:CI_RoleCode&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/cit:role&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;cit:party&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;cit:CI_Organisation&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;cit:name&gt;</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&lt;gco:CharacterString&gt;</span>Puertos del Estado (PdE)<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;/cit:name&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;/cit:CI_Organisation&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/cit:party&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;/cit:CI_Responsibility&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/cit:citedResponsibleParty&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;cit:otherCitationDetails&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;gco:CharacterString&gt;</span>http://marine.copernicus.eu/<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/cit:otherCitationDetails&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/cit:CI_Citation&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/mri:citation&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;mri:pointOfContact&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;cit:CI_Responsibility&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;cit:role&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;cit:CI_RoleCode</span> <span class="na">codeList=</span><span class="s">&#34;(…snip…)#CI_RoleCode&#34;</span> <span class="na">codeListValue=</span><span class="s">&#34;pointOfContact&#34;</span><span class="nt">&gt;</span>Point of contact<span class="nt">&lt;/cit:CI_RoleCode&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/cit:role&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;cit:party&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;cit:CI_Organisation&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;cit:name&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;gco:CharacterString&gt;</span>Puertos del Estado (PdE)<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/cit:name&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;/cit:CI_Organisation&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/cit:party&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/cit:CI_Responsibility&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/mri:pointOfContact&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;mri:spatialRepresentationType&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;mcc:MD_SpatialRepresentationTypeCode</span> <span class="na">codeList=</span><span class="s">&#34;(…snip…)#MD_SpatialRepresentationTypeCode&#34;</span> <span class="na">codeListValue=</span><span class="s">&#34;grid&#34;</span><span class="nt">&gt;</span>Grid<span class="nt">&lt;/mcc:MD_SpatialRepresentationTypeCode&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/mri:spatialRepresentationType&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;mri:resourceFormat&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;mrd:MD_Format&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;mrd:formatSpecificationCitation&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;cit:CI_Citation&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;cit:title&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;gco:CharacterString&gt;</span>Hierarchical Data Format, version 5<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/cit:title&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;cit:alternateTitle&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;gco:CharacterString&gt;</span>NetCDF-4<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/cit:alternateTitle&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;/cit:CI_Citation&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/mrd:formatSpecificationCitation&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/mrd:MD_Format&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/mri:resourceFormat&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/mri:MD_DataIdentification&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/mdb:identificationInfo&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;mdb:contentInfo&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;mrc:MD_CoverageDescription&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;mrc:attributeGroup&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;mrc:MD_AttributeGroup&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;mrc:attribute&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;mrc:MD_SampleDimension&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:sequenceIdentifier&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;gco:MemberName&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;gco:aName&gt;</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&lt;gco:CharacterString&gt;</span>zos<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;/gco:aName&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;gco:attributeType&gt;</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&lt;gco:TypeName&gt;</span>
+</span></span><span class="line"><span class="cl">                      <span class="nt">&lt;gco:aName&gt;</span>
+</span></span><span class="line"><span class="cl">                        <span class="nt">&lt;gco:CharacterString&gt;</span>short[865][1081][96]<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">                      <span class="nt">&lt;/gco:aName&gt;</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&lt;/gco:TypeName&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;/gco:attributeType&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;/gco:MemberName&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/mrc:sequenceIdentifier&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:description&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;gco:CharacterString&gt;</span>Sea surface height<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/mrc:description&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:name&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;mcc:MD_Identifier&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;mcc:code&gt;</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&lt;gco:CharacterString&gt;</span>sea_surface_height_above_geoid<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;/mcc:code&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;/mcc:MD_Identifier&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/mrc:name&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:units&gt;</span>m<span class="nt">&lt;/mrc:units&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:scaleFactor&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;gco:Real&gt;</span>0.001<span class="nt">&lt;/gco:Real&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/mrc:scaleFactor&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:offset&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;gco:Real&gt;</span>0.0<span class="nt">&lt;/gco:Real&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/mrc:offset&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;/mrc:MD_SampleDimension&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/mrc:attribute&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;mrc:attribute&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;mrc:MD_SampleDimension&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:sequenceIdentifier&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;gco:MemberName&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;gco:aName&gt;</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&lt;gco:CharacterString&gt;</span>uo<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;/gco:aName&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;gco:attributeType&gt;</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&lt;gco:TypeName&gt;</span>
+</span></span><span class="line"><span class="cl">                      <span class="nt">&lt;gco:aName&gt;</span>
+</span></span><span class="line"><span class="cl">                        <span class="nt">&lt;gco:CharacterString&gt;</span>short[865][1081][96]<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">                      <span class="nt">&lt;/gco:aName&gt;</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&lt;/gco:TypeName&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;/gco:attributeType&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;/gco:MemberName&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/mrc:sequenceIdentifier&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:description&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;gco:CharacterString&gt;</span>Eastward velocity<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/mrc:description&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:name&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;mcc:MD_Identifier&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;mcc:code&gt;</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&lt;gco:CharacterString&gt;</span>eastward_sea_water_velocity<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;/mcc:code&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;/mcc:MD_Identifier&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/mrc:name&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:units&gt;</span>m∕s<span class="nt">&lt;/mrc:units&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:scaleFactor&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;gco:Real&gt;</span>0.001<span class="nt">&lt;/gco:Real&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/mrc:scaleFactor&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:offset&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;gco:Real&gt;</span>0.0<span class="nt">&lt;/gco:Real&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/mrc:offset&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;/mrc:MD_SampleDimension&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/mrc:attribute&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;mrc:attribute&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;mrc:MD_SampleDimension&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:sequenceIdentifier&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;gco:MemberName&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;gco:aName&gt;</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&lt;gco:CharacterString&gt;</span>vo<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;/gco:aName&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;gco:attributeType&gt;</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&lt;gco:TypeName&gt;</span>
+</span></span><span class="line"><span class="cl">                      <span class="nt">&lt;gco:aName&gt;</span>
+</span></span><span class="line"><span class="cl">                        <span class="nt">&lt;gco:CharacterString&gt;</span>short[865][1081][96]<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">                      <span class="nt">&lt;/gco:aName&gt;</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&lt;/gco:TypeName&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;/gco:attributeType&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;/gco:MemberName&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/mrc:sequenceIdentifier&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:description&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;gco:CharacterString&gt;</span>Northward velocity<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/mrc:description&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:name&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;mcc:MD_Identifier&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;mcc:code&gt;</span>
+</span></span><span class="line"><span class="cl">                    <span class="nt">&lt;gco:CharacterString&gt;</span>northward_sea_water_velocity<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">                  <span class="nt">&lt;/mcc:code&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;/mcc:MD_Identifier&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/mrc:name&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:units&gt;</span>m∕s<span class="nt">&lt;/mrc:units&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:scaleFactor&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;gco:Real&gt;</span>0.001<span class="nt">&lt;/gco:Real&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/mrc:scaleFactor&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;mrc:offset&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;gco:Real&gt;</span>0.0<span class="nt">&lt;/gco:Real&gt;</span>
+</span></span><span class="line"><span class="cl">              <span class="nt">&lt;/mrc:offset&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;/mrc:MD_SampleDimension&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/mrc:attribute&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/mrc:MD_AttributeGroup&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/mrc:attributeGroup&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/mrc:MD_CoverageDescription&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/mdb:contentInfo&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;mdb:resourceLineage&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;mrl:LI_Lineage&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;mrl:source&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;mrl:LI_Source&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;mrl:description&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;gco:CharacterString&gt;</span>IBI-MFC (PdE Production Center)<span class="nt">&lt;/gco:CharacterString&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&lt;/mrl:description&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/mrl:LI_Source&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/mrl:source&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/mrl:LI_Lineage&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/mdb:resourceLineage&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;mdb:metadataScope&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;mdb:MD_MetadataScope&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;mdb:resourceScope&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;mcc:MD_ScopeCode</span> <span class="na">codeList=</span><span class="s">&#34;(…snip…)#MD_ScopeCode&#34;</span> <span class="na">codeListValue=</span><span class="s">&#34;dataset&#34;</span><span class="nt">&gt;</span>Dataset<span class="nt">&lt;/mcc:MD_ScopeCode&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&lt;/mdb:resourceScope&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/mdb:MD_MetadataScope&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/mdb:metadataScope&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/mdb:MD_Metadata&gt;</span></span></span></code></pre></div>
+
+
+      </article>
+    </main>
+    <footer class="footer">
+    <div class="container">
+      <p>
+        Copyright &copy; 2013-2023 The Apache Software Foundation, Licensed under the
+        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
+        Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
+      </p>
+    </div>
+</footer>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+
+</body>
+</html>
