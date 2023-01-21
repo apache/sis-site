@@ -122,9 +122,9 @@ public class RasterValuesAtGeographicCoordinates {
      * @throws DataStoreException if an error occurred while reading the raster.
      */
     private static void printComponents(DataStore store) throws DataStoreException {
-        if (store instanceof Aggregate a) {
+        if (store instanceof Aggregate agg) {
             System.out.println("Components found in the data store:");
-            for (Resource component : a.components()) {
+            for (Resource component : agg.components()) {
                 component.getIdentifier().ifPresent((id) -> System.out.println("- " + id));
             }
         } else {

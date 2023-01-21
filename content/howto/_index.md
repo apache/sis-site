@@ -12,9 +12,17 @@ The examples are grouped in the following sections:
 
 * [Instantiate a Universal Transverse Mercator (UTM) projection](howto/instantiate_utm_projection.html)
 * [Instantiate a Pseudo Mercator (a.k.a. Google) projection](faq.html#google)
-* [Transform coordinates between two reference systems](howto/transform_coordinates.html)
-* [Get the EPSG code or URN of an existing {{% CRS %}}](howto/lookup_crs_urn.html)
-* [Determine if two {{% CRS %}} are functionally equal](howto/crs_equality.html)
+* [Get the EPSG code or URN of an existing reference system](howto/lookup_crs_urn.html)
+* [Transform points between two reference systems](howto/transform_coordinates.html)
+* [Transform envelopes between two reference systems](howto/transform_envelopes.html)
+* [Union or intersection of envelopes in different reference systems](howto/envelopes_in_different_crs.html)
+* [Determine if two reference systems are functionally equal](howto/crs_equality.html)
+
+
+# Metadata    {#metadata}
+
+* [Get the geographic bounding box of a data file](howto/geographic_bounding_box.html)
+* [Export metadata of a data file to standard XML](howto/export_metadata_to_xml.html)
 
 
 # Grid coverages (rasters)    {#raster}
