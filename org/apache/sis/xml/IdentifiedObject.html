@@ -99,7 +99,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">IdentifiedObject</span></div>
 <div class="block">The interface for all SIS objects having identifiers. Identifiers are <a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link"><code>String</code></a> in
- a namespace identified by a <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/metadata/citation/Citation.html" title="class or interface in org.opengis.metadata.citation" class="external-link"><code>Citation</code></a>. The namespace can be some organization like
+ a namespace identified by a <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/metadata/citation/Citation.html" title="class or interface in org.opengis.metadata.citation" class="external-link"><code>Citation</code></a>. The namespace can be some organization like
  <a href="https://epsg.org/">EPSG</a> for Coordinate Reference System objects, or a
  well-known acronym like ISBN for <cite>International Standard Book Number</cite>.
 
@@ -113,23 +113,23 @@ object.<b>getIdentifierMap</b>().<b>put</b>(IdentifierSpace.ID, <font color="ora
 
  <h2>Relationship with GeoAPI</h2>
  Identifiers exist also in some (not all) GeoAPI objects. Some GeoAPI objects
- (<a href="http://www.geoapi.org/3.0/javadoc/org/opengis/metadata/acquisition/Instrument.html" title="class or interface in org.opengis.metadata.acquisition" class="external-link"><code>Instrument</code></a>, <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/metadata/acquisition/Platform.html" title="class or interface in org.opengis.metadata.acquisition" class="external-link"><code>Platform</code></a>,
- <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/metadata/acquisition/Operation.html" title="class or interface in org.opengis.metadata.acquisition" class="external-link"><code>Operation</code></a>, <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/metadata/lineage/Processing.html" title="class or interface in org.opengis.metadata.lineage" class="external-link"><code>Processing</code></a>,
+ (<a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/metadata/acquisition/Instrument.html" title="class or interface in org.opengis.metadata.acquisition" class="external-link"><code>Instrument</code></a>, <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/metadata/acquisition/Platform.html" title="class or interface in org.opengis.metadata.acquisition" class="external-link"><code>Platform</code></a>,
+ <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/metadata/acquisition/Operation.html" title="class or interface in org.opengis.metadata.acquisition" class="external-link"><code>Operation</code></a>, <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/metadata/lineage/Processing.html" title="class or interface in org.opengis.metadata.lineage" class="external-link"><code>Processing</code></a>,
  <i>etc.</i>) have an explicit single identifier attribute, while other GeoAPI objects
- (<a href="http://www.geoapi.org/3.0/javadoc/org/opengis/metadata/citation/Citation.html" title="class or interface in org.opengis.metadata.citation" class="external-link"><code>Citation</code></a>, <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/metadata/acquisition/Objective.html" title="class or interface in org.opengis.metadata.acquisition" class="external-link"><code>Objective</code></a>,
- referencing <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/referencing/IdentifiedObject.html" title="class or interface in org.opengis.referencing" class="external-link"><code>Identified­Object</code></a>, <i>etc.</i>) allow an arbitrary
+ (<a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/metadata/citation/Citation.html" title="class or interface in org.opengis.metadata.citation" class="external-link"><code>Citation</code></a>, <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/metadata/acquisition/Objective.html" title="class or interface in org.opengis.metadata.acquisition" class="external-link"><code>Objective</code></a>,
+ referencing <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/referencing/IdentifiedObject.html" title="class or interface in org.opengis.referencing" class="external-link"><code>Identified­Object</code></a>, <i>etc.</i>) allow an arbitrary
  number of identifiers. However, GeoAPI does not define explicit methods for handling the <code>id</code>,
  <code>uuid</code> or <code>href</code> attributes, since they are specific to XML marshalling (they do not
  appear in OGC/ISO abstract specifications). This <code>Identified­Object</code> interface provides a
  way to handle those identifiers.
 
- <p>Note that GeoAPI defines a similar interface, also named <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/referencing/IdentifiedObject.html" title="class or interface in org.opengis.referencing" class="external-link"><code>Identified­Object</code></a>.
+ <p>Note that GeoAPI defines a similar interface, also named <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/referencing/IdentifiedObject.html" title="class or interface in org.opengis.referencing" class="external-link"><code>Identified­Object</code></a>.
  However, that GeoAPI interface is not of general use, since it contains methods like
- <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/referencing/IdentifiedObject.html#toWKT()" title="class or interface in org.opengis.referencing" class="external-link"><code>to­WKT()</code></a> that are specific to referencing
+ <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/referencing/IdentifiedObject.html#toWKT()" title="class or interface in org.opengis.referencing" class="external-link"><code>to­WKT()</code></a> that are specific to referencing
  or geometric objects. In addition, the GeoAPI interface defines some attributes
- (<a href="http://www.geoapi.org/3.0/javadoc/org/opengis/referencing/IdentifiedObject.html#getName()" title="class or interface in org.opengis.referencing" class="external-link">name</a>,
- <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/referencing/IdentifiedObject.html#getAlias()" title="class or interface in org.opengis.referencing" class="external-link">alias</a>,
- <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/referencing/IdentifiedObject.html#getRemarks()" title="class or interface in org.opengis.referencing" class="external-link">remarks</a>) that are not needed
+ (<a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/referencing/IdentifiedObject.html#getName()" title="class or interface in org.opengis.referencing" class="external-link">name</a>,
+ <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/referencing/IdentifiedObject.html#getAlias()" title="class or interface in org.opengis.referencing" class="external-link">alias</a>,
+ <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/referencing/IdentifiedObject.html#getRemarks()" title="class or interface in org.opengis.referencing" class="external-link">remarks</a>) that are not needed
  for the purpose of handling XML <code>id</code>, <code>uuid</code> or <code>href</code> attributes.</p></div>
 <dl class="notes">
 <dt>Since:</dt>
@@ -165,7 +165,7 @@ object.<b>getIdentifierMap</b>().<b>put</b>(IdentifierSpace.ID, <font color="ora
 <div class="block">A map view of the <a href="#getIdentifiers()">identifiers</a> collection
  as (<var>authority</var>, <var>code</var>) entries.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/metadata/Identifier.html" title="class or interface in org.opengis.metadata" class="external-link">Identifier</a>&gt;</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/metadata/Identifier.html" title="class or interface in org.opengis.metadata" class="external-link">Identifier</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getIdentifiers()" class="member-name-link">get­Identifiers</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Returns all identifiers associated to this object.</div>
@@ -187,8 +187,8 @@ object.<b>getIdentifierMap</b>().<b>put</b>(IdentifierSpace.ID, <font color="ora
 <li>
 <section class="detail" id="getIdentifiers()">
 <h3>getIdentifiers</h3>
-<div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/metadata/Identifier.html" title="class or interface in org.opengis.metadata" class="external-link">Identifier</a>&gt;</span>&nbsp;<span class="element-name">getIdentifiers</span>()</div>
-<div class="block">Returns all identifiers associated to this object. Each <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/metadata/Identifier.html#getCode()" title="class or interface in org.opengis.metadata" class="external-link">identifier code</a> shall be unique in the <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/metadata/Identifier.html#getAuthority()" title="class or interface in org.opengis.metadata" class="external-link">identifier
+<div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;? extends <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/metadata/Identifier.html" title="class or interface in org.opengis.metadata" class="external-link">Identifier</a>&gt;</span>&nbsp;<span class="element-name">getIdentifiers</span>()</div>
+<div class="block">Returns all identifiers associated to this object. Each <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/metadata/Identifier.html#getCode()" title="class or interface in org.opengis.metadata" class="external-link">identifier code</a> shall be unique in the <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/metadata/Identifier.html#getAuthority()" title="class or interface in org.opengis.metadata" class="external-link">identifier
  authority</a> name space. Examples of namespace are:
 
  <ul>
@@ -230,9 +230,9 @@ object.<b>getIdentifierMap</b>().<b>put</b>(IdentifierSpace.ID, <font color="ora
  Each <a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/util/Map.Entry.html" title="class or interface in java.util" class="external-link">map entry</a> is associated
  to an element from the above identifier collection in which the
  <a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/util/Map.Entry.html#getKey()" title="class or interface in java.util" class="external-link">key</a> is the
- <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/metadata/Identifier.html#getAuthority()" title="class or interface in org.opengis.metadata" class="external-link">identifier authority</a> and the
+ <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/metadata/Identifier.html#getAuthority()" title="class or interface in org.opengis.metadata" class="external-link">identifier authority</a> and the
  <a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/util/Map.Entry.html#getValue()" title="class or interface in java.util" class="external-link">value</a> is the
- <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/metadata/Identifier.html#getCode()" title="class or interface in org.opengis.metadata" class="external-link">identifier code</a>.
+ <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/metadata/Identifier.html#getCode()" title="class or interface in org.opengis.metadata" class="external-link">identifier code</a>.
 
  <p>There is usually a one-to-one relationship between the map entries and the identifier
  elements, but not always:</p>
@@ -243,7 +243,7 @@ object.<b>getIdentifierMap</b>().<b>put</b>(IdentifierSpace.ID, <font color="ora
    many identifiers for the same authority, then only the first occurrence is visible through
    this <code>Map</code> view.</li>
 
-   <li>The map view may also contain more entries than the <a href="#getIdentifiers()">identifier collection</a>. For example, the <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/metadata/citation/Citation.html" title="class or interface in org.opengis.metadata.citation" class="external-link"><code>Citation</code></a>
+   <li>The map view may also contain more entries than the <a href="#getIdentifiers()">identifier collection</a>. For example, the <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/metadata/citation/Citation.html" title="class or interface in org.opengis.metadata.citation" class="external-link"><code>Citation</code></a>
    interface defines separated attributes for ISBN, ISSN and other identifiers. This map
    view may choose to unify all those attributes in a single view.</li>
  </ul>

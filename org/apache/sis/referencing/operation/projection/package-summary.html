@@ -119,8 +119,8 @@ loadScripts(document, 'script');</script>
  Many <a href="../../crs/DefaultGeographicCRS.html" title="class in org.apache.sis.referencing.crs">geographic coordinate reference systems</a>
  use axis in (<var>latitude</var>, <var>longitude</var>) order, but not all. Axis order, orientation and units
  are CRS-dependent. For example, some CRS use longitude values increasing toward
- <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/referencing/cs/AxisDirection.html#EAST" title="class or interface in org.opengis.referencing.cs" class="external-link">East</a>, while some others use longitude values
- increasing toward <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/referencing/cs/AxisDirection.html#WEST" title="class or interface in org.opengis.referencing.cs" class="external-link">West</a>.
+ <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/referencing/cs/AxisDirection.html#EAST" title="class or interface in org.opengis.referencing.cs" class="external-link">East</a>, while some others use longitude values
+ increasing toward <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/referencing/cs/AxisDirection.html#WEST" title="class or interface in org.opengis.referencing.cs" class="external-link">West</a>.
  The axis order must be specified in all CRS, and any method working with them should take their
  axis order and units in account.
 
@@ -150,14 +150,14 @@ loadScripts(document, 'script');</script>
  </blockquote>
 
  The Apache SIS implementation extends this rule to axis directions as well, i.e. (<var>x</var>, <var>y</var>) coordinates
- must be (<a href="http://www.geoapi.org/3.0/javadoc/org/opengis/referencing/cs/AxisDirection.html#EAST" title="class or interface in org.opengis.referencing.cs" class="external-link">East</a>,
- <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/referencing/cs/AxisDirection.html#NORTH" title="class or interface in org.opengis.referencing.cs" class="external-link">North</a>) oriented.
+ must be (<a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/referencing/cs/AxisDirection.html#EAST" title="class or interface in org.opengis.referencing.cs" class="external-link">East</a>,
+ <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/referencing/cs/AxisDirection.html#NORTH" title="class or interface in org.opengis.referencing.cs" class="external-link">North</a>) oriented.
 
  <h3>Implications on South oriented projections</h3>
  The above rule implies a non-intuitive behavior for the <cite>Transverse Mercator (South Orientated)</cite>
  projection, which still projects coordinates with <var>y</var> values increasing toward North.
  The real axis flip is performed outside this projection package, upon
- <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/referencing/cs/CoordinateSystemAxis.html" title="class or interface in org.opengis.referencing.cs" class="external-link">coordinate system axis</a> inspection,
+ <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/referencing/cs/CoordinateSystemAxis.html" title="class or interface in org.opengis.referencing.cs" class="external-link">coordinate system axis</a> inspection,
  as a concatenation of the North oriented cartographic projection with an affine transform.
  Such axis analysis and transforms concatenation can be performed automatically by the
  <a href="../transform/DefaultMathTransformFactory.html#createBaseToDerived(org.opengis.referencing.crs.CoordinateReferenceSystem,org.opengis.parameter.ParameterValueGroup,org.opengis.referencing.cs.CoordinateSystem)"><code>create­Base­To­Derived(…)</code></a> method defined in the <code>Math­Transform­Factory</code> interface.
@@ -191,8 +191,8 @@ loadScripts(document, 'script');</script>
  <p>In other words, the
  <a href="NormalizedProjection.html#transform(double%5B%5D,int,double%5B%5D,int,boolean)">transform</a> method of the middle step works typically on longitude and latitude values in <strong>radians</strong>
  relative to the central meridian (not necessarily Greenwich). Its results are typically (<var>x</var>, <var>y</var>)
- coordinates having (<a href="http://www.geoapi.org/3.0/javadoc/org/opengis/referencing/cs/AxisDirection.html#EAST" title="class or interface in org.opengis.referencing.cs" class="external-link">East</a>,
- <a href="http://www.geoapi.org/3.0/javadoc/org/opengis/referencing/cs/AxisDirection.html#NORTH" title="class or interface in org.opengis.referencing.cs" class="external-link">North</a>) axis orientation.
+ coordinates having (<a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/referencing/cs/AxisDirection.html#EAST" title="class or interface in org.opengis.referencing.cs" class="external-link">East</a>,
+ <a href="http://www.geoapi.org/3.0/javadoc/org.opengis.geoapi/org/opengis/referencing/cs/AxisDirection.html#NORTH" title="class or interface in org.opengis.referencing.cs" class="external-link">North</a>) axis orientation.
  However, in some cases the actual input and output coordinates may be different than the above by some scale factor,
  translation or rotation, if the projection implementation choose to combine some linear coefficients with the
  above-cited normalization and denormalization affine transforms.</p>
