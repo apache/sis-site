@@ -185,29 +185,6 @@ git checkout geoapi-4.0
 Note that those `geoapi-xxx` branches may disappear or be replaced by something else
 after {{% OGC %}} releases the corresponding GeoAPI versions.
 
-# Opening Apache SIS in NetBeans    {#netbeans}
-
-Apache {{% SIS %}} build is defined by Maven `pom.xml` files.
-All major IDE, including NetBeans, can open a project defined by those files.
-However in the particular case of NetBeans IDE, we also provide a way to open Apache {{% SIS %}} using Ant configuration files.
-Compared to "Java with Maven" project, the "Java with Ant" project is faster to build and debug,
-makes easier to see all modules at once, and provides more configuration options.
-Those configuration files are available in the `ide-project/NetBeans` directory.
-This project will fetch dependencies directly from the `.m2/repository` local directory,
-and will refer to the resources `*.utf` files compiled by Maven in the `sis-*/target` directories.
-Consequently it is important to run `mvn install` manually (on the command line)
-before opening the project and after any change in the project dependencies or in the resources.
-
-Users can customize their project configuration by editing the `ide-project/NetBeans/nbproject/private/config.properties` file.
-The `private` directory is excluded by the versioning system, so it okay to put user-specific information there.
-For example in order to overwrite the default location of the local Maven repository and to define a system property at execution time,
-one can use:
-
-{{< highlight ini >}}
-maven.repository = /path/to/my/local/repository
-run.jvmargs = -DmyProperty=myValue
-{{< / highlight >}}
-
 # History    {#history}
 
 All developments and tags prior Apache {{% SIS %}} 1.0 were done on a [Subversion][subversion] repository
