@@ -197,9 +197,9 @@ Notes:
   + The `<gpg.keyname>` property can be omitted if GPG contains only one private key.
   + The whole `<profile>` section can be omitted if the two above-cited properties are omitted.
 
-[PGP]:     http://www.apache.org/dev/openpgp.html
-[signing]: http://www.apache.org/dev/release-signing.html
-[maven]:   http://www.apache.org/dev/publishing-maven-artifacts.html
+[PGP]:     https://www.apache.org/dev/openpgp.html
+[signing]: https://www.apache.org/dev/release-signing.html
+[maven]:   https://www.apache.org/dev/publishing-maven-artifacts.html
 [source]:  https://gitbox.apache.org/repos/asf?p=sis.git
-[dist]:    http://dist.apache.org/repos/dist/release/sis/
-[MIT]:     http://pgp.mit.edu
+[dist]:    https://dist.apache.org/repos/dist/release/sis/
+[MIT]:     https://pgp.mit.edu

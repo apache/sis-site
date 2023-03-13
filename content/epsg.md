@@ -257,4 +257,4 @@ fetching the data source from the `context.xml` file.
 [IOGP]:     https://www.iogp.org/
 [EPSG]:     https://epsg.org/
 [EPSG-ToU]: https://epsg.org/terms-of-use.html
-[Derby]:    http://db.apache.org/derby/derby_downloads.html
+[Derby]:    https://db.apache.org/derby/derby_downloads.html

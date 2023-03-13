@@ -650,7 +650,7 @@ In the _Repositories_ tag, select _Snapshots_ of type _hosted_
 Delete the whole `org/apache/sis` directory.
 It will be recreated the next time that [Jenkins][jenkins] is run.
 
-[release-faq]:      http://www.apache.org/dev/release.html
-[JIRA]:             http://issues.apache.org/jira/browse/SIS
+[release-faq]:      https://www.apache.org/dev/release.html
+[JIRA]:             https://issues.apache.org/jira/browse/SIS
 [repository]:       https://repository.apache.org/index.html
 [jenkins]:          https://ci-builds.apache.org/job/SIS/

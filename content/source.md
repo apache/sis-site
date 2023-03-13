@@ -192,11 +192,11 @@ and can be [browsed online][viewvc].
 Tags for Apache {{% SIS %}} versions 0.1 to 0.8 should be fetched from the [SVN repository][svn-sis-tags].
 The development branches on that repository were named `JDK8`, `JDK7`, `JDK6` and `trunk`.
 
-[subversion]:       http://subversion.apache.org
-[git]:              http://git-scm.com
-[viewvc]:           http://svn.apache.org/viewvc/sis/
+[subversion]:       https://subversion.apache.org
+[git]:              https://git-scm.com
+[viewvc]:           https://svn.apache.org/viewvc/sis/
 [epsg-install]:     epsg.html
 [EPSG-ToU]:         https://epsg.org/terms-of-use.html
 [svn-sis-tags]:     https://svn.apache.org/repos/asf/sis/tags/
-[geoapi-stable]:    http://www.geoapi.org/3.0/index.html
-[geoapi-snapshot]:  http://www.geoapi.org/snapshot/index.html
+[geoapi-stable]:    https://www.geoapi.org/3.0/index.html
+[geoapi-snapshot]:  https://www.geoapi.org/snapshot/index.html

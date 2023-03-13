@@ -65,7 +65,7 @@ Some standards are implemented partially, others almost fully.
     <td>Spatial referencing by geographic identifier</td>
   </tr><tr>
     <td>ISO 19162:2015</td>
-    <td><a href="http://docs.opengeospatial.org/is/12-063r5/12-063r5.html">OGC 12-063</a></td>
+    <td><a href="https://docs.opengeospatial.org/is/12-063r5/12-063r5.html">OGC 12-063</a></td>
     <td>ISO 19162:2019</td>
     <td>Well-known text representation of coordinate reference systems</td>
   </tr><tr>
@@ -90,7 +90,7 @@ Some standards are implemented partially, others almost fully.
     <td>Grid Coverage</td>
   </tr><tr>
     <td></td>
-    <td><a href="http://docs.opengeospatial.org/is/19-008r4/19-008r4.html">OGC 19-008</a></td>
+    <td><a href="https://docs.opengeospatial.org/is/19-008r4/19-008r4.html">OGC 19-008</a></td>
     <td></td>
     <td>GeoTIFF format</td>
   </tr><tr>
@@ -100,12 +100,12 @@ Some standards are implemented partially, others almost fully.
     <td>NetCDF binary encoding: classic and 64-bit offset format</td>
   </tr><tr>
     <td></td>
-    <td><a href="http://docs.opengeospatial.org/bp/16-114r3/16-114r3.html">OGC 16-114</a></td>
+    <td><a href="https://docs.opengeospatial.org/bp/16-114r3/16-114r3.html">OGC 16-114</a></td>
     <td></td>
     <td>Moving Feature netCDF encoding</td>
   </tr><tr>
     <td></td>
-    <td><a href="http://docs.opengeospatial.org/is/14-084r2/14-084r2.html">OGC 14-084</a></td>
+    <td><a href="https://docs.opengeospatial.org/is/14-084r2/14-084r2.html">OGC 14-084</a></td>
     <td></td>
     <td>Moving features Comma Separated Values (CSV) encoding</td>
   </tr><tr>
@@ -115,7 +115,7 @@ Some standards are implemented partially, others almost fully.
     <td>Simple feature access — SQL option</td>
   </tr><tr>
     <td>ISO 19143:2010</td>
-    <td><a href="http://docs.opengeospatial.org/is/09-026r2/09-026r2.html">OGC 09-026</a></td>
+    <td><a href="https://docs.opengeospatial.org/is/09-026r2/09-026r2.html">OGC 09-026</a></td>
     <td></td>
     <td>Filter encoding</td>
   </tr><tr>
