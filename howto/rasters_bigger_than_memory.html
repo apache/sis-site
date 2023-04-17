@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
+  
 
   <title>Apache SIS - Handle rasters bigger than memory</title>
   <meta charset="utf-8">
@@ -104,14 +104,14 @@
       <article>
         <img src="../images/logo.png" class="sis-logo" align="left"/>
         <p class="page-title">Handle rasters bigger than memory</p>
-
+        
   <p>This example opens a big GeoTIFF file without reading the tiles immediately.
 Instead, tiles will be read only when requested by a call to the Java2D <code>RenderedImage.getTile(int, int)</code> method.
 Loaded tiles are cached by soft references, i.e. they may be discarted and reloaded when needed again.
 This approach allows processing of raster data larger than memory,
 provided that the application does not request all tiles at once.
 It integrates well with operations provided by Apache <abbr title="Spatial Information System">SIS</abbr> such as
-<a href="resample_and_save_raster.html">raster resampling</a> and
+<a href="resample_raster.html">raster resampling</a> and
 <a href="raster_values_at_geographic_coordinates.html">getting values at geographic coordinates</a>.</p>
 <p>The example in this page works with pixel coordinates.
 For working with geographic coordinates, see
@@ -168,11 +168,6 @@ depending how the Coordinate Reference System (CRS) is encoded in the GeoTIFF fi
 </span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
 </span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">DataStoreException</span> <span class="o">{</span>
 </span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">(</span><span class="n">DataStore</span> <span class="n">store</span> <span class="o">=</span> <span class="n">DataStores</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&#34;TM250m.tiff&#34;</span><span class="o">)))</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">            <span class="cm">/*
-</span></span></span><span class="line"><span class="cl"><span class="cm">             * This data store is an aggregate because a GeoTIFF file may contain many images.
-</span></span></span><span class="line"><span class="cl"><span class="cm">             * Not all data stores are aggregate, so the following casts do not apply to all.
-</span></span></span><span class="line"><span class="cl"><span class="cm">             * For this example, we know that the file is GeoTIFF and we take the first image.
-</span></span></span><span class="line"><span class="cl"><span class="cm">             */</span>
 </span></span><span class="line"><span class="cl">            <span class="n">Collection</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Resource</span><span class="o">&gt;</span> <span class="n">allImages</span> <span class="o">=</span> <span class="o">((</span><span class="n">Aggregate</span><span class="o">)</span> <span class="n">store</span><span class="o">).</span><span class="na">components</span><span class="o">();</span>
 </span></span><span class="line"><span class="cl">            <span class="n">GridCoverageResource</span> <span class="n">firstImage</span> <span class="o">=</span> <span class="o">(</span><span class="n">GridCoverageResource</span><span class="o">)</span> <span class="n">allImages</span><span class="o">.</span><span class="na">iterator</span><span class="o">().</span><span class="na">next</span><span class="o">();</span>
 </span></span><span class="line"><span class="cl">            <span class="cm">/*
@@ -184,56 +179,49 @@ depending how the Coordinate Reference System (CRS) is encoded in the GeoTIFF fi
 </span></span></span><span class="line"><span class="cl"><span class="cm">             */</span>
 </span></span><span class="line"><span class="cl">            <span class="n">firstImage</span><span class="o">.</span><span class="na">setLoadingStrategy</span><span class="o">(</span><span class="n">RasterLoadingStrategy</span><span class="o">.</span><span class="na">AT_GET_TILE_TIME</span><span class="o">);</span>
 </span></span><span class="line"><span class="cl">            <span class="n">GridCoverage</span> <span class="n">data</span> <span class="o">=</span> <span class="n">firstImage</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Information about the selected image:%n%s%n&#34;</span><span class="o">,</span> <span class="n">data</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">            <span class="cm">/*
-</span></span></span><span class="line"><span class="cl"><span class="cm">             * Get an arbitrary tile, then get an arbitrary sample value in an arbitrary band
-</span></span></span><span class="line"><span class="cl"><span class="cm">             * (the blue channel) of that tile.
-</span></span></span><span class="line"><span class="cl"><span class="cm">             */</span>
-</span></span><span class="line"><span class="cl">            <span class="n">RenderedImage</span> <span class="n">image</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="na">render</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;The image has %d × %d tiles.%n&#34;</span><span class="o">,</span> <span class="n">image</span><span class="o">.</span><span class="na">getNumXTiles</span><span class="o">(),</span> <span class="n">image</span><span class="o">.</span><span class="na">getNumYTiles</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">            <span class="n">printPixelValue</span><span class="o">(</span><span class="n">data</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">            <span class="n">Raster</span> <span class="n">tile</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="na">getTile</span><span class="o">(</span><span class="n">130</span><span class="o">,</span> <span class="n">80</span><span class="o">);</span>               <span class="c1">// This is where tile loading actually happen.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Got a tile starting at coordinates %d, %d.%n&#34;</span><span class="o">,</span> <span class="n">tile</span><span class="o">.</span><span class="na">getMinX</span><span class="o">(),</span> <span class="n">tile</span><span class="o">.</span><span class="na">getMinY</span><span class="o">());</span>
-</span></span><span class="line"><span class="cl">            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;A sample value in a tile: %d%n&#34;</span><span class="o">,</span> <span class="n">tile</span><span class="o">.</span><span class="na">getSample</span><span class="o">(</span><span class="n">93710</span><span class="o">,</span> <span class="n">57680</span><span class="o">,</span> <span class="n">2</span><span class="o">));</span>
-</span></span><span class="line"><span class="cl">            <span class="cm">/*
-</span></span></span><span class="line"><span class="cl"><span class="cm">             * If we know in advance which tiles will be requested, specifying them in advance allows
-</span></span></span><span class="line"><span class="cl"><span class="cm">             * the GeoTIFF reader to use a better strategy than loading the tiles in random order.
-</span></span></span><span class="line"><span class="cl"><span class="cm">             */</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * Prints the value of an arbitrary pixel.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     *
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @param data      the data from which to get sample values.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @param prefetch  whether to load some pixels in advance.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printPixelValue</span><span class="o">(</span><span class="n">GridCoverage</span> <span class="n">data</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">prefetch</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">RenderedImage</span> <span class="n">image</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="na">render</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;The image has %d × %d tiles.%n&#34;</span><span class="o">,</span> <span class="n">image</span><span class="o">.</span><span class="na">getNumXTiles</span><span class="o">(),</span> <span class="n">image</span><span class="o">.</span><span class="na">getNumYTiles</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">        <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * If we know in advance which tiles will be requested, specifying them in advance allows
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * the GeoTIFF reader to use a better strategy than loading the tiles in random order.
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * This step is optional.
+</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">prefetch</span><span class="o">)</span> <span class="o">{</span>
 </span></span><span class="line"><span class="cl">            <span class="n">var</span> <span class="n">processor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ImageProcessor</span><span class="o">();</span>
 </span></span><span class="line"><span class="cl">            <span class="n">image</span> <span class="o">=</span> <span class="n">processor</span><span class="o">.</span><span class="na">prefetch</span><span class="o">(</span><span class="n">image</span><span class="o">,</span> <span class="k">new</span> <span class="n">Rectangle</span><span class="o">(</span><span class="n">90000</span><span class="o">,</span> <span class="n">50000</span><span class="o">,</span> <span class="n">1000</span><span class="o">,</span> <span class="n">1000</span><span class="o">));</span>
-</span></span><span class="line"><span class="cl">            <span class="n">tile</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="na">getTile</span><span class="o">(</span><span class="n">130</span><span class="o">,</span> <span class="n">80</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Same, but from prefetched image: %d%n%n&#34;</span><span class="o">,</span> <span class="n">tile</span><span class="o">.</span><span class="na">getSample</span><span class="o">(</span><span class="n">93710</span><span class="o">,</span> <span class="n">57680</span><span class="o">,</span> <span class="n">2</span><span class="o">));</span>
 </span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * Get an arbitrary tile, then get an arbitrary sample value in an arbitrary band (the blue channel).
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * This example handles the tiles directly for demonstration purposes, but it could be simplified
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * by using `PixelIterator` instead.
+</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Raster</span> <span class="n">tile</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="na">getTile</span><span class="o">(</span><span class="n">130</span><span class="o">,</span> <span class="n">80</span><span class="o">);</span>               <span class="c1">// This is where tile loading actually happen.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Got a tile starting at coordinates %d, %d.%n&#34;</span><span class="o">,</span> <span class="n">tile</span><span class="o">.</span><span class="na">getMinX</span><span class="o">(),</span> <span class="n">tile</span><span class="o">.</span><span class="na">getMinY</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;A sample value in the arbitrary tile: %d%n&#34;</span><span class="o">,</span> <span class="n">tile</span><span class="o">.</span><span class="na">getSample</span><span class="o">(</span><span class="n">93710</span><span class="o">,</span> <span class="n">57680</span><span class="o">,</span> <span class="n">2</span><span class="o">));</span>
 </span></span><span class="line"><span class="cl">    <span class="o">}</span>
 </span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
 <h1 id="output">Output</h1>
 <p>The output depends on the raster data and the locale.
 Below is an example:</p>
-<pre tabindex="0"><code>Information about the selected image:
-CompressedSubset
-  └─Coverage domain
-      ├─Grid extent
-      │   ├─Column: [0 … 172799] (172800 cells)
-      │   └─Row:    [0 …  86399]  (86400 cells)
-      ├─Geographic extent
-      │   ├─Lower bound:  90°00′00″S  180°00′00″W
-      │   └─Upper bound:  90°00′00″N  180°00′00″E
-      ├─Envelope
-      │   ├─Geodetic longitude: -180.000 … 180.000  ∆Lon = 0.00208333°
-      │   └─Geodetic latitude:   -90.000 … 90.000   ∆Lat = 0.00208333°
-      ├─Coordinate reference system
-      │   └─CRS:84 — WGS 84
-      └─Conversion (origin in a cell center)
-          └─┌                                                                    ┐
-            │ 0.0020833333333333333   0                      -179.99895833333332 │
-            │ 0                      -0.0020833333333333333    89.99895833333333 │
-            │ 0                       0                         1                │
-            └                                                                    ┘
-
-The image has 240 × 120 tiles.
+<pre tabindex="0"><code>The image has 240 × 120 tiles.
 Got a tile starting at coordinates 93600, 57600.
-A sample value in a tile: 20
-Same, but from prefetched image: 20
+A sample value in the arbitrary tile: 20
+</code></pre><p>If logging at fine level is enabled, the logs should contain an entry likes below.
+The interesting point is that the &ldquo;loading&rdquo; of the TIFF file was quick even if the file was very big.
+This is because the loading did not really happens at that time,
+but instead was deferred at <code>image.getTile(…)</code> or <code>processor.prefetch(…)</code> time.</p>
+<pre tabindex="0"><code>FINE [GridCoverageResource] Loaded grid coverage between 90°S – 90°N and 180°W – 180°E from file “TM250m.tiff” in 0.779 seconds.
 </code></pre>
 
       </article>
