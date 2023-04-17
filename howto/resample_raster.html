@@ -3,7 +3,7 @@
 <head>
   
 
-  <title>Apache SIS - Transform coordinates</title>
+  <title>Apache SIS - Resample a raster</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
@@ -103,13 +103,14 @@
     <main class="container">
       <article>
         <img src="../images/logo.png" class="sis-logo" align="left"/>
-        <p class="page-title">Transform coordinates</p>
+        <p class="page-title">Resample a raster</p>
         
-  <p>The following Java code projects geographic coordinates from the <em>World Geodetic System 1984</em> (WGS84) to <em>WGS 84 / UTM zone 33N</em>.
-In order to make the example a little bit simpler, this code uses predefined constants given by the <code>CommonCRS</code> convenience class.
-But more advanced applications may use <a href="../epsg.html">EPSG codes</a> or definitions in Well-Known Text (WKT) instead.</p>
-<p><strong>Note:</strong> if the result of a coordinate transformation seems wrong, see the <a href="../faq.html">FAQ</a> page.
-Unexpected results are often caused by wrong axis order.</p>
+  <p>This example reprojects a raster to a different Coordinate Reference System (CRS).
+This example assumes a preloaded two-dimensional raster.
+For the loading part,
+see <a href="read_netcdf.html">read from a netCDF file</a>
+or <a href="read_geotiff.html">read from a GeoTIFF file</a>
+code examples.</p>
 <h1 id="direct-dependencies">Direct dependencies</h1>
 <table>
 <thead>
@@ -121,72 +122,96 @@ Unexpected results are often caused by wrong axis order.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>org.apache.sis.storage:sis-referencing</code></td>
-<td><code>org.apache.sis.referencing</code></td>
+<td><code>org.apache.sis.code:sis-feature</code></td>
+<td><code>org.apache.sis.feature</code></td>
 <td></td>
 </tr>
 <tr>
 <td><code>org.apache.sis.non-free:sis-embedded-data</code></td>
 <td><code>org.apache.sis.referencing.database</code></td>
-<td>Optional. Non-Apache license.</td>
+<td>Non-Apache license.</td>
 </tr>
 </tbody>
 </table>
-<p>The <a href="../epsg.html">EPSG dependency</a> is optional for this example.
-But if present, the Coordinate Reference Systems will have more metadata.
-Consequently, coordinate transformation results between some pairs of reference systems
-may be different depending on whether the EPSG dataset is present or not.
-In general, results are more accurate and/or more reliable in presence of EPSG dataset.</p>
+<p>The <a href="../epsg.html">EPSG dependency</a> is necessary for this example
+because a Coordinate Reference System (CRS) is instantiated from its EPSG code.
+But it would also be possible to specify a CRS without EPSG code,
+for example using Well Known Text (WKT) format.</p>
 <h1 id="code-example">Code example</h1>
-<p>Note that all geographic coordinates below express latitude <em>before</em> longitude.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.geometry.DirectPosition</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.referencing.crs.CoordinateReferenceSystem</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.referencing.operation.CoordinateOperation</span><span class="o">;</span>
+<p>The file name in following code need to be updated for yours data.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.awt.image.ImagingOpException</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.coverage.grid.GridCoverage</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.coverage.grid.GridCoverageProcessor</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.image.Interpolation</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CRS</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.referencing.operation.TransformException</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.util.FactoryException</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CRS</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CommonCRS</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.geometry.DirectPosition2D</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">TransformCoordinates</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ResampleRaster</span> <span class="o">{</span>
 </span></span><span class="line"><span class="cl">    <span class="cm">/**
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * Demo entry point.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     *
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @param  args  ignored.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws FactoryException   if an error occurred while creating the Coordinate Reference System (CRS).
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws TransformException if an error occurred while transforming coordinates to the target CRS.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws ImagingOpException unchecked exception thrown if an error occurred while resampling a tile.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
 </span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">FactoryException</span><span class="o">,</span> <span class="n">TransformException</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">CoordinateReferenceSystem</span> <span class="n">sourceCRS</span> <span class="o">=</span> <span class="n">CommonCRS</span><span class="o">.</span><span class="na">WGS84</span><span class="o">.</span><span class="na">geographic</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">        <span class="n">CoordinateReferenceSystem</span> <span class="n">targetCRS</span> <span class="o">=</span> <span class="n">CommonCRS</span><span class="o">.</span><span class="na">WGS84</span><span class="o">.</span><span class="na">universal</span><span class="o">(</span><span class="n">40</span><span class="o">,</span> <span class="n">14</span><span class="o">);</span>  <span class="c1">// UTM zone for 40°N 14°E.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">CoordinateOperation</span> <span class="n">operation</span> <span class="o">=</span> <span class="n">CRS</span><span class="o">.</span><span class="na">findOperation</span><span class="o">(</span><span class="n">sourceCRS</span><span class="o">,</span> <span class="n">targetCRS</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">GridCoverage</span> <span class="n">data</span> <span class="o">=</span> <span class="o">...;</span>      <span class="c1">// See &#34;Read netCDF&#34; or &#34;Read GeoTIFF&#34; code examples.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Information about the selected image:%n%s%n&#34;</span><span class="o">,</span> <span class="n">data</span><span class="o">.</span><span class="na">getGridGeometry</span><span class="o">());</span>
 </span></span><span class="line"><span class="cl">        <span class="cm">/*
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * The above lines are costly and should be performed only once before to project many points.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * In this example, the operation that we got is valid for coordinates in geographic area from
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * 12°E to 18°E (UTM zone 33) and 0°N to 84°N.
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * Reproject to &#34;WGS 84 / World Mercator&#34; (EPSG::3395) using bilinear interpolation.
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * This example lets Apache SIS choose the output grid size and resolution.
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * But it is possible to specify those aspects if desired.
 </span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
-</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Domain of validity:&#34;</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">CRS</span><span class="o">.</span><span class="na">getGeographicBoundingBox</span><span class="o">(</span><span class="n">operation</span><span class="o">));</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="n">DirectPosition</span> <span class="n">ptSrc</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DirectPosition2D</span><span class="o">(</span><span class="n">40</span><span class="o">,</span> <span class="n">14</span><span class="o">);</span>           <span class="c1">// 40°N 14°E
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">DirectPosition</span> <span class="n">ptDst</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="na">getMathTransform</span><span class="o">().</span><span class="na">transform</span><span class="o">(</span><span class="n">ptSrc</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Source: &#34;</span> <span class="o">+</span> <span class="n">ptSrc</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Target: &#34;</span> <span class="o">+</span> <span class="n">ptDst</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">var</span> <span class="n">processor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GridCoverageProcessor</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">processor</span><span class="o">.</span><span class="na">setInterpolation</span><span class="o">(</span><span class="n">Interpolation</span><span class="o">.</span><span class="na">BILINEAR</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">data</span> <span class="o">=</span> <span class="n">processor</span><span class="o">.</span><span class="na">resample</span><span class="o">(</span><span class="n">data</span><span class="o">,</span> <span class="n">CRS</span><span class="o">.</span><span class="na">forCode</span><span class="o">(</span><span class="s">&#34;EPSG::3395&#34;</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Information about the image after reprojection:%n%s%n&#34;</span><span class="o">,</span> <span class="n">data</span><span class="o">.</span><span class="na">getGridGeometry</span><span class="o">());</span>
 </span></span><span class="line"><span class="cl">    <span class="o">}</span>
 </span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
 <h1 id="output">Output</h1>
-<p>Note: for some pairs of Coordinate Reference Systems,
-the output may vary depending on whether the <a href="../epsg.html">EPSG geodetic dataset</a> is present or not.</p>
-<pre tabindex="0"><code>Domain of validity:
-Geographic bounding box
-  ├─West bound longitude…… 12°E
-  ├─East bound longitude…… 18°E
-  ├─South bound latitude…… 0°N
-  └─North bound latitude…… 84°N
+<p>The output depends on the raster data and the locale.
+Below is an example:</p>
+<pre tabindex="0"><code>Information about the image after reprojection:
+GridGeometry
+  ├─Grid extent
+  │   ├─Column: [0 … 8191] (8192 cells)
+  │   └─Row:    [0 … 8191] (8192 cells)
+  ├─Geographic extent
+  │   ├─Lower bound:  48°59′20″N  02°31′33″E
+  │   └─Upper bound:  49°01′08″N  02°34′16″E
+  ├─Envelope
+  │   ├─Easting:    465,341.6 … 468,618.39999999997  ∆E = 0.4 m
+  │   └─Northing: 5,426,352.8 … 5,429,629.6          ∆N = 0.4 m
+  ├─Coordinate reference system
+  │   └─EPSG:32631 — WGS 84 / UTM zone 31N
+  └─Conversion (origin in a cell center)
+      └─┌                      ┐
+        │ 0.4   0     465341.8 │
+        │ 0    -0.4  5429629.4 │
+        │ 0     0          1   │
+        └                      ┘
 
-Source: POINT(40 14)
-Target: POINT(414639.5381572213 4428236.064633072)
+Information about the image after reprojection:
+GridGeometry
+  ├─Grid extent
+  │   ├─Dimension 0: [0 … 8239] (8240 cells)
+  │   └─Dimension 1: [0 … 8240] (8241 cells)
+  ├─Geographic extent
+  │   ├─Lower bound:  48°59′20″N  02°31′33″E
+  │   └─Upper bound:  49°01′08″N  02°34′16″E
+  ├─Envelope
+  │   ├─Easting:   281,190.4273301751 … 286,207.11249780044  ∆E = 0.60882102 m
+  │   └─Northing: 6,240,752.860382801 … 6,245,770.154371441  ∆N = 0.60882102 m
+  ├─Coordinate reference system
+  │   └─EPSG:3395 — WGS 84 / World Mercator
+  └─Conversion (origin in a cell center)
+      └─┌                                                            ┐
+        │ 0.6088210154885099   0                  281190.73174068285 │
+        │ 0                   -0.60882101548851  6245769.8499609330  │
+        │ 0                    0                       1             │
+        └                                                            ┘
 </code></pre>
 
       </article>

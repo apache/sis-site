@@ -3,7 +3,7 @@
 <head>
   
 
-  <title>Apache SIS - Get raster values at geographic coordinates</title>
+  <title>Apache SIS - Get raster values at pixel coordinates</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
@@ -103,15 +103,10 @@
     <main class="container">
       <article>
         <img src="../images/logo.png" class="sis-logo" align="left"/>
-        <p class="page-title">Get raster values at geographic coordinates</p>
+        <p class="page-title">Get raster values at pixel coordinates</p>
         
-  <p>This example fetches values at given geospatial coordinates in a raster.
-The coordinates can be expressed in different Coordinate Reference System (CRS).
-Conversions from geographic or projected coordinates to pixel coordinates,
-optionally followed by conversions from raster data to units of measurement,
-are done automatically.
-Raster data and spatiotemporal coordinates can have more than two dimensions.</p>
-<p>This example assumes a preloaded three-dimensional raster.
+  <p>This example fetches values at given pixel coordinates in a raster.
+This example assumes a preloaded three-dimensional raster.
 For the loading part,
 see <a href="read_netcdf.html">read from a netCDF file</a>
 or <a href="read_geotiff.html">read from a GeoTIFF file</a>
@@ -138,15 +133,16 @@ This choice is specified by the boolean argument in the <code>data.​forConvert
 </tbody>
 </table>
 <h1 id="code-example">Code example</h1>
-<p>The geographic coordinates in following code need to be updated for yours data.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.util.Map</span><span class="o">;</span>
+<p>The pixel coordinates in following code need to be updated for yours data.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.awt.Point</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.awt.image.RenderedImage</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">javax.measure.Unit</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.coverage.grid.GridCoverage</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.geometry.GeneralDirectPosition</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CommonCRS</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.coverage.grid.GridExtent</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.image.PixelIterator</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.measure.Units</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RasterValuesAtGeographicCoordinates</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RasterValuesAtPixelCoordinates</span> <span class="o">{</span>
 </span></span><span class="line"><span class="cl">    <span class="cm">/**
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * Demo entry point.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     *
@@ -163,41 +159,45 @@ This choice is specified by the boolean argument in the <code>data.​forConvert
 </span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">band</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl">        <span class="n">Unit</span><span class="o">&lt;?&gt;</span> <span class="n">unit</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="na">getSampleDimensions</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">band</span><span class="o">).</span><span class="na">getUnits</span><span class="o">().</span><span class="na">orElse</span><span class="o">(</span><span class="n">Units</span><span class="o">.</span><span class="na">UNITY</span><span class="o">);</span>
 </span></span><span class="line"><span class="cl">        <span class="cm">/*
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * Get raster values at geographic coordinates expressed in WGS84.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * Coordinate values in this example are in (latitude, longitude) order.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * Any compatible coordinate reference system (CRS) can be used below,
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * Apache SIS will automatically transform to the CRS used by the raster.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * If the raster data are three-dimensional, a 3D CRS should be specified.
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * If the data are three-dimensional, we need to specify a two-dimensional slice
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * for the `RenderedImage`. Following code arbitrarily takes the first slice.
 </span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
-</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Evaluation at some (latitude, longitude) coordinates:&#34;</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">var</span> <span class="n">point</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GeneralDirectPosition</span><span class="o">(</span><span class="n">CommonCRS</span><span class="o">.</span><span class="na">WGS84</span><span class="o">.</span><span class="na">geographic</span><span class="o">());</span>
-</span></span><span class="line"><span class="cl">        <span class="n">GridCoverage</span><span class="o">.</span><span class="na">Evaluator</span> <span class="n">eval</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="na">evaluator</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">GridExtent</span> <span class="n">extent</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="na">getGridGeometry</span><span class="o">().</span><span class="na">getExtent</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">&#34;Grid extent:%n%s%n&#34;</span><span class="o">,</span> <span class="n">extent</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">extent</span><span class="o">.</span><span class="na">getDimension</span><span class="o">()</span> <span class="o">&gt;</span> <span class="n">2</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="kt">long</span> <span class="n">first</span> <span class="o">=</span> <span class="n">extent</span><span class="o">.</span><span class="na">getLow</span><span class="o">(</span><span class="n">2</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">extent</span> <span class="o">=</span> <span class="n">extent</span><span class="o">.</span><span class="na">withRange</span><span class="o">(</span><span class="n">2</span><span class="o">,</span> <span class="n">first</span><span class="o">,</span> <span class="n">first</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">RenderedImage</span> <span class="n">image</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="na">render</span><span class="o">(</span><span class="n">extent</span><span class="o">);</span>
 </span></span><span class="line"><span class="cl">        <span class="cm">/*
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * If the data are three-dimensional but we still want to use two-dimensional
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * coordinates, we need to specify a default value for the temporal dimension.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * This code set the default to slice 0 (the first slice) in dimension 2.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * Omit this line if the data are two-dimensional or if `point` has a 3D CRS.
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * Prints the value at a few positions. For avoiding to flood the output stream,
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * this example prints a value only for the 3 first pixel, then an arbitrary pixel.
 </span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
-</span></span><span class="line"><span class="cl">        <span class="n">eval</span><span class="o">.</span><span class="na">setDefaultSlice</span><span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">2</span><span class="o">,</span> <span class="n">0L</span><span class="o">));</span>
-</span></span><span class="line"><span class="cl">        <span class="cm">/*
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * The same `Evaluator` can be reused as often as needed for evaluating
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * at many points.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
-</span></span><span class="line"><span class="cl">        <span class="n">point</span><span class="o">.</span><span class="na">setCoordinate</span><span class="o">(</span><span class="n">40</span><span class="o">,</span> <span class="o">-</span><span class="n">10</span><span class="o">);</span>           <span class="c1">// 40°N 10°W
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">double</span><span class="o">[]</span> <span class="n">values</span> <span class="o">=</span> <span class="n">eval</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">point</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;- Value at %s is %g %s.%n&#34;</span><span class="o">,</span> <span class="n">point</span><span class="o">,</span> <span class="n">values</span><span class="o">[</span><span class="n">band</span><span class="o">],</span> <span class="n">unit</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="n">point</span><span class="o">.</span><span class="na">setCoordinate</span><span class="o">(</span><span class="n">30</span><span class="o">,</span> <span class="o">-</span><span class="n">15</span><span class="o">);</span>           <span class="c1">// 30°N 15°W
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">values</span> <span class="o">=</span> <span class="n">eval</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">point</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;- Value at %s is %g %s.%n&#34;</span><span class="o">,</span> <span class="n">point</span><span class="o">,</span> <span class="n">values</span><span class="o">[</span><span class="n">band</span><span class="o">],</span> <span class="n">unit</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">3</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">PixelIterator</span> <span class="n">pit</span> <span class="o">=</span> <span class="n">PixelIterator</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">image</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="o">(</span><span class="n">pit</span><span class="o">.</span><span class="na">next</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">Point</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">pit</span><span class="o">.</span><span class="na">getPosition</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="kt">float</span> <span class="n">value</span> <span class="o">=</span> <span class="n">pit</span><span class="o">.</span><span class="na">getSampleFloat</span><span class="o">(</span><span class="n">band</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Value at (%d,%d) is %g %s.%n&#34;</span><span class="o">,</span> <span class="n">pos</span><span class="o">.</span><span class="na">x</span><span class="o">,</span> <span class="n">pos</span><span class="o">.</span><span class="na">y</span><span class="o">,</span> <span class="n">value</span><span class="o">,</span> <span class="n">unit</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(--</span><span class="n">n</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span> <span class="k">break</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pit</span><span class="o">.</span><span class="na">moveTo</span><span class="o">(</span><span class="n">100</span><span class="o">,</span> <span class="n">200</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">float</span> <span class="n">value</span> <span class="o">=</span> <span class="n">pit</span><span class="o">.</span><span class="na">getSampleFloat</span><span class="o">(</span><span class="n">band</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Value at (100,200) is %g %s.%n&#34;</span><span class="o">,</span> <span class="n">value</span><span class="o">,</span> <span class="n">unit</span><span class="o">);</span>
 </span></span><span class="line"><span class="cl">    <span class="o">}</span>
 </span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
 <h1 id="output">Output</h1>
 <p>The output depends on the raster data and the locale.
 Below is an example:</p>
-<pre tabindex="0"><code>Evaluation at some (latitude, longitude) coordinates:
-- Value at POINT(40 -10) is 0.188000 m.
-- Value at POINT(30 -15) is 0.619000 m.
+<pre tabindex="0"><code>Grid extent:
+Column: [0 …  864]  (865 cells)
+Row:    [0 … 1080] (1081 cells)
+Time:   [0 …   95]   (96 cells)
+
+Value at (0,0) is NaN m.
+Value at (1,0) is NaN m.
+Value at (2,0) is NaN m.
+Value at (100,200) is 0.586000 m.
 </code></pre>
 
       </article>

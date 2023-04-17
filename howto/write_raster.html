@@ -3,7 +3,7 @@
 <head>
   
 
-  <title>Apache SIS - Determine if two CRS are functionally equal</title>
+  <title>Apache SIS - Write a raster to a file</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
@@ -103,75 +103,59 @@
     <main class="container">
       <article>
         <img src="../images/logo.png" class="sis-logo" align="left"/>
-        <p class="page-title">Determine if two CRS are functionally equal</p>
+        <p class="page-title">Write a raster to a file</p>
         
-  <p>Two Coordinate Reference Systems may not be considered equal if they are associated to different metadata
-(name, identifiers, scope, domain of validity, remarks), even though they represent the same logical <abbr title="Coordinate Reference System">CRS</abbr>.
-In order to test if two <abbr title="Coordinate Reference System">CRS</abbr> are functionally equivalent,
-<code>Utilities​.equals­Ignore­Metadata(myFirstCRS, mySecondCRS)</code> can be used.</p>
-<p>In some cases, <code>equals­Ignore­Metadata(…)</code> may fail to see that two reference systems are equal.
-It may happen for example when two map projections are defined with different parameters,
-but are mathematically equivalent.
-A more reliable but more costly way to check if two <abbr title="Coordinate Reference System">CRS</abbr> are functionally equivalent
-is to request the coordinate operation between them, and check if that operation is identity.</p>
+  <p>This example saves a raster in PNG format.
+This example assumes a preloaded raster.
+For the loading part,
+see <a href="read_netcdf.html">read from a netCDF file</a>
+or <a href="read_geotiff.html">read from a GeoTIFF file</a>
+code examples.</p>
+<p>Note: this example is incomplete.
+A more complete example will be provided with next Apache SIS release.</p>
 <h1 id="direct-dependencies">Direct dependencies</h1>
 <table>
 <thead>
 <tr>
 <th>Maven coordinates</th>
 <th>Module info</th>
+<th>Remarks</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>org.apache.sis.storage:sis-referencing</code></td>
-<td><code>org.apache.sis.referencing</code></td>
+<td><code>org.apache.sis.storage:sis-storage</code></td>
+<td><code>org.apache.sis.storage</code></td>
+<td></td>
 </tr>
 </tbody>
 </table>
 <h1 id="code-example">Code example</h1>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.referencing.crs.CoordinateReferenceSystem</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.util.FactoryException</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CRS</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CommonCRS</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.util.Utilities</span><span class="o">;</span>
+<p>The file name in following code need to be updated for yours data.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.File</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">javax.imageio.ImageIO</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.coverage.grid.GridCoverage</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CrsEquality</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">WriteRaster</span> <span class="o">{</span>
 </span></span><span class="line"><span class="cl">    <span class="cm">/**
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * Demo entry point.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     *
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @param  args  ignored.
-</span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws FactoryException if an error occurred while creating the CRS
-</span></span></span><span class="line"><span class="cl"><span class="cm">     *         or searching for a coordinate operation.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws IOException if an error occurred while writing the raster.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
-</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">FactoryException</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">CoordinateReferenceSystem</span> <span class="n">crs1</span> <span class="o">=</span> <span class="n">CommonCRS</span><span class="o">.</span><span class="na">WGS84</span><span class="o">.</span><span class="na">geographic</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">        <span class="n">CoordinateReferenceSystem</span> <span class="n">crs2</span> <span class="o">=</span> <span class="n">CRS</span><span class="o">.</span><span class="na">fromWKT</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">                <span class="s">&#34;&#34;&#34;
-</span></span></span><span class="line"><span class="cl"><span class="s">                GeodeticCRS[&#34;</span><span class="n">WGS84</span> <span class="n">with</span> <span class="n">a</span> <span class="n">different</span> <span class="n">name</span><span class="s">&#34;,
-</span></span></span><span class="line"><span class="cl"><span class="s">                  Datum[&#34;</span><span class="n">World</span> <span class="n">Geodetic</span> <span class="n">System</span> <span class="n">1984</span><span class="s">&#34;,
-</span></span></span><span class="line"><span class="cl"><span class="s">                    Ellipsoid[&#34;</span><span class="n">A</span> <span class="n">different</span> <span class="n">name</span><span class="s">&#34;, 6378137.0, 298.257223563]],
-</span></span></span><span class="line"><span class="cl"><span class="s">                  CS[ellipsoidal, 2],
-</span></span></span><span class="line"><span class="cl"><span class="s">                    Axis[&#34;</span><span class="n">Latitude</span> <span class="o">(</span><span class="n">B</span><span class="o">)</span><span class="s">&#34;, north],
-</span></span></span><span class="line"><span class="cl"><span class="s">                    Axis[&#34;</span><span class="n">Longitude</span> <span class="o">(</span><span class="n">L</span><span class="o">)</span><span class="s">&#34;, east],
-</span></span></span><span class="line"><span class="cl"><span class="s">                    Unit[&#34;</span><span class="n">degree</span><span class="s">&#34;, 0.017453292519943295]]
-</span></span></span><span class="line"><span class="cl"><span class="s">                &#34;&#34;&#34;</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;equals: &#34;</span>
-</span></span><span class="line"><span class="cl">                <span class="o">+</span> <span class="n">crs1</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">crs2</span><span class="o">));</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;equalsIgnoreMetadata: &#34;</span>
-</span></span><span class="line"><span class="cl">                <span class="o">+</span> <span class="n">Utilities</span><span class="o">.</span><span class="na">equalsIgnoreMetadata</span><span class="o">(</span><span class="n">crs1</span><span class="o">,</span> <span class="n">crs2</span><span class="o">));</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Identity transform: &#34;</span>
-</span></span><span class="line"><span class="cl">                <span class="o">+</span> <span class="n">CRS</span><span class="o">.</span><span class="na">findOperation</span><span class="o">(</span><span class="n">crs2</span><span class="o">,</span> <span class="n">crs2</span><span class="o">,</span> <span class="kc">null</span><span class="o">).</span><span class="na">getMathTransform</span><span class="o">().</span><span class="na">isIdentity</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">GridCoverage</span> <span class="n">data</span> <span class="o">=</span> <span class="o">...;</span>      <span class="c1">// See &#34;Read netCDF&#34; or &#34;Read GeoTIFF&#34; code examples.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * TODO: Apache SIS is missing a `DataStores.write(…)` convenience method.
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * Writing a TIFF World File is possible but requires use of internal API.
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * A public convenience method will be added in next version.
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * For now we use Java I/O API.
+</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ImageIO</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">data</span><span class="o">.</span><span class="na">render</span><span class="o">(</span><span class="kc">null</span><span class="o">),</span> <span class="s">&#34;png&#34;</span><span class="o">,</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&#34;test.png&#34;</span><span class="o">));</span>
 </span></span><span class="line"><span class="cl">    <span class="o">}</span>
 </span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
-<h1 id="output">Output</h1>
-<pre tabindex="0"><code>equals: false
-equalsIgnoreMetadata: true
-Identity transform: true
-</code></pre>
+
 
       </article>
     </main>
