@@ -41,15 +41,15 @@ public class CrsEquality {
     public static void main(String[] args) throws FactoryException {
         CoordinateReferenceSystem crs1 = CommonCRS.WGS84.geographic();
         CoordinateReferenceSystem crs2 = CRS.fromWKT(
-        """
-        GeodeticCRS["WGS84 with a different name",
-          Datum["World Geodetic System 1984",
-            Ellipsoid["A different name", 6378137.0, 298.257223563]],
-          CS[ellipsoidal, 2],
-            Axis["Latitude (B)", north],
-            Axis["Longitude (L)", east],
-            Unit["degree", 0.017453292519943295]]
-        """);
+                """
+                GeodeticCRS["WGS84 with a different name",
+                  Datum["World Geodetic System 1984",
+                    Ellipsoid["A different name", 6378137.0, 298.257223563]],
+                  CS[ellipsoidal, 2],
+                    Axis["Latitude (B)", north],
+                    Axis["Longitude (L)", east],
+                    Unit["degree", 0.017453292519943295]]
+                """);
 
         System.out.println("equals: "
                 + crs1.equals(crs2));

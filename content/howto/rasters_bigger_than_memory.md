@@ -8,7 +8,7 @@ Loaded tiles are cached by soft references, i.e. they may be discarted and reloa
 This approach allows processing of raster data larger than memory,
 provided that the application does not request all tiles at once.
 It integrates well with operations provided by Apache {{% SIS %}} such as
-[raster resampling](resample_and_save_raster.html) and
+[raster resampling](resample_raster.html) and
 [getting values at geographic coordinates](raster_values_at_geographic_coordinates.html).
 
 The example in this page works with pixel coordinates.
@@ -58,11 +58,6 @@ public class RasterBiggerThanMemory {
      */
     public static void main(String[] args) throws DataStoreException {
         try (DataStore store = DataStores.open(new File("TM250m.tiff"))) {
-            /*
-             * This data store is an aggregate because a GeoTIFF file may contain many images.
-             * Not all data stores are aggregate, so the following casts do not apply to all.
-             * For this example, we know that the file is GeoTIFF and we take the first image.
-             */
             Collection<? extends Resource> allImages = ((Aggregate) store).components();
             GridCoverageResource firstImage = (GridCoverageResource) allImages.iterator().next();
             /*
@@ -74,26 +69,36 @@ public class RasterBiggerThanMemory {
              */
             firstImage.setLoadingStrategy(RasterLoadingStrategy.AT_GET_TILE_TIME);
             GridCoverage data = firstImage.read(null, null);
-            System.out.printf("Information about the selected image:%n%s%n", data);
-            /*
-             * Get an arbitrary tile, then get an arbitrary sample value in an arbitrary band
-             * (the blue channel) of that tile.
-             */
-            RenderedImage image = data.render(null);
-            System.out.printf("The image has %d × %d tiles.%n", image.getNumXTiles(), image.getNumYTiles());
+            printPixelValue(data, false);
+        }
+    }
 
-            Raster tile = image.getTile(130, 80);               // This is where tile loading actually happen.
-            System.out.printf("Got a tile starting at coordinates %d, %d.%n", tile.getMinX(), tile.getMinY());
-            System.out.printf("A sample value in a tile: %d%n", tile.getSample(93710, 57680, 2));
-            /*
-             * If we know in advance which tiles will be requested, specifying them in advance allows
-             * the GeoTIFF reader to use a better strategy than loading the tiles in random order.
-             */
+    /**
+     * Prints the value of an arbitrary pixel.
+     *
+     * @param data      the data from which to get sample values.
+     * @param prefetch  whether to load some pixels in advance.
+     */
+    private static void printPixelValue(GridCoverage data, boolean prefetch) {
+        RenderedImage image = data.render(null);
+        System.out.printf("The image has %d × %d tiles.%n", image.getNumXTiles(), image.getNumYTiles());
+        /*
+         * If we know in advance which tiles will be requested, specifying them in advance allows
+         * the GeoTIFF reader to use a better strategy than loading the tiles in random order.
+         * This step is optional.
+         */
+        if (prefetch) {
             var processor = new ImageProcessor();
             image = processor.prefetch(image, new Rectangle(90000, 50000, 1000, 1000));
-            tile = image.getTile(130, 80);
-            System.out.printf("Same, but from prefetched image: %d%n%n", tile.getSample(93710, 57680, 2));
         }
+        /*
+         * Get an arbitrary tile, then get an arbitrary sample value in an arbitrary band (the blue channel).
+         * This example handles the tiles directly for demonstration purposes, but it could be simplified
+         * by using `PixelIterator` instead.
+         */
+        Raster tile = image.getTile(130, 80);               // This is where tile loading actually happen.
+        System.out.printf("Got a tile starting at coordinates %d, %d.%n", tile.getMinX(), tile.getMinY());
+        System.out.printf("A sample value in the arbitrary tile: %d%n", tile.getSample(93710, 57680, 2));
     }
 }
 {{< / highlight >}}
@@ -105,29 +110,16 @@ The output depends on the raster data and the locale.
 Below is an example:
 
 ```
-Information about the selected image:
-CompressedSubset
-  └─Coverage domain
-      ├─Grid extent
-      │   ├─Column: [0 … 172799] (172800 cells)
-      │   └─Row:    [0 …  86399]  (86400 cells)
-      ├─Geographic extent
-      │   ├─Lower bound:  90°00′00″S  180°00′00″W
-      │   └─Upper bound:  90°00′00″N  180°00′00″E
-      ├─Envelope
-      │   ├─Geodetic longitude: -180.000 … 180.000  ∆Lon = 0.00208333°
-      │   └─Geodetic latitude:   -90.000 … 90.000   ∆Lat = 0.00208333°
-      ├─Coordinate reference system
-      │   └─CRS:84 — WGS 84
-      └─Conversion (origin in a cell center)
-          └─┌                                                                    ┐
-            │ 0.0020833333333333333   0                      -179.99895833333332 │
-            │ 0                      -0.0020833333333333333    89.99895833333333 │
-            │ 0                       0                         1                │
-            └                                                                    ┘
-
 The image has 240 × 120 tiles.
 Got a tile starting at coordinates 93600, 57600.
-A sample value in a tile: 20
-Same, but from prefetched image: 20
+A sample value in the arbitrary tile: 20
+```
+
+If logging at fine level is enabled, the logs should contain an entry likes below.
+The interesting point is that the "loading" of the TIFF file was quick even if the file was very big.
+This is because the loading did not really happens at that time,
+but instead was deferred at `image.getTile(…)` or `processor.prefetch(…)` time.
+
+```
+FINE [GridCoverageResource] Loaded grid coverage between 90°S – 90°N and 180°W – 180°E from file “TM250m.tiff” in 0.779 seconds.
 ```

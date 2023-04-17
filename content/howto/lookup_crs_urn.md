@@ -51,26 +51,26 @@ public class LookupAuthorityCode {
      */
     public static void main(String[] args) throws FactoryException {
         CoordinateReferenceSystem crs = CRS.fromWKT(
-        """
-        PROJCRS["NTF (Paris) / zone to be discovered by the demo",
-          BASEGEODCRS["NTF (Paris)",
-            DATUM["Nouvelle Triangulation Francaise",
-              ELLIPSOID["Clarke 1880 (IGN)", 6378249.2, 293.4660212936269]],
-              PRIMEM["Paris", 2.5969213],
-            UNIT["grade", 0.015707963267948967]],
-          CONVERSION["Lambert zone II",
-            METHOD["Lambert Conic Conformal (1SP)"],
-            PARAMETER["Latitude of natural origin", 52.0],
-            PARAMETER["Longitude of natural origin", 0.0],
-            PARAMETER["Scale factor at natural origin", 0.99987742],
-            PARAMETER["False easting", 600000.0],
-            PARAMETER["False northing", 2200000.0]],
-          CS[Cartesian, 2],
-            AXIS["Easting (E)", east],
-            AXIS["Northing (N)", north],
-            LENGTHUNIT["metre", 1],
-          REMARK["EPSG:27572 identifier intentionally omitted."]]
-        """);
+                """
+                PROJCRS["NTF (Paris) / zone to be discovered by the demo",
+                  BASEGEODCRS["NTF (Paris)",
+                    DATUM["Nouvelle Triangulation Francaise",
+                      ELLIPSOID["Clarke 1880 (IGN)", 6378249.2, 293.4660212936269]],
+                      PRIMEM["Paris", 2.5969213],
+                    UNIT["grade", 0.015707963267948967]],
+                  CONVERSION["Lambert zone II",
+                    METHOD["Lambert Conic Conformal (1SP)"],
+                    PARAMETER["Latitude of natural origin", 52.0],
+                    PARAMETER["Longitude of natural origin", 0.0],
+                    PARAMETER["Scale factor at natural origin", 0.99987742],
+                    PARAMETER["False easting", 600000.0],
+                    PARAMETER["False northing", 2200000.0]],
+                  CS[Cartesian, 2],
+                    AXIS["Easting (E)", east],
+                    AXIS["Northing (N)", north],
+                    LENGTHUNIT["metre", 1],
+                  REMARK["EPSG:27572 identifier intentionally omitted."]]
+                """);
 
         System.out.println("Identifier declared in the CRS: "
                 + IdentifiedObjects.getIdentifier(crs, null));
