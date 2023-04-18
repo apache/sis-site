@@ -3,7 +3,7 @@
 <head>
   
 
-  <title>Apache SIS - Resample a raster</title>
+  <title>Apache SIS - Parse and format MGRS codes</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
@@ -103,14 +103,12 @@
     <main class="container">
       <article>
         <img src="../images/logo.png" class="sis-logo" align="left"/>
-        <p class="page-title">Resample a raster</p>
+        <p class="page-title">Parse and format MGRS codes</p>
         
-  <p>This example reprojects a raster to a different Coordinate Reference System (CRS).
-This example assumes a preloaded two-dimensional raster.
-For the loading part,
-see <a href="read_netcdf.html">read from a netCDF file</a>
-or <a href="read_geotiff.html">read from a GeoTIFF file</a>
-code examples.</p>
+  <p>The following example converts geographic coordinates to
+Military Grid Reference System (MGRS) codes and conversely.
+MGRS codes can be seen as a kind of GeoHash but with better properties.
+Apache SIS supports also GeoHash if desired, in a way similar to this example.</p>
 <h1 id="direct-dependencies">Direct dependencies</h1>
 <table>
 <thead>
@@ -122,94 +120,60 @@ code examples.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>org.apache.sis.code:sis-feature</code></td>
-<td><code>org.apache.sis.feature</code></td>
+<td><code>org.apache.sis.storage:sis-referencing</code></td>
+<td><code>org.apache.sis.referencing</code></td>
 <td></td>
-</tr>
-<tr>
-<td><code>org.apache.sis.non-free:sis-embedded-data</code></td>
-<td><code>org.apache.sis.referencing.database</code></td>
-<td>Non-Apache license.</td>
 </tr>
 </tbody>
 </table>
-<p>The <a href="../epsg.html">EPSG dependency</a> is necessary for this example
-because a Coordinate Reference System (CRS) is instantiated from its EPSG code.
-But it would also be possible to specify a CRS without EPSG code,
-for example using Well Known Text (WKT) format.</p>
 <h1 id="code-example">Code example</h1>
-<p>The file name in following code need to be updated for yours data.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.coverage.grid.GridCoverage</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.coverage.grid.GridCoverageProcessor</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.image.Interpolation</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CRS</span><span class="o">;</span>
+<p>Note that all geographic coordinates below express latitude <em>before</em> longitude.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.geometry.DirectPosition2D</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CommonCRS</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.gazetteer.MilitaryGridReferenceSystem</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.referencing.gazetteer.Location</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.referencing.operation.TransformException</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.util.FactoryException</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ResampleRaster</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MGRS</span> <span class="o">{</span>
 </span></span><span class="line"><span class="cl">    <span class="cm">/**
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * Demo entry point.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     *
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @param  args  ignored.
-</span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws FactoryException   if an error occurred while creating the Coordinate Reference System (CRS).
-</span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws TransformException if an error occurred while transforming coordinates to the target CRS.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws TransformException if an error occurred when encoding or decoding a position.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
-</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">FactoryException</span><span class="o">,</span> <span class="n">TransformException</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">GridCoverage</span> <span class="n">data</span> <span class="o">=</span> <span class="o">...;</span>      <span class="c1">// See &#34;Read netCDF&#34; or &#34;Read GeoTIFF&#34; code examples.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Information about the selected image:%n%s%n&#34;</span><span class="o">,</span> <span class="n">data</span><span class="o">.</span><span class="na">getGridGeometry</span><span class="o">());</span>
-</span></span><span class="line"><span class="cl">        <span class="cm">/*
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * Reproject to &#34;WGS 84 / World Mercator&#34; (EPSG::3395) using bilinear interpolation.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * This example lets Apache SIS choose the output grid size and resolution.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * But it is possible to specify those aspects if desired.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
-</span></span><span class="line"><span class="cl">        <span class="n">var</span> <span class="n">processor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GridCoverageProcessor</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">        <span class="n">processor</span><span class="o">.</span><span class="na">setInterpolation</span><span class="o">(</span><span class="n">Interpolation</span><span class="o">.</span><span class="na">BILINEAR</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">data</span> <span class="o">=</span> <span class="n">processor</span><span class="o">.</span><span class="na">resample</span><span class="o">(</span><span class="n">data</span><span class="o">,</span> <span class="n">CRS</span><span class="o">.</span><span class="na">forCode</span><span class="o">(</span><span class="s">&#34;EPSG::3395&#34;</span><span class="o">));</span>
-</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Information about the image after reprojection:%n%s%n&#34;</span><span class="o">,</span> <span class="n">data</span><span class="o">.</span><span class="na">getGridGeometry</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span>  <span class="n">TransformException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">var</span> <span class="n">rs</span>    <span class="o">=</span> <span class="k">new</span> <span class="n">MilitaryGridReferenceSystem</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">var</span> <span class="n">point</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DirectPosition2D</span><span class="o">(</span><span class="n">CommonCRS</span><span class="o">.</span><span class="na">WGS84</span><span class="o">.</span><span class="na">geographic</span><span class="o">(),</span> <span class="n">40</span><span class="o">,</span> <span class="n">5</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">var</span> <span class="n">coder</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="na">createCoder</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">var</span> <span class="n">code</span>  <span class="o">=</span> <span class="n">coder</span><span class="o">.</span><span class="na">encode</span><span class="o">(</span><span class="n">point</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;MGRS code of %s is %s%n&#34;</span><span class="o">,</span> <span class="n">point</span><span class="o">,</span> <span class="n">code</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">coder</span><span class="o">.</span><span class="na">setPrecision</span><span class="o">(</span><span class="n">1000</span><span class="o">);</span>           <span class="c1">// Limit to a precision of 1 km.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">code</span> <span class="o">=</span> <span class="n">coder</span><span class="o">.</span><span class="na">encode</span><span class="o">(</span><span class="n">point</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Same code reduced to 1 km precision: %s%n&#34;</span><span class="o">,</span> <span class="n">code</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">Location</span> <span class="n">reverse</span> <span class="o">=</span> <span class="n">coder</span><span class="o">.</span><span class="na">decode</span><span class="o">(</span><span class="n">code</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Back to geographic coordinates: %s%n&#34;</span><span class="o">,</span> <span class="n">reverse</span><span class="o">);</span>
 </span></span><span class="line"><span class="cl">    <span class="o">}</span>
 </span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
 <h1 id="output">Output</h1>
-<p>The output depends on the raster data and the locale.
+<p>The output depends on the locale.
 Below is an example:</p>
-<pre tabindex="0"><code>Information about the image after reprojection:
-GridGeometry
-  ├─Grid extent
-  │   ├─Column: [0 … 8191] (8192 cells)
-  │   └─Row:    [0 … 8191] (8192 cells)
-  ├─Geographic extent
-  │   ├─Lower bound:  48°59′20″N  02°31′33″E
-  │   └─Upper bound:  49°01′08″N  02°34′16″E
-  ├─Envelope
-  │   ├─Easting:    465,341.6 … 468,618.39999999997  ∆E = 0.4 m
-  │   └─Northing: 5,426,352.8 … 5,429,629.6          ∆N = 0.4 m
-  ├─Coordinate reference system
-  │   └─EPSG:32631 — WGS 84 / UTM zone 31N
-  └─Conversion (origin in a cell center)
-      └─┌                      ┐
-        │ 0.4   0     465341.8 │
-        │ 0    -0.4  5429629.4 │
-        │ 0     0          1   │
-        └                      ┘
-
-Information about the image after reprojection:
-GridGeometry
-  ├─Grid extent
-  │   ├─Dimension 0: [0 … 8239] (8240 cells)
-  │   └─Dimension 1: [0 … 8240] (8241 cells)
-  ├─Geographic extent
-  │   ├─Lower bound:  48°59′20″N  02°31′33″E
-  │   └─Upper bound:  49°01′08″N  02°34′16″E
-  ├─Envelope
-  │   ├─Easting:   281,190.4273301751 … 286,207.11249780044  ∆E = 0.60882102 m
-  │   └─Northing: 6,240,752.860382801 … 6,245,770.154371441  ∆N = 0.60882102 m
-  ├─Coordinate reference system
-  │   └─EPSG:3395 — WGS 84 / World Mercator
-  └─Conversion (origin in a cell center)
-      └─┌                                                            ┐
-        │ 0.6088210154885099   0                  281190.73174068285 │
-        │ 0                   -0.60882101548851  6245769.8499609330  │
-        │ 0                    0                       1             │
-        └                                                            ┘
+<pre tabindex="0"><code>MGRS code of POINT(40 5) is 31TFE7072529672
+Same code reduced to 1 km precision: 31TFE7029
+Back to geographic coordinates:
+┌─────────────────────────────────────────────────────────────────┐
+│ Location type:               Grid coordinate                    │
+│ Geographic identifier:       31TFE7029                          │
+│ West bound:                    670,000 m    —     4°59′28″E     │
+│ Representative value:          670,500 m    —     4°59′51″E     │
+│ East bound:                    671,000 m    —     5°00′12″E     │
+│ South bound:                 4,429,656 m    —    40°00′00″N     │
+│ Representative value:        4,429,828 m    —    40°00′05″N     │
+│ North bound:                 4,430,000 m    —    40°00′12″N     │
+│ Coordinate reference system: WGS 84 / UTM zone 31N              │
+│ Administrator:               North Atlantic Treaty Organization │
+└─────────────────────────────────────────────────────────────────┘
 </code></pre>
 
       </article>

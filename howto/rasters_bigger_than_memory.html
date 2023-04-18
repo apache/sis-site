@@ -113,6 +113,9 @@ provided that the application does not request all tiles at once.
 It integrates well with operations provided by Apache <abbr title="Spatial Information System">SIS</abbr> such as
 <a href="resample_raster.html">raster resampling</a> and
 <a href="raster_values_at_geographic_coordinates.html">getting values at geographic coordinates</a>.</p>
+<p>The approach demonstrated in this example has one drawback compared to the default behavior:
+the <code>DataStore</code> must be kept open during all the time that the <code>GridCoverage</code> is used.
+Consequently the <code>data</code> variable should not be used outside the <code>try</code> block in this example.</p>
 <p>The example in this page works with pixel coordinates.
 For working with geographic coordinates, see
 <a href="raster_values_at_geographic_coordinates.html">values at geographic coordinates</a> code example.</p>
@@ -180,6 +183,10 @@ depending how the Coordinate Reference System (CRS) is encoded in the GeoTIFF fi
 </span></span><span class="line"><span class="cl">            <span class="n">firstImage</span><span class="o">.</span><span class="na">setLoadingStrategy</span><span class="o">(</span><span class="n">RasterLoadingStrategy</span><span class="o">.</span><span class="na">AT_GET_TILE_TIME</span><span class="o">);</span>
 </span></span><span class="line"><span class="cl">            <span class="n">GridCoverage</span> <span class="n">data</span> <span class="o">=</span> <span class="n">firstImage</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
 </span></span><span class="line"><span class="cl">            <span class="n">printPixelValue</span><span class="o">(</span><span class="n">data</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">             * Contrarily to other examples, the `GridCoverage` fetched in deferred reading mode
+</span></span></span><span class="line"><span class="cl"><span class="cm">             * can NOT be used outside this `try` block, because the `DataStore` must be open.
+</span></span></span><span class="line"><span class="cl"><span class="cm">             */</span>
 </span></span><span class="line"><span class="cl">        <span class="o">}</span>
 </span></span><span class="line"><span class="cl">    <span class="o">}</span>
 </span></span><span class="line"><span class="cl">
