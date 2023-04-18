@@ -61,7 +61,7 @@ public class ReadNetCDF {
      */
     public static GridCoverage example() throws DataStoreException {
         GridCoverage data;
-        try (DataStore store = DataStores.open(new File("CMEMS_R20220516.nc"))) {
+        try (DataStore store = DataStores.open(new File("CMEMS_20220516.nc"))) {
             /*
              * See what is inside this file. One of the components listed
              * below can be given in argument to `findResource(String)`.

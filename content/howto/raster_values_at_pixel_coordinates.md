@@ -14,6 +14,11 @@ but provide a _transfer function_ for converting those integers to "real world" 
 Apache SIS can provide either the original integers or the converted values, at user's choice.
 This choice is specified by the boolean argument in the `data.​forConvertedValues(…)` call.
 
+Note that pixel coordinates are relative to the request made in the call to `render(…)`.
+They are not directly the grid coordinates of the coverage.
+The use of relative coordinates makes possible to avoid 32 bits integer overflow,
+and is also convenient for working on an area of interest regardless the grid coverage origin.
+
 
 # Direct dependencies
 
@@ -74,7 +79,7 @@ public class RasterValuesAtPixelCoordinates {
             System.out.printf("Value at (%d,%d) is %g %s.%n", pos.x, pos.y, value, unit);
             if (--n == 0) break;
         }
-        pit.moveTo(100, 200);
+        pit.moveTo(100, 200);                   // Relative to `extent` low coordinates.
         float value = pit.getSampleFloat(band);
         System.out.printf("Value at (100,200) is %g %s.%n", value, unit);
     }

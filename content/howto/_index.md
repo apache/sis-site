@@ -16,6 +16,8 @@ The examples are grouped in the following sections:
 * [Get raster values at geographic coordinates](howto/raster_values_at_geographic_coordinates.html)
 * [Handle rasters bigger than memory](howto/rasters_bigger_than_memory.html)
 * [Resample a raster](howto/resample_raster.html)
+* [Parallel computation](howto/parallel_computation.html)
+* [From data lake to data cube](howto/datalake_to_datacube.html)
 * [Write a raster to a file](howto/write_raster.html)
 
 

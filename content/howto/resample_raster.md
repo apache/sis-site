@@ -28,7 +28,6 @@ for example using Well Known Text (WKT) format.
 The file name in following code need to be updated for yours data.
 
 {{< highlight java >}}
-import java.awt.image.ImagingOpException;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.image.Interpolation;
@@ -43,7 +42,6 @@ public class ResampleRaster {
      * @param  args  ignored.
      * @throws FactoryException   if an error occurred while creating the Coordinate Reference System (CRS).
      * @throws TransformException if an error occurred while transforming coordinates to the target CRS.
-     * @throws ImagingOpException unchecked exception thrown if an error occurred while resampling a tile.
      */
     public static void main(String[] args) throws FactoryException, TransformException {
         GridCoverage data = ...;      // See "Read netCDF" or "Read GeoTIFF" code examples.
