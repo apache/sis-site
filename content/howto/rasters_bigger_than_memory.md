@@ -11,6 +11,10 @@ It integrates well with operations provided by Apache {{% SIS %}} such as
 [raster resampling](resample_raster.html) and
 [getting values at geographic coordinates](raster_values_at_geographic_coordinates.html).
 
+The approach demonstrated in this example has one drawback compared to the default behavior:
+the `DataStore` must be kept open during all the time that the `GridCoverage` is used.
+Consequently the `data` variable should not be used outside the `try` block in this example.
+
 The example in this page works with pixel coordinates.
 For working with geographic coordinates, see
 [values at geographic coordinates](raster_values_at_geographic_coordinates.html) code example.
@@ -70,6 +74,10 @@ public class RasterBiggerThanMemory {
             firstImage.setLoadingStrategy(RasterLoadingStrategy.AT_GET_TILE_TIME);
             GridCoverage data = firstImage.read(null, null);
             printPixelValue(data, false);
+            /*
+             * Contrarily to other examples, the `GridCoverage` fetched in deferred reading mode
+             * can NOT be used outside this `try` block, because the `DataStore` must be open.
+             */
         }
     }
 

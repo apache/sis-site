@@ -50,6 +50,17 @@ public class ReadNetCDF {
      * @throws DataStoreException if an error occurred while reading the raster.
      */
     public static void main(String[] args) throws DataStoreException {
+        example();
+    }
+
+    /**
+     * Reads an example file and prints some information about it.
+     *
+     * @return the raster data.
+     * @throws DataStoreException if an error occurred while reading the raster.
+     */
+    public static GridCoverage example() throws DataStoreException {
+        GridCoverage data;
         try (DataStore store = DataStores.open(new File("CMEMS_R20220516.nc"))) {
             /*
              * See what is inside this file. One of the components listed
@@ -61,8 +72,9 @@ public class ReadNetCDF {
             if (resource instanceof GridCoverageResource gridded) {
                 /*
                  * Read the resource immediately and fully.
+                 * `data` can be used outside the `try` block.
                  */
-                GridCoverage data = gridded.read(null, null);
+                data = gridded.read(null, null);
                 System.out.printf("Information about the selected resource:%n%s%n", data);
                 /*
                  * Read only a subset of the resource. The Area Of Interest can be specified
@@ -75,8 +87,16 @@ public class ReadNetCDF {
                 data = gridded.read(new GridGeometry(null, areaOfInterest, GridOrientation.HOMOTHETY), null);
                 System.out.printf("Information about the resource subset:%n%s%n",
                                   data.getGridGeometry().getExtent());
+            } else {
+                throw new DataStoreException("Unexpected type of resource.");
             }
         }
+        /*
+         * By default, it is possible to continue to use the `GridCoverage` (but not the `Resource`) after
+         * the `DataStore` has been closed because data are in memory. Note that it would not be the case
+         * if deferred data loading was enabled has shown in "Handle rasters bigger than memory" example.
+         */
+        return data;
     }
 
     /**

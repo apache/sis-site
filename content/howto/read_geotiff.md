@@ -53,6 +53,17 @@ public class ReadGeoTIFF {
      * @throws ImagingOpException unchecked exception thrown if an error occurred while loading a tile.
      */
     public static void main(String[] args) throws DataStoreException {
+        example();
+    }
+
+    /**
+     * Reads an example file and prints some information about it.
+     *
+     * @return the raster data.
+     * @throws DataStoreException if an error occurred while reading the raster.
+     */
+    public static GridCoverage example() throws DataStoreException {
+        GridCoverage data;
         try (DataStore store = DataStores.open(new File("Aéroport.tiff"))) {
             /*
              * This data store is an aggregate because a GeoTIFF file may contain many images.
@@ -64,7 +75,7 @@ public class ReadGeoTIFF {
             /*
              * Read the resource immediately and fully.
              */
-            GridCoverage data = firstImage.read(null, null);
+            data = firstImage.read(null, null);
             System.out.printf("Information about the selected image:%n%s%n", data);
             /*
              * Read only a subset of the resource. The Area Of Interest can be specified
@@ -79,6 +90,12 @@ public class ReadGeoTIFF {
             System.out.printf("Information about the resource subset:%n%s%n",
                               data.getGridGeometry().getExtent());
         }
+        /*
+         * By default, it is possible to continue to use the `GridCoverage` (but not the `Resource`) after
+         * the `DataStore` has been closed because data are in memory. Note that it would not be the case
+         * if deferred data loading was enabled has shown in "Handle rasters bigger than memory" example.
+         */
+        return data;
     }
 }
 {{< / highlight >}}
