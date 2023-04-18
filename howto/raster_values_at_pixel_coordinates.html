@@ -115,6 +115,10 @@ code examples.</p>
 but provide a <em>transfer function</em> for converting those integers to &ldquo;real world&rdquo; values.
 Apache SIS can provide either the original integers or the converted values, at user&rsquo;s choice.
 This choice is specified by the boolean argument in the <code>data.​forConvertedValues(…)</code> call.</p>
+<p>Note that pixel coordinates are relative to the request made in the call to <code>render(…)</code>.
+They are not directly the grid coordinates of the coverage.
+The use of relative coordinates makes possible to avoid 32 bits integer overflow,
+and is also convenient for working on an area of interest regardless the grid coverage origin.</p>
 <h1 id="direct-dependencies">Direct dependencies</h1>
 <table>
 <thead>
@@ -181,8 +185,8 @@ This choice is specified by the boolean argument in the <code>data.​forConvert
 </span></span><span class="line"><span class="cl">            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Value at (%d,%d) is %g %s.%n&#34;</span><span class="o">,</span> <span class="n">pos</span><span class="o">.</span><span class="na">x</span><span class="o">,</span> <span class="n">pos</span><span class="o">.</span><span class="na">y</span><span class="o">,</span> <span class="n">value</span><span class="o">,</span> <span class="n">unit</span><span class="o">);</span>
 </span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(--</span><span class="n">n</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span> <span class="k">break</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl">        <span class="o">}</span>
-</span></span><span class="line"><span class="cl">        <span class="n">pit</span><span class="o">.</span><span class="na">moveTo</span><span class="o">(</span><span class="n">100</span><span class="o">,</span> <span class="n">200</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="kt">float</span> <span class="n">value</span> <span class="o">=</span> <span class="n">pit</span><span class="o">.</span><span class="na">getSampleFloat</span><span class="o">(</span><span class="n">band</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pit</span><span class="o">.</span><span class="na">moveTo</span><span class="o">(</span><span class="n">100</span><span class="o">,</span> <span class="n">200</span><span class="o">);</span>                   <span class="c1">// Relative to `extent` low coordinates.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">float</span> <span class="n">value</span> <span class="o">=</span> <span class="n">pit</span><span class="o">.</span><span class="na">getSampleFloat</span><span class="o">(</span><span class="n">band</span><span class="o">);</span>
 </span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Value at (100,200) is %g %s.%n&#34;</span><span class="o">,</span> <span class="n">value</span><span class="o">,</span> <span class="n">unit</span><span class="o">);</span>
 </span></span><span class="line"><span class="cl">    <span class="o">}</span>
 </span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
