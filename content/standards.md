@@ -15,8 +15,8 @@ Some standards are implemented partially, others almost fully.
 <table>
   <tr>
     <th>{{% ISO %}} standard</th>
-    <th>{{% OGC %}} / other</th>
-    <th>Upgrade needed</th>
+    <th>Other standard</th>
+    <th>Upgrade plan</th>
     <th>Title</th>
   </tr><tr>
     <td>ISO 19103:2015</td>

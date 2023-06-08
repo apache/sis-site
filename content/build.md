@@ -8,7 +8,7 @@ For installing the JAR files in the local Maven repository, execute the followin
 from the SIS project root:
 
 {{< highlight bash >}}
-mvn install
+mvn install --define skipTests
 {{< / highlight >}}
 
 The JavaFX application is excluded by default because it depends on
@@ -18,7 +18,7 @@ Likewise the [EPSG geodetic dataset](epsg.html) is excluded by default for licen
 For including the JavaFX module and the use of EPSG dataset in the build:
 
 {{< highlight bash >}}
-mvn install --activate-profiles javafx,non-free
+mvn install --define skipTests --activate-profiles javafx,non-free
 {{< / highlight >}}
 
 For signing the artifacts and producing distribution files (`apache-sis-bin.zip` and `apache-sis.oxt`),
@@ -27,7 +27,7 @@ Note that it requires an OpenPGP (_Open Pretty Good Privacy_) software for crypt
 (more information on the [release management setup](release-management-setup.html#generate-key) page):
 
 {{< highlight bash >}}
-mvn install --activate-profiles apache-release
+mvn install --define skipTests --activate-profiles apache-release
 {{< / highlight >}}
 
 The remaining of this page provides more advanced tips for SIS developers.

@@ -1,5 +1,5 @@
 ---
-title: How to
+title: How to…
 ---
 
 Java code examples for performing some tasks with Apache {{% SIS %}}.
