@@ -72,7 +72,7 @@ public class TransformEnvelopes {
      * @param  bbox       the bounding box to transform.
      * @param  operation  the coordinate operation to use for transforming corners.
      * @return the result of transforming the 4 corners of the provided bounding box.
-     * @throws TransformException if a coordinate can not be converted.
+     * @throws TransformException if a coordinate cannot be converted.
      */
     private static Envelope transformCorners(Envelope bbox, CoordinateOperation operation) throws TransformException {
         double[] corners = {

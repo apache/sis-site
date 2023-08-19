@@ -37,7 +37,7 @@ git clone https://gitbox.apache.org/repos/asf/sis
 # svn checkout https://github.com/apache/sis/trunk
 {{< / highlight >}}
 
-That is all. Apache {{% SIS %}} can be built by running `mvn install` in the `sis` subdirectory.
+Apache {{% SIS %}} can be built by running `gradle assemble` in the `sis` subdirectory.
 At this stage, the `ApacheSIS` parent directory is redundant with the `sis` subdirectory,
 but we recommend to create that parent directory anyway in anticipation
 for more subdirectories to be created later, when desired.
@@ -147,7 +147,7 @@ Note that this step is likely to change after Apache {{% SIS %}} upgrade to JUni
 
 ## Running extensive tests    {#tests}
 
-A simple `mvn install` execution in the `sis` directory
+A simple `gradle test` execution in the `sis` directory
 will build and test Apache {{% SIS %}} with the default set of JUnit tests.
 Some tests are skipped by default, either because they would have some effects outside
 the `sis` directory (for example writing in `SpatialMetadataTest` database on PostgreSQL),
@@ -156,25 +156,25 @@ For enabling all tests, use the following command:
 
 {{< highlight bash >}}
 cd sis
-mvn install -Dorg.apache.sis.test.extensive=true
+gradle test --system-prop org.apache.sis.test.extensive=true
 {{< / highlight >}}
 
 ## Switch to development branch    {#branches}
 
-The source code repository contains `master`, `geoapi-3.1` and `geoapi-4.0` branches.
-Apache {{% SIS %}} releases are created from `master`, which depends on the latest GeoAPI version
+The source code repository contains `main`, `geoapi-3.1` and `geoapi-4.0` branches.
+Apache {{% SIS %}} releases are created from `main`, which depends on the latest GeoAPI version
 released by the Open Geospatial Consortium (OGC), currently [GeoAPI 3.0.1][geoapi-stable].
-However daily developments occur on the `geoapi-4.0` branch before to be merged (indirectly) to `master`.
+However daily developments occur on the `geoapi-4.0` branch before to be merged (indirectly) to `main`.
 Those branches exist in order to experiment early new API and technologies — since they may impact
 the library design — while keeping the releases compatible with officially released API.
 In summary:
 
 * The `geoapi-4.0` branch implements interfaces defined in GeoAPI 4.0 snapshots.
 * The `geoapi-3.1` branch implements interfaces defined in [GeoAPI 3.1 snapshots][geoapi-snapshot].
-* The `master` implements interfaces defined by the [GeoAPI 3.0.1 stable release][geoapi-stable].
+* The `main` implements interfaces defined by the [GeoAPI 3.0.1 stable release][geoapi-stable].
 
-Developments on `geoapi-4.0` branch are merged to `geoapi-3.1` branch, which is then merged to `master`.
-When commits reach `master` they become unmodifiable; the `git push --force` command is not allowed on that branch.
+Developments on `geoapi-4.0` branch are merged to `geoapi-3.1` branch, which is then merged to `main`.
+When commits reach `main` they become unmodifiable; the `git push --force` command is not allowed on that branch.
 Contributors to Apache {{% SIS %}} project should switch to the current development branch before submitting patches:
 
 {{< highlight bash >}}

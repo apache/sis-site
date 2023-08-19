@@ -5,9 +5,8 @@ by the `org.apache.sis.internal.book.Assembler` class in `sis-build-helper` modu
 Assuming the following directory structure:
 
 (current directory)
-├─ master
-│   └─ core
-│       └─ sis-build-helper
+├─ main
+│   └─ buildSrc
 └─ site
     ├─ main
     │   └─ content
@@ -16,4 +15,4 @@ Assuming the following directory structure:
 
 Then the command can be used as below on Unix systems:
 
-java -classpath master/core/sis-build-helper/target/classes org.apache.sis.internal.book.Assembler site
+java -classpath main/buildSrc/build/classes/java/main org.apache.sis.internal.book.Assembler site
