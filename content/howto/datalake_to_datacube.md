@@ -84,7 +84,7 @@ public class DataLakeToDataCube {
             System.out.printf("Extent of second set of slices:%n%s%n", r2.getGridGeometry().getExtent());
             System.out.printf("Extent of third set of slices:%n%s%n",  r3.getGridGeometry().getExtent());
 
-            var aggregator = new CoverageAggregator(null);
+            var aggregator = new CoverageAggregator();
             aggregator.add(r1);
             aggregator.add(r2);
             aggregator.add(r3);

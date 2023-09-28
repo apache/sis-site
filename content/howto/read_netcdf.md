@@ -38,7 +38,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.storage.GridCoverageResource;
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridGeometry;
-import org.apache.sis.coverage.grid.GridOrientation;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 
@@ -84,7 +83,7 @@ public class ReadNetCDF {
                 var areaOfInterest = new GeneralEnvelope(CommonCRS.WGS84.geographic());
                 areaOfInterest.setRange(0, 30, 40);     // Minimal and maximal latitude values.
                 areaOfInterest.setRange(1, -5,  4);     // Minimal and maximal longitude values.
-                data = gridded.read(new GridGeometry(null, areaOfInterest, GridOrientation.HOMOTHETY), null);
+                data = gridded.read(new GridGeometry(areaOfInterest), null);
                 System.out.printf("Information about the resource subset:%n%s%n",
                                   data.getGridGeometry().getExtent());
             } else {

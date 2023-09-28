@@ -312,13 +312,13 @@ svn commit -m "Test project for SIS $NEW_VERSION-RC$RELEASE_CANDIDATE"
 {{< / highlight >}}
 
 Create a temporary directory where Apache {{% SIS %}} will write the EPSG dataset.
-Force the Java version to the one supported by Apache SIS (adjust `JDK8_HOME` as needed).
+Force the Java version to the one supported by Apache SIS (adjust `JDK11_HOME` as needed).
 Specify the URL to the nexus repository (will be needed in a future step. Replace `####` as needed).
 
 {{< highlight bash >}}
 mkdir target/SpatialMetadata
 export SIS_DATA=`pwd`/target/SpatialMetadata
-export JAVA_HOME=$JDK8_HOME
+export JAVA_HOME=$JDK11_HOME
 export JAVA_OPTS=-Dorg.apache.sis.epsg.downloadURL
 export JAVA_OPTS=$JAVA_OPTS=https://repository.apache.org/content/repositories/orgapachesis-####
 export JAVA_OPTS=$JAVA_OPTS/org/apache/sis/non-free/sis-epsg/$NEW_VERSION/sis-epsg-$NEW_VERSION.jar

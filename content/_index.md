@@ -59,9 +59,9 @@ The API and the data encodings follow [international standards](standards.html) 
 
 ## Using Apache SIS    {#user}
 
-The latest SIS release is {{% version %}}, released December 2022,
+The latest SIS release is {{% version %}}, released in October 2023,
 and can be [downloaded](downloads.html) as a `zip` files or as Maven dependencies.
-This is the latest version that can be run on Java 8 (next version will require Java 11).
+This version requires Java 11 or later.
 The EPSG geodetic dataset is optional for licensing reasons, but recommended.
 EPSG database installation is [described in a separated page](epsg.html).
 

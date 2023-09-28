@@ -1,5 +1,5 @@
 ---
-title: Source code
+title: Coding conventions
 ---
 
 This page describes some coding conventions applied in Apache {{% SIS %}} development.
@@ -33,16 +33,12 @@ The `Envelope2D` class is another implementation of the same interface specializ
 
 ## Internal packages    {#internal}
 
-All classes in `org.apache.sis.internal` sub-packages are for SIS usage only and may change without warning in any future release.
-Those classes are excluded from Javadoc and will not be exported by SIS Jigsaw modules.
-Those packages may be renamed after SIS upgraded to JDK 9+.
-
-## Substitution for non-existent classes    {#substitutions}
-
-When using a JDK 9+ class that does not exist on JDK 8, define a class of the same name in a
-`org.apache.sis.internal` sub-package with the minimal amount of needed functionalities,
-provided that it can be done with reasonable effort.
-Otherwise just delete the JDK9-dependent code from the development branch.
+The public API is made of all public classes in all exported packages,
+i.e. packages declared in non-qualified `exports` statements in the `module-info.java` file.
+All other classes are for SIS usage only and may change without warning in any future release.
+Those classes are excluded from Javadoc and normally not accessible to users.
+Contrarily to previous SIS versions, there is no longer any particular convention for internal package names.
+They may or may not have `internal` in their name.
 
 # Code formatting    {#formatting}
 
