@@ -274,8 +274,6 @@ Navigate through the artifact tree and make sure that all javadoc, source and ja
 Select any `*-javadoc.jar` file and click on the <cite>Archive Browser</cite> tab on the right side.
 Select any `*.html` file which is known to use some of the custom taglets defined in the `sis-build-helper` module.
 Click on that file and verify that the custom elements are rendered properly.
-In particular, all Java code snippets are missing if the `@preformat` taglet had not be properly registered,
-so try to see at least one code snippet.
 In the `sis-epsg-$NEW_VERSION.jar` file, verify that `META-INF/LICENSE` contains the EPSG terms of use.
 
 Additional cleaning:

@@ -63,9 +63,13 @@ import java.io.File;
 import java.util.List;
 import org.opengis.metadata.Metadata;
 
-// Branch-specific imports
+// Specific to the geoapi-3.1 and geoapi-4.0 branches:
 import org.opengis.feature.Feature;
 {{< / highlight >}}
+
+The import statements can be rearranged automatically by the `ReorganizeImports` class in `buildSrc`.
+This tool requires checkouts of all three branches (`main`, `geoapi-3.1` and `geoapi-4.0`) in order
+to identify which imports are branch-specific.
 
 ## Spaces and line length    {#spaces}
 
@@ -92,8 +96,7 @@ import org.opengis.feature.Feature;
   This is known as the "customary order" in the [Java Language Specification][JLS-order]:
   + `public`, `protected` or `private`,
   + `abstract` or `static`,
-  + `final`,
-  + `strictfp` (should be applied on all test classes).
+  + `final`.
 * Member fields do not have any particular prefix (no `m_` prefix).
 
 ## Exceptions to coding conventions    {#tabular-formatting}
@@ -123,7 +126,7 @@ structure of `<table>` elements.
 
 SIS uses standard javadoc annotations. The meaning of some tags are refined as below:
 
-* `@since`   - the SIS version when the annotated element (class, method, <i>etc.</i>) was first introduced.
+* `@since`   - the SIS version when the annotated element (class, method, <i>etc.</i>) was first introduced in public API.
 * `@version` - the last SIS version when the code of the annotated class got a significant change.
 * `@author`  - developer name in <var>FirstName</var> <var>LastName</var> (<var>Organization</var>) format.
   A separated `@author` tag is added for each developer.
@@ -134,17 +137,24 @@ In addition, the `sis-build-helper` modules provides the following custom javado
 Javadoc tag    | Description
 -------------- | -------------------------------------------------------------------------------------------
 `{@include}`   | Include the content of a given HTML file below a `<h2>` section having the given title.
-`{@preformat}` | An inline taglet for pre-formatted text. The first word inside the taglet shall be one of `java`, `xml`, `sql`, `wkt`, `text`, `math` or `shell`.
+
+### Where to use @since and @version tags    {#since-tag}
+
+The `@since` and `@version` Javadoc tags should be used only on classes, interfaces, enumerations, methods or fields
+that are part of public API. They should not be put on package-private classes or classes in non-exported packages.
+The reason is that non-public classes can be moved, splitted or merged without warning,
+which gives confusing meaning to the `@since` tag.
+Furthermore, restricting the use of those tags to public API is also a way to remind developers
+that the class that they are editing is part of public API, so backward-compatibility concerns apply.
 
 ## HTML elements    {#html}
 
 HTML tags and entities shall be used only when there is no equivalent Javadoc tag.
 For example:
 
-* Instead of "`<code>✎</code>`", use "`{@code ✎}`".
+* Instead of "`<code>Foo</code>`", use "`{@code Foo}`".
 * Instead of "`a &lt; b &lt; c`", use "`{@literal a < b < c}`".
-* Instead of "`<pre>✎</pre>`" for a Java listing, use "`{@preformat java ✎}`"
-  (this Javadoc tag is specific to Apache {{% SIS %}} — see above table).
+* Instead of "`<pre>Foo</pre>`" for a Java listing, use "`{@snippet lang=java : Foo}`".
 
 ### Paragraphs    {#paragraph}
 
@@ -152,7 +162,7 @@ Usages of the `<p>` tag should be relatively rare, since we use CSS styles (see 
 as much as possible for controlling the margin between elements like lists and tables.
 Do **not** use `<p>` for the first paragraph in a package, class or member documentation,
 or for the first paragraph after a `</ul>`, `</ol>`, `</table>`, `</blockquote>`, `</pre>`,
-or `{@preformat}` element.
+or `{@snippet}` element.
 The `<p>` tag shall be used only for separating a new paragraph from a previous one.
 In such cases, `<p>` shall have a matching `</p>` tag at the paragraph end in order to form valid HTML.
 
@@ -178,8 +188,7 @@ HTML tag                  | Description
 The source code occasionally uses MathML for formulas that are difficult to render with only Unicode characters.
 PNG images are not extensively used for formulas because they are difficult to edit after creation,
 and their content are invisible to search operations (for example when a variable is renamed).
-For examples of MathML usage in SIS, search for the `<math …>` XML tag in Java source files
-(note: there is also legacy `{@preformat math …}` custom Javadoc tags, but they may be phased out as MathML adoption increase).
+For examples of MathML usage in SIS, search for the `<math …>` XML tag in Java source files.
 For an introduction to MathML, see:
 
 * [MathML learn & use][mathml-W3C] on W3C
