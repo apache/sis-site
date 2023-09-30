@@ -9,13 +9,155 @@ The intended audiences are SIS release managers.
 
 {{< toc >}}
 
-# Configure    {#configure}
+
+# Prerequisites    {#prerequisites}
+
+The instructions in this section need to be done only once per new release manager,
+or when configuring a new machine for performing the releases.
+If those steps have already been done, jump directly to the [configuration section](#configure).
 
 Before to perform a release, make sure that the following conditions hold:
 
 * Commands will be executed in a Unix shell.
-* Git, Subversion, GNU GPG, ZIP, Maven, Ant, Java and the Java compiler are available on the path.
-* The [release management setup](release-management-setup.html) steps have been executed once.
+* All the following commands are available on the classpath:
+  * `git` for fetching the source code.
+  * `svn` (Subversion) for fetching the non-free sources.
+  * `gpg` (GNU GPG) for signing artifacts.
+  * `gradle` for compiling Apache SIS.
+  * `java` and `javac` from the Java Development Kit (JDK).
+  * `zip` for creating the release bundles.
+
+
+## Directory layout    {#directory-layout}
+
+The steps described in this page assume the following directory layout.
+Some directories are Git checkout, other are ordinary directories. Any other layout can be used,
+provided that all relative paths in this page are adjusted accordingly.
+
+{{< highlight text >}}
+<any root directory for SIS>
+├─ main
+├─ non-free
+│  ├─ sis-epsg
+│  └─ sis-embedded-data
+├─ release
+│  ├─ distribution
+│  └─ test
+│     ├─ integration
+│     └─ maven
+└─ site
+   ├─ main
+   ├─ asf-staging
+   ├─ asf-site
+   └─ javadoc
+{{< / highlight >}}
+
+Create the above directory structure as below:
+
+{{< highlight bash >}}
+mkdir site
+mkdir release
+git clone https://gitbox.apache.org/repos/asf/sis.git main
+git clone https://gitbox.apache.org/repos/asf/sis-site.git site/main
+svn checkout https://svn.apache.org/repos/asf/sis/data/non-free
+svn checkout https://svn.apache.org/repos/asf/sis/release-test release/test
+svn checkout https://dist.apache.org/repos/dist/dev/sis release/distribution
+cd site/main
+git worktree add ../asf-staging asf-staging
+git worktree add ../asf-site asf-site
+{{< / highlight >}}
+
+
+## Generate GPG key    {#generate-key}
+
+The releases have to be signed by public key cryptography signatures.
+Detailed instructions about why releases have to be signed are provided on the [Release Signing][signing] page.
+The standard used is OpenPGP (_Open Pretty Good Privacy_), and a popular software implementation of that standard is GPG (_GNU Privacy Guard_).
+The [OpenPGP instructions][PGP] list out detailed steps on managing your keys.
+The following steps provide a summary:
+
+Edit the `~/.gnupg/gpg.conf` configuration file and add the following configuration options,
+or edit the existing values if any:
+
+{{< highlight text >}}
+personal-digest-preferences SHA512
+cert-digest-algo SHA512
+default-preference-list SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed
+{{< / highlight >}}
+
+If a private key already exists for emails or other purposes, it may be a good idea to keep that key as the default one.
+Add or modify the following line in the `gpg.conf` file, replacing `<previous_key_id>` by the existing key identifier
+(a value like `621CC013`):
+
+{{< highlight text >}}
+default-key <previous_key_id>
+{{< / highlight >}}
+
+Generate 4096 bits RSA key pair using the following command-line. GPG will prompts for various informations.
+The list below the command suggests some values, keeping in mind that the new key should be used only for
+signing Apache software packages, not for daily emails.
+
+{{< highlight bash >}}
+gpg --gen-key
+{{< / highlight >}}
+
+* Kind of key: RSA and RSA (default). Do not create DSA key.
+* Key size: 4096 bits.
+* Validity time: 0 (key does not expire).
+* Real name: the developer's name.
+* Email address: developer's email address at `@apache.org`.
+* Comment: "CODE SIGNING KEY".
+* Passphrase: please choose a strong one.
+
+Verify the key information (replace _Real Name_ by the above-cited developer's name, keeping quotes in the command below).
+Note the key identifier, which is a value like `74383E9D`. This key identifier will be needed for the next steps.
+
+{{< highlight bash >}}
+gpg --list-sigs "Real Name"
+{{< / highlight >}}
+
+Sends the public key to a keys server (replace `<key_id>` by the above-cited key identifier).
+The default GPG configuration sends the key to `hkp://keys.gnupg.net`.
+Note that while there is many key servers, most of them synchronize changes with each other,
+so a key uploaded to one should be disseminated to the rest.
+
+{{< highlight bash >}}
+gpg --send-key <key_id>
+{{< / highlight >}}
+
+The key publication can be verified by going on the [MIT server][MIT],
+then entering the developer's "Real Name" in the _Search String_ field.
+It may take a few hours before the published key is propagated.
+
+Generate a revocation certificate. This is not for immediate use, but generating the certificate now
+is a safety in case the passphrase is lost. Keep the revocation certificate in a safe place,
+preferably on a removable device.
+
+{{< highlight bash >}}
+gpg --output revocation_certificate.asc --gen-revoke <key_id>
+{{< / highlight >}}
+
+
+## Web of trust    {#trust}
+
+Have the key signed by at least three Apache commiters. This can be done by executing the following commands on
+the machine of the other Apache commiter, where `<key_to_use>` is the identifier of the other commiter's key.
+Those operation should preferably be done in some event where the commiters can meet face-to-face.
+The other commiter should verify that the `gpg --fingerprint` command output matches the fingerprint of the key to sign.
+
+{{< highlight bash >}}
+gpg --recv-keys <key_id>
+gpg --fingerprint <key_id>
+gpg --default-key <key_to_use> --sign-key <key_id>
+gpg --send-key <key_id>
+{{< / highlight >}}
+
+The above-cited _Release Signing_ page provides more instructions.
+Then, the signed public key shall be appended to the `KEYS` file on the [SIS source code repository][source],
+then copied to the [SIS distribution directory][dist].
+
+
+# Configure    {#configure}
 
 For all instructions in this page, `$OLD_VERSION` and `$NEW_VERSION` stand for the version
 number of the previous and the new release respectively, and `$RELEASE_CANDIDATE` stands for
@@ -648,7 +790,13 @@ In the _Repositories_ tag, select _Snapshots_ of type _hosted_
 Delete the whole `org/apache/sis` directory.
 It will be recreated the next time that [Jenkins][jenkins] is run.
 
-[release-faq]:      http://www.apache.org/dev/release.html
-[JIRA]:             http://issues.apache.org/jira/browse/SIS
+[release-faq]:      https://www.apache.org/legal/release-policy.html
+[signing]:          https://infra.apache.org/release-signing.html
+[PGP]:              https://infra.apache.org/openpgp.html
+[maven]:            https://infra.apache.org/publishing-maven-artifacts.html
+[source]:           https://github.com/apache/sis
+[dist]:             https://dist.apache.org/repos/dist/release/sis/
+[MIT]:              http://pgp.mit.edu
+[JIRA]:             https://issues.apache.org/jira/browse/SIS
 [repository]:       https://repository.apache.org/index.html
 [jenkins]:          https://ci-builds.apache.org/job/SIS/
