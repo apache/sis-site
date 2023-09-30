@@ -4,7 +4,7 @@ title: The Apache SIS™ library
 
 Apache Spatial Information System (SIS) is a free software, Java language library for developing geospatial applications.
 SIS provides data structures for geographic features and associated metadata along with methods to manipulate those data structures.
-The library is an implementation of [GeoAPI 3.0.1][geoapi] interfaces and can be used for desktop or server applications.
+The library is an implementation of [GeoAPI 3.0.2][geoapi] interfaces and can be used for desktop or server applications.
 
 The SIS metadata module enables the creation of metadata objects
 which comply with the model of {{% OGC %}}/{{% ISO %}} international standards.

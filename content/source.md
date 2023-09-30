@@ -163,7 +163,7 @@ gradle test --system-prop org.apache.sis.test.extensive=true
 
 The source code repository contains `main`, `geoapi-3.1` and `geoapi-4.0` branches.
 Apache {{% SIS %}} releases are created from `main`, which depends on the latest GeoAPI version
-released by the Open Geospatial Consortium (OGC), currently [GeoAPI 3.0.1][geoapi-stable].
+released by the Open Geospatial Consortium (OGC), currently [GeoAPI 3.0.2][geoapi-stable].
 However daily developments occur on the `geoapi-4.0` branch before to be merged (indirectly) to `main`.
 Those branches exist in order to experiment early new API and technologies — since they may impact
 the library design — while keeping the releases compatible with officially released API.
@@ -171,7 +171,7 @@ In summary:
 
 * The `geoapi-4.0` branch implements interfaces defined in GeoAPI 4.0 snapshots.
 * The `geoapi-3.1` branch implements interfaces defined in [GeoAPI 3.1 snapshots][geoapi-snapshot].
-* The `main` implements interfaces defined by the [GeoAPI 3.0.1 stable release][geoapi-stable].
+* The `main` implements interfaces defined by the [GeoAPI 3.0.2 stable release][geoapi-stable].
 
 Developments on `geoapi-4.0` branch are merged to `geoapi-3.1` branch, which is then merged to `main`.
 When commits reach `main` they become unmodifiable; the `git push --force` command is not allowed on that branch.
