@@ -30,18 +30,22 @@ Before to perform a release, make sure that the following conditions hold:
 
 ## Directory layout    {#directory-layout}
 
-The steps described in this page assume the following directory layout.
+The steps described in this page assume the following directory layout,
+where `$NEW_VERSION` and `$RELEASE_CANDIDATE` are environment variables introduced [later](#configure).
 Some directories are Git checkout, other are ordinary directories. Any other layout can be used,
 provided that all relative paths in this page are adjusted accordingly.
 
 {{< highlight text >}}
 <any root directory for SIS>
+├─ $NEW_VERSION-RC
 ├─ main
 ├─ non-free
 │  ├─ sis-epsg
 │  └─ sis-embedded-data
 ├─ release
 │  ├─ distribution
+│  │  └─ $NEW_VERSION
+│  │     └─ RC$RELEASE_CANDIDATE
 │  └─ test
 │     ├─ integration
 │     └─ maven
@@ -166,7 +170,7 @@ the current release attempt. Those versions shall be set on the command line lik
 {{< highlight bash >}}
 gpg --list-keys                     # For getting the value to put in <your key ID>
 unset PATH_TO_FX
-export OLD_VERSION=1.2
+export OLD_VERSION=1.3
 export NEW_VERSION={{% version %}}
 export RELEASE_CANDIDATE=1
 export SIGNING_KEY=<your key ID>    # hexadecimal number with 8 or 40 digits.
@@ -174,32 +178,6 @@ export SIGNING_KEY=<your key ID>    # hexadecimal number with 8 or 40 digits.
 
 Make sure that the code signing key is the defauly key declared in `~/.gnupg/gpg.conf`
 during the Maven deployment phase.
-
-## Directory layout    {#directory-layout}
-
-The steps described in this page assume the following directory layout (some directories will be created as
-a result of the steps). Any other layout can be used. However if the layout differs, then the relative paths
-in this page shall be adjusted accordingly.
-
-{{< highlight text >}}
-    <any root directory for SIS>
-    ├─ $NEW_VERSION-RC
-    ├─ master
-    ├─ non-free
-    │  └─ sis-epsg
-    ├─ releases
-    │  ├─ distribution
-    │  │  └─ $NEW_VERSION
-    │  │     └─ RC$RELEASE_CANDIDATE
-    │  └─ tests
-    │     ├─ integration
-    │     └─ maven
-    └─ site
-       ├─ main
-       ├─ asf-staging
-       ├─ asf-site
-       └─ javadoc
-{{< / highlight >}}
 
 # Review project status before branching    {#prepare-source}
 
