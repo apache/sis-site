@@ -179,14 +179,15 @@ export SIGNING_KEY=<your key ID>    # hexadecimal number with 8 or 40 digits.
 Make sure that the code signing key is the defauly key declared in `~/.gnupg/gpg.conf`
 during the Maven deployment phase.
 
+
 # Review project status before branching    {#prepare-source}
 
 Replace the `$OLD_VERSION` number by `$NEW_VERSION` in the values of following properties on the development branch:
 
-* `DOWNLOAD_URL` in `core/sis-utility/src/main/java/org/apache/sis/setup/OptionalInstallations.java` file.
-* `<sis.non-free.version>` in root `pom.xml` file.
-* Review the `README` and `NOTICE` files in root directory.
-* Review the `README` files in `application/sis-javafx/src/main/artifact/` and subdirectories.
+* `DOWNLOAD_URL` in `endorsed/src/org.apache.sis.util/main/org/apache/sis/setup/OptionalInstallations.java` file
+  (note that the version number appears twice, and once more in `@since` Javadoc tag).
+* Review the `README.md` and `NOTICE` files in root directory.
+* Review the `README` file in `optional/src/org.apache.sis.gui/bundle/`.
 
 Commit and merge with other branches up to master.
 
@@ -228,17 +229,42 @@ the [CoordinateOperationMethods](./tables/CoordinateOperationMethods.html)
 and [CoordinateReferenceSystems](./tables/CoordinateReferenceSystems.html) pages.
 Those steps are also useful as additional tests, since failure to generate those pages may reveal problems.
 
-1. Open the `AuthorityCodes` class, search `DEPRECATED=0` (it appears in a SQL fragment) and replace by `(DEPRECATED=0 OR TRUE)`.
-   **Do not commit!** This is a temporary hack for including deprecated codes in the CRS list to be generated.
-   Those codes will appear with strike for making clear that they are deprecated.
-2. Open the `CoordinateOperationMethods` Java class and execute its `main` method, for example in an IDE.
-3. Open the `CoordinateReferenceSystems` Java class and execute its `main` method.
-4. If successful, HTML files will be generated in the current directory.
-   Open those files in a web browser and verify that information are okay,
-   in particular the SIS and EPSG version numbers in the first paragraph.
-5. If okay, move those two HTML files to the `../site/main/static/tables/` directory, overwriting previous files.
-6. Revert the hack in `AuthorityCodes` class.
-7. Commit: `git commit --message="Update the list CRS and operation methods supported by Apache SIS $NEW_VERSION."`
+* Open the `AuthorityCodes` class and apply the following changes **withoug committing them.**
+  They are temporary hacks for including deprecated codes in the CRS list to be generated.
+  (those codes will appear with strike for making clear that they are deprecated):
+
+   * Search `DEPRECATED=0` (it appears in a SQL fragment) and replace by `(DEPRECATED=0 OR TRUE)`.
+   * Comment-out the `if (table.showColumn != null)` block which appears just above the `DEPRECATED=0` occurrence.
+  <br><br>
+
+* Run the following commands:
+
+  {{< highlight bash >}}
+  gradle assemble
+
+  java --module-path endorsed/build/libs \
+       --limit-modules org.apache.sis.referencing \
+       --patch-module org.apache.sis.referencing=endorsed/build/classes/java/test/org.apache.sis.referencing \
+       --module org.apache.sis.referencing/org.apache.sis.referencing.report.CoordinateOperationMethods
+
+  # Following requires a build of NetBeans project for fetching test dependencies. This may change in a future version.
+  java --module-path endorsed/build/libs:netbeans-project/build/dependencies \
+       --add-modules   org.opengis.geoapi.conformance,org.apache.derby.tools,org.apache.derby.engine \
+       --limit-modules org.opengis.geoapi.conformance,org.apache.derby.tools,org.apache.derby.engine,org.apache.sis.referencing \
+       --add-reads     org.apache.sis.referencing=org.opengis.geoapi.conformance,junit \
+       --patch-module  org.apache.sis.referencing=endorsed/build/classes/java/test/org.apache.sis.referencing \
+       --module org.apache.sis.referencing/org.apache.sis.referencing.report.CoordinateReferenceSystems
+  {{< / highlight >}}
+
+* If successful, HTML files will be generated in the current directory.
+  Open those files in a web browser and verify that information are okay,
+  in particular the SIS and EPSG version numbers in the first paragraph.
+* If okay, move those two HTML files to the `../site/main/static/tables/` directory, overwriting previous files.
+  Revert the hack in `AuthorityCodes` class, then commit:
+
+  {{< highlight bash >}}
+  git commit --message="Update the list CRS and operation methods supported by Apache SIS $NEW_VERSION."
+  {{< / highlight >}}
 
 ## Prepare release notes    {#release-notes}
 
