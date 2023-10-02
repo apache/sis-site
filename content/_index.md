@@ -22,7 +22,7 @@ The API and the data encodings follow [international standards](standards.html) 
 
 * Raster formats:
   * Read [NetCDF-3 Classic and 64-bit Offset Format][netCDF].
-  * Read [GeoTIFF][geoTIFF] including BigTIFF extension.
+  * Read [GeoTIFF][geoTIFF] or Cloud Optimized GeoTIFF (COG), including BigTIFF extension.
   * Read Landsat (groups of GeoTIFF files).
   * Read ESRI BIL/BIP/BSQ and read/write ERSI ASCII Grid.
   * Read/write World Files with any image format supported by Image I/O.
