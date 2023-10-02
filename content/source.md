@@ -17,11 +17,12 @@ or to cherry-pick only the interesting parts of the advanced configuration.
 
 {{< toc >}}
 
+
 # Basic installation    {#basic}
 
 Create an empty directory for the Apache {{% SIS %}} project.
-We use `ApacheSIS` directory name in this page, but that name can be anything;
-replace that name in the shell commands below if another name is used.
+We use `ApacheSIS` directory name in this page, but that name can be anything.
+Replace that name in the shell commands below if another name is used.
 The Apache {{% SIS %}} source code can be cloned in that directory as below
 (lines starting with `#` are comments and can be ignored):
 
@@ -37,18 +38,41 @@ git clone https://gitbox.apache.org/repos/asf/sis
 # svn checkout https://github.com/apache/sis/trunk
 {{< / highlight >}}
 
-Apache {{% SIS %}} can be built by running `gradle assemble` in the `sis` subdirectory.
-At this stage, the `ApacheSIS` parent directory is redundant with the `sis` subdirectory,
-but we recommend to create that parent directory anyway in anticipation
-for more subdirectories to be created later, when desired.
-The remaining of this page describes those optional configurations for more advanced developments.
+If JavaFX is available on the local machine,
+its JAR files location can be specified as below
+(edit the `/usr/lib/jvm/openjfx` path as needed).
+This is optional and can be safely ignored if the JavaFX application is not desired.
+
+{{< highlight bash >}}
+# Syntax for Unix shell
+export PATH_TO_FX=/usr/lib/jvm/openjfx
+{{< / highlight >}}
+
+Then, Apache {{% SIS %}} can be built as below:
+
+{{< highlight bash >}}
+cd sis
+gradle test                     # Theoretically optional, seems sometime necessary.
+gradle assemble
+gradle publishToMavenLocal      # If use with Maven projects is desired.
+{{< / highlight >}}
+
+Outputs will be located in the following sub-directories:
+
+* `endorsed/build/libs/`  for the JAR files of the core library and its dependencies.
+* `optional/build/libs/`  for the JAR files of modules requiring optional dependencies.
+* `incubator/build/libs/` for the JAR files of modules that are not yet part of releases.
+* `optional/build/bundle/` for the JavaFX application if optional dependencies were specified.
+
+The remaining of this page describes optional configurations for more advanced developments.
+
 
 # Advanced installation    {#advanced}
 
 This section assumes that above-described basic checkout has been done.
-All subsections below are optional. It is not mandatory to execute all of them,
-but we recommend to at least create the data directory described below
-because some other optional services depend on it.
+All subsections below are optional, but the "Create data directory" one
+is recommended because some other subsections depend on it.
+
 
 ## Create data directory    {#data}
 
@@ -121,23 +145,33 @@ The requirements are:
 The `SpatialMetadataTest` database should stay empty when not running tests,
 because Apache {{% SIS %}} always delete the temporary schema after tests completion,
 regardless if the tests were successful or not.
-The role and database can be created by the following SQL instructions
+The role and database can be created by connecting to the server:
+
+{{< highlight bash >}}
+psql --username=postgres
+{{< / highlight >}}
+
+Then the role and database can be created by the following SQL instructions
 (replace `my_unix_user_name` by your actual user name):
 
 {{< highlight sql >}}
 CREATE ROLE my_unix_user_name LOGIN;
 CREATE DATABASE "SpatialMetadataTest" WITH OWNER = my_unix_user_name;
 COMMENT ON DATABASE "SpatialMetadataTest" IS 'For Apache SIS tests only.';
+\connect "SpatialMetadataTest"
+CREATE EXTENSION postgis;
+\q
 {{< / highlight >}}
 
 For opening access to that database without password, it may be necessary
 to add following line (ignoring comment lines) in the `pg_hba.conf` file.
-Location of this file is system-dependent; it may be `/var/​lib/​pgsql/​data`:
+Location of this file is system-dependent, it may be `/var/lib/pgsql/data/`.
+The following lines should be inserted *before* the lines for user `all`:
 
 {{< highlight text >}}
-# IPv4 local connections:
 # TYPE  DATABASE               USER                 ADDRESS         METHOD
 host    SpatialMetadataTest    my_unix_user_name    127.0.0.1/32    trust
+host    SpatialMetadataTest    my_unix_user_name    ::1/128         trust
 {{< / highlight >}}
 
 The last step for allowing Apache {{% SIS %}} to run tests on PostgreSQL is to set the

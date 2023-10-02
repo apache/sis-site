@@ -40,8 +40,8 @@ provided that all relative paths in this page are adjusted accordingly.
 ├─ $NEW_VERSION-RC
 ├─ main
 ├─ non-free
-│  ├─ sis-epsg
-│  └─ sis-embedded-data
+│  ├─ sis-embedded-data
+│  └─ sis-epsg
 ├─ release
 │  ├─ distribution
 │  │  └─ $NEW_VERSION
@@ -50,10 +50,10 @@ provided that all relative paths in this page are adjusted accordingly.
 │     ├─ integration
 │     └─ maven
 └─ site
-   ├─ main
-   ├─ asf-staging
    ├─ asf-site
-   └─ javadoc
+   ├─ asf-staging
+   ├─ javadoc
+   └─ main
 {{< / highlight >}}
 
 Create the above directory structure as below:
@@ -169,7 +169,6 @@ the current release attempt. Those versions shall be set on the command line lik
 
 {{< highlight bash >}}
 gpg --list-keys                     # For getting the value to put in <your key ID>
-unset PATH_TO_FX
 export OLD_VERSION=1.3
 export NEW_VERSION={{% version %}}
 export RELEASE_CANDIDATE=1
@@ -229,8 +228,8 @@ the [CoordinateOperationMethods](./tables/CoordinateOperationMethods.html)
 and [CoordinateReferenceSystems](./tables/CoordinateReferenceSystems.html) pages.
 Those steps are also useful as additional tests, since failure to generate those pages may reveal problems.
 
-* Open the `AuthorityCodes` class and apply the following changes **withoug committing them.**
-  They are temporary hacks for including deprecated codes in the CRS list to be generated.
+* Open the `AuthorityCodes` class and apply the following changes **without committing them.**
+  They are temporary hacks for including deprecated codes in the CRS list to be generated
   (those codes will appear with strike for making clear that they are deprecated):
 
    * Search `DEPRECATED=0` (it appears in a SQL fragment) and replace by `(DEPRECATED=0 OR TRUE)`.
