@@ -4,7 +4,6 @@ title: Apache SIS downloads
 
 Apache {{% SIS %}} {{% version %}} is now available.
 See the [release notes](release-notes/{{% version %}}.html) for a list of changes since the previous version.
-See the [build instruction](build.html) for compiling from the sources.
 
 Apache {{% SIS %}} releases are available under the [Apache License, Version 2.0][license].
 See the `NOTICE` file contained in each release artifact for applicable copyright attribution notices.
@@ -21,7 +20,7 @@ Optional dependencies (JAXB implementation, UCAR netCDF library, Amazon SDK) are
 
 * [Apache SIS {{% version %}} binary][bin]  \[[PGP][bin-PGP]\] \[[SHA 512][bin-SHA]\]
 * [Apache SIS {{% version %}} javadoc][doc] \[[PGP][doc-PGP]\] \[[SHA 512][doc-SHA]\]
-* [Apache SIS {{% version %}} sources][src] \[[PGP][src-PGP]\] \[[SHA 512][src-SHA]\] ([build instruction](build.html))
+* [Apache SIS {{% version %}} sources][src] \[[PGP][src-PGP]\] \[[SHA 512][src-SHA]\]
 
 
 ## Verify signatures    {#release-gpg}
@@ -54,7 +53,37 @@ pgpv apache-sis-{{% version %}}-src.zip.asc
 {{< / highlight >}}
 
 
-## Setting the module-path
+## Build from the sources    {#build}
+
+If the source files were donwloaded instead of the binaries, the sources will need to be built by Gradle.
+It requires Java 18 or higher for building, but the compilation result can be executed on Java 11 or higher.
+For installing the JAR files in the local Maven repository, execute the following command
+from the SIS project root:
+
+{{< highlight bash >}}
+cd apache-sis-{{% version %}}
+gradle test                     # Theoretically optional, seems sometime necessary.
+gradle assemble
+gradle publishToMavenLocal      # If use with Maven projects is desired.
+{{< / highlight >}}
+
+The JavaFX application is excluded by default because it depends on
+the [JavaFX platform][JavaFX] which is distributed under GPL license
+(note that the SIS module stay under Apache 2 licence).
+Likewise the [EPSG geodetic dataset](epsg.html) is excluded by default for licensing reasons.
+For including the JavaFX module in the build, define the `PATH_TO_FX` environment variable
+with the path to the directory containing all JavaFX JAR files.
+Example on a Linux system (the path may vary):
+
+{{< highlight bash >}}
+export PATH_TO_FX=/usr/lib/jvm/openjfx
+{{< / highlight >}}
+
+The application will bundled in a ZIP file in the `optional/build/bundle` directory.
+To test, uncompress in any directory and execute `apache-​sis-​{{% version %}}/​bin/sisfx`.
+
+
+## Setting the module-path    {#module-path}
 
 Apache SIS 1.4 and later use the Java Platform Module System (JPMS).
 Consequently applications should declare SIS JAR files on their module-path rather than their class-path.
@@ -161,3 +190,4 @@ See [How to use EPSG geodetic dataset](epsg.html) page for more information.
 [bin-SHA]:  https://www.apache.org/dist/sis/{{% version %}}/apache-sis-{{% version %}}-bin.zip.sha512
 [EPSG]:     https://epsg.org/
 [EPSG-ToU]: https://epsg.org/terms-of-use.html
+[JavaFX]:   https://openjfx.io/

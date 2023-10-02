@@ -41,12 +41,16 @@ git clone https://gitbox.apache.org/repos/asf/sis
 If JavaFX is available on the local machine,
 its JAR files location can be specified as below
 (edit the `/usr/lib/jvm/openjfx` path as needed).
-This is optional and can be safely ignored if the JavaFX application is not desired.
+The JavaFX application is excluded by default because it depends on
+the [JavaFX platform][JavaFX] which is distributed under GPL license
+(note that the SIS module stay under Apache 2 licence).
 
 {{< highlight bash >}}
 # Syntax for Unix shell
 export PATH_TO_FX=/usr/lib/jvm/openjfx
 {{< / highlight >}}
+
+Likewise the [EPSG geodetic dataset](epsg.html) is excluded by default for licensing reasons.
 
 Then, Apache {{% SIS %}} can be built as below:
 
@@ -92,6 +96,7 @@ export SIS_DATA=$PWD/Data
 echo export SIS_DATA=$SIS_DATA
 {{< / highlight >}}
 
+
 ## Checkout non-free data    {#non-free}
 
 The EPSG geodetic dataset is recommended for operations related to Coordinate Reference Systems.
@@ -128,6 +133,7 @@ non-free dependencies without explicit action from user.
 If this action is not taken, some JUnit tests requiring EPSG data may be skipped.
 If any EPSG file is updated, deleting the `$SIS_DATA/​Databases/​SpatialMetadata` directory
 is sufficient for causing Apache {{% SIS %}} to recreate the Derby database with new data.
+
 
 ## Configure PostgreSQL    {#postgres}
 
@@ -179,6 +185,7 @@ The last step for allowing Apache {{% SIS %}} to run tests on PostgreSQL is to s
 This requirement has been added for avoiding undesired interference with host.
 Note that this step is likely to change after Apache {{% SIS %}} upgrade to JUnit 5.
 
+
 ## Running extensive tests    {#tests}
 
 A simple `gradle test` execution in the `sis` directory
@@ -192,6 +199,7 @@ For enabling all tests, use the following command:
 cd sis
 gradle test --system-prop org.apache.sis.test.extensive=true
 {{< / highlight >}}
+
 
 ## Switch to development branch    {#branches}
 
@@ -218,6 +226,33 @@ git checkout geoapi-4.0
 
 Note that those `geoapi-xxx` branches may disappear or be replaced by something else
 after {{% OGC %}} releases the corresponding GeoAPI versions.
+
+
+# Managing resources   {#resources}
+
+Resources are in the same `src` directories than Java source code.
+Resources files are kept close to Java source files because they often need to be edited together.
+All resource files are copied to the build directory, except those with the following extensions:
+
+* `tmp`, `bak`, `log` — because they are temporary files.
+* `java`, `idl`       — because they are source files.
+* `html`, `md`        — because they are documentation files.
+
+The `properties` files are handled in a special way.
+Localized resources are provided in `*.properties` files as specified by the `java.util.Property­Resource­Bundle` standard class.
+However SIS does not use those resources files directly. Instead `*.properties` files are transformed into binary files having
+the same filename but the `.utf` extension. This conversion is done for efficiency, for convenience (the compiler applies the
+`java.text.Message­Format` _doubled single quotes_ rule itself), and for compile-time safety.
+
+In addition to generating the `*.utf` files, the resource compiler may modify the `*.java` files having the same name than the
+resource files. For example given a set of `Vocabulary*.properties` files (one for each supported language), the compiler will
+generate the corresponding `Vocabulary*.utf` files, then look for a `Vocabulary.java` source file. If such source file is found
+and contains a public static inner class named `Keys`, then the compiler will rewrite the constants declared in that inner class
+with the list of keys found in the `Vocabulary*.properties` files.
+
+Apache {{% SIS %}} uses a plugin in `buildSrc/` for processing resources.
+This plugin is used automatically by Gradle.
+
 
 # History    {#history}
 
