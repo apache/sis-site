@@ -221,6 +221,8 @@ after {{% OGC %}} releases the corresponding GeoAPI versions.
 
 # History    {#history}
 
+The build system before Apache {{% SIS %}} 1.4 was Maven.
+Migration to Gradle was necessary for partial support of Module Source Hierarchy.
 All developments and tags prior Apache {{% SIS %}} 1.0 were done on a [Subversion][subversion] repository
 and can be [browsed online][viewvc].
 Tags for Apache {{% SIS %}} versions 0.1 to 0.8 should be fetched from the [SVN repository][svn-sis-tags].

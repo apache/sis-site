@@ -61,9 +61,12 @@ The API and the data encodings follow [international standards](standards.html) 
 
 The latest SIS release is {{% version %}}, released in October 2023,
 and can be [downloaded](downloads.html) as a `zip` files or as Maven dependencies.
-This version requires Java 11 or later.
 The EPSG geodetic dataset is optional for licensing reasons, but recommended.
 EPSG database installation is [described in a separated page](epsg.html).
+This Apache SIS version requires Java 11 or later and uses the Java Platform Module System (JPMS).
+Consequently applications should declare SIS JAR files on their module-path rather than their class-path,
+but a compatibility mechanism makes possible to nevertheless use SIS on the class-path.
+Note that this class-path compatibility may be removed in future versions.
 
 Apache {{% SIS %}} is a Java library for use by other applications.
 Leveraging the full SIS capabilities or getting the best performance require that users write their own applications on top of SIS.

@@ -11,6 +11,7 @@ See the `NOTICE` file contained in each release artifact for applicable copyrigh
 
 {{< toc >}}
 
+
 # Download ZIP files    {#bundles}
 
 Apache {{% SIS %}} is distributed in the form of Java source code in a multi-modules Apache Maven project.
@@ -21,6 +22,7 @@ Optional dependencies (JAXB implementation, UCAR netCDF library, Amazon SDK) are
 * [Apache SIS {{% version %}} binary][bin]  \[[PGP][bin-PGP]\] \[[SHA 512][bin-SHA]\]
 * [Apache SIS {{% version %}} javadoc][doc] \[[PGP][doc-PGP]\] \[[SHA 512][doc-SHA]\]
 * [Apache SIS {{% version %}} sources][src] \[[PGP][src-PGP]\] \[[SHA 512][src-SHA]\] ([build instruction](build.html))
+
 
 ## Verify signatures    {#release-gpg}
 
@@ -50,6 +52,25 @@ Using PGP version 5:
 pgpk -a KEYS
 pgpv apache-sis-{{% version %}}-src.zip.asc
 {{< / highlight >}}
+
+
+## Setting the module-path
+
+Apache SIS 1.4 and later use the Java Platform Module System (JPMS).
+Consequently applications should declare SIS JAR files on their module-path rather than their class-path.
+The easiest way is to declare the whole directory like below:
+
+{{< highlight bash >}}
+java --module-path apache-sis-{{% version %}}/lib
+{{< / highlight >}}
+
+If the application using Apache SIS is not itself modularized,
+it may be necessary to add the `--add-modules ALL-MODULE-PATH` option.
+If it is not possible to declare SIS JAR files on the module-path,
+a compatibility mechanism makes possible to nevertheless use SIS {{% version %}} on the class-path.
+Note however that declaring SIS JAR files on the class-path may be no longer supported in a future version
+(it does **not** mean that applications using SIS must put themselves on the module-path).
+
 
 # Download as Maven dependencies    {#maven}
 
@@ -82,20 +103,20 @@ Below are examples of declarations in a `pom.xml` file for building a project wi
 The `sis-referencing` module in above example can be replaced by one or many of the following modules:
 
 <table>
-  <tr><th>Service</th>                          <th>Group</th>                                   <th>Artifact</th></tr>
-  <tr><td>ISO 19115 metadata</td>               <td><code>org.apache.sis.core</code></td>        <td><code>sis-metadata</code></td></tr>
-  <tr><td>Referencing by coordinates</td>       <td><code>org.apache.sis.core</code></td>        <td><code>sis-referencing</code></td></tr>
-  <tr><td>Referencing by identifiers</td>       <td><code>org.apache.sis.core</code></td>        <td><code>sis-referencing-by-identifiers</code></td></tr>
-  <tr><td>Features and coverages</td>           <td><code>org.apache.sis.core</code></td>        <td><code>sis-feature</code></td></tr>
-  <tr><td>Feature data from SQL database</td>   <td><code>org.apache.sis.storage</code></td>     <td><code>sis-sqlstore</code></td></tr>
-  <tr><td>Feature data from GPX files</td>      <td><code>org.apache.sis.storage</code></td>     <td><code>sis-xmlstore</code></td></tr>
-  <tr><td>Features and rasters from NetCDF</td> <td><code>org.apache.sis.storage</code></td>     <td><code>sis-netcdf</code></td></tr>
-  <tr><td>Raster data from GeoTIFF</td>         <td><code>org.apache.sis.storage</code></td>     <td><code>sis-geotiff</code></td></tr>
-  <tr><td>Raster data from Landsat</td>         <td><code>org.apache.sis.storage</code></td>     <td><code>sis-earth-observation</code></td></tr>
-  <tr><td>Raster data from GCOM (JAXA)</td>     <td><code>org.apache.sis.profile</code></td>     <td><code>sis-japan-profile</code></td></tr>
-  <tr><td>Connection to storages on cloud</td>  <td><code>org.apache.sis.cloud</code></td>       <td><code>sis-cloud-aws</code></td></tr>
-  <tr><td>Console application</td>              <td><code>org.apache.sis.application</code></td> <td><code>sis-console</code></td></tr>
-  <tr><td>Graphical application</td>            <td><code>org.apache.sis.application</code></td> <td><code>sis-javafx</code></td></tr>
+  <tr><th>Service</th>                          <th>Java module name</th>                                     <th>Maven group</th>                             <th>Maven artifact</th></tr>
+  <tr><td>ISO 19115 metadata</td>               <td><code>org.apache.sis.metadata</code></td>                 <td><code>org.apache.sis.core</code></td>        <td><code>sis-metadata</code></td></tr>
+  <tr><td>Referencing by coordinates</td>       <td><code>org.apache.sis.referencing</code></td>              <td><code>org.apache.sis.core</code></td>        <td><code>sis-referencing</code></td></tr>
+  <tr><td>Referencing by identifiers</td>       <td><code>org.apache.sis.referencing.gazetteer</code></td>    <td><code>org.apache.sis.core</code></td>        <td><code>sis-referencing-by-identifiers</code></td></tr>
+  <tr><td>Features and coverages</td>           <td><code>org.apache.sis.feature</code></td>                  <td><code>org.apache.sis.core</code></td>        <td><code>sis-feature</code></td></tr>
+  <tr><td>Feature data from SQL database</td>   <td><code>org.apache.sis.storage.sql</code></td>              <td><code>org.apache.sis.storage</code></td>     <td><code>sis-sqlstore</code></td></tr>
+  <tr><td>Feature data from GPX files</td>      <td><code>org.apache.sis.storage.xml</code></td>              <td><code>org.apache.sis.storage</code></td>     <td><code>sis-xmlstore</code></td></tr>
+  <tr><td>Features and rasters from NetCDF</td> <td><code>org.apache.sis.storage.netcdf</code></td>           <td><code>org.apache.sis.storage</code></td>     <td><code>sis-netcdf</code></td></tr>
+  <tr><td>Raster data from GeoTIFF</td>         <td><code>org.apache.sis.storage.geotiff</code></td>          <td><code>org.apache.sis.storage</code></td>     <td><code>sis-geotiff</code></td></tr>
+  <tr><td>Raster data from Landsat</td>         <td><code>org.apache.sis.storage.earthobservation</code></td> <td><code>org.apache.sis.storage</code></td>     <td><code>sis-earth-observation</code></td></tr>
+  <tr><td>Raster data from GCOM (JAXA)</td>     <td><code>org.apache.sis.profile.japan</code></td>            <td><code>org.apache.sis.profile</code></td>     <td><code>sis-japan-profile</code></td></tr>
+  <tr><td>Connection to storages on cloud</td>  <td><code>org.apache.sis.cloud.aws</code></td>                <td><code>org.apache.sis.cloud</code></td>       <td><code>sis-cloud-aws</code></td></tr>
+  <tr><td>Console application</td>              <td><code>org.apache.sis.console</code></td>                  <td><code>org.apache.sis.application</code></td> <td><code>sis-console</code></td></tr>
+  <tr><td>Graphical application</td>            <td><code>org.apache.sis.gui</code></td>                      <td><code>org.apache.sis.application</code></td> <td><code>sis-javafx</code></td></tr>
 </table>
 
 
