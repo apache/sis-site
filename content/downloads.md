@@ -62,10 +62,12 @@ from the SIS project root:
 
 {{< highlight bash >}}
 cd apache-sis-{{% version %}}
-gradle test                     # Theoretically optional, seems sometime necessary.
 gradle assemble
 gradle publishToMavenLocal      # If use with Maven projects is desired.
 {{< / highlight >}}
+
+JAR files will be in the `endorsed/build/libs/` sub-directory.
+An Open/LibreOffice add-in will be in `endorsed/build/bundle/`.
 
 The JavaFX application is excluded by default because it depends on
 the [JavaFX platform][JavaFX] which is distributed under GPL license

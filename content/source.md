@@ -56,16 +56,16 @@ Then, Apache {{% SIS %}} can be built as below:
 
 {{< highlight bash >}}
 cd sis
-gradle test                     # Theoretically optional, seems sometime necessary.
 gradle assemble
 gradle publishToMavenLocal      # If use with Maven projects is desired.
 {{< / highlight >}}
 
 Outputs will be located in the following sub-directories:
 
-* `endorsed/build/libs/`  for the JAR files of the core library and its dependencies.
-* `optional/build/libs/`  for the JAR files of modules requiring optional dependencies.
-* `incubator/build/libs/` for the JAR files of modules that are not yet part of releases.
+* `endorsed/build/libs/`   for the JAR files of the core library and its dependencies.
+* `optional/build/libs/`   for the JAR files of modules requiring optional dependencies.
+* `incubator/build/libs/`  for the JAR files of modules that are not yet part of releases.
+* `endorsed/build/bundle/` for the OXT add-in for Open/LibreOffice Calc.
 * `optional/build/bundle/` for the JavaFX application if optional dependencies were specified.
 
 The remaining of this page describes optional configurations for more advanced developments.

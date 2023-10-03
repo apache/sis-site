@@ -29,7 +29,7 @@ The API and the data encodings follow [international standards](standards.html) 
 * Feature formats:
   * Read [Moving Feature Comma Separated Values (CSV) encoding][MF_CSV].
   * Read [Moving Feature netCDF encoding][netCDF_MF].
-  * Read {{% GPX %}} (a {{% XML %}} schema for {{% GPS %}} data).
+  * Read/Write {{% GPX %}} (a {{% XML %}} schema for {{% GPS %}} data).
   * Read [features from {{% SQL %}} spatial databases][SF_SQL] by analysing the database schema.
 * Geographic metadata (ISO 19115):
   * Read ISO 19115 metadata from all above-listed raster and feature formats.

@@ -188,15 +188,15 @@ Replace the `$OLD_VERSION` number by `$NEW_VERSION` in the values of following p
 * Review the `README.md` and `NOTICE` files in root directory.
 * Review the `README` file in `optional/src/org.apache.sis.gui/bundle/`.
 
-Commit and merge with other branches up to master.
+Commit and merge with other branches up to main branch.
 
 {{< highlight bash >}}
 git add --update
 git commit --message="Set version number and the EPSG geodetic dataset URL to expected values after release."
-# merge with master
+# merge with main
 {{< / highlight >}}
 
-Before to start the release process, we need to test more extensively the master.
+Before to start the release process, we need to test more extensively the main branch.
 The tests described below often reveal errors that were unnoticed in daily builds.
 It is better to detect and fix them before to create the release branch.
 First, ensure that a PostgreSQL server is running and listening to the default port on local host
@@ -206,8 +206,7 @@ Then execute the following commands and fix as much warnings as practical:
 
 {{< highlight bash >}}
 systemctl start postgresql.service        # Optional — exact command depends on Linux distribution.
-mvn clean install --define org.apache.sis.test.extensive=true
-mvn javadoc:aggregate --activate-profiles javafx
+gradle test --system-prop org.apache.sis.test.extensive=true
 {{< / highlight >}}
 
 If the `SIS_DATA` environment variable was set during above build, unset it a try again.
@@ -218,8 +217,9 @@ the variable value in the shell performing the release.
 {{< highlight bash >}}
 unset SIS_DATA
 echo $SIS_DATA
-mvn test
+gradle cleanTest test
 {{< / highlight >}}
+
 
 ## Update the list of supported CRS    {#update-crs-list}
 
@@ -265,6 +265,7 @@ Those steps are also useful as additional tests, since failure to generate those
   git commit --message="Update the list CRS and operation methods supported by Apache SIS $NEW_VERSION."
   {{< / highlight >}}
 
+
 ## Prepare release notes    {#release-notes}
 
 We update JIRA soon because doing so is sometimes a reminder of uncompleted tasks in source code.
@@ -290,6 +291,7 @@ git add content/release-notes/$NEW_VERSION.md
 git commit --message "Release notes for Apache SIS $NEW_VERSION."
 {{< / highlight >}}
 
+
 # Create release branch    {#branch}
 
 Execute the following commands.
@@ -297,43 +299,61 @@ It is okay to checkout the branch in a separated directory if desired.
 The `SIS_RC_DIR` environment variable will specify that directory.
 
 {{< highlight bash >}}
-cd ../master
+cd ../main
 git checkout -b $NEW_VERSION-RC
 export SIS_RC_DIR=`pwd`
 {{< / highlight >}}
 
-Remove the files and modules that are not yet ready for a release.
-This may require removing `<module>` elements in the parent `pom.xml` file.
+Remove the files and modules that are not intended to be released.
+Edit at least the files listed below for removing all occurrences of "incubator"
+(the search is easier to do after the removal of "incubator" directory):
+
+* `endorsed/src/org.apache.sis.util/main/module-info.java`
+* `netbeans-project/nbproject/project.properties`
+* `netbeans-project/nbproject/project.xml`
+* `settings.gradle.kts`
+* `README.md`
 
 {{< highlight bash >}}
 git rm .asf.yaml
-git rm -r core/sis-cql
-git rm -r storage/sis-shapefile
-git rm -r application/sis-webapp
+git rm -r incubator
+# Edit above-listed files before to continue.
 git add --update    # for the removal of <module> elements in pom.xml files.
 git commit --message="Remove the modules to be excluded from $NEW_VERSION release."
 {{< / highlight >}}
 
-Open the root `pom.xml` file in an editor and perform the following changes:
+Update SIS version numbers by removing all occurrences of the `-SNAPSHOT` suffix
+at least in the following files:
 
-* Remove the whole `<pluginRepositories>` block (including comment),
-  since it should not be needed for releases (and is actually not allowed).
+* `parent/pom.xml`
+* `optional/build.gradle.kts`
+* `endorsed/build.gradle.kts`
+* `endorsed/src/org.apache.sis.openoffice/bundle/README.md`
+* `endorsed/src/org.apache.sis.util/main/org/apache/sis/util/Version.java`
+* `endorsed/src/org.apache.sis.referencing/test/org/apache/sis/referencing/factory/sql/epsg/README.md`
 
-We need to update the SIS version numbers not only in the `pom.xml` files, but also in a few Java files.
-The following command performs the replacement using Ant.
-
-{{< highlight bash >}}
-ant -buildfile core/sis-build-helper/src/main/ant/prepare-release.xml branch -Dsis.version=$NEW_VERSION
-git rm -r core/sis-build-helper/src/main/ant
-{{< / highlight >}}
-
-Validate with `git diff --staged`, search `SNAPSHOT` in the whole source directory in case we missed some, then commit:
+Then commit:
 
 {{< highlight bash >}}
 git add --update
-mvn clean install
+gradle test
 git commit --message="Set version number to $NEW_VERSION."
 {{< / highlight >}}
+
+## Generate Javadoc    {#javadoc}
+
+Execute the following commands. The first one (`gradle javadoc`) will fail.
+This is a known problem with the current build.
+Open `javadoc.options` file as below (`gedit` can be replaced by another editor),
+and move all `-classpath` content to `--module-path`.
+Then launch Javadoc from the command-line:
+
+{{< highlight bash >}}
+gradle javadoc
+gedit endorsed/build/tmp/javadoc/javadoc.options
+javadoc @endorsed/build/tmp/javadoc/javadoc.options
+{{< / highlight >}}
+
 
 ## Test branch extensively    {#test-branch}
 
@@ -626,7 +646,7 @@ unzip apache-sis-$NEW_VERSION-bin.zip
 cd apache-sis-$NEW_VERSION
 unset SIS_DATA
 bin/sis about --verbose
-bin/sis crs https://github.com/apache/sis/raw/master/core/sis-referencing/src/test/resources/org/apache/sis/referencing/crs/ProjectedCRS.xml --format WKT
+bin/sis crs https://github.com/apache/sis/raw/main/core/sis-referencing/src/test/resources/org/apache/sis/referencing/crs/ProjectedCRS.xml --format WKT
 {{< / highlight >}}
 
 # Prepare OpenOffice add-in    {#openoffice}
@@ -773,9 +793,9 @@ svn delete https://dist.apache.org/repos/dist/release/sis/$OLD_VERSION \
     --message "Archive SIS-$OLD_VERSION after release of SIS-$NEW_VERSION."
 {{< / highlight >}}
 
-# Update master for the next development cycle    {#next-release}
+# Update main branch for the next development cycle    {#next-release}
 
-On the `master` branch:
+On the `main` branch:
 
 * Update the version numbers in all `pom.xml` files.
 * Edit the value of the `MAJOR_VERSION` or `MINOR_VERSION` constant in the
