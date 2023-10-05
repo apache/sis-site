@@ -161,6 +161,18 @@ Then, the signed public key shall be appended to the `KEYS` file on the [SIS sou
 then copied to the [SIS distribution directory][dist].
 
 
+## Gradle configuration
+
+Edit the `~/.gradle/gradle.properties` file, making sure that the following properties are present:
+
+{{< highlight text >}}
+org.gradle.java.home=<path to a Java installation>
+signing.gnupg.keyName=<your key ID>
+asfNexusUsername=<login for uploding to Maven Central>
+asfNexusPassword=<password for uploading to Maven Central>
+{{< / highlight >}}
+
+
 # Configure    {#configure}
 
 For all instructions in this page, `$OLD_VERSION` and `$NEW_VERSION` stand for the version
@@ -292,7 +304,7 @@ git commit --message "Release notes for Apache SIS $NEW_VERSION."
 {{< / highlight >}}
 
 
-# Create release branch    {#branch}
+# Create release artifacts    {#create-artifacts}
 
 Execute the following commands.
 It is okay to checkout the branch in a separated directory if desired.
@@ -340,48 +352,123 @@ gradle test
 git commit --message="Set version number to $NEW_VERSION."
 {{< / highlight >}}
 
+
+## Initialize the distribution directory    {#dist}
+
+Create the directory for the new version and release candidate within the distribution directory.
+The `$RELEASE_CANDIDATE` variable shall be the number of current release attempt.
+
+{{< highlight bash >}}
+cd ../release/distribution
+svn update
+mkdir -p $NEW_VERSION/RC$RELEASE_CANDIDATE
+svn add $NEW_VERSION
+cd $NEW_VERSION/RC$RELEASE_CANDIDATE
+export DIST_DIR=`pwd`
+{{< / highlight >}}
+
+Copy the `HEADER.html` file from the previous release.
+Update the file content if necessary.
+
+{{< highlight bash >}}
+svn copy https://dist.apache.org/repos/dist/release/sis/$OLD_VERSION/HEADER.html .
+{{< / highlight >}}
+
+
 ## Generate Javadoc    {#javadoc}
 
-Execute the following commands. The first one (`gradle javadoc`) will fail.
-This is a known problem with the current build.
-Open `javadoc.options` file as below (`gedit` can be replaced by another editor),
-and move all `-classpath` content to `--module-path`.
-Then launch Javadoc from the command-line:
+Execute `gradle javadoc`. That command will fail. This is a known problem with the current Gradle build configuration.
+But it should have created a `javadoc.options` file that we will patch as below (`gedit` can be replaced by another editor):
 
 {{< highlight bash >}}
-gradle javadoc
+cd $SIS_RC_DIR
+gradle javadoc      # Fail. See workaround below.
 gedit endorsed/build/tmp/javadoc/javadoc.options
+{{< / highlight >}}
+
+Apply the following changes:
+
+* Move all `-classpath` content to `--module-path`.
+* Add the value of `$PATH_TO_FX` environment variable to the module-path.
+* Delete all Java source files listed after the options, everything until the end of file.
+* Add the following line in-place of deleted lines (omit the `org.opengis.geoapi` module if not desired):
+
+{{< highlight text >}}
+--module org.opengis.geoapi,org.apache.sis.util,org.apache.sis.metadata,org.apache.sis.referencing,org.apache.sis.referencing.gazetteer,org.apache.sis.feature,org.apache.sis.storage,org.apache.sis.storage.sql,org.apache.sis.storage.xml,org.apache.sis.storage.netcdf,org.apache.sis.storage.geotiff,org.apache.sis.storage.earthobservation,org.apache.sis.cloud.aws,org.apache.sis.portrayal,org.apache.sis.profile.france,org.apache.sis.profile.japan,org.apache.sis.openoffice,org.apache.sis.console,org.apache.sis.gui
+{{< / highlight >}}
+
+The following commands temporarily create links to optional modules for inclusion in the Javadoc.
+The GeoAPI interfaces may also be copied if they should be bundled with the Javadoc.
+Then the Javadoc command is launched manually.
+
+{{< highlight bash >}}
+cd endorsed/src
+ln -s ../../optional/src/org.apache.sis.gui
+cd -
+
+# Replace "../../GeoAPI/3.0.2" by the path to a GeoAPI 3.0.2 checkout, or omit those lines.
+mkdir endorsed/src/org.opengis.geoapi
+cp -r ../../GeoAPI/3.0.2/geoapi/src/main/java                    endorsed/src/org.opengis.geoapi/main
+cp -r ../../GeoAPI/3.0.2/geoapi/src/pending/java/org             endorsed/src/org.opengis.geoapi/main/
+cp    ../../GeoAPI/3.0.2/geoapi/src/main/java9/module-info.java  endorsed/src/org.opengis.geoapi/main/
+
 javadoc @endorsed/build/tmp/javadoc/javadoc.options
+firefox endorsed/build/docs/javadoc/index.html                      # For verifying the result.
+rm    endorsed/src/org.apache.sis.gui
+rm -r endorsed/src/org.opengis.geoapi
 {{< / highlight >}}
 
-
-## Test branch extensively    {#test-branch}
-
-Build the project with the `apache-release` profile enabled.
-This profile performs the following actions:
-
-* Enable extensive tests (i.e. it will set the `org.apache.sis.test.extensive` property to `true`).
-* Generate Javadoc. This may fail if the source code contains invalid Javadoc tags or broken HTML.
-* Generate additional binary artifacts (`*.zip` and `*.oxt` files).
-  This will fail if duplicated class files or resources are found.
-  Consequently building the `*.zip` file is an additional test worth to do before deployment.
-* Sign the artifacts.
-
-Each of those additional products may cause a failure that did not happen in normal builds.
+Prepares the Javadoc ZIP file to be released.
+Then update the online Javadoc:
 
 {{< highlight bash >}}
-mvn clean install --activate-profiles apache-release
-find . -name "sis-*.asc" -exec gpg --verify '{}' \;     # Verify signatures.
+cd endorsed/build/docs/
+mv javadoc apidocs
+zip -9 -r $DIST_DIR/apache-sis-$NEW_VERSION-doc.zip apidocs
+cd -
+cd ../site/javadoc/
+rm -r *
+mv $SIS_RC_DIR/endorsed/build/docs/apidocs/* .
+git checkout -- README.md
+git add --all
+git commit --message "Update javadoc for SIS $NEW_VERSION."
 {{< / highlight >}}
 
-Move to the `target` directory and execute all examples documented in the [command-line interface page](./command-line.html)
-with the `sis` command replaced by the following:
+
+## Publish Maven artifacts    {#publish-artifacts}
+
+This section publish artifacts to the staging repository.
+
+### Stage the parent POM
+
+Execute the following:
 
 {{< highlight bash >}}
-java -classpath "binaries/*" -enableassertions org.apache.sis.console.Command
+cd $SIS_RC_DIR/parent
+mvn install deploy
 {{< / highlight >}}
 
-## Prepare non-free resources    {#maven-nonfree}
+
+### Stage the project arfifacts
+
+Build the project and publish in the Maven local repository.
+The `org.apache.sis.releaseVersion` property will cause Javadoc to be generated for earch artifact
+(this step is normally skipped because a bit long) and sign the artifacts.
+
+{{< highlight bash >}}
+cd $SIS_RC_DIR
+git status      # Make sure that everything is clean.
+gradle clean
+gradle test     --system-prop org.apache.sis.test.extensive=true
+gradle assemble
+gradle assemble --system-prop org.apache.sis.releaseVersion=$NEW_VERSION --rerun
+gradle publishToMavenLocal --system-prop org.apache.sis.releaseVersion=$NEW_VERSION
+
+ll ~/.m2/repository/org/apache/sis/core/sis-referencing/$NEW_VERSION
+find ~/.m2/repository/org/apache/sis -name "sis-*-$NEW_VERSION-*.asc" -exec gpg --verify '{}' \;
+{{< / highlight >}}
+
+### Stage the non-free resources    {#maven-nonfree}
 
 Go to the directory that contains a checkout of `https://svn.apache.org/repos/asf/sis/data/non-free/sis-epsg`.
 Those modules will not be part of the distribution (except on Maven), but we nevertheless need to ensure that they work.
@@ -396,6 +483,13 @@ svn commit --message "Set version number and dependencies to $NEW_VERSION."
 {{< / highlight >}}
 
 ## Integration test    {#integration-tests}
+
+Execute all examples documented in the [command-line interface page](./command-line.html).
+
+{{< highlight bash >}}
+JAVA_OPTS=-enableassertions
+{{< / highlight >}}
+
 
 Open the root `pom.xml` file of integration tests.
 Set version numbers to `$NEW_VERSION` without `-SNAPSHOT` suffix.
@@ -503,39 +597,6 @@ mvn clean
 {{< / highlight >}}
 
 # Stage the source, binary and javadoc artifacts    {#stage}
-
-Generate the Javadoc:
-
-{{< highlight bash >}}
-cd $SIS_RC_DIR
-git checkout .            # Discard local changes, in particular the hack for excluding test files.
-mvn clean install --activate-profiles apache-release
-mvn javadoc:aggregate --activate-profiles javafx
-cd target/site
-zip -9 -r apache-sis-$NEW_VERSION-doc.zip apidocs
-cd ../..
-{{< / highlight >}}
-
-## Initialize the distribution directory    {#dist}
-
-Create the directory for the new version and release candidate within the distribution directory.
-The `$RELEASE_CANDIDATE` variable shall be the number of current release attempt.
-
-{{< highlight bash >}}
-cd ../releases/distribution
-svn update
-mkdir -p $NEW_VERSION/RC$RELEASE_CANDIDATE
-svn add $NEW_VERSION
-cd $NEW_VERSION/RC$RELEASE_CANDIDATE
-export DIST_DIR=`pwd`
-{{< / highlight >}}
-
-Copy the `HEADER.html` file from the previous release.
-Update the file content if necessary.
-
-{{< highlight bash >}}
-svn copy https://dist.apache.org/repos/dist/release/sis/$OLD_VERSION/HEADER.html .
-{{< / highlight >}}
 
 Move the files generated by Maven to the distribution directory:
 
