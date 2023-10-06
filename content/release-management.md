@@ -173,6 +173,24 @@ asfNexusPassword=<password for uploading to Maven Central>
 {{< / highlight >}}
 
 
+## Maven configuration
+
+Edit the `~/.m2/setting.xml` file, making sure that the following fragments are present.
+Note that the [password can be enctypted](https://maven.apache.org/guides/mini/guide-encryption.html).
+
+{{< highlight xml >}}
+<settings>
+  <servers>
+    <server>
+      <id>apache.releases.https</id>
+      <username>login for uploding to Maven Central</username>
+      <password>password for uploading to Maven Central</password>
+    </server>
+  </servers>
+</settings>
+{{< / highlight >}}
+
+
 # Configure    {#configure}
 
 For all instructions in this page, `$OLD_VERSION` and `$NEW_VERSION` stand for the version
@@ -439,14 +457,18 @@ git commit --message "Update javadoc for SIS $NEW_VERSION."
 
 This section publish artifacts to the staging repository.
 
+
 ### Stage the parent POM
 
 Execute the following:
 
 {{< highlight bash >}}
 cd $SIS_RC_DIR/parent
-mvn install deploy
+mvn clean install deploy --activate-profiles apache-release
 {{< / highlight >}}
+
+Connect to the [Nexus repository][repository], select the staging repository,
+navigate to the `parent` sub-directory, and delete all `parent-*-source-release.zip` files.
 
 
 ### Stage the project arfifacts
@@ -461,12 +483,16 @@ git status      # Make sure that everything is clean.
 gradle clean
 gradle test     --system-prop org.apache.sis.test.extensive=true
 gradle assemble
-gradle assemble --system-prop org.apache.sis.releaseVersion=$NEW_VERSION --rerun
+rm endorsed/build/docs/*        # For forcing a rerun.
+gradle assemble --system-prop org.apache.sis.releaseVersion=$NEW_VERSION
 gradle publishToMavenLocal --system-prop org.apache.sis.releaseVersion=$NEW_VERSION
 
 ll ~/.m2/repository/org/apache/sis/core/sis-referencing/$NEW_VERSION
 find ~/.m2/repository/org/apache/sis -name "sis-*-$NEW_VERSION-*.asc" -exec gpg --verify '{}' \;
+
+gradle publish --system-prop org.apache.sis.releaseVersion=$NEW_VERSION
 {{< / highlight >}}
+
 
 ### Stage the non-free resources    {#maven-nonfree}
 
