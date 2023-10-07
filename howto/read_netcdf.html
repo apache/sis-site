@@ -24,6 +24,7 @@
           <li><a class="dropdown-item" href="http://www.apache.org/licenses/">License</a></li>
           <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
           <li><a class="dropdown-item" href="../team-list.html">Project Team</a></li>
+          <li><a class="dropdown-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy policy</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown">
@@ -31,7 +32,6 @@
         <ul class="dropdown-menu" aria-labelledby="menuDownload">
           <li><a class="dropdown-item" href="../downloads.html">Downloads</a></li>
           <li><a class="dropdown-item" href="../source.html">Checkout Sources</a></li>
-          <li><a class="dropdown-item" href="../build.html">Build from Sources</a></li>
           <li><a class="dropdown-item" href="../epsg.html">EPSG Database</a></li>
         </ul>
       </li>
@@ -149,7 +149,6 @@ in following code need to be updated for yours data.</p>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.GridCoverageResource</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.coverage.grid.GridCoverage</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.coverage.grid.GridGeometry</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.coverage.grid.GridOrientation</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.geometry.GeneralEnvelope</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CommonCRS</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl">
@@ -195,7 +194,7 @@ in following code need to be updated for yours data.</p>
 </span></span><span class="line"><span class="cl">                <span class="n">var</span> <span class="n">areaOfInterest</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GeneralEnvelope</span><span class="o">(</span><span class="n">CommonCRS</span><span class="o">.</span><span class="na">WGS84</span><span class="o">.</span><span class="na">geographic</span><span class="o">());</span>
 </span></span><span class="line"><span class="cl">                <span class="n">areaOfInterest</span><span class="o">.</span><span class="na">setRange</span><span class="o">(</span><span class="n">0</span><span class="o">,</span> <span class="n">30</span><span class="o">,</span> <span class="n">40</span><span class="o">);</span>     <span class="c1">// Minimal and maximal latitude values.
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">areaOfInterest</span><span class="o">.</span><span class="na">setRange</span><span class="o">(</span><span class="n">1</span><span class="o">,</span> <span class="o">-</span><span class="n">5</span><span class="o">,</span>  <span class="n">4</span><span class="o">);</span>     <span class="c1">// Minimal and maximal longitude values.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">data</span> <span class="o">=</span> <span class="n">gridded</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="k">new</span> <span class="n">GridGeometry</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="n">areaOfInterest</span><span class="o">,</span> <span class="n">GridOrientation</span><span class="o">.</span><span class="na">HOMOTHETY</span><span class="o">),</span> <span class="kc">null</span><span class="o">);</span>
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">data</span> <span class="o">=</span> <span class="n">gridded</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="k">new</span> <span class="n">GridGeometry</span><span class="o">(</span><span class="n">areaOfInterest</span><span class="o">),</span> <span class="kc">null</span><span class="o">);</span>
 </span></span><span class="line"><span class="cl">                <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Information about the resource subset:%n%s%n&#34;</span><span class="o">,</span>
 </span></span><span class="line"><span class="cl">                                  <span class="n">data</span><span class="o">.</span><span class="na">getGridGeometry</span><span class="o">().</span><span class="na">getExtent</span><span class="o">());</span>
 </span></span><span class="line"><span class="cl">            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>

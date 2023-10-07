@@ -3,7 +3,7 @@
 <head>
 
 
-  <title>Apache SIS - SIS 1.3 Release notes</title>
+  <title>Apache SIS - SIS 1.4 Release notes</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
@@ -103,58 +103,84 @@
     <main class="container">
       <article>
         <img src="../images/logo.png" class="sis-logo" align="left"/>
-        <p class="page-title">SIS 1.3 Release notes</p>
+        <p class="page-title">SIS 1.4 Release notes</p>
 
   <ul>
-<li>Release date: <strong>2022-12-25</strong></li>
-<li><a href="1.4.html">Next release</a></li>
-<li><a href="1.2.html">Previous release</a></li>
+<li>Release date: <strong>2023-01-10</strong></li>
+<li>Next release</li>
+<li><a href="1.3.html">Previous release</a></li>
 <li><a href="#compatibility">Incompatible changes</a></li>
 <li><a href="#issues">Noticeable changes</a></li>
-<li>Requirement: Java 8</li>
+<li>Requirement: Java 11</li>
 </ul>
-<p>This release contains an upgrade of the <code>org.apache.sis.metadata.iso.quality</code> package
-to the ISO 19157:2013 international standard.
-This release also contains various bug fixes improving the stability.</p>
+<p>This release contains the upgrade from Java 8 to Java 11,
+including the migration to Java Platform Module System (JPMS).
+This release also contains various bug fixes improving the stability.
+Cloud Optimized GeoTIFF (COG) support has been completed with the
+automatic use of HTTP Range requests.</p>
+<p>In this release, the source code of Apache SIS project has been restructured with a new directory layout.
+The new layout uses
+<a href="https://docs.oracle.com/en/java/javase/21/docs/specs/man/javac.html#directory-hierarchies">Module Source Hierarchy</a>
+and is described <a href="Modularization.html">in annex of this release notes</a>.
+This change can be ignored when only the pre-compiled JAR files are used.</p>
 <h1 id="compatibility">Incompatible changes   </h1>
-<p>The following changes in Apache SIS 1.3 are incompatibles with the previous release (SIS 1.2):</p>
+<p>The following changes in Apache SIS 1.4 are incompatibles with the previous release (SIS 1.3):</p>
 <ul>
-<li>In the <code>org.apache.sis.coverage.grid</code> package, the <code>GridEvaluator</code> class has been replaced by the <code>GridCoverage.Evaluator</code> interface.</li>
-<li>In the <code>org.apache.sis.gui.map</code> package, the <code>ValuesUnderCursor.evaluate(DirectPosition)</code> method has been replaced by
-<code>evaluateLater(DirectPosition)</code> for computing values in a background thread.</li>
+<li>In the <code>org.apache.sis.storage.aggregate</code> package, two classes got an incompatible change: <code>JoinFeatureSet</code> and <code>ConcatenatedFeatureSet</code>.
+In those two classes, the <code>StoreListeners</code> argument given to the constructor is replaced by a <code>Resource</code> argument.</li>
+<li>The constant value defined by <code>PlanarImage.SAMPLE_RESOLUTIONS_KEY</code> has been modified from singular to plural
+(i.e., a &ldquo;s&rdquo;  has been added to the <code>String</code> value). It was done for consistency with <code>SAMPLE_DIMENSIONS_KEY</code>.
+Projects do not need to modify their code, only to recompile.</li>
+<li>In the method signatures of the <code>Filter</code> and <code>Expression</code> interfaces,
+parameterized type <code>&lt;? super R&gt;</code> become <code>&lt;R&gt;</code>.</li>
+<li><code>org.apache.sis.util.ResourceInternationalString</code> become an abstract class.
+Furthermore the constructor method signature changed.
+Those changes were needed for JPMS.</li>
 </ul>
 <h1 id="issues">Noticeable changes   </h1>
 <h2 id="features">New Features   </h2>
 <ul>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-394">SIS-394</a>] — Implement data quality (ISO 19157) in metadata package</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-558">SIS-558</a>] — Allow instantiation of temporal CRS by identifiers</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-342">SIS-342</a>] — Support temporal CRS in URL</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-550">SIS-550</a>] — Give estimation of MathTransform domain</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-553">SIS-553</a>] — Add &ldquo;Pseudo sinusoidal equal area&rdquo; projection</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-258">SIS-258</a>] — Geocentric/topocentric conversions (EPSG:9836)</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-259">SIS-259</a>] — Geographic/topocentric conversions (EPSG:9837)</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-559">SIS-559</a>] — Allow aggregation of coverages in a data cube</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-549">SIS-549</a>] — Add notification when a data store is closed</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-574">SIS-574</a> — Grid coverage dimensionality reduction</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-575">SIS-575</a> — Aggregation of bands of different grid coveragess</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-571">SIS-571</a> — Add a <code>DataStores.openWritable(String, Object)</code> method</li>
 </ul>
 <h2 id="improvements">Improvements   </h2>
 <ul>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-547">SIS-547</a>] — Mercator projection should wraparound longitude values</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-411">SIS-411</a>] — GPX data store should implement WritableFeatureSet</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-419">SIS-419</a>] — Implement (un)marshalling of gco:Record</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-552">SIS-552</a>] — Better identification of latitude/longitude axes in netCDF</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-561">SIS-561</a> — Upgrade to Java 11</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-563">SIS-563</a> — Upgrade from GeoAPI 3.0.1 to 3.0.2 and JSR-363 to JSR-385</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-560">SIS-560</a> — Remove the boolean return value in <code>WritableFeatureSet.removeIf(Predicate)</code></li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-573">SIS-573</a> — Allow data stores to be closed asynchronously</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-569">SIS-569</a> — Replace <code>Path</code> by <code>URI</code> for datum shift grid files</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-577">SIS-577</a> — Replace <code>ColorModel</code> argument by a <code>Colorizer</code> interface</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-568">SIS-568</a> — Simplify matrix internal and double-double arithmetic</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-136">SIS-136</a> — Fused multiply-add in <code>org.apache.sis.referencing.operation</code></li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-86">SIS-86</a>   — Refactor <code>@Configuration</code> annotation into a real <code>Configuration</code> class</li>
 </ul>
 <h2 id="bugs">Bug fixes   </h2>
 <ul>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-555">SIS-555</a>] — Some isolines are missing</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-551">SIS-551</a>] — GeoTIFF uncompression bug fixes</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-548">SIS-548</a>] — Unexpected wraparound during intersection of grid geometries</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-556">SIS-556</a>] — Memory leak in tile cache</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-572">SIS-572</a> — Assign GeoTIFF projection 15 to Polar Stereographic variant B instead of A</li>
 </ul>
 <h2 id="tasks">Tasks   </h2>
 <ul>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-546">SIS-546</a>] — Remove LoggerFactory</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-554">SIS-554</a>] — Replace GridEvaluator by an interface</li>
-<li>[<a href="https://issues.apache.org/jira/browse/SIS-398">SIS-398</a>] — MI_PolarizationOrientationCode as an alias of MI_PolarisationOrientationCode</li>
+<li><a href="https://issues.apache.org/jira/browse/INFRA-24907">INFRA-24907</a> — Rename SIS &ldquo;master&rdquo; branch to &ldquo;main&rdquo;</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-582">SIS-582</a> — Migrate build system from Maven to Gradle</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-581">SIS-581</a> — Replace <code>java.xml.bind</code> dependencies by <code>jakarta.xml.bind</code></li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-526">SIS-526</a> — Replace <code>org.apache.sis.storage.geotiff.Tags</code> by <code>javax.imageio.plugins.tiff</code></li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-500">SIS-500</a> — Deprecate (for removal) <code>InterpolatedMolodenskyTransform</code></li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-562">SIS-562</a> — Deprecate and remove <code>NullArgumentException</code></li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-193">SIS-193</a> — Remove the workaround for <code>ServiceLoader</code> bug</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-469">SIS-469</a> — Remove support for JAXB internal implementation (JDK 8)</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-565">SIS-565</a> — Remove <code>@module</code> and <code>@preformat</code> taglets</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-585">SIS-585</a> — Remove deprecated dimension attributes from <code>OperationMethod</code></li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-578">SIS-578</a> — Remove contravariance in filters and expressions</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-580">SIS-580</a> — Remove <code>TestSuite</code> classes</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-566">SIS-566</a> — Remove instantiation of primitive wrappers</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-586">SIS-586</a> — Abandon NilObject support of primitive wrappers</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-567">SIS-567</a> — Resolve serialization compiler warnings</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-570">SIS-570</a> — Assign loggers to static final fields</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-584">SIS-584</a> — Stable selection of default factories</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-579">SIS-579</a> — Do not extend JUnit <code>Assert</code> class</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-587">SIS-587</a> — Rename internal packages</li>
 </ul>
 
 

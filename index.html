@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta name="generator" content="Hugo 0.98.0" />
+	<meta name="generator" content="Hugo 0.101.0" />
 
 
   <title>Apache SIS - The Apache SIS™ library</title>
@@ -25,6 +25,7 @@
           <li><a class="dropdown-item" href="http://www.apache.org/licenses/">License</a></li>
           <li><a class="dropdown-item" href="./mail-lists.html">Mailing Lists</a></li>
           <li><a class="dropdown-item" href="./team-list.html">Project Team</a></li>
+          <li><a class="dropdown-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy policy</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown">
@@ -32,7 +33,6 @@
         <ul class="dropdown-menu" aria-labelledby="menuDownload">
           <li><a class="dropdown-item" href="./downloads.html">Downloads</a></li>
           <li><a class="dropdown-item" href="./source.html">Checkout Sources</a></li>
-          <li><a class="dropdown-item" href="./build.html">Build from Sources</a></li>
           <li><a class="dropdown-item" href="./epsg.html">EPSG Database</a></li>
         </ul>
       </li>
@@ -108,7 +108,7 @@
 
   <p>Apache Spatial Information System (SIS) is a free software, Java language library for developing geospatial applications.
 SIS provides data structures for geographic features and associated metadata along with methods to manipulate those data structures.
-The library is an implementation of <a href="http://www.geoapi.org/">GeoAPI 3.0.1</a> interfaces and can be used for desktop or server applications.</p>
+The library is an implementation of <a href="http://www.geoapi.org/">GeoAPI 3.0.2</a> interfaces and can be used for desktop or server applications.</p>
 <p>The SIS metadata module enables the creation of metadata objects
 which comply with the model of <abbr title="Open Geospatial Consortium">OGC</abbr>/<abbr title="International Organization for Standardization">ISO</abbr> international standards.
 The SIS referencing module enables the construction of data structures for coordinate reference system definitions,
@@ -125,7 +125,7 @@ The API and the data encodings follow <a href="standards.html">international sta
 <li>Raster formats:
 <ul>
 <li>Read <a href="https://www.ogc.org/standards/netcdf">NetCDF-3 Classic and 64-bit Offset Format</a>.</li>
-<li>Read <a href="https://www.ogc.org/standards/geotiff">GeoTIFF</a> including BigTIFF extension.</li>
+<li>Read <a href="https://www.ogc.org/standards/geotiff">GeoTIFF</a> or Cloud Optimized GeoTIFF (COG), including BigTIFF extension.</li>
 <li>Read Landsat (groups of GeoTIFF files).</li>
 <li>Read ESRI BIL/BIP/BSQ and read/write ERSI ASCII Grid.</li>
 <li>Read/write World Files with any image format supported by Image I/O.</li>
@@ -135,7 +135,7 @@ The API and the data encodings follow <a href="standards.html">international sta
 <ul>
 <li>Read <a href="http://docs.opengeospatial.org/is/14-084r2/14-084r2.html">Moving Feature Comma Separated Values (CSV) encoding</a>.</li>
 <li>Read <a href="http://docs.opengeospatial.org/bp/16-114r3/16-114r3.html">Moving Feature netCDF encoding</a>.</li>
-<li>Read <abbr title="GPS Exchange Format">GPX</abbr> (a <abbr title="Extensible Markup Language">XML</abbr> schema for <abbr title="Global Positioning System">GPS</abbr> data).</li>
+<li>Read/Write <abbr title="GPS Exchange Format">GPX</abbr> (a <abbr title="Extensible Markup Language">XML</abbr> schema for <abbr title="Global Positioning System">GPS</abbr> data).</li>
 <li>Read <a href="https://www.ogc.org/standards/sfs">features from <abbr title="Structured Query Language">SQL</abbr> spatial databases</a> by analysing the database schema.</li>
 </ul>
 </li>
@@ -182,11 +182,14 @@ and more <a href="tables/CoordinateOperationMethods.html">supported operation me
 </ul>
 </details>
 <h2 id="user">Using Apache SIS   </h2>
-<p>The latest SIS release is 1.3, released December 2022,
+<p>The latest SIS release is 1.4, released in October 2023,
 and can be <a href="downloads.html">downloaded</a> as a <code>zip</code> files or as Maven dependencies.
-This is the latest version that can be run on Java 8 (next version will require Java 11).
 The EPSG geodetic dataset is optional for licensing reasons, but recommended.
-EPSG database installation is <a href="epsg.html">described in a separated page</a>.</p>
+EPSG database installation is <a href="epsg.html">described in a separated page</a>.
+This Apache SIS version requires Java 11 or later and uses the Java Platform Module System (JPMS).
+Consequently applications should declare SIS JAR files on their module-path rather than their class-path,
+but a compatibility mechanism makes possible to nevertheless use SIS on the class-path.
+Note that this class-path compatibility may be removed in future versions.</p>
 <p>Apache <abbr title="Spatial Information System">SIS</abbr> is a Java library for use by other applications.
 Leveraging the full SIS capabilities or getting the best performance require that users write their own applications on top of SIS.
 The <a href="book/en/developer-guide.html">developer guide</a>, <a href="apidocs/index.html">online Javadoc</a> and <a href="code-patterns.html">recommended code patterns</a> page
