@@ -622,12 +622,12 @@ wget https://sis.apache.org/examples/coordinates/CanadianCities.csv
 
 Go to the test Maven project.
 Open the root `pom.xml` file and set the `<version>` number to the SIS release to be tested.
-Then go to the `<url>` declaration of the first `<repository>` and replace value by the URL
+Then go to the `<url>` declaration of <repository>` each block and replace value by the URL
 of the temporary Maven repository created by Nexus.
 Usually, only the 3 last digits need to be updated.
 
 {{< highlight bash >}}
-cd $SIS_RC_DIR/../releases/tests/maven
+cd $SIS_RC_DIR/../release/test/maven
 # Edit <url> in pom.xml before to continue.
 mvn compile
 svn commit -m "Test project for SIS $NEW_VERSION-RC$RELEASE_CANDIDATE"
@@ -637,6 +637,7 @@ Clear the local Maven repository in order to force downloads from the Nexus repo
 This will also verify the checksums.
 
 {{< highlight bash >}}
+rm -r $SIS_DATA/*
 rm -r ~/.m2/repository/org/apache/sis
 mvn package --show-version --strict-checksums
 {{< / highlight >}}
@@ -668,7 +669,7 @@ wget https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDAT
 # Test
 gpg --verify apache-sis-$NEW_VERSION-src.zip.asc
 unzip apache-sis-$NEW_VERSION-src.zip
-cd sis-$NEW_VERSION
+cd apache-sis-$NEW_VERSION-src
 gradle assemble
 {{< / highlight >}}
 
@@ -682,8 +683,8 @@ gpg --verify apache-sis-$NEW_VERSION-bin.zip.asc
 unzip apache-sis-$NEW_VERSION-bin.zip
 cd apache-sis-$NEW_VERSION
 unset SIS_DATA
-bin/sis about --verbose
-bin/sis crs https://github.com/apache/sis/raw/main/core/sis-referencing/src/test/resources/org/apache/sis/referencing/crs/ProjectedCRS.xml --format WKT
+./bin/sis about --verbose
+./bin/sis crs https://raw.githubusercontent.com/apache/sis/main/endorsed/src/org.apache.sis.referencing/test/org/apache/sis/referencing/crs/ProjectedCRS.xml --format WKT
 {{< / highlight >}}
 
 
@@ -694,7 +695,7 @@ Add a new `<release>` block for the new release with the estimated release date.
 
 Update the following files (e.g. the release date in `index.md`):
 
-* `content/index.md`
+* `content/_index.md`
 * `content/command-line.md`
 * `content/epsg.md` for EPSG dataset version
 * `content/download.md` for SIS version and JAXB dependency
