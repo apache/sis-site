@@ -24,6 +24,7 @@
           <li><a class="dropdown-item" href="http://www.apache.org/licenses/">License</a></li>
           <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
           <li><a class="dropdown-item" href="../team-list.html">Project Team</a></li>
+          <li><a class="dropdown-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy policy</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown">
@@ -31,7 +32,6 @@
         <ul class="dropdown-menu" aria-labelledby="menuDownload">
           <li><a class="dropdown-item" href="../downloads.html">Downloads</a></li>
           <li><a class="dropdown-item" href="../source.html">Checkout Sources</a></li>
-          <li><a class="dropdown-item" href="../build.html">Build from Sources</a></li>
           <li><a class="dropdown-item" href="../epsg.html">EPSG Database</a></li>
         </ul>
       </li>
@@ -105,14 +105,12 @@
         <img src="../images/logo.png" class="sis-logo" align="left"/>
         <p class="page-title">Write a raster to a file</p>
 
-  <p>This example saves a raster in PNG format.
+  <p>This example saves a raster in PNG format together with its WorldFile PRJ and PGW auxiliary files.
 This example assumes a preloaded raster.
 For the loading part,
 see <a href="read_netcdf.html">read from a netCDF file</a>
 or <a href="read_geotiff.html">read from a GeoTIFF file</a>
 code examples.</p>
-<p>Note: this example is incomplete.
-A more complete example will be provided with next Apache SIS release.</p>
 <h1 id="direct-dependencies">Direct dependencies</h1>
 <table>
 <thead>
@@ -133,8 +131,10 @@ A more complete example will be provided with next Apache SIS release.</p>
 <h1 id="code-example">Code example</h1>
 <p>The file name in following code need to be updated for yours data.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.File</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">javax.imageio.ImageIO</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.DataStore</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.DataStores</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.DataStoreException</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.WritableGridCoverageResource</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.coverage.grid.GridCoverage</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">WriteRaster</span> <span class="o">{</span>
@@ -142,17 +142,24 @@ A more complete example will be provided with next Apache SIS release.</p>
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * Demo entry point.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     *
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @param  args  ignored.
-</span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws IOException if an error occurred while writing the raster.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws DataStoreException if an error occurred while reading or writing the raster.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
-</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">GridCoverage</span> <span class="n">data</span> <span class="o">=</span> <span class="o">...;</span>      <span class="c1">// See &#34;Read netCDF&#34; or &#34;Read GeoTIFF&#34; code examples.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="cm">/*
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * TODO: Apache SIS is missing a `DataStores.write(…)` convenience method.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * Writing a TIFF World File is possible but requires use of internal API.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * A public convenience method will be added in next version.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         * For now we use Java I/O API.
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">DataStoreException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * In this example we just read an existing grid coverage,
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * but it could be the result of some calculation instead.
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * See &#34;Read netCDF&#34; or &#34;Read GeoTIFF&#34; code examples.
 </span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
-</span></span><span class="line"><span class="cl">        <span class="n">ImageIO</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">data</span><span class="o">.</span><span class="na">render</span><span class="o">(</span><span class="kc">null</span><span class="o">),</span> <span class="s">&#34;png&#34;</span><span class="o">,</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&#34;test.png&#34;</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        <span class="n">GridCoverage</span> <span class="n">data</span> <span class="o">=</span> <span class="n">ReadGeoTIFF</span><span class="o">.</span><span class="na">example</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">(</span><span class="n">DataStore</span> <span class="n">store</span> <span class="o">=</span> <span class="n">DataStores</span><span class="o">.</span><span class="na">openWritable</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&#34;output.png&#34;</span><span class="o">),</span> <span class="s">&#34;PNG&#34;</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">             * In this example, we use the knowledge that PNG format can store only one image.
+</span></span></span><span class="line"><span class="cl"><span class="cm">             * So we can cast to `WritableGridCoverageResource`. If the format supported many
+</span></span></span><span class="line"><span class="cl"><span class="cm">             * images (e.g. GeoTIFF), the store would rather be a `WritableAggregate`.
+</span></span></span><span class="line"><span class="cl"><span class="cm">             */</span>
+</span></span><span class="line"><span class="cl">            <span class="n">var</span> <span class="n">writable</span> <span class="o">=</span> <span class="o">(</span><span class="n">WritableGridCoverageResource</span><span class="o">)</span> <span class="n">store</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">writable</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">data</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
 </span></span><span class="line"><span class="cl">    <span class="o">}</span>
 </span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
 

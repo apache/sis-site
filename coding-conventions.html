@@ -3,7 +3,7 @@
 <head>
 
 
-  <title>Apache SIS - Source code</title>
+  <title>Apache SIS - Coding conventions</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
@@ -24,6 +24,7 @@
           <li><a class="dropdown-item" href="http://www.apache.org/licenses/">License</a></li>
           <li><a class="dropdown-item" href="./mail-lists.html">Mailing Lists</a></li>
           <li><a class="dropdown-item" href="./team-list.html">Project Team</a></li>
+          <li><a class="dropdown-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy policy</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown">
@@ -31,7 +32,6 @@
         <ul class="dropdown-menu" aria-labelledby="menuDownload">
           <li><a class="dropdown-item" href="./downloads.html">Downloads</a></li>
           <li><a class="dropdown-item" href="./source.html">Checkout Sources</a></li>
-          <li><a class="dropdown-item" href="./build.html">Build from Sources</a></li>
           <li><a class="dropdown-item" href="./epsg.html">EPSG Database</a></li>
         </ul>
       </li>
@@ -103,7 +103,7 @@
     <main class="container">
       <article>
         <img src="./images/logo.png" class="sis-logo" align="left"/>
-        <p class="page-title">Source code</p>
+        <p class="page-title">Coding conventions</p>
 
   <p>This page describes some coding conventions applied in Apache <abbr title="Spatial Information System">SIS</abbr> development.</p>
 <nav id="TableOfContents">
@@ -112,7 +112,6 @@
     <li><a href="#naming">Naming convention   </a>
       <ul>
         <li><a href="#internal">Internal packages   </a></li>
-        <li><a href="#substitutions">Substitution for non-existent classes   </a></li>
       </ul>
     </li>
     <li><a href="#formatting">Code formatting   </a>
@@ -126,7 +125,11 @@
     </li>
     <li><a href="#javadoc">Documentation formatting   </a>
       <ul>
-        <li><a href="#javadoc-tags">Javadoc annotations   </a></li>
+        <li><a href="#javadoc-tags">Javadoc annotations   </a>
+          <ul>
+            <li><a href="#since-tag">Where to use @since and @version tags   </a></li>
+          </ul>
+        </li>
         <li><a href="#html">HTML elements   </a>
           <ul>
             <li><a href="#paragraph">Paragraphs   </a></li>
@@ -157,14 +160,12 @@ as opposed to other implementations specialized for a fixed number of dimensions
 <p>Example: the <code>GeneralEnvelope</code> class is an implementation of <code>Envelope</code> interface for the multi-dimensional case.
 The <code>Envelope2D</code> class is another implementation of the same interface specialized for the two-dimensional case.</p>
 <h2 id="internal">Internal packages   </h2>
-<p>All classes in <code>org.apache.sis.internal</code> sub-packages are for SIS usage only and may change without warning in any future release.
-Those classes are excluded from Javadoc and will not be exported by SIS Jigsaw modules.
-Those packages may be renamed after SIS upgraded to JDK 9+.</p>
-<h2 id="substitutions">Substitution for non-existent classes   </h2>
-<p>When using a JDK 9+ class that does not exist on JDK 8, define a class of the same name in a
-<code>org.apache.sis.internal</code> sub-package with the minimal amount of needed functionalities,
-provided that it can be done with reasonable effort.
-Otherwise just delete the JDK9-dependent code from the development branch.</p>
+<p>The public API is made of all public classes in all exported packages,
+i.e. packages declared in non-qualified <code>exports</code> statements in the <code>module-info.java</code> file.
+All other classes are for SIS usage only and may change without warning in any future release.
+Those classes are excluded from Javadoc and normally not accessible to users.
+Contrarily to previous SIS versions, there is no longer any particular convention for internal package names.
+They may or may not have <code>internal</code> in their name.</p>
 <h1 id="formatting">Code formatting   </h1>
 <p>Apache <abbr title="Spatial Information System">SIS</abbr> uses the standard Java conventions, except for the 80 characters line length restriction.
 The conventions listed below are guidelines. Some exceptions to those conventions can occur but should
@@ -183,8 +184,11 @@ conflicts with the platform-dependent import statements. Example:</p>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.opengis.metadata.Metadata</span><span class="o">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">// Branch-specific imports
+</span></span><span class="line"><span class="cl"><span class="c1">// Specific to the geoapi-3.1 and geoapi-4.0 branches:
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kn">import</span> <span class="nn">org.opengis.feature.Feature</span><span class="o">;</span></span></span></code></pre></div>
+<p>The import statements can be rearranged automatically by the <code>ReorganizeImports</code> class in <code>buildSrc</code>.
+This tool requires checkouts of all three branches (<code>main</code>, <code>geoapi-3.1</code> and <code>geoapi-4.0</code>) in order
+to identify which imports are branch-specific.</p>
 <h2 id="spaces">Spaces and line length   </h2>
 <ul>
 <li><strong>Indentation:</strong> Use a consistent space indents and never use tabs.
@@ -217,8 +221,7 @@ This is known as the &ldquo;customary order&rdquo; in the <a href="https://docs.
 <ul>
 <li><code>public</code>, <code>protected</code> or <code>private</code>,</li>
 <li><code>abstract</code> or <code>static</code>,</li>
-<li><code>final</code>,</li>
-<li><code>strictfp</code> (should be applied on all test classes).</li>
+<li><code>final</code>.</li>
 </ul>
 </li>
 <li>Member fields do not have any particular prefix (no <code>m_</code> prefix).</li>
@@ -241,7 +244,7 @@ structure of <code>&lt;table&gt;</code> elements.</p>
 <h2 id="javadoc-tags">Javadoc annotations   </h2>
 <p>SIS uses standard javadoc annotations. The meaning of some tags are refined as below:</p>
 <ul>
-<li><code>@since</code>   - the SIS version when the annotated element (class, method, <i>etc.</i>) was first introduced.</li>
+<li><code>@since</code>   - the SIS version when the annotated element (class, method, <i>etc.</i>) was first introduced in public API.</li>
 <li><code>@version</code> - the last SIS version when the code of the annotated class got a significant change.</li>
 <li><code>@author</code>  - developer name in <var>FirstName</var> <var>LastName</var> (<var>Organization</var>) format.
 A separated <code>@author</code> tag is added for each developer.
@@ -257,34 +260,32 @@ The intent is to allow other developers to know to who to ask questions if neede
 </thead>
 <tbody>
 <tr>
-<td><code>@module</code></td>
-<td>Create links to the module where the class is defined, source code and Maven artifacts.</td>
-</tr>
-<tr>
 <td><code>{@include}</code></td>
 <td>Include the content of a given HTML file below a <code>&lt;h2&gt;</code> section having the given title.</td>
 </tr>
-<tr>
-<td><code>{@preformat}</code></td>
-<td>An inline taglet for pre-formatted text. The first word inside the taglet shall be one of <code>java</code>, <code>xml</code>, <code>sql</code>, <code>wkt</code>, <code>text</code>, <code>math</code> or <code>shell</code>.</td>
-</tr>
 </tbody>
 </table>
+<h3 id="since-tag">Where to use @since and @version tags   </h3>
+<p>The <code>@since</code> and <code>@version</code> Javadoc tags should be used only on classes, interfaces, enumerations, methods or fields
+that are part of public API. They should not be put on package-private classes or classes in non-exported packages.
+The reason is that non-public classes can be moved, splitted or merged without warning,
+which gives confusing meaning to the <code>@since</code> tag.
+Furthermore, restricting the use of those tags to public API is also a way to remind developers
+that the class that they are editing is part of public API, so backward-compatibility concerns apply.</p>
 <h2 id="html">HTML elements   </h2>
 <p>HTML tags and entities shall be used only when there is no equivalent Javadoc tag.
 For example:</p>
 <ul>
-<li>Instead of &ldquo;<code>&lt;code&gt;✎&lt;/code&gt;</code>&rdquo;, use &ldquo;<code>{@code ✎}</code>&rdquo;.</li>
+<li>Instead of &ldquo;<code>&lt;code&gt;Foo&lt;/code&gt;</code>&rdquo;, use &ldquo;<code>{@code Foo}</code>&rdquo;.</li>
 <li>Instead of &ldquo;<code>a &amp;lt; b &amp;lt; c</code>&rdquo;, use &ldquo;<code>{@literal a &lt; b &lt; c}</code>&rdquo;.</li>
-<li>Instead of &ldquo;<code>&lt;pre&gt;✎&lt;/pre&gt;</code>&rdquo; for a Java listing, use &ldquo;<code>{@preformat java ✎}</code>&rdquo;
-(this Javadoc tag is specific to Apache <abbr title="Spatial Information System">SIS</abbr> — see above table).</li>
+<li>Instead of &ldquo;<code>&lt;pre&gt;Foo&lt;/pre&gt;</code>&rdquo; for a Java listing, use &ldquo;<code>{@snippet lang=java : Foo}</code>&rdquo;.</li>
 </ul>
 <h3 id="paragraph">Paragraphs   </h3>
 <p>Usages of the <code>&lt;p&gt;</code> tag should be relatively rare, since we use CSS styles (see below)
 as much as possible for controlling the margin between elements like lists and tables.
 Do <strong>not</strong> use <code>&lt;p&gt;</code> for the first paragraph in a package, class or member documentation,
 or for the first paragraph after a <code>&lt;/ul&gt;</code>, <code>&lt;/ol&gt;</code>, <code>&lt;/table&gt;</code>, <code>&lt;/blockquote&gt;</code>, <code>&lt;/pre&gt;</code>,
-or <code>{@preformat}</code> element.
+or <code>{@snippet}</code> element.
 The <code>&lt;p&gt;</code> tag shall be used only for separating a new paragraph from a previous one.
 In such cases, <code>&lt;p&gt;</code> shall have a matching <code>&lt;/p&gt;</code> tag at the paragraph end in order to form valid HTML.</p>
 <h3 id="css">Javadoc CSS   </h3>
@@ -340,8 +341,7 @@ Instead, rely on styling. Some HTML tags having a style definition in Apache <ab
 <p>The source code occasionally uses MathML for formulas that are difficult to render with only Unicode characters.
 PNG images are not extensively used for formulas because they are difficult to edit after creation,
 and their content are invisible to search operations (for example when a variable is renamed).
-For examples of MathML usage in SIS, search for the <code>&lt;math …&gt;</code> XML tag in Java source files
-(note: there is also legacy <code>{@preformat math …}</code> custom Javadoc tags, but they may be phased out as MathML adoption increase).
+For examples of MathML usage in SIS, search for the <code>&lt;math …&gt;</code> XML tag in Java source files.
 For an introduction to MathML, see:</p>
 <ul>
 <li><a href="https://www.w3.org/Math/">MathML learn &amp; use</a> on W3C</li>
