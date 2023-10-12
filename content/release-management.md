@@ -47,7 +47,6 @@ provided that all relative paths in this page are adjusted accordingly.
 │  │  └─ $NEW_VERSION
 │  │     └─ RC$RELEASE_CANDIDATE
 │  └─ test
-│     ├─ integration
 │     └─ maven
 └─ site
    ├─ asf-site
@@ -827,13 +826,9 @@ svn delete https://dist.apache.org/repos/dist/release/sis/$OLD_VERSION \
 
 On the `main` branch:
 
-* Update the version numbers in all `pom.xml` files.
+* Search for all occurrences of `SNAPSHOT` and update the version number.
 * Edit the value of the `MAJOR_VERSION` or `MINOR_VERSION` constant in the
-  `core/sis-utility/src/main/java/org/apache/sis/internal/system/Modules.java` file.
-
-Then on the development branch:
-
-* Edit the version number in the `application/sis-javafx/src/main/artifact/README` file.
+  `endorsed/src/org.apache.sis.util/main/org/apache/sis/system/Modules.java` file.
 
 
 ## Delete old artifacts on Maven snapshot repository    {#nexus-clean}
