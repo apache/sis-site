@@ -90,9 +90,14 @@ Some standards are implemented partially, others almost fully.
     <td>Grid Coverage</td>
   </tr><tr>
     <td></td>
-    <td><a href="http://docs.opengeospatial.org/is/19-008r4/19-008r4.html">OGC 19-008</a></td>
+    <td><a href="http://www.opengis.net/doc/IS/GeoTIFF/1.1">OGC 19-008</a></td>
     <td></td>
     <td>GeoTIFF format</td>
+  </tr><tr>
+    <td></td>
+    <td><a href="http://www.opengis.net/doc/is/COG/1.0">OGC 21-026</a></td>
+    <td></td>
+    <td>Cloud Optimized GeoTIF</td>
   </tr><tr>
     <td></td>
     <td><a href="https://portal.ogc.org/files/?artifact_id=43734">OGC 10-092</a></td>
