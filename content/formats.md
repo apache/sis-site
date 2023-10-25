@@ -13,58 +13,72 @@ in which case the root resource will be `Aggregate`.
   <tr>
     <th>Format</th>
     <th>Capability</th>
+    <th>Module</th>
     <th>Type of resource</th>
   </tr><tr>
     <td>{{% CSV %}}</td>
     <td>Read</td>
+    <td><code>org.apache.sis.storage</code></td>
     <td><code>FeatureSet</code></td>
   </tr><tr>
     <td>ESRI ASCII Grid</td>
     <td>Read/write</td>
+    <td><code>org.apache.sis.storage</code></td>
     <td><code>GridCoverageResource</code></td>
   </tr><tr>
     <td>ESRI BIL/BIQ/BSQ</td>
     <td>Read</td>
+    <td><code>org.apache.sis.storage</code></td>
     <td><code>GridCoverageResource</code></td>
   </tr><tr>
     <td>Folder</td>
     <td>Read/write</td>
+    <td><code>org.apache.sis.storage</code></td>
     <td><code>Aggregate</code>, <code>FeatureSet</code>, <code>GridCoverageResource</code></td>
   </tr><tr>
     <td>(Big) GeoTIFF</td>
     <td>Read</td>
+    <td><code>org.apache.sis.storage.geotiff</code></td>
     <td><code>Aggregate</code>, <code>GridCoverageResource</code></td>
   </tr><tr>
     <td>{{% GML %}} ({{% CRS %}} only)</td>
     <td>Read/write⁽¹⁾</td>
+    <td><code>org.apache.sis.referencing</code></td>
     <td><code>Resource</code></td>
   </tr><tr>
     <td>{{% GPX %}}</td>
     <td>Read/write</td>
+    <td><code>org.apache.sis.storage.xml</code></td>
     <td><code>FeatureSet</code></td>
   </tr><tr>
     <td>{{% ISO %}} 19115 {{% XML %}}</td>
     <td>Read/write⁽¹⁾</td>
+    <td><code>org.apache.sis.metadata</code></td>
     <td><code>Resource</code></td>
   </tr><tr>
     <td>Landsat</td>
     <td>Read</td>
+    <td><code>org.apache.sis.storage.earthobservation</code></td>
     <td><code>Aggregate</code>, <code>GridCoverageResource</code></td>
   </tr><tr>
     <td>NetCDF</td>
     <td>Read</td>
+    <td><code>org.apache.sis.storage.netcdf</code></td>
     <td><code>Aggregate</code>, <code>FeatureSet</code>, <code>GridCoverageResource</code></td>
   </tr><tr>
     <td>{{% SQL %}}⁽²⁾</td>
     <td>Read</td>
+    <td><code>org.apache.sis.storage.sql</code></td>
     <td><code>Aggregate</code>, <code>FeatureSet</code></td>
   </tr><tr>
     <td>{{% WKT %}} ({{% CRS %}} only)</td>
     <td>Read/write⁽¹⁾</td>
+    <td><code>org.apache.sis.referencing</code></td>
     <td><code>Resource</code></td>
   </tr><tr>
     <td>World File</td>
     <td>Read/write</td>
+    <td><code>org.apache.sis.storage</code></td>
     <td><code>GridCoverageResource</code>, sometimes <code>Aggregate<code></td>
   </tr>
 </table>
