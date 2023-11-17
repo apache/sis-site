@@ -514,7 +514,7 @@ In the [Nexus repository][repository], click on "Refresh".
 A new `org.apache.sis` item should appear in the _Repository_ column of _Build Promotion_ → _Staging repositories_.
 Navigate through the artifact tree and make sure that all Javadoc, source and jar files have `.asc` (GPG signature) and `.sha1` files.
 Select any `*-javadoc.jar` file and click on the <cite>Archive Browser</cite> tab on the right side.
-Select any `*.html` file which is known to use some of the custom taglets defined in the `sis-build-helper` module.
+Select any `*.html` file which is known to use some of the custom taglets defined in `buildSrc`.
 Click on that file and verify that the custom elements are rendered properly.
 Then close this staging repository.
 In the description field, specify _"Apache SIS main artifacts"_.

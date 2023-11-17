@@ -125,7 +125,7 @@ Below are examples of declarations in a `pom.xml` file for building a project wi
   <dependency>
     <groupId>org.glassfish.jaxb</groupId>
     <artifactId>jaxb-runtime</artifactId>
-    <version>4.0.3</version>
+    <version>4.0.4</version>
     <scope>runtime</scope>
   </dependency>
 </dependencies>

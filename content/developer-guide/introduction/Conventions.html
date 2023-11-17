@@ -29,17 +29,17 @@
   <body>
     <!--
       Content below this point is copied in "/asf-staging/book/en/developer-guide.html" file
-      by the `org.apache.sis.internal.book.Assembler` class in `sis-build-helper` module.
+      by the `org.apache.sis.buildtools.book` class in `buildSrc`.
     -->
     <section>
       <header>
-        <h2 id="Conventions">Typographic and naming conventions</h2>
+        <h2 id="TypographicConventions">Typographic conventions</h2>
       </header>
       <p>
         The elements defined in a computer language, such as classes and methods in Java or elements in an <abbr>XML</abbr> document,
         appear in monospaced font in this document.
         In order to facilitate an understanding of the relationships between Apache <abbr>SIS</abbr> and the standards,
-        these elements are also represented using the following colour codes:
+        these elements are also represented using the following color codes:
       </p>
       <ul>
         <li>
@@ -54,7 +54,7 @@
         </li>
         <li>
           Elements left in black are either defined elsewhere (for example the standard Java library),
-          or there is simply no emphasis on that element for the discussion.
+          or there is no emphasis on that element for the discussion.
         </li>
       </ul>
       <p>
@@ -62,7 +62,13 @@
         <code class="OGC">SC_ProjectedCRS</code> is an <abbr>UML</abbr> and <abbr>XML</abbr> element defined by the <abbr>ISO</abbr> 19111 standard.
         Then <code class="GeoAPI">org.​opengis.​referencing.​crs.​<b>ProjectedCRS</b></code> is the implementation-neutral GeoAPI interface derived from that standard,
         and <code class="SIS">org.​apache.​sis.​referencing.​crs.​<b>DefaultProjectedCRS</b></code> is the implementation class provided by Apache SIS.
-      </p><p>
+      </p>
+    </section>
+    <section>
+      <header>
+        <h2 id="CodingConventions">Coding conventions</h2>
+      </header>
+      <p>
         Apache SIS implements most GeoAPI interfaces by a classes of the same name than the interface
         but prefixed by <code>Abstract</code>, <code>Default</code> or <code>General</code> word.
         The <code>General</code> prefix is sometimes used instead of <code>Default</code>
@@ -79,35 +85,6 @@
         Such classes can be instantiated by a <code>new AbstractXXX(…)</code> statement despite being conceptually abstract.
         Such instantiations should be avoided, but are nevertheless permitted in last resort when it is not possible to determine the exact subtype.
       </p>
-      <p>
-        Text in gray boxes, like below (click to expand), are for information purpose only and can be ignored.
-      </p>
-      <details>
-        <summary>Note about the definition of terms</summary>
-        <article id="ChosenTerms">
-          <header>
-            <h2>Source of term definitions</h2>
-          </header>
-          <p>
-            Standards sometimes favour the application of certain generic terms to particular contexts,
-            which may differ from the context in which other communities use these terms.
-            For example, the terms <i>domain</i> and <i>range</i> may apply to arbitrary mathematical functions in order to designate
-            a set of possible values of inputs and outputs respectively.
-            The <abbr>ISO</abbr> 19123 standard applies these terms to <code>CV_Coverage</code> objects,
-            seen as functions in which the <i>domain</i> is the set of spatio-temporal coordinates encompassed by the data,
-            and the <i>range</i> is the set of values encompassed.
-          </p><p>
-            However the functions to which above terms are applied by <abbr>ISO</abbr> standards are not the same as the functions to which they are applied by other libraries.
-            For example <abbr title="University Corporation for Atmospheric Research">UCAR</abbr>’s <abbr title="Network Common Data Form">netCDF</abbr> library
-            applies these terms instead to the function for converting pixel indices (its <i>domain</i>) to spatial-temporal coordinates (its <i>range</i>).
-            Thus the <abbr>UCAR</abbr> library’s <i>range</i> may be the <i>domain</i> of <abbr>ISO</abbr> 19123.
-          </p><p>
-            The Apache <abbr>SIS</abbr> library prefers as much as possible to use terms in the sense of <abbr>OGC</abbr> and <abbr>ISO</abbr> norms.
-            Particular care must be taken, however, with the interfaces between <abbr>SIS</abbr> and certain other external libraries,
-            in order to reduce the risk of confusion.
-          </p>
-        </article>
-      </details>
     </section>
   </body>
 </html>

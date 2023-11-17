@@ -1,6 +1,6 @@
 This directory contains the source files for the developer guide in HTML5 format.
 Those files are assembled into a single file in the "../../static/book/ directory"
-by the `org.apache.sis.internal.book.Assembler` class in `sis-build-helper` module.
+by the `org.apache.sis.buildtools.book` class in `buildSrc`.
 
 Assuming the following directory structure:
 

@@ -132,7 +132,7 @@ SIS uses standard javadoc annotations. The meaning of some tags are refined as b
   A separated `@author` tag is added for each developer.
   The intent is to allow other developers to know to who to ask questions if needed.
 
-In addition, the `sis-build-helper` modules provides the following custom javadoc taglets:
+In addition, the Java code in `buildSrc` provides the following custom javadoc taglets:
 
 Javadoc tag    | Description
 -------------- | -------------------------------------------------------------------------------------------
