@@ -711,7 +711,6 @@ rm --recursive ../asf-staging/*
 mv public/.htaccess public/* ../asf-staging/
 rmdir public
 cd ../asf-staging/
-rm fr.html
 
 # Remove trailing whitespaces
 find . -name "*.html" -type f -exec sed -i 's/[[:space:]]*$//' '{}' \;
