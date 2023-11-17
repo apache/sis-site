@@ -42,10 +42,14 @@ Every JAR files present in the `lib` sub-directory will be included on the class
 By default, the `lib` directory contains the `sis-*.jar` files together with GeoAPI, JAXB and Apache Derby dependencies.
 However users can add other JAR files in that directory for the following optional dependencies:
 
+* **JAXB implementation —**
+  reading and writing XML documents requires a JAXB implementation such as Glassfish.
 * **UCAR netCDF library —**
   by default, SIS uses its own embedded netCDF reader which supports only the classical netCDF format, as standardized by OGC.
   If there is a need to read files encoded in GRID or HDF formats, then copy the UCAR netCDF library in the `lib` sub-directory.
   If presents, the UCAR library should be detected and used automatically when SIS cannot read a netCDF file by itself.
+
+See [issue SIS-545](https://issues.apache.org/jira/browse/SIS-545) for instructions on downloading optional dependencies.
 
 # Usage    {#usage}
 
