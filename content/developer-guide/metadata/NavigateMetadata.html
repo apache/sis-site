@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>NavigateMetadata</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="../book.css"/>
+  </head>
+  <body>
+    <!--
+      Content below this point is copied in "/asf-staging/book/en/developer-guide.html" file
+      by the `org.apache.sis.buildtools.book` class in `buildSrc`.
+    -->
+    <section>
+      <header>
+        <h2 id="NavigateMetadata">Navigating in metadata elements</h2>
+      </header>
+      <p>
+        The metadata modules provide support methods for handling the metadata objects through Java Reflection.
+        This is an approach similar to <cite>Java Beans</cite>, in that users are encouraged to use directly the API of
+        Plain Old Java objects every time their type is known at compile time,
+        and fallback on the reflection technic when the type is known only at runtime.
+        When using Java reflection, a metadata can be viewed in different ways:
+      </p>
+      <ul>
+        <li>As key-value pairs in a <code>Map</code> (from <code>java.util</code>).</li>
+        <li>As a <code>TreeTable</code> (from <code>org.apache.sis.util.collection</code>).</li>
+        <li>As a table record in a database (using <code>org.apache.sis.metadata.sql</code>).</li>
+        <li>As an <abbr>XML</abbr> document conforms to <abbr>ISO</abbr> standard schema.</li>
+      </ul>
+      <p>
+        The use of reflection is described <a href="#MetadataAsMap">below</a>.
+        The <abbr>XML</abbr> representation is described in a <a href="#XML-ISO-19115">separated chapter</a>.
+      </p>
+
+      <h3 id="GetMetadataElement">Direct access via getter methods</h3>
+      <p>
+        All metadata classes provide getter, and sometime setter, methods for their properties.
+        Some properties accept many values, in which case the property type is a collection.
+        The following example prints the range of latitudes of all data descriptions
+        found in a given root <code>Metadata</code> object:
+      </p>
+
+<pre><code>
+import org.opengis.metadata.metadata;
+import org.opengis.metadata.extent.Extent;
+import org.opengis.metadata.extent.GeographicExtent;
+import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.metadata.identification.DataIdentification;
+
+void main() {
+    Metadata metadata = ...;    // For example, metadata read from a data store.
+    for (Identification identification : metadata.getIdentificationInfo()) {
+        if (identification instanceof DataIdentification data) {
+            for (Extent extent : data.getExtents()) {
+                // Extents may have horizontal, vertical and temporal components.
+                for (GeographicExtent horizontal : extent.getGeographicElements()) {
+                    if (horizontal instanceof GeographicBoundingBox bbox) {
+                        double south = bbox.getSouthBoundLatitude();
+                        double north = bbox.getNorthBoundLatitude();
+                        System.out.println("Latitude range: " + south + " to " + north);
+                    }
+                }
+            }
+        }
+    }
+}</code></pre>
+
+      <p>
+        Because of <abbr>ISO</abbr> 19115 richness, interesting information may be buried deeply in the metadata tree, as in above example.
+        For a few frequently-used elements, some convenience methods are provided.
+        Those conveniences are generally defined as static methods in classes having a name in plural form.
+        For example the <code>Extents</code> class defines static methods for fetching more easily some information from <code>Extent</code> metadata elements.
+        For example the following method navigates through different branches where North, South, East and West data bounds may be found:
+      </p>
+
+<pre><code>
+import org.opengis.metadata.metadata;
+import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.apache.sis.metadata.iso.extent.Extents;
+
+void main() {
+    Metadata metadata = ...;    // For example, metadata read from a data store.
+    GeographicBoundingBox bbox = Extents.getGeographicBoundingBox(extent);
+}</code></pre>
+
+      <p>
+        Those conveniences are defined as static methods in order to allow their use with different metadata implementations.
+        Some other classes providing static methods for specific interfaces are
+        <code>Citations</code>, <code>Envelopes</code>, <code>Matrices</code> and <code>MathTransforms</code>.
+      </p>
+
+      <h3 id="MetadataAsMap">View as key-value pairs</h3>
+      <p>
+        Above static methods explore fragments of metadata tree in search for requested information,
+        but the searches are still targeted to elements whose types and at least part of their paths are known at compile-time.
+        Sometimes the element to search is known only at runtime, or sometimes there is a need to iterate over all elements.
+        In such cases, one can view the metadata as a <code>java.util.Map</code> like below:
+      </p>
+
+<pre><code>
+import java.util.Map;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.metadata.KeyNamePolicy;
+import org.apache.sis.metadata.ValueExistencePolicy;
+
+void main() {
+    Map&lt;String,Object&gt; elements = MetadataStandard.ISO_19115.asValueMap(
+            metadata,                           // Any instance from the org.opengis.metadata package or a sub-package.
+            null,                               // Used for resolving ambiguities. We can ignore for this example.
+            KeyNamePolicy.JAVABEANS_PROPERTY,   // Keys in the map will be getter method names without "get" prefix.
+            ValueExistencePolicy.NON_EMPTY);    // Entries with null or empty values will be omitted.
+
+    // Print the names of all root metadata elements having a value.
+    for (String name : elements.keySet()) {
+        System.out.println(name);
+    }
+}</code></pre>
+
+      <p>
+        The <code>Map</code> object returned by <code class="SIS">asValueMap(…)</code> is live:
+        any change in the <code>metadata</code> instance will be immediately reflected in the view.
+        Actually, each <code>map.get("foo")</code> call is forwarded to the corresponding <code>metadata.getFoo()</code> method.
+        Conversely, any <code>map.put("foo", …)</code> or <code>map.remove("foo")</code> operation applied on the view
+        will be forwarded to the corresponding <code>metadata.setFoo(…)</code> method, if that method exists.
+        The view is lenient regarding keys given in arguments to <code>Map</code> methods:
+        keys may be property names (<code>"foo"</code>), method names (<code>"getFoo"</code>),
+        or names used in <abbr>ISO</abbr> 19115 standard <abbr>UML</abbr> diagrams
+        (similar to property names but not always identical).
+        Differences in upper cases and lower cases are ignored when this tolerance does not introduce ambiguities.
+        For more information on metadata views, see
+        <a href="../../apidocs/org.apache.sis.metadata/org/apache/sis/metadata/package-summary.html#package.description"><code>org.apache.sis.metadata</code></a>
+        package javadoc.
+      </p>
+
+      <h3 id="MetadataAsTreeTable">View as tree table</h3>
+      <p>
+        A richer alternative to the view as a map is the view as a tree table.
+        With this view, the metadata structure is visible as a tree,
+        and each tree node is a table row with the following columns:
+      </p>
+      <table>
+        <caption>Columns of a tree table view of a metadata</caption>
+        <tr><th>Column</th> <th>Description</th></tr>
+        <tr><td><code class="SIS">IDENTIFIER</code></td> <td>The UML identifier if any, or otherwise the Java Beans name, of the metadata property.</td></tr>
+        <tr><td><code class="SIS">INDEX</code></td>      <td>If the property is a collection, then the zero-based index of the element in that collection.</td></tr>
+        <tr><td><code class="SIS">NAME</code></td>       <td>A human-readable name for the node, derived from above identifier and index.</td></tr>
+        <tr><td><code class="SIS">TYPE</code></td>       <td>The base type of the value (usually a GeoAPI interface).</td></tr>
+        <tr><td><code class="SIS">VALUE</code></td>      <td>The metadata value for the node. This column may be writable.</td></tr>
+        <tr><td><code class="SIS">NIL_REASON</code></td> <td>If the value is mandatory and nevertheless absent, the reason why.</td></tr>
+        <tr><td><code class="SIS">REMARKS</code></td>    <td>Remarks or warning on the property value.</td></tr>
+      </table>
+      <p>
+        Tree table views are obtained in a way similar to <a href="#MetadataAsMap">map views</a>,
+        but using the <code class="SIS">asTreeTable(Object)</code> method instead of <code class="SIS">asValueMap(Object)</code>.
+      </p>
+    </section>
+  </body>
+</html>

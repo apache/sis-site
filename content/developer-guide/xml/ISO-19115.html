@@ -193,22 +193,10 @@ public class MyClass {
 
       <h3 id="nilReason">Placeholders for missing values</h3>
       <p>
-        When a property is not defined, the corresponding GeoAPI method usually returns <code>null</code>.
-        However, things become complicated when the missing property is a value considered mandatory by <abbr>ISO</abbr> 19115 standard.
-        <abbr>ISO</abbr> 19115-3 allows for the omission of mandatory properties so long as the reason for the missing value is indicated.
-        The reason may be that the property is not applicable (<code class="OGC">inapplicable</code>),
-        that the value probably exists but is not known (<code class="OGC">unknown</code>),
-        that the value cannot exist (<code class="OGC">missing</code>),
-        or that the value cannot be revealed (<code class="OGC">withheld</code>), <i>etc.</i>
-        The transmission of this information requires the use of a non-nul object, even when the value is missing.
-        <abbr>SIS</abbr> will then return an object that, besides implementing the desired GeoAPI interface,
-        also implements the <code>org.apache.sis.xml.NilObject</code> interface.
-        This interface flags the instances where all methods return an empty collection, an empty table, <code>null</code>,
-        <code>NaN</code>, <code>0</code> or <code>false</code>, in this preference order, as permitted by the return types of the methods.
-        Each instance that implements <code>NilObject</code> provides a <code class="SIS">getNilReason()</code> method
-        indicating why the object is nil.
-      </p>
-      <p>
+        If a mandatory property value is missing, a <a href="#NilReason">nil reason should be provided</a>.
+        The reason is specified in a <code class="OGC">nilReason</code> attribute, which can take values such as
+        <code class="OGC">unknown</code>, <code class="OGC">missing</code>, <code class="OGC">inapplicable</code>,
+        <code class="OGC">withheld</code>, <code class="OGC">template</code>, <i>etc.</i>
         In the following example, the left side shows a <code>CI_Citation</code> element containing a
         <code>CI_Series</code> element, while on the right side the series is unknown.
         If the <code>CI_Series</code> element had been completely omitted,
