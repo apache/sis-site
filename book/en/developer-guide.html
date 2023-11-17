@@ -21,7 +21,9 @@
 <p>Table of content</p>
 <ul>
 <li><a href="#Introduction">Introduction</a><ul>
-<li><a href="#Conventions">Typographic and naming conventions</a></li>
+<li><a href="#DefinitionOfTerms">Definition of terms</a></li>
+<li><a href="#TypographicConventions">Typographic conventions</a></li>
+<li><a href="#CodingConventions">Coding conventions</a></li>
 <li><a href="#Installation">Installation</a></li>
 <li><a href="#DataAccess">Data access overview</a></li></ul></li>
 <li><a href="#Coverage">Data as coverage</a><ul>
@@ -48,8 +50,11 @@
 <li><a href="#TransformDerivative">Partial derivatives of coordinate operations</a></li>
 <li><a href="#CoordinateOperationSteps">Chain of coordinate operation steps</a></li></ul></li></ul></li>
 <li><a href="#Metadata">Metadata</a><ul>
-<li><a href="#GetMetadataElement">Navigating in metadata elements</a><ul>
-<li><a href="#MetadataAsMap">View as key-value pairs</a></li></ul></li></ul></li>
+<li><a href="#NavigateMetadata">Navigating in metadata elements</a><ul>
+<li><a href="#GetMetadataElement">Direct access via getter methods</a></li>
+<li><a href="#MetadataAsMap">View as key-value pairs</a></li>
+<li><a href="#MetadataAsTreeTable">View as tree table</a></li></ul></li>
+<li><a href="#NilReason">Nil values in mandatory properties</a></li></ul></li>
 <li><a href="#XML-ISO">XML representation of ISO objects</a><ul>
 <li><a href="#XML-ISO-19115">ISO 19115-3 metadata</a><ul>
 <li><a href="#gco-id">Links to previously-defined instances</a></li>
@@ -109,16 +114,13 @@ The <a href="#Annexes">annex</a> provides more context about international stand
 </p><p>
 The library is an implementation of <abbr title="Open Geospatial Consortium">OGC</abbr> <a href="http://www.geoapi.org">GeoAPI</a> interfaces.
 In a series of <code class="GeoAPI">org.opengis.*</code> packages, GeoAPI offers a set of implementation-neutral Java interfaces for geospatial applications.
-These interfaces closely follow the specifications of the <abbr>OGC</abbr>, while interpreting and adapting them
-to meet the needs of Java developers — for example, conforming with Java naming conventions.
+These interfaces closely follow the specifications of the <abbr>OGC</abbr>,
+while interpreting and adapting them to meet the needs of Java developers.
 The conceptual model of GeoAPI will be explained in detail in the chapters describing Apache <abbr>SIS</abbr> implementation.
-However, we can get an overview of its content by consulting the page listing the mapping between
-<a href="http://www.geoapi.org/3.0/javadoc/content.html">GeoAPI methods and the standards where they come from</a>.
-The <a href="#GeoAPI">annex</a> provides more details about GeoAPI history and how to use it.
 </p><p>
 While Apache <abbr>SIS</abbr> is primarily a library for helping developers to create their own applications,
 <abbr>SIS</abbr> provides also an optional JavaFX application for testing its capability to read, transform and visualize data files.
-Screenshots of this application may be used in this document for illustrative purposes.
+Screenshots of this application are used in this document for illustrative purposes.
 </p><p>
 <b>Note:</b> this document contains mathematical formulas expressed in MathML.
 For viewing those formulas, a MathML-capable browser (e.g. Firefox) is required.
@@ -129,15 +131,78 @@ For viewing those formulas, a MathML-capable browser (e.g. Firefox) is required.
 
 
 
+
 <section>
 <header>
-<h2 id="Conventions"><span class="section-number">1.1.</span> Typographic and naming conventions</h2>
+<h2 id="DefinitionOfTerms"><span class="section-number">1.1.</span> Definition of terms</h2>
+</header>
+<p>
+The meaning of words sometime depend on the community using them.
+The Apache <abbr title="Spatial Information System">SIS</abbr> library prefers as much as possible to use terms in the sense of <abbr title="Open Geospatial Consortium">OGC</abbr> and <abbr>ISO</abbr> standards.
+Particular care must be taken with the interfaces between <abbr>SIS</abbr> and certain other external libraries.
+For example, the <abbr>ISO</abbr> 19123 standard see <code class="OGC">CV_Coverage</code> as functions
+in which the <dfn>domain</dfn> is the set of spatio-temporal coordinates encompassed by the data,
+and the <dfn>range</dfn> is the set of values encompassed.
+However, <abbr title="University Corporation for Atmospheric Research">UCAR</abbr>’s <abbr title="Network Common Data Form">netCDF</abbr> library
+applies these terms instead to the function for converting pixel indices (its <dfn>domain</dfn>) to spatial-temporal coordinates (its <dfn>range</dfn>).
+Thus the <abbr>UCAR</abbr> library’s <dfn>range</dfn> may be the <dfn>domain</dfn> of <abbr>ISO</abbr> 19123.
+</p>
+<dl>
+<dt>Coverage</dt>
+<dd>Feature that acts as a function to return values from its range for any direct position within its spatial,
+temporal or spatiotemporal domain.
+<span class="term-source">ISO 19123</span></dd>
+
+<dt>Coordinate</dt>
+<dd>One of a sequence of numbers designating the position of a point.
+<span class="term-source">ISO 19111</span></dd>
+
+<dt>Coordinate operation</dt>
+<dd>Process using a mathematical model, based on a one-to-one relationship, that changes coordinates
+in a source coordinate reference system to coordinates in a target coordinate reference system,
+or that changes coordinates at a source coordinate epoch to coordinates at a target coordinate epoch
+within the same coordinate reference system.
+<span class="term-source">ISO 19111</span></dd>
+
+<dt>Coordinate reference system</dt>
+<dd>Coordinate system that is related to an object by a datum.
+<span class="term-source">ISO 19111</span></dd>
+
+<dt>Coordinate system</dt>
+<dd>Set of mathematical rules for specifying how coordinates are to be assigned to points.
+<span class="term-source">ISO 19111</span></dd>
+
+<dt>Coordinate tuple</dt>
+<dd>Tuple composed of coordinates.
+The number of coordinates in the coordinate tuple equals the dimension of the coordinate system.
+The order of coordinates in the coordinate tuple is identical to the order of the axes of the coordinate system.
+<span class="term-source">ISO 19111</span></dd>
+
+<dt>Datum</dt>
+<dd>Parameter or set of parameters that realize the position of the origin,
+the scale, and the orientation of a coordinate system.
+<span class="term-source">ISO 19111</span></dd>
+
+<dt>Domain</dt>
+<dd>Well-defined set.
+<span class="term-source">ISO 19123</span></dd>
+
+<dt>Range</dt>
+<dd>Set of feature attribute values associated by a function with the elements of the domain of a coverage.
+<span class="term-source">ISO 19123</span></dd>
+</dl>
+</section>
+
+
+<section>
+<header>
+<h2 id="TypographicConventions"><span class="section-number">1.2.</span> Typographic conventions</h2>
 </header>
 <p>
 The elements defined in a computer language, such as classes and methods in Java or elements in an <abbr>XML</abbr> document,
 appear in monospaced font in this document.
 In order to facilitate an understanding of the relationships between Apache <abbr title="Spatial Information System">SIS</abbr> and the standards,
-these elements are also represented using the following colour codes:
+these elements are also represented using the following color codes:
 </p>
 <ul>
 <li>
@@ -152,7 +217,7 @@ Elements in brown are defined in Apache <abbr title="Spatial Information System"
 </li>
 <li>
 Elements left in black are either defined elsewhere (for example the standard Java library),
-or there is simply no emphasis on that element for the discussion.
+or there is no emphasis on that element for the discussion.
 </li>
 </ul>
 <p>
@@ -160,7 +225,13 @@ For example to represent a projected coordinate reference system (Mercator, Lamb
 <code class="OGC">SC_ProjectedCRS</code> is an <abbr>UML</abbr> and <abbr>XML</abbr> element defined by the <abbr>ISO</abbr> 19111 standard.
 Then <code class="GeoAPI">org.​opengis.​referencing.​crs.​<b>ProjectedCRS</b></code> is the implementation-neutral GeoAPI interface derived from that standard,
 and <code class="SIS">org.​apache.​sis.​referencing.​crs.​<b>DefaultProjectedCRS</b></code> is the implementation class provided by Apache SIS.
-</p><p>
+</p>
+</section>
+<section>
+<header>
+<h2 id="CodingConventions"><span class="section-number">1.3.</span> Coding conventions</h2>
+</header>
+<p>
 Apache SIS implements most GeoAPI interfaces by a classes of the same name than the interface
 but prefixed by <code>Abstract</code>, <code>Default</code> or <code>General</code> word.
 The <code>General</code> prefix is sometimes used instead of <code>Default</code>
@@ -172,46 +243,17 @@ while the second implementation is specialized for two-dimensional envelopes.
 </p><p>
 Apache SIS classes prefixed by <code>Abstract</code> should not (in principle) be instantiated.
 Users should instantiate a non-abstract subclass instead.
-However many <abbr>SIS</abbr> classes are only conceptually abstract,
+However many <abbr title="Spatial Information System">SIS</abbr> classes are only conceptually abstract,
 without <code>abstract</code> Java keyword in class definition.
 Such classes can be instantiated by a <code>new AbstractXXX(…)</code> statement despite being conceptually abstract.
 Such instantiations should be avoided, but are nevertheless permitted in last resort when it is not possible to determine the exact subtype.
 </p>
-<p>
-Text in gray boxes, like below (click to expand), are for information purpose only and can be ignored.
-</p>
-<details>
-<summary>Note about the definition of terms</summary>
-<article id="ChosenTerms">
-<header>
-<h2>Source of term definitions</h2>
-</header>
-<p>
-Standards sometimes favour the application of certain generic terms to particular contexts,
-which may differ from the context in which other communities use these terms.
-For example, the terms <i>domain</i> and <i>range</i> may apply to arbitrary mathematical functions in order to designate
-a set of possible values of inputs and outputs respectively.
-The <abbr title="International Organization for Standardization">ISO</abbr> 19123 standard applies these terms to <code class="OGC">CV_Coverage</code> objects,
-seen as functions in which the <i>domain</i> is the set of spatio-temporal coordinates encompassed by the data,
-and the <i>range</i> is the set of values encompassed.
-</p><p>
-However the functions to which above terms are applied by <abbr>ISO</abbr> standards are not the same as the functions to which they are applied by other libraries.
-For example <abbr title="University Corporation for Atmospheric Research">UCAR</abbr>’s <abbr title="Network Common Data Form">netCDF</abbr> library
-applies these terms instead to the function for converting pixel indices (its <i>domain</i>) to spatial-temporal coordinates (its <i>range</i>).
-Thus the <abbr>UCAR</abbr> library’s <i>range</i> may be the <i>domain</i> of <abbr>ISO</abbr> 19123.
-</p><p>
-The Apache <abbr title="Spatial Information System">SIS</abbr> library prefers as much as possible to use terms in the sense of <abbr title="Open Geospatial Consortium">OGC</abbr> and <abbr>ISO</abbr> norms.
-Particular care must be taken, however, with the interfaces between <abbr>SIS</abbr> and certain other external libraries,
-in order to reduce the risk of confusion.
-</p>
-</article>
-</details>
 </section>
 
 
 <section>
 <header>
-<h2 id="Installation"><span class="section-number">1.2.</span> Installation</h2>
+<h2 id="Installation"><span class="section-number">1.4.</span> Installation</h2>
 </header>
 <p>
 The easiest way to use Apache <abbr title="Spatial Information System">SIS</abbr> is to declare Maven dependencies in the application project.
@@ -225,7 +267,7 @@ It is optional but recommended;
 see <a href="../../epsg.html">How to use EPSG geodetic dataset</a> page for more information.
 </p>
 <pre>&lt;properties&gt;
-  &lt;sis.version&gt;1.3&lt;/sis.version&gt;
+  &lt;sis.version&gt;1.4&lt;/sis.version&gt;
 &lt;/properties&gt;
 &lt;dependencies&gt;
   &lt;dependency&gt;
@@ -250,7 +292,7 @@ see <a href="../../epsg.html">How to use EPSG geodetic dataset</a> page for more
   &lt;dependency&gt;
     &lt;groupId&gt;org.glassfish.jaxb&lt;/groupId&gt;
     &lt;artifactId&gt;jaxb-runtime&lt;/artifactId&gt;
-    &lt;version&gt;2.3.6&lt;/version&gt;
+    &lt;version&gt;4.0.4&lt;/version&gt;
     &lt;scope&gt;runtime&lt;/scope&gt;
   &lt;/dependency&gt;
 
@@ -283,7 +325,7 @@ for other purposes such as the installation of datum shift grids.
 
 <section>
 <header>
-<h2 id="DataAccess"><span class="section-number">1.3.</span> Data access overview</h2>
+<h2 id="DataAccess"><span class="section-number">1.5.</span> Data access overview</h2>
 </header>
 <p>
 It is possible to instantiate data structures programmatically in memory.
@@ -308,35 +350,40 @@ contact information for the responsible person or organization,
 legal or technical constraints on data usage,
 the history of processing apply on the data,
 expected updates schedule, <i>etc.</i>
-</p><p>
-Various data formats have their own metadata model, but Apache <abbr title="Spatial Information System">SIS</abbr> translates all of them
+The metadata structures depends on the data formats, but Apache <abbr title="Spatial Information System">SIS</abbr> translates all of them
 in a unique metadata model in order to hide this heterogeneity.
-This <em>pivot model</em> approach is often used by various libraries,
-with <cite>Dublin Core</cite> as a popular choice.
-For Apache <abbr>SIS</abbr>, the chosen pivot model is the <abbr title="International Organization for Standardization">ISO</abbr> <cite>19115</cite> international standard.
-This model organizes metadata in a tree structure where each information is accessible by a well-defined path,
-regardless the origin of that information.
+This <em>pivot model</em> approach is often used by various libraries, with Dublin Core as a popular choice.
+For Apache <abbr>SIS</abbr>, the chosen pivot model is the <abbr title="International Organization for Standardization">ISO</abbr> 19115 international standard.
+This model organizes metadata in a tree structure.
 For example if a data format can provides a geographic bounding box encompassing all data,
 then that information will always be accessible (regardless the data format) from the root <code class="GeoAPI">Metadata</code> object
-under the <code class="OGC">identification­Info</code> node, <code class="OGC">extent</code> sub-node,
-<code class="OGC">geographic­Element</code> sub-node.
-</p>
-<div class="example"><p><b>Example:</b>
-following code read a metadata file from a Landsat-8 image and prints the declared geographic bounding box:
+under the <code class="OGC">identification­Info</code> node, then the <code class="OGC">extent</code> sub-node,
+and finally the <code class="OGC">geographic­Element</code> sub-node.
+For example, the following code read a metadata file from a Landsat-8 image and prints the declared geographic bounding box:
 </p>
 
-<pre><code><b>try</b> (<code class="SIS">DataStore</code> store = <code class="SIS">DataStores</code>.open(<b>new</b> File(<i>"LC81230522014071LGN00_MTL.txt"</i>))) {
-    <code class="GeoAPI">Metadata</code> overview = store.<code class="SIS">getMetadata()</code>;
+<pre><code>
+<b>import</b> org.opengis.metadata.<code class="GeoAPI">Metadata</code>;
+<b>import</b> org.opengis.metadata.extent.<code class="GeoAPI">GeographicBoundingBox</code>;
+<b>import</b> org.apache.sis.storage.<code class="SIS">DataStore</code>;
+<b>import</b> org.apache.sis.storage.<code class="SIS">DataStores</code>;
+<b>import</b> org.apache.sis.storage.DataStoreException;
+<b>import</b> org.apache.sis.metadata.iso.extent.<code class="SIS">Extents</code>;
 
-    <code class="comment">// Convenience method for fetching the geographic bounding box at the right location in metadata tree.</code>
-    <code class="GeoAPI">GeographicBoundingBox</code> bbox = <code class="SIS"><code class="SIS">Extents</code>.getGeographicBoundingBox</code>(overview);
+<b>void</b> main() <b>throws</b> DataStoreException {
+    <b>try</b> (<code class="SIS">DataStore</code> store = <code class="SIS">DataStores</code>.open(<b>new</b> File(<i>"LC81230522014071LGN00_MTL.txt"</i>))) {
+        <code class="GeoAPI">Metadata</code> overview = store.<code class="SIS">getMetadata()</code>;
 
-    System.out.println(<i>"The geographic bounding box is:"</i>);
-    System.out.println(bbox);
+        <code class="comment">// Convenience method for fetching value at the "metadata/identification­Info/geographic­Element" path.</code>
+        <code class="GeoAPI">GeographicBoundingBox</code> bbox = <code class="SIS"><code class="SIS">Extents</code>.getGeographicBoundingBox</code>(overview);
+
+        System.out.println(<i>"The geographic bounding box is:"</i>);
+        System.out.println(bbox);
+    }
 }</code></pre>
 
 <p>
-This example produces the following output (this area is located in Vietnam):
+Above example produces the following output (this area is located in Vietnam):
 </p>
 
 <pre><samp>The geographic bounding box is:
@@ -345,64 +392,16 @@ Geographic Bounding Box
   ├─East bound longitude…………………………… 110°26′39.66″E
   ├─South bound latitude…………………………… 10°29′59.604″N
   └─North bound latitude…………………………… 12°37′25.716″N</samp></pre>
-</div>
 
 <p>
-The <abbr>ISO</abbr> 19115 standard defines hundreds of elements.
-Some of them will be introduced progressively in next chapters.
-But in order to give some idea about what is available, the following table lists a few metadata elements.
-Most of the nodes accept an arbitrary number of values.
-For example the <code class="OGC">extent</code> node may contain many geographic areas.
-</p>
-
-<table class="monospacedHeaderColumn" style="font-size:0.82vw">
-<caption>Extract of a few metadata elements from ISO 19115</caption>
-<tr><th>Element</th>                                <th>Description</th></tr>
-<tr><td style="padding-top:9px">Metadata</td>       <td style="padding-top:9px">Metadata about a dataset, service or other resources.</td></tr>
-<tr><td>  ├─Reference system info</td>              <td>Description of the spatial and temporal reference systems used in the dataset.</td></tr>
-<tr><td>  ├─Identification info</td>                <td>Basic information about the resource(s) to which the metadata applies.</td></tr>
-<tr><td>  │   ├─Citation</td>                       <td>Name by which the cited resource is known, reference dates, presentation form, <i>etc.</i></td></tr>
-<tr><td>  │   │   └─Cited responsible party</td>    <td>Role, name, contact and position information for individuals or organizations that are responsible for the resource.</td></tr>
-<tr><td>  │   ├─Topic category</td>                 <td>Main theme(s) of the resource (e.g. farming, climatology, environment, economy, health, transportation, <i>etc.</i>).</td></tr>
-<tr><td>  │   ├─Descriptive keywords</td>           <td>Category keywords, their type, and reference source.</td></tr>
-<tr><td>  │   ├─Spatial resolution</td>             <td>Factor which provides a general understanding of the density of spatial data in the resource.</td></tr>
-<tr><td>  │   ├─Temporal resolution</td>            <td>Smallest resolvable temporal period in a resource.</td></tr>
-<tr><td>  │   ├─Extent</td>                         <td>Spatial and temporal extent of the resource.</td></tr>
-<tr><td>  │   ├─Resource format</td>                <td>Description of the format of the resource(s).</td></tr>
-<tr><td>  │   ├─Resource maintenance</td>           <td>Information about the frequency of resource updates, and the scope of those updates.</td></tr>
-<tr><td>  │   └─Resource constraints</td>           <td>Information about constraints (legal or security) which apply to the resource(s).</td></tr>
-<tr><td>  ├─Content info</td>                       <td>Information about the feature catalog and describes the coverage and image data characteristics.</td></tr>
-<tr><td>  │   ├─Imaging condition</td>              <td>Conditions which affected the image (e.g. blurred image, fog, semi darkness, <i>etc.</i>).</td></tr>
-<tr><td>  │   ├─Cloud cover percentage</td>         <td>Area of the dataset obscured by clouds, expressed as a percentage of the spatial extent.</td></tr>
-<tr><td>  │   └─Attribute group</td>                <td>Information on attribute groups of the resource.</td></tr>
-<tr><td>  │       ├─Content type</td>               <td>Types of information represented by the values (e.g. thematic classification, physical measurement, <i>etc.</i>).</td></tr>
-<tr><td>  │       └─Attribute</td>                  <td>Information on an attribute of the resource.</td></tr>
-<tr><td>  │           ├─Sequence identifier</td>    <td>Unique name or number that identifies attributes included in the coverage.</td></tr>
-<tr><td>  │           ├─Peak response</td>          <td>Wavelength at which the response is the highest.</td></tr>
-<tr><td>  │           ├─Min/max value</td>          <td>Minimum/maximum value of data values in each sample dimension included in the resource.</td></tr>
-<tr><td>  │           ├─Units</td>                  <td>Units of data in each dimension included in the resource.</td></tr>
-<tr><td>  │           └─Transfer function type</td> <td>Type of transfer function to be used when scaling a physical value for a given element.</td></tr>
-<tr><td>  ├─Distribution info</td>                  <td>Information about the distributor of and options for obtaining the resource(s).</td></tr>
-<tr><td>  │   ├─Distribution format</td>            <td>Description of the format of the data to be distributed.</td></tr>
-<tr><td>  │   └─Transfer options</td>               <td>Technical means and media by which a resource is obtained from the distributor.</td></tr>
-<tr><td>  ├─Data quality info</td>                  <td>Overall assessment of quality of a resource(s).</td></tr>
-<tr><td>  ├─Acquisition information</td>            <td>Information about the acquisition of the data.</td></tr>
-<tr><td>  │   ├─Environmental conditions</td>       <td>Record of the environmental circumstances during the data acquisition.</td></tr>
-<tr><td>  │   └─Platform</td>                       <td>General information about the platform from which the data were taken.</td></tr>
-<tr><td>  │       └─Instrument</td>                 <td>Instrument(s) mounted on a platform.</td></tr>
-<tr><td>  └─Resource lineage</td>                   <td>Information about the provenance, sources and/or the production processes applied to the resource.</td></tr>
-<tr><td>      ├─Source</td>                         <td>Information about the source data used in creating the data specified by the scope.</td></tr>
-<tr><td>      └─Process step</td>                   <td>Information about events in the life of a resource specified by the scope.</td></tr>
-</table>
-<p>
-Among metadata elements introduced in this chapter, there is one which will be the topic of
+Metadata are covered in more details in a <a href="#Metadata">latter chapter</a>.
+Among metadata elements, there is one which will be the topic of
 a <a href="#Referencing">dedicated chapter</a>: <code class="OGC">reference­System­Info</code>.
 Its content is essential for accurate data positioning;
 without this element, even positions given by latitudes and longitudes are ambiguous.
 Reference systems have many characteristics that make them apart from other metadata:
-they are immutable, cannot be handled by <code class="SIS">MetadataStandard.ISO_19115​.asValueMap(…)</code>,
-have a particular text representation and are associated to an engine
-performing coordinate transformation from one reference system to another.
+they are immutable, have a particular Well-Known Text representation and are associated
+to an engine performing coordinate transformation from one reference system to another.
 </p>
 </section>
 </section>
@@ -910,7 +909,7 @@ However, the left and right positions are switched.
 This case is illustrated by the red rectangle in the figure below.
 </p>
 <p style="text-align:center">
-<img alt="Envelope example with and without anti-meridian spanning." src="../../apidocs/org/apache/sis/geometry/doc-files/AntiMeridian.png"/>
+<img alt="Envelope example with and without anti-meridian spanning." src="../../apidocs/org.apache.sis.referencing/org/apache/sis/geometry/doc-files/AntiMeridian.png"/>
 </p>
 <p>
 The notions of inclusion and intersection, however, are interpreted slightly differently in these two cases.
@@ -1845,30 +1844,194 @@ about common causes of coordinate transformation errors.
 <header>
 <h1 id="Metadata"><span class="section-number">5.</span> Metadata</h1>
 </header>
+<p>
+Many metadata standards exist, including Dublin core, <abbr title="International Organization for Standardization">ISO</abbr> 19115
+and the Image I/O metadata defined in the <code>javax.imageio.metadata</code> package.
+Apache <abbr title="Spatial Information System">SIS</abbr> uses the <abbr>ISO</abbr> 19115 series of standards as the pivotal metadata structure,
+and converts other metadata structures to <abbr>ISO</abbr> 19115 when needed.
+The <abbr>ISO</abbr> 19115 standard defines hundreds of metadata elements,
+but the following table gives an overview with a few of them.
+Note that most of the nodes accept an arbitrary number of values.
+For example the <code class="OGC">extent</code> node may contain many geographic areas.
+</p>
+
+<table class="monospacedHeaderColumn" style="font-size:0.82vw">
+<caption>Extract of a few metadata elements from ISO 19115</caption>
+<tr><th>Element</th>                                <th>Description</th></tr>
+<tr><td style="padding-top:9px">Metadata</td>       <td style="padding-top:9px">Metadata about a dataset, service or other resources.</td></tr>
+<tr><td>  ├─Reference system info</td>              <td>Description of the spatial and temporal reference systems used in the dataset.</td></tr>
+<tr><td>  ├─Identification info</td>                <td>Basic information about the resource(s) to which the metadata applies.</td></tr>
+<tr><td>  │   ├─Citation</td>                       <td>Name by which the cited resource is known, reference dates, presentation form, <i>etc.</i></td></tr>
+<tr><td>  │   │   └─Cited responsible party</td>    <td>Role, name, contact and position information for individuals or organizations that are responsible for the resource.</td></tr>
+<tr><td>  │   ├─Topic category</td>                 <td>Main theme(s) of the resource (e.g. farming, climatology, environment, economy, health, transportation, <i>etc.</i>).</td></tr>
+<tr><td>  │   ├─Descriptive keywords</td>           <td>Category keywords, their type, and reference source.</td></tr>
+<tr><td>  │   ├─Spatial resolution</td>             <td>Factor which provides a general understanding of the density of spatial data in the resource.</td></tr>
+<tr><td>  │   ├─Temporal resolution</td>            <td>Smallest resolvable temporal period in a resource.</td></tr>
+<tr><td>  │   ├─Extent</td>                         <td>Spatial and temporal extent of the resource.</td></tr>
+<tr><td>  │   ├─Resource format</td>                <td>Description of the format of the resource(s).</td></tr>
+<tr><td>  │   ├─Resource maintenance</td>           <td>Information about the frequency of resource updates, and the scope of those updates.</td></tr>
+<tr><td>  │   └─Resource constraints</td>           <td>Information about constraints (legal or security) which apply to the resource(s).</td></tr>
+<tr><td>  ├─Content info</td>                       <td>Information about the feature catalog and describes the coverage and image data characteristics.</td></tr>
+<tr><td>  │   ├─Imaging condition</td>              <td>Conditions which affected the image (e.g. blurred image, fog, semi darkness, <i>etc.</i>).</td></tr>
+<tr><td>  │   ├─Cloud cover percentage</td>         <td>Area of the dataset obscured by clouds, expressed as a percentage of the spatial extent.</td></tr>
+<tr><td>  │   └─Attribute group</td>                <td>Information on attribute groups of the resource.</td></tr>
+<tr><td>  │       ├─Content type</td>               <td>Types of information represented by the values (e.g. thematic classification, physical measurement, <i>etc.</i>).</td></tr>
+<tr><td>  │       └─Attribute</td>                  <td>Information on an attribute of the resource.</td></tr>
+<tr><td>  │           ├─Sequence identifier</td>    <td>Unique name or number that identifies attributes included in the coverage.</td></tr>
+<tr><td>  │           ├─Peak response</td>          <td>Wavelength at which the response is the highest.</td></tr>
+<tr><td>  │           ├─Min/max value</td>          <td>Minimum/maximum value of data values in each sample dimension included in the resource.</td></tr>
+<tr><td>  │           ├─Units</td>                  <td>Units of data in each dimension included in the resource.</td></tr>
+<tr><td>  │           └─Transfer function type</td> <td>Type of transfer function to be used when scaling a physical value for a given element.</td></tr>
+<tr><td>  ├─Distribution info</td>                  <td>Information about the distributor of and options for obtaining the resource(s).</td></tr>
+<tr><td>  │   ├─Distribution format</td>            <td>Description of the format of the data to be distributed.</td></tr>
+<tr><td>  │   └─Transfer options</td>               <td>Technical means and media by which a resource is obtained from the distributor.</td></tr>
+<tr><td>  ├─Data quality info</td>                  <td>Overall assessment of quality of a resource(s).</td></tr>
+<tr><td>  ├─Acquisition information</td>            <td>Information about the acquisition of the data.</td></tr>
+<tr><td>  │   ├─Environmental conditions</td>       <td>Record of the environmental circumstances during the data acquisition.</td></tr>
+<tr><td>  │   └─Platform</td>                       <td>General information about the platform from which the data were taken.</td></tr>
+<tr><td>  │       └─Instrument</td>                 <td>Instrument(s) mounted on a platform.</td></tr>
+<tr><td>  └─Resource lineage</td>                   <td>Information about the provenance, sources and/or the production processes applied to the resource.</td></tr>
+<tr><td>      ├─Source</td>                         <td>Information about the source data used in creating the data specified by the scope.</td></tr>
+<tr><td>      └─Process step</td>                   <td>Information about events in the life of a resource specified by the scope.</td></tr>
+</table>
+
+<p>
+The ISO 19115 standard is reified by the <a href="http://www.geoapi.org">GeoAPI</a> interfaces
+defined in the <code class="GeoAPI">org.opengis.metadata</code> package and sub-packages.
+For each interface, the collection of declared getter methods defines its <dfn>properties</dfn> (or <dfn>attributes</dfn>).
+The implementation classes are defined in the <code class="SIS">org.apache.sis.metadata.iso</code> package and sub-packages.
+The sub-packages hierarchy is the same as GeoAPI,
+and the names of implementation classes are the name of the GeoAPI interfaces
+prefixed with <code>Abstract</code> or <code>Default</code>. In this context,
+the <code>Abstract</code> prefix means that the class is abstract in the sense of the implemented standard.
+It it not necessarily abstract in the sense of Java. Because incomplete metadata are common in practice,
+sometimes an "abstract" class may be instantiated because of the lack of knowledge about the exact sub-type.
+A metadata instance (abstract or not) may also have missing values for properties considered as mandatory.
+The latter case is handled by <a href="#NilReason">nil reasons</a>.
+</p><p>
+A metadata may be created programmatically like below:
+</p>
+
+<pre><code>
+<b>import</b> org.apache.sis.metadata.iso.citation.DefaultCitation;
+<b>import</b> org.opengis.metadata.citation.<code class="GeoAPI">PresentationForm</code>;
+
+<b>void</b> main() {
+    <code class="comment">// Convenience constructor setting the "title" property to the given value.</code>
+    var citation = <b>new</b> DefaultCitation(<i>"Map of Antarctica"</i>);
+    citation.getPresentationForms().add(<code class="GeoAPI">PresentationForm</code>.DOCUMENT_HARDCOPY);
+
+    <code class="comment">// The following code prints "Map of Antarctica".</code>
+    System.out.println(citation.getTitle());
+}</code></pre>
+
+<p>
+But more often, metadata are obtained by parsing an <abbr>XML</abbr> document
+conforms to the <abbr>ISO</abbr> 19115-3 schema:
+</p>
+
+<pre><code><b>import</b> org.apache.sis.xml.XML;
+<b>import</b> org.opengis.metadata.<code class="GeoAPI">Metadata</code>;
+<b>import</b> jakarta.xml.bind.JAXBException;
+
+<b>void</b> main() <b>throws</b> JAXBException {
+    var metadata = (<code class="GeoAPI">Metadata</code>) XML.unmarshal(Path.of(<i>"Map of Antarctica.xml"</i>));
+}</code></pre>
+
+<p>
+Metadata objects in Apache <abbr>SIS</abbr> are mostly containers:
+they provide getter and setter methods for manipulating the values associated to properties
+(for example the <code class="OGC">title</code> property of a <code class="GeoAPI">Citation</code> object),
+but otherwise does not process the values.
+Exceptions to this rule are deprecated properties,
+which are not stored but rather redirected to their replacements.
+</p>
+
 
 
 
 
 <section>
 <header>
-<h2 id="GetMetadataElement"><span class="section-number">5.1.</span> Navigating in metadata elements</h2>
+<h2 id="NavigateMetadata"><span class="section-number">5.1.</span> Navigating in metadata elements</h2>
 </header>
 <p>
-Methods like <code class="GeoAPI">getExtents()</code> are efficient when looking for a particular element known at compile-time.
-But those elements may be deep in the tree structure and may require traversal of many optional elements and collection members,
-which is sometimes tedious. For a few frequently-used elements, some convenience methods are provided.
+The metadata modules provide support methods for handling the metadata objects through Java Reflection.
+This is an approach similar to <cite>Java Beans</cite>, in that users are encouraged to use directly the API of
+Plain Old Java objects every time their type is known at compile time,
+and fallback on the reflection technic when the type is known only at runtime.
+When using Java reflection, a metadata can be viewed in different ways:
+</p>
+<ul>
+<li>As key-value pairs in a <code>Map</code> (from <code>java.util</code>).</li>
+<li>As a <code>TreeTable</code> (from <code class="SIS">org.apache.sis.util.collection</code>).</li>
+<li>As a table record in a database (using <code class="SIS">org.apache.sis.metadata.sql</code>).</li>
+<li>As an <abbr>XML</abbr> document conforms to <abbr title="International Organization for Standardization">ISO</abbr> standard schema.</li>
+</ul>
+<p>
+The use of reflection is described <a href="#MetadataAsMap">below</a>.
+The <abbr>XML</abbr> representation is described in a <a href="#XML-ISO-19115">separated chapter</a>.
+</p>
+
+<h3 id="GetMetadataElement"><span class="section-number">5.1.1.</span> Direct access via getter methods</h3>
+<p>
+All metadata classes provide getter, and sometime setter, methods for their properties.
+Some properties accept many values, in which case the property type is a collection.
+The following example prints the range of latitudes of all data descriptions
+found in a given root <code class="GeoAPI">Metadata</code> object:
+</p>
+
+<pre><code>
+<b>import</b> org.opengis.metadata.metadata;
+<b>import</b> org.opengis.metadata.extent.<code class="GeoAPI">Extent</code>;
+<b>import</b> org.opengis.metadata.extent.<code class="GeoAPI">GeographicExtent</code>;
+<b>import</b> org.opengis.metadata.extent.<code class="GeoAPI">GeographicBoundingBox</code>;
+<b>import</b> org.opengis.metadata.identification.<code class="GeoAPI">Identification</code>;
+<b>import</b> org.opengis.metadata.identification.<code class="GeoAPI">DataIdentification</code>;
+
+<b>void</b> main() {
+    <code class="GeoAPI">Metadata</code> metadata = ...;    <code class="comment">// For example, metadata read from a data store.</code>
+    <b>for</b> (<code class="GeoAPI">Identification</code> identification : metadata.getIdentificationInfo()) {
+        <b>if</b> (identification <b>instanceof</b> <code class="GeoAPI">DataIdentification</code> data) {
+            <b>for</b> (<code class="GeoAPI">Extent</code> extent : data.getExtents()) {
+                <code class="comment">// Extents may have horizontal, vertical and temporal components.</code>
+                <b>for</b> (<code class="GeoAPI">GeographicExtent</code> horizontal : extent.getGeographicElements()) {
+                    <b>if</b> (horizontal <b>instanceof</b> <code class="GeoAPI">GeographicBoundingBox</code> bbox) {
+                        <b>double</b> south = bbox.getSouthBoundLatitude();
+                        <b>double</b> north = bbox.getNorthBoundLatitude();
+                        System.out.println(<i>"Latitude range: "</i> + south + <i>" to "</i> + north);
+                    }
+                }
+            }
+        }
+    }
+}</code></pre>
+
+<p>
+Because of <abbr title="International Organization for Standardization">ISO</abbr> 19115 richness, interesting information may be buried deeply in the metadata tree, as in above example.
+For a few frequently-used elements, some convenience methods are provided.
 Those conveniences are generally defined as static methods in classes having a name in plural form.
 For example the <code class="SIS">Extents</code> class defines static methods for fetching more easily some information from <code class="GeoAPI">Extent</code> metadata elements.
 For example the following method navigates through different branches where North, South, East and West data bounds may be found:
 </p>
-<pre><code><code class="GeoAPI">GeographicBoundingBox</code> bbox = <code class="SIS">Extents</code>.getGeographicBoundingBox(extent);</code></pre>
+
+<pre><code>
+<b>import</b> org.opengis.metadata.metadata;
+<b>import</b> org.opengis.metadata.extent.<code class="GeoAPI">GeographicBoundingBox</code>;
+<b>import</b> org.apache.sis.metadata.iso.extent.<code class="SIS">Extents</code>;
+
+<b>void</b> main() {
+    <code class="GeoAPI">Metadata</code> metadata = ...;    <code class="comment">// For example, metadata read from a data store.</code>
+    <code class="GeoAPI">GeographicBoundingBox</code> bbox = <code class="SIS">Extents</code>.getGeographicBoundingBox(extent);
+}</code></pre>
+
 <p>
 Those conveniences are defined as static methods in order to allow their use with different metadata implementations.
 Some other classes providing static methods for specific interfaces are
 <code class="SIS">Citations</code>, <code class="SIS">Envelopes</code>, <code class="SIS">Matrices</code> and <code class="SIS">MathTransforms</code>.
 </p>
 
-<h3 id="MetadataAsMap"><span class="section-number">5.1.1.</span> View as key-value pairs</h3>
+<h3 id="MetadataAsMap"><span class="section-number">5.1.2.</span> View as key-value pairs</h3>
 <p>
 Above static methods explore fragments of metadata tree in search for requested information,
 but the searches are still targeted to elements whose types and at least part of their paths are known at compile-time.
@@ -1876,17 +2039,23 @@ Sometimes the element to search is known only at runtime, or sometimes there is 
 In such cases, one can view the metadata as a <code>java.util.Map</code> like below:
 </p>
 
-<pre><code>Map&lt;String,Object&gt; elements = <code class="SIS">MetadataStandard</code>.ISO_19115.<code class="SIS">asValueMap</code>(
-        metadata,                           <code class="comment">// Any instance from the org.opengis.metadata package or a sub-package.</code>
-        <b>null</b>,                               <code class="comment">// Used for resolving ambiguities. We can ignore for this example.</code>
-        <code class="SIS">KeyNamePolicy</code>.<code class="SIS">JAVABEANS_PROPERTY</code>,   <code class="comment">// Keys in the map will be getter method names without "get" prefix.</code>
-        <code class="SIS">ValueExistencePolicy</code>.<code class="SIS">NON_EMPTY</code>);    <code class="comment">// Entries with null or empty values will be omitted.</code>
-<code class="comment">/*
- * Print the names of all root metadata elements having a value.
- * This loop does not iterate recursively in children.
- */</code>
-<b>for</b> (String name : elements.keySet()) {
-    System.out.println(name);
+<pre><code>
+<b>import</b> java.util.Map;
+<b>import</b> org.apache.sis.metadata.<code class="SIS">MetadataStandard</code>;
+<b>import</b> org.apache.sis.metadata.<code class="SIS">KeyNamePolicy</code>;
+<b>import</b> org.apache.sis.metadata.<code class="SIS">ValueExistencePolicy</code>;
+
+<b>void</b> main() {
+    Map&lt;String,Object&gt; elements = <code class="SIS">MetadataStandard</code>.ISO_19115.<code class="SIS">asValueMap</code>(
+            metadata,                           <code class="comment">// Any instance from the org.opengis.metadata package or a sub-package.</code>
+            <b>null</b>,                               <code class="comment">// Used for resolving ambiguities. We can ignore for this example.</code>
+            <code class="SIS">KeyNamePolicy</code>.<code class="SIS">JAVABEANS_PROPERTY</code>,   <code class="comment">// Keys in the map will be getter method names without "get" prefix.</code>
+            <code class="SIS">ValueExistencePolicy</code>.<code class="SIS">NON_EMPTY</code>);    <code class="comment">// Entries with null or empty values will be omitted.</code>
+
+    <code class="comment">// Print the names of all root metadata elements having a value.</code>
+    <b>for</b> (String name : elements.keySet()) {
+        System.out.println(name);
+    }
 }</code></pre>
 
 <p>
@@ -1901,8 +2070,65 @@ or names used in <abbr title="International Organization for Standardization">IS
 (similar to property names but not always identical).
 Differences in upper cases and lower cases are ignored when this tolerance does not introduce ambiguities.
 For more information on metadata views, see
-<a href="../../apidocs/org/apache/sis/metadata/package-summary.html#package.description"><code class="SIS">org.apache.sis.metadata</code></a>
+<a href="../../apidocs/org.apache.sis.metadata/org/apache/sis/metadata/package-summary.html#package.description"><code class="SIS">org.apache.sis.metadata</code></a>
 package javadoc.
+</p>
+
+<h3 id="MetadataAsTreeTable"><span class="section-number">5.1.3.</span> View as tree table</h3>
+<p>
+A richer alternative to the view as a map is the view as a tree table.
+With this view, the metadata structure is visible as a tree,
+and each tree node is a table row with the following columns:
+</p>
+<table>
+<caption>Columns of a tree table view of a metadata</caption>
+<tr><th>Column</th> <th>Description</th></tr>
+<tr><td><code class="SIS">IDENTIFIER</code></td> <td>The UML identifier if any, or otherwise the Java Beans name, of the metadata property.</td></tr>
+<tr><td><code class="SIS">INDEX</code></td>      <td>If the property is a collection, then the zero-based index of the element in that collection.</td></tr>
+<tr><td><code class="SIS">NAME</code></td>       <td>A human-readable name for the node, derived from above identifier and index.</td></tr>
+<tr><td><code class="SIS">TYPE</code></td>       <td>The base type of the value (usually a GeoAPI interface).</td></tr>
+<tr><td><code class="SIS">VALUE</code></td>      <td>The metadata value for the node. This column may be writable.</td></tr>
+<tr><td><code class="SIS">NIL_REASON</code></td> <td>If the value is mandatory and nevertheless absent, the reason why.</td></tr>
+<tr><td><code class="SIS">REMARKS</code></td>    <td>Remarks or warning on the property value.</td></tr>
+</table>
+<p>
+Tree table views are obtained in a way similar to <a href="#MetadataAsMap">map views</a>,
+but using the <code class="SIS">asTreeTable(Object)</code> method instead of <code class="SIS">asValueMap(Object)</code>.
+</p>
+</section>
+
+
+<section>
+<header>
+<h2 id="NilReason"><span class="section-number">5.2.</span> Nil values in mandatory properties</h2>
+</header>
+<p>
+Apache <abbr title="Spatial Information System">SIS</abbr> allows any metadata property to be <code>null</code>
+(for values that are not collections) or an empty collection.
+However, <abbr title="International Organization for Standardization">ISO</abbr> 19115 defines some properties as mandatory.
+For example, the <code class="OGC">title</code> of a <code class="GeoAPI">Citation</code> is mandatory,
+while the <code class="OGC">edition</code> is optional.
+Apache <abbr>SIS</abbr> will not raise any warning or error if a mandatory property is missing.
+But for strict <abbr>ISO</abbr> compliance, the reason why the property is missing should be provided.
+Predefined reasons are:
+</p>
+<table>
+<caption>Predefined nil reasons from <abbr>ISO</abbr> 19115-3</caption>
+<tr><th>Reason</th> <th>Explanation</th></tr>
+<tr><td><code class="OGC">inapplicable</code></td> <td>The property is not applicable.</td></tr>
+<tr><td><code class="OGC">unknown</code></td>      <td>The value probably exists but is not known.</td></tr>
+<tr><td><code class="OGC">missing</code></td>      <td>The value cannot exist.</td></tr>
+<tr><td><code class="OGC">withheld</code></td>     <td>The value cannot be revealed.</td></tr>
+<tr><td><code class="OGC">template</code></td>     <td>The value will be available later.</td></tr>
+</table>
+<p>
+The transmission of this information requires the use of a non-null object, even when the value is missing.
+In such case, <abbr>SIS</abbr> will return an object that, besides implementing the desired GeoAPI interface,
+also implements the <code class="SIS">org.apache.sis.xml.NilObject</code> interface.
+This interface flags the instances where all methods return an empty collection, an empty table, <code>null</code>,
+<code>NaN</code>, <code>0</code> or <code>false</code>, in this preference order, as permitted by the return types of the methods.
+Each instance that implements <code class="SIS">NilObject</code> provides a <code class="SIS">getNilReason()</code> method
+indicating why the object is nil.
 </p>
 </section>
 </section>
@@ -2127,27 +2353,15 @@ where all types of identifiers (not only <abbr>XML</abbr>) associated with an ob
 
 <h3 id="nilReason"><span class="section-number">6.1.2.</span> Placeholders for missing values</h3>
 <p>
-When a property is not defined, the corresponding GeoAPI method usually returns <code>null</code>.
-However, things become complicated when the missing property is a value considered mandatory by <abbr title="International Organization for Standardization">ISO</abbr> 19115 standard.
-<abbr>ISO</abbr> 19115-3 allows for the omission of mandatory properties so long as the reason for the missing value is indicated.
-The reason may be that the property is not applicable (<code class="OGC">inapplicable</code>),
-that the value probably exists but is not known (<code class="OGC">unknown</code>),
-that the value cannot exist (<code class="OGC">missing</code>),
-or that the value cannot be revealed (<code class="OGC">withheld</code>), <i>etc.</i>
-The transmission of this information requires the use of a non-nul object, even when the value is missing.
-<abbr title="Spatial Information System">SIS</abbr> will then return an object that, besides implementing the desired GeoAPI interface,
-also implements the <code class="SIS">org.apache.sis.xml.NilObject</code> interface.
-This interface flags the instances where all methods return an empty collection, an empty table, <code>null</code>,
-<code>NaN</code>, <code>0</code> or <code>false</code>, in this preference order, as permitted by the return types of the methods.
-Each instance that implements <code class="SIS">NilObject</code> provides a <code class="SIS">getNilReason()</code> method
-indicating why the object is nil.
-</p>
-<p>
+If a mandatory property value is missing, a <a href="#NilReason">nil reason should be provided</a>.
+The reason is specified in a <code class="OGC">nilReason</code> attribute, which can take values such as
+<code class="OGC">unknown</code>, <code class="OGC">missing</code>, <code class="OGC">inapplicable</code>,
+<code class="OGC">withheld</code>, <code class="OGC">template</code>, <i>etc.</i>
 In the following example, the left side shows a <code class="OGC">CI_Citation</code> element containing a
 <code class="OGC">CI_Series</code> element, while on the right side the series is unknown.
 If the <code class="OGC">CI_Series</code> element had been completely omitted,
 then the <code class="GeoAPI">Citation​.getSeries()</code> method would return <code>null</code> in Java.
-But when a <code class="OGC">nilReason</code> is present, the <abbr>SIS</abbr> implementation of
+But when a <code class="OGC">nilReason</code> is present, the <abbr title="Spatial Information System">SIS</abbr> implementation of
 <code class="SIS">getSeries()</code> returns instead an object that implements both the
 <code class="GeoAPI">Series</code> and <code class="SIS">NilReason</code> interfaces, and in which the
 <code class="SIS">getNilReason()</code> method returns the constant <code class="SIS">UNKNOWN</code>.
@@ -2828,7 +3042,8 @@ was accompanied by <abbr title="Component Object Model">COM</abbr>, <abbr title=
 At this time, the wave of web services had not yet eclipsed classical programming interfaces.
 The interfaces of the <abbr>OGC</abbr> did anticipate a networked world,
 but invested rather — in the case of Java — in <abbr>RMI</abbr> (<i>Remote Method Invocation</i>) technology.
-As the GeoAPI project did not yet exist, we retroactively designate these historical interfaces “<a href="http://www.geoapi.org/0.1/index.html">GeoAPI 0.1</a>”.
+As the GeoAPI project did not yet exist, we retroactively designate these historical interfaces
+“<a href="http://www.geoapi.org/archives/1.0/index.html">GeoAPI 1.0</a>”.
 These interfaces already used the package name <code class="GeoAPI">org.opengis</code>, which would be adopted by GeoAPI.
 </p><p>
 In 2002, developers of free projects launched a
