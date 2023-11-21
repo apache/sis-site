@@ -219,7 +219,7 @@ When Apache {{% SIS %}} is used in a JavaEE container, the data source can be co
    the Derby databases are located (skip this step if another database is used):
 
 {{< highlight bash >}}
-export JAVA_OPTS=-Dderby.system.home=$SIS_DATA/Databases
+export JDK_JAVA_OPTIONS=-Dderby.system.home=$SIS_DATA/Databases
 {{< / highlight >}}
 
 3. Declare the JNDI name in application `WEB-INF/web.xml` file:

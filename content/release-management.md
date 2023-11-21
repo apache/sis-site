@@ -591,9 +591,9 @@ Specify the URL to the nexus repository, where `####` is the identifier of the "
 export SIS_DATA=/tmp/apache-sis-data
 mkdir $SIS_DATA
 export JAVA_HOME=$JDK11_HOME
-export JAVA_OPTS="-enableassertions -Dorg.apache.sis.epsg.downloadURL"
-export JAVA_OPTS=$JAVA_OPTS=https://repository.apache.org/content/repositories/orgapachesis-####
-export JAVA_OPTS=$JAVA_OPTS/org/apache/sis/non-free/sis-epsg/$NEW_VERSION/sis-epsg-$NEW_VERSION.jar
+export JDK_JAVA_OPTIONS="-enableassertions -Dorg.apache.sis.epsg.downloadURL"
+export JDK_JAVA_OPTIONS=$JDK_JAVA_OPTIONS=https://repository.apache.org/content/repositories/orgapachesis-####
+export JDK_JAVA_OPTIONS=$JDK_JAVA_OPTIONS/org/apache/sis/non-free/sis-epsg/$NEW_VERSION/sis-epsg-$NEW_VERSION.jar
 {{< / highlight >}}
 
 
