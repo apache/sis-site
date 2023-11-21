@@ -53,16 +53,70 @@
         <tr><td><code class="OGC">missing</code></td>      <td>The value cannot exist.</td></tr>
         <tr><td><code class="OGC">withheld</code></td>     <td>The value cannot be revealed.</td></tr>
         <tr><td><code class="OGC">template</code></td>     <td>The value will be available later.</td></tr>
+        <tr><td><code class="OGC">other</code></td>        <td>None of the above. Can be completed by user-suplied strings.</td></tr>
       </table>
       <p>
         The transmission of this information requires the use of a non-null object, even when the value is missing.
-        In such case, <abbr>SIS</abbr> will return an object that, besides implementing the desired GeoAPI interface,
-        also implements the <code>org.apache.sis.xml.NilObject</code> interface.
+        In such case, Apache <abbr>SIS</abbr> will return an object that, besides implementing the desired GeoAPI interface,
+        also implements the <code class="SIS">NilObject</code> interface.
         This interface flags the instances where all methods return an empty collection, an empty table, <code>null</code>,
         <code>NaN</code>, <code>0</code> or <code>false</code>, in this preference order, as permitted by the return types of the methods.
-        Each instance that implements <code>NilObject</code> provides a <code class="SIS">getNilReason()</code> method
+        Each instance that implements <code class="SIS">NilObject</code> provides a <code class="SIS">getNilReason()</code> method
         indicating why the object is nil.
+        For example, the following code specifies that a citation title is missing
+        because this metadata is only a template to be completed by the user:
       </p>
+
+<pre><code>import org.opengis.util.InternationalString;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.xml.NilReason;
+
+void main() {
+    InternationalString nil = NilReason.TEMPLATE.createNilObject(InternationalString.class);
+    var citation = new DefaultCitation(nil);
+
+    // Verify the reason that we have just set.
+    System.out.println("Title: " + citation.getTitle());
+    NilReason reason = NilReason.forObject(citation.getTitle());
+    System.out.println("Reason why the title is missing: " + reason);
+}</code></pre>
+
+      <p>
+        Output is as below (note that the title is empty, not null):
+      </p>
+
+<pre><samp>Title:
+Reason why the title is missing: template</samp></pre>
+
+<!-- SIS 1.5
+      <p>
+        Alternatively, if the metadata instance is known to be a subclass of <code class="SIS">AbstractMetadata</code>,
+        then the following substitutions can be done in the above example.
+        The advantage is that the <code class="SIS">nilReasons()</code> map works for a few more types
+        than what <code class="SIS">NilReason.createNilObject(Class)</code> can support, for example <code>Boolean</code>.
+        The inconvenient is that there is less compile-time checks, because properties are identified by character strings.
+      </p>
+      <div class="table">
+        <div class="row">
+          <div class="cell"><code><code class="SIS">NilReason.forObject</code>(citation.<code class="API">getTitle()</code>)</code></div>
+          <div class="cell">⟶</div>
+          <div class="cell"><code>citation.<code class="SIS">nilReasons()</code>.get(<code class="OGC">"title"</code>)</code></div>
+        </div>
+        <div class="row">
+          <div class="cell"><code>citation.<code class="SIS">setTitle</code>(nilReason.<code class="SIS">createNilObject</code>(<code class="OGC">InternationalString</code>.class))</code></div>
+          <div class="cell">⟶</div>
+          <div class="cell"><code>citation.<code class="SIS">nilReasons()</code>.put(<code class="OGC">"title"</code>, nilReason)</code></div>
+        </div>
+      </div>
+      <p>
+        The <code class="SIS">nilReasons()</code> is also useful for checking if there is any mandatory property without value.
+        That map will alway contain an entry for such cases, even if the associated nil reason is <code>null</code>.
+        By contrast, optional properties are contained in the map only if they are associated to a non-null nil reason.
+        Consequently, <code>metadata.<code class="SIS">nilReasons()</code>.contains(null)</code> is true if the metadata
+        contains at least one mandatory property with no value and no nil reason.
+      </p>
+-->
+
     </section>
   </body>
 </html>

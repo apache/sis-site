@@ -44,7 +44,7 @@
       </p>
       <ul>
         <li>As key-value pairs in a <code>Map</code> (from <code>java.util</code>).</li>
-        <li>As a <code>TreeTable</code> (from <code>org.apache.sis.util.collection</code>).</li>
+        <li>As a <code class="SIS">TreeTable</code> (from <code>org.apache.sis.util.collection</code>).</li>
         <li>As a table record in a database (using <code>org.apache.sis.metadata.sql</code>).</li>
         <li>As an <abbr>XML</abbr> document conforms to <abbr>ISO</abbr> standard schema.</li>
       </ul>
@@ -56,13 +56,22 @@
       <h3 id="GetMetadataElement">Direct access via getter methods</h3>
       <p>
         All metadata classes provide getter, and sometime setter, methods for their properties.
-        Some properties accept many values, in which case the property type is a collection.
-        The following example prints the range of latitudes of all data descriptions
-        found in a given root <code>Metadata</code> object:
+        The following example prints all ranges of latitudes found in a metadata.
+        It may be, for example, a metadata describing the extent of a raster file.
+        Fetching that information requires navigating through the following steps:
+      </p><p style="text-align:center">
+        <code class="API">Metadata</code>
+        ⟶  <code class="OGC">identificationInfo</code>
+        ⟶  <code class="OGC">extent</code>
+        ⟶  <code class="OGC">geographicElement</code>
+        ⟶ (<code class="OGC">southBoundLatitude</code>, <code class="OGC">northBoundLatitude</code>)
+      </p><p>
+        Some properties accept many values, in which case the code must iterate over the elements of a collection.
+        Furthermore, some properties are available only in a sub-interface, in which case <code>instanceof</code>
+        checks are required. The resulting code is as below:
       </p>
 
-<pre><code>
-import org.opengis.metadata.metadata;
+<pre><code>import org.opengis.metadata.metadata;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.metadata.extent.GeographicBoundingBox;
@@ -95,14 +104,16 @@ void main() {
         For example the following method navigates through different branches where North, South, East and West data bounds may be found:
       </p>
 
-<pre><code>
-import org.opengis.metadata.metadata;
+<pre><code>import org.opengis.metadata.metadata;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.apache.sis.metadata.iso.extent.Extents;
 
 void main() {
     Metadata metadata = ...;    // For example, metadata read from a data store.
     GeographicBoundingBox bbox = Extents.getGeographicBoundingBox(extent);
+    if (box != null) {
+        // Same as in the previous example.
+    }
 }</code></pre>
 
       <p>
@@ -110,6 +121,88 @@ void main() {
         Some other classes providing static methods for specific interfaces are
         <code>Citations</code>, <code>Envelopes</code>, <code>Matrices</code> and <code>MathTransforms</code>.
       </p>
+
+
+
+
+      <h3 id="SetMetadataElement">Direct construction via setter methods</h3>
+      <p>
+        For every getter method, there is a corresponding setter method.
+        However the setter methods are not defined in the GeoAPI interfaces, which are read-only.
+        For invoking setter methods, it is necessary to use the Apache <abbr>SIS</abbr> implementation classes directly.
+        It is straightforward when the metadata objects are created and populated in the same code, as there is nothing special to do.
+        The following example creates a citation using three different ways to specify a value:
+        at construction time using convenience constructors,
+        using setter methods,
+        and by adding elements directly in the collections, which are modifiable.
+      </p>
+<pre><code>import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.opengis.metadata.citation.PresentationForm;          // A code list.
+
+void main() {
+    // Following constructor is a convenience for setting the `title` property at construction time.
+    var citation = new DefaultCitation("Climate Change 2022: Impacts, Adaptation, and Vulnerability");
+    citation.getPresentationForms().add(PresentationForm.DOCUMENT_DIGITAL);
+
+    var identifier = new DefaultIdentifier();
+    identifier.setCode("10.1017/9781009325844");
+    identifier.setCodeSpace("DOI");
+    citation.getIdentifiers().add(identifier);
+
+    // Do not allow the citation to be modified after this point (optional).
+    citation.transitionTo(DefaultCitation.State.FINAL);
+    System.out.println(citation);
+}</code></pre>
+
+      <p>
+        Output is as below:
+      </p>
+
+<pre><samp>Citation……………………………………… Climate Change 2022: Impacts, Adaptation, and Vulnerability
+  ├─Identifier……………………… 10.1017/9781009325844
+  │   └─Code space…………… DOI
+  └─Presentation form…… Document digital</samp></pre>
+
+      <p>
+        Often, the newly created metadata will be reused many times.
+        It may be for example a static final constant, or a cached value.
+        In such case, it may be desirable to declare the metadata as unmodifiable after its construction.
+        This is the purpose of the call to <code class="SIS">transitionTo(State.FINAL)</code> in above example.
+        After that call, any attempt to modify the metadata will cause an <code class="SIS">UnmodifiableMetadataException</code> to be thrown.
+      </p><p>
+        Setting the values of a metadata object may be more tricky when the implementation class is unknown.
+        Since there is no setter methods in the GeoAPI interfaces, the metadata may need to be converted to
+        an Apache <abbr>SIS</abbr> implementation class first, and that instance needs to be modifiable.
+        This is a two steps process.
+        The first step can be done by invoking the static <code class="SIS">castOrCopy(…)</code> method
+        which is defined in every Apache <abbr>SIS</abbr> implementation classes.
+        For example there is
+        a <code class="SIS">DefaultCitation.castOrCopy(<code class="OGC">Citation</code>)</code> method,
+        a <code class="SIS">DefaultExtent.castOrCopy(<code class="OGC">Extent</code>)</code> method, <i>etc.</i>
+        Those methods will either return the given instance directly when possible,
+        or otherwise create a <em>shallow</em> copy of that instance (i.e., without recursive copy of children).
+        The second step can be done in different ways. An easy way (while not the most efficient)
+        is to make an unconditional <em>deep</em> copy of the metadata,
+        in case that metadata was unmodifiable (<code class="SIS">State.FINAL</code>),
+        and also (if desired) for avoiding to change the original metadata.
+        Example:
+      </p>
+
+<pre><code>import org.opengis.metadata.citation.Citation;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.util.SimpleInternationalString;
+
+void main() {
+    Citation original = ...;    // Some pre-existing citation.
+
+    // Get a modifiable copy and change its title.
+    DefaultCitation edit = DefaultCitation.castOrCopy(original);
+    edit = (DefaultCitation) copy.deepCopy(DefaultCitation.State.EDITABLE);
+    edit.setTitle(new SimpleInternationalString("A new title"));
+}</code></pre>
+
+
 
       <h3 id="MetadataAsMap">View as key-value pairs</h3>
       <p>
@@ -119,13 +212,13 @@ void main() {
         In such cases, one can view the metadata as a <code>java.util.Map</code> like below:
       </p>
 
-<pre><code>
-import java.util.Map;
+<pre><code>import java.util.Map;
 import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.metadata.KeyNamePolicy;
 import org.apache.sis.metadata.ValueExistencePolicy;
 
 void main() {
+    Object metadata = ...;
     Map&lt;String,Object&gt; elements = MetadataStandard.ISO_19115.asValueMap(
             metadata,                           // Any instance from the org.opengis.metadata package or a sub-package.
             null,                               // Used for resolving ambiguities. We can ignore for this example.
@@ -154,6 +247,9 @@ void main() {
         package javadoc.
       </p>
 
+
+
+
       <h3 id="MetadataAsTreeTable">View as tree table</h3>
       <p>
         A richer alternative to the view as a map is the view as a tree table.
@@ -162,19 +258,53 @@ void main() {
       </p>
       <table>
         <caption>Columns of a tree table view of a metadata</caption>
-        <tr><th>Column</th> <th>Description</th></tr>
-        <tr><td><code class="SIS">IDENTIFIER</code></td> <td>The UML identifier if any, or otherwise the Java Beans name, of the metadata property.</td></tr>
-        <tr><td><code class="SIS">INDEX</code></td>      <td>If the property is a collection, then the zero-based index of the element in that collection.</td></tr>
-        <tr><td><code class="SIS">NAME</code></td>       <td>A human-readable name for the node, derived from above identifier and index.</td></tr>
-        <tr><td><code class="SIS">TYPE</code></td>       <td>The base type of the value (usually a GeoAPI interface).</td></tr>
-        <tr><td><code class="SIS">VALUE</code></td>      <td>The metadata value for the node. This column may be writable.</td></tr>
-        <tr><td><code class="SIS">NIL_REASON</code></td> <td>If the value is mandatory and nevertheless absent, the reason why.</td></tr>
-        <tr><td><code class="SIS">REMARKS</code></td>    <td>Remarks or warning on the property value.</td></tr>
+        <tr><th>Column</th> <th>Description</th> <th>Writable</th></tr>
+        <tr><td><code class="SIS">IDENTIFIER</code></td> <td>The UML identifier if any, or otherwise the Java Beans name, of the metadata property.</td><td></td></tr>
+        <tr><td><code class="SIS">INDEX</code></td>      <td>If the property is a collection, then the zero-based index of the element in that collection.</td><td></td></tr>
+        <tr><td><code class="SIS">NAME</code></td>       <td>A human-readable name for the node, derived from above identifier and index.</td><td></td></tr>
+        <tr><td><code class="SIS">TYPE</code></td>       <td>The base type of the value (usually a GeoAPI interface).</td><td></td></tr>
+<!-- SIS 1.5
+        <tr><td><code class="SIS">OBLIGATION</code></td> <td>Whether the property is mandatory, optional or conditional.</td><td></td></tr>
+-->
+        <tr><td><code class="SIS">VALUE</code></td>      <td>The metadata value for the node. This column may be writable.</td><td>✓</td></tr>
+<!-- SIS 1.5
+        <tr><td><code class="SIS">NIL_REASON</code></td> <td>If the value is mandatory and nevertheless absent, the reason why.</td><td>✓</td></tr>
+-->
+        <tr><td><code class="SIS">REMARKS</code></td>    <td>Remarks or warning on the property value.</td><td></td></tr>
       </table>
       <p>
         Tree table views are obtained in a way similar to <a href="#MetadataAsMap">map views</a>,
-        but using the <code class="SIS">asTreeTable(Object)</code> method instead of <code class="SIS">asValueMap(Object)</code>.
+        but using the <code class="SIS">asTreeTable(…)</code> method instead of <code class="SIS">asValueMap(…)</code>.
+        Values can be obtained for each column, and can be set for the <code class="SIS">VALUE</code> column
+        if the underlying metadata object is modifiable.
+        The following example prints the values of the <code class="SIS">NAME</code> and <code class="SIS">TYPE</code>
+        columns for a given metadata and all its children:
       </p>
+
+<pre><code>import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.metadata.ValueExistencePolicy;
+import org.apache.sis.util.collection.TreeTable;
+import org.apache.sis.util.collection.TableColumn;
+
+class Explorer {
+    void main() {
+        Object metadata = ...;
+        TreeTable table = MetadataStandard.ISO_19115.asTreeTable(
+                metadata,                           // Any instance from the org.opengis.metadata package or a sub-package.
+                null,                               // Used for resolving ambiguities. We can ignore for this example.
+                ValueExistencePolicy.NON_EMPTY);    // Entries with null or empty values will be omitted.
+
+        // Print the names and types of all metadata elements having a value.
+        printRecursively(table.getRoot());
+    }
+
+    private static void printRecursively(TreeTable.Node node) {
+        String   name = node.getValue(TableColumn.NAME);
+        Class&lt;?&gt; type = node.getValue(TableColumn.TYPE);
+        System.out.println(name + " : " + type.getSimpleName());
+        node.getChildren().forEach(Explorer::printRecursively);
+    }
+}</code></pre>
     </section>
   </body>
 </html>
