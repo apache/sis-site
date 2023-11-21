@@ -65,15 +65,15 @@
       </p></div>
 
       <p>
-        The easiest way to perform these verifications is to call the static methods <code class="GeoAPI">validate(…)</code>
+        The easiest way to perform these verifications is to call the static methods <code class="API">validate(…)</code>
         of the <code>org.opengis.test.Validators</code> class.
         As all of <code>Validators</code> methods bear the same name, it is enough to write “<code>validate(<var>value</var>)</code>”
         and then let the compiler choose the most appropriate method for the type of object given in argument.
         If the object type is not known at the time of compilation,
-        the <code class="GeoAPI">dispatch(Object)</code> method can be invoked for redirecting the work to the most appropriate <code class="GeoAPI">validate(…)</code> method.
+        the <code class="API">dispatch(Object)</code> method can be invoked for redirecting the work to the most appropriate <code class="API">validate(…)</code> method.
       </p>
       <p>
-        All <code class="GeoAPI">validate(…)</code> functions follow a chain of dependencies,
+        All <code class="API">validate(…)</code> functions follow a chain of dependencies,
         meaning that they will also validate each component of the object to be validated.
         For example, the validation of a <code>GeographicCRS</code> implies the validation of its component
         <code>GeodeticDatum</code>, which itself implies the validation of its component <code>Ellipsoid</code>, and so on.
@@ -98,14 +98,14 @@ public class MyTest {
      * in a parent class to all test classes.
      */
     static {
-        Validators.<code class="GeoAPI">DEFAULT.metadata.requireMandatoryAttributes</code> = false;
-        Validators.<code class="GeoAPI">DEFAULT.citation.requireMandatoryAttributes</code> = false;
+        Validators.<code class="API">DEFAULT.metadata.requireMandatoryAttributes</code> = false;
+        Validators.<code class="API">DEFAULT.citation.requireMandatoryAttributes</code> = false;
     }
 
     @Test
     public void testMyMetadata() {
         Metadata myObject = …; // Create an object here.
-        Validators.<code class="GeoAPI">validate</code>(myObject);
+        Validators.<code class="API">validate</code>(myObject);
     }
 }</code></pre>
 
@@ -123,14 +123,14 @@ public class MyTest {
 
     public MyTest() {
         validators = new ValidatorContainer();
-        validators.<code class="GeoAPI">metadata.requireMandatoryAttributes</code> = false;
-        validators.<code class="GeoAPI">citation.requireMandatoryAttributes</code> = false;
+        validators.<code class="API">metadata.requireMandatoryAttributes</code> = false;
+        validators.<code class="API">citation.requireMandatoryAttributes</code> = false;
     }
 
     @Test
     public void testMyMetadata() {
         Metadata myObject = …; // Create an object here.
-        validators.<code class="GeoAPI">validate</code>(myObject);
+        validators.<code class="API">validate</code>(myObject);
     }
 }</code></pre>
 
@@ -142,7 +142,7 @@ public class MyTest {
         All test classes bear a name ending in "<code>Test</code>".
         GeoAPI also provides an <code>org.opengis.test.TestSuite</code> class including all test classes defined in the
         <code>geoapi-conformance</code> module, but Apache <abbr>SIS</abbr> does not use it.
-        Instead, Apache <abbr>SIS</abbr> inherits GeoAPI’s <code class="GeoAPI">*Test</code> classes on a case-by-case basis,
+        Instead, Apache <abbr>SIS</abbr> inherits GeoAPI’s <code class="API">*Test</code> classes on a case-by-case basis,
         in the appropriate modules.
         The example below gives an example of a customized GeoAPI test:
         The <a href="http://www.geoapi.org/geoapi-conformance/apidocs/org/opengis/test/referencing/ParameterizedTransformTest.html">parent test javadoc</a>
@@ -175,8 +175,8 @@ public class MyTest extends ParameterizedTransformTest {
     @Test
     @Override
     public void testLambertAzimuthalEqualArea() throws FactoryException, TransformException {
-        <code class="GeoAPI">tolerance</code> = 0.1;                    // 10 cm tolerance.
-        super.<code class="GeoAPI">testLambertAzimuthalEqualArea()</code>;
+        <code class="API">tolerance</code> = 0.1;                    // 10 cm tolerance.
+        super.<code class="API">testLambertAzimuthalEqualArea()</code>;
     }
 
     /**
@@ -186,7 +186,7 @@ public class MyTest extends ParameterizedTransformTest {
      */
     @After
     public void ensureAllTransformAreMath2D() {
-        assertTrue(<code class="GeoAPI">transform</code> instanceof MathTransform2D);
+        assertTrue(<code class="API">transform</code> instanceof MathTransform2D);
     }
 }</code></pre>
     </section>

@@ -82,7 +82,7 @@
             The <abbr>OGC</abbr> class <code>MD_Identifier</code> becomes the
             <code>Identifier</code> interface in the <code>org.opengis.metadata</code> package.
             The <abbr>OGC</abbr> class <code>SC_CRS</code> becomes the <code>CoordinateReferenceSystem</code> interface,
-            and the <code class="OGC">usesDatum</code> association becomes a <code class="GeoAPI">getDatum()</code> method,
+            and the <code class="OGC">usesDatum</code> association becomes a <code class="API">getDatum()</code> method,
             rather than the “<code>getUsesDatum()</code>” that would result from an automatic conversion tool.
             We do not allow programs to blindly apply rules that ignore the conventions of the community whose schemas we translate.
           </p></div>
@@ -156,12 +156,12 @@
         the name of the element in that standard, and also its obligation.
         For example, in the following code snippet, the first <code>@UML</code> code indicates that the Java interface that follows
         (<code>ProjectedCRS</code>) is defined using the <code>SC_ProjectedCRS</code> type of <abbr>ISO</abbr> 19111 standard.
-        The second <code>@UML</code> annotation, this time applied to the <code class="GeoAPI">getCoordinateSystem()</code> method,
+        The second <code>@UML</code> annotation, this time applied to the <code class="API">getCoordinateSystem()</code> method,
         indicates that this method is defined using the <code class="OGC">coordinateSystem</code> association of <abbr>ISO</abbr> 19111 standard,
         and that this association is mandatory — meaning, in Java, that the method is not allowed to return a <code>null</code> value.
       </p>
 
-<pre><code>package <code class="GeoAPI">org.opengis.referencing.crs</code>;
+<pre><code>package <code class="API">org.opengis.referencing.crs</code>;
 
 /**
  * A 2D coordinate reference system used to approximate the shape of the earth on a planar surface.
@@ -172,7 +172,7 @@ public interface ProjectedCRS extends GeneralDerivedCRS {
      * Returns the coordinate system, which must be Cartesian.
      */
     @UML(obligation=MANDATORY, specification=ISO_19111, identifier="<code class="OGC">coordinateSystem</code>")
-    CartesianCS <code class="GeoAPI">getCoordinateSystem()</code>;
+    CartesianCS <code class="API">getCoordinateSystem()</code>;
 }</code></pre>
 
       <p>
@@ -198,7 +198,7 @@ System.out.println("Standard name of type " + type.getName() + " is " + Types.ge
 
       <h4 id="MappingToJDK">Implicit mapping to standard <abbr>JDK</abbr></h4>
       <p>
-        Some classes and methods have neither an <code>@UML</code> annotation, nor an entry in the <code class="GeoAPI">class-index.properties</code> file.
+        Some classes and methods have neither an <code>@UML</code> annotation, nor an entry in the <code class="API">class-index.properties</code> file.
         They are either extensions of GeoAPI, or else types defined in other libraries, such as standard <abbr title="Java Development Kit">JDK</abbr>.
         In this last case, the mapping to <abbr>ISO</abbr> standards is implicit.
         The following table describes this mapping for <abbr>ISO</abbr> 19103 types.
@@ -248,12 +248,12 @@ System.out.println("Standard name of type " + type.getName() + " is " + Types.ge
         <tr>
           <td><code class="OGC">FreeText</code></td>
           <td>(no equivalent)</td>
-          <td class="leftBorder">See <code class="GeoAPI">org.opengis.util.InternationalString</code> below.</td>
+          <td class="leftBorder">See <code class="API">org.opengis.util.InternationalString</code> below.</td>
         </tr>
         <tr>
           <td><code class="OGC">CharacterString</code></td>
           <td><code>java.lang.String</code></td>
-          <td class="leftBorder">Often <code class="GeoAPI">org.opengis.util.InternationalString</code> (see below).</td>
+          <td class="leftBorder">Often <code class="API">org.opengis.util.InternationalString</code> (see below).</td>
         </tr>
         <tr>
           <td><code class="OGC">LocalisedCharacterString</code></td>
@@ -369,15 +369,15 @@ System.out.println("Standard name of type " + type.getName() + " is " + Types.ge
         Both define all authorized values, without allowing the user to add any.
         A <code class="OGC">CodeList</code> is similar to an enumeration, except that users may add their own items.
         Standard <abbr>JDK</abbr> does not offer this possibility.
-        GeoAPI defines an abstract <code class="GeoAPI">CodeList</code> class that reproduces some of the functionality of <code>Enum</code> while being extensible.
-        Extensions are made available by the <code class="GeoAPI">valueOf(String)</code> static method, which, in contrast to <code>Enum</code>,
+        GeoAPI defines an abstract <code class="API">CodeList</code> class that reproduces some of the functionality of <code>Enum</code> while being extensible.
+        Extensions are made available by the <code class="API">valueOf(String)</code> static method, which, in contrast to <code>Enum</code>,
         creates new instances if the name provided does not correspond to the name of an existing instance.
       </p>
 
-<pre><code>MediumName cdRom  = MediumName.<code class="GeoAPI">CD_ROM;</code>
-MediumName usbKey = MediumName.<code class="GeoAPI">valueOf</code>("<code class="GeoAPI">USB_KEY</code>"); // There is no constraint on this value.
-assert MediumName.<code class="GeoAPI">valueOf</code>("<code class="GeoAPI">CD_ROM</code>")  == cdRom  : "valueOf must return existing constants.";
-assert MediumName.<code class="GeoAPI">valueOf</code>("<code class="GeoAPI">USB_KEY</code>") == usbKey : "valueOf must cache the previously requested values.";</code></pre>
+<pre><code>MediumName cdRom  = MediumName.<code class="API">CD_ROM;</code>
+MediumName usbKey = MediumName.<code class="API">valueOf</code>("<code class="API">USB_KEY</code>"); // There is no constraint on this value.
+assert MediumName.<code class="API">valueOf</code>("<code class="API">CD_ROM</code>")  == cdRom  : "valueOf must return existing constants.";
+assert MediumName.<code class="API">valueOf</code>("<code class="API">USB_KEY</code>") == usbKey : "valueOf must cache the previously requested values.";</code></pre>
     </section>
   </body>
 </html>
