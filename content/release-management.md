@@ -167,8 +167,6 @@ Edit the `~/.gradle/gradle.properties` file, making sure that the following prop
 {{< highlight text >}}
 org.gradle.java.home=<path to a Java installation>
 signing.gnupg.keyName=<your key ID>
-asfNexusUsername=<login for uploding to Maven Central>
-asfNexusPassword=<password for uploading to Maven Central>
 {{< / highlight >}}
 
 
@@ -334,6 +332,14 @@ export SIS_RC_DIR=`pwd`
 {{< / highlight >}}
 
 Remove the files and modules that are not intended to be released.
+For example, Apache source distribution shall not include Gradle wrapper binary.
+
+{{< highlight bash >}}
+git rm .asf.yaml
+git rm -r gradlew gradlew.bat gradle/
+git rm -r incubator
+{{< / highlight >}}
+
 Edit at least the files listed below for removing all occurrences of "incubator"
 (the search is easier to do after the removal of "incubator" directory):
 
@@ -343,9 +349,9 @@ Edit at least the files listed below for removing all occurrences of "incubator"
 * `settings.gradle.kts`
 * `README.md`
 
+Commit the removals:
+
 {{< highlight bash >}}
-git rm .asf.yaml
-git rm -r incubator
 # Edit above-listed files before to continue.
 git add --update    # for the removal of <module> elements in pom.xml files.
 git commit --message="Remove the modules to be excluded from $NEW_VERSION release."
@@ -355,8 +361,7 @@ Update SIS version numbers by removing all occurrences of the `-SNAPSHOT` suffix
 at least in the following files:
 
 * `parent/pom.xml`
-* `optional/build.gradle.kts`
-* `endorsed/build.gradle.kts`
+* `gradle.properties`
 * `endorsed/src/org.apache.sis.openoffice/bundle/README.md`
 * `endorsed/src/org.apache.sis.util/main/org/apache/sis/util/Version.java`
 * `endorsed/src/org.apache.sis.referencing/test/org/apache/sis/referencing/factory/sql/epsg/README.md`
