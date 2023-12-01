@@ -36,7 +36,7 @@ The API and the data encodings follow [international standards](standards.html) 
   * Read and write XML documents compliant with ISO 19115-3 (current standard) or ISO 19139 (older standard).
   * Automatic conversions between the old metadata model published in 2003 and the revision published in 2014.
 * Units of measurement:
-  * Implementation of [JSR-363][JSR_363]
+  * Implementation of [JSR-385][JSR_385]
     with parsing, formating and unit conversion functionalities.
   * The same implementation is available as a [small standalone separated project][seshat].
 * Referencing by coordinates (ISO 19111):
@@ -84,5 +84,5 @@ are also provided for allowing users to experiment some SIS functionalities befo
 [netCDF]:    https://www.ogc.org/standards/netcdf
 [netCDF_MF]: http://docs.opengeospatial.org/bp/16-114r3/16-114r3.html
 [MF_CSV]:    http://docs.opengeospatial.org/is/14-084r2/14-084r2.html
-[JSR_363]:   https://jcp.org/en/jsr/detail?id=363
+[JSR_385]:   https://jcp.org/en/jsr/detail?id=385
 [seshat]:    https://unitsofmeasurement.github.io/seshat/
