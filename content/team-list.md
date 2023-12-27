@@ -10,20 +10,16 @@ The Project Management Committee (PMC) is the group of people with formal oversi
 * Alexis Manin
 * Andrew Hart
 * Charitha Madusanka
-* Gregory D. Reddin
 * Johann Sorel
 * Joseph F. White
 * Marc Le Bihan
 * Martin Desruisseaux
 * Nga Thien Chung
 * Olivier Nouguier
-* Patrick O'Leary
-* Paul Michael Ramirez
 * Peter Karich
 * Ross Laidlaw
 * Sean William McCleese
 * [Suresh Marru][sureshweb]
-* Travis Pinney
 
 ## Committers    {#committers}
 
@@ -56,8 +52,12 @@ but are still entitled to many of the rights and privileges of the position.
 Emeritus status indicates interest but not activity, as opposed to having resigned.
 
 * [Chris A. Mattmann][chrisweb]
+* Gregory D. Reddin
 * Ian Holsman
 * Joe Schaefer
+* Patrick O'Leary
+* Paul Michael Ramirez
+* Travis Pinney
 
 [chrisweb]: http://sunset.usc.edu/~mattmann/
 [sureshweb]: http://people.apache.org/~smarru/
