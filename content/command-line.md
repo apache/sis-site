@@ -25,7 +25,7 @@ apache-sis-{{% version %}}
 └─ log
 ```
 
-The `bin` sub-directory contains a `sis` command for Unix systems (Linux or MacOS — we have not yet done a `sis.bat` file for Windows).
+The `bin` sub-directory contains a `sis` command for Unix systems and a `sis.bat` command for Windows systems.
 The `bin` sub-directory can be added to the `PATH` environment variable for convenience, but this is not mandatory.
 Example:
 
@@ -70,6 +70,7 @@ Available commands are:
   <tr><td><code>crs</code></td>        <td>Show Coordinate Reference System (CRS) information for the given file or code.</td></tr>
   <tr><td><code>identifier</code></td> <td>Show identifiers for metadata and referencing systems in the given file.</td></tr>
   <tr><td><code>transform</code></td>  <td>Convert or transform coordinates from given source {{% CRS %}} to target {{% CRS %}}.</td></tr>
+  <tr><td><code>translate</code></td>  <td>Read resources and rewrite them in another format.</td></tr>
 </table>
 
 The set of legal options and the expected number of file arguments depend on the command being executed.
@@ -79,6 +80,7 @@ Available options will be from the following list:
 <table>
   <tr><td><code>--sourceCRS</code></td> <td>The Coordinate Reference System of input data.</td></tr>
   <tr><td><code>--targetCRS</code></td> <td>The Coordinate Reference System of output data.</td></tr>
+  <tr><td><code>--operation</code></td> <td>The Coordinate Operation from source CRS to target CRS (optional).</td></tr>
   <tr><td><code>--format</code></td>    <td>The output format: <code>xml</code>, <code>wkt</code>, <code>wkt1</code> or <code>text</code>.</td></tr>
   <tr><td><code>--locale</code></td>    <td>The locale to use for the command output.</td></tr>
   <tr><td><code>--timezone</code></td>  <td>The timezone for the dates to be formatted.</td></tr>
@@ -287,10 +289,8 @@ The example is run twice: once for cities in USA, then once for cities in Canada
 (Note: the application may log warnings to the console. Those warnings can be ignored)
 
 ```bash
-wget https://sis.apache.org/examples/coordinates/AmericanCities.csv
-wget https://sis.apache.org/examples/coordinates/CanadianCities.csv
-sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 AmericanCities.csv
-sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 CanadianCities.csv
+sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 https://sis.apache.org/examples/coordinates/AmericanCities.csv
+sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 https://sis.apache.org/examples/coordinates/CanadianCities.csv
 ```
 
 The first execution should print the following header, followed by transformed coordinate values.
@@ -352,6 +352,20 @@ Java API for accessing functionalities shown in above examples are:
   + `CRS.findOperation(CoordinateReferenceSystem, CoordinateReferenceSystem, GeographicBoundingBox)`
 * Class in other package (less convenient but give more control):
   + `org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory`
+
+### Using a specific coordinate operation
+
+Above conversions and transformations can also be performed by specifying explicitly the coordinate operation to use,
+instead of letting Apache {{% SIS %}} infers the operation from the source and target {{% CRS %}}.
+For example, for forcing the use of the coordinate operation for Canada,
+the "`--operation EPSG:1693`" option can be provided instead of the `--sourceCRS` and `--targetCRS` pair of options.
+The coordinate operation and the {{% CRS %}} can also be {{% WKT %}} or {{% GML %}} files,
+in which case they do not need to exist in the EPSG database.
+
+If the `--operation` option is provided, then the `--sourceCRS` and `--targetCRS` options become optional.
+But if the source and/or target {{% CRS %}} are nevertheless specified together with the operation,
+then the operation is used in the middle of a chain of operations,
+and conversions from/to the specified {{% CRS %}} are concatenated before/after the specified operation.
 
 ## Extracting ISO 19115 Metadata    {#metadata}
 
