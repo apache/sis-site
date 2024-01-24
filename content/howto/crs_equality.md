@@ -23,7 +23,7 @@ Maven coordinates                           | Module info
 
 # Code example
 
-{{< highlight java >}}
+```java
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CRS;
@@ -61,7 +61,7 @@ public class CrsEquality {
                 + CRS.findOperation(crs2, crs2, null).getMathTransform().isIdentity());
     }
 }
-{{< / highlight >}}
+```
 
 
 # Output

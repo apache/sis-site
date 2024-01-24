@@ -76,13 +76,13 @@ Some "characters" are actually represented using two consecutive `char` elements
 Those "characters" are called <cite>code points</cite>.
 Consequently, when iterating over characters in a string, the following pattern should be used:
 
-{{< highlight java >}}
+```java
 for (int i=0; i<string.length();) {
     final int c = string.codePointAt(i);
     // ... do some stuff ...
     i += Character.charCount(c);
 }
-{{< / highlight >}}
+```
 
 # Logging    {#logging}
 

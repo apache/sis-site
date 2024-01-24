@@ -51,7 +51,7 @@ The `cdm-core` dependency can be omitted for netCDF-3 (a.k.a. "classic"),
 
 The file name and geospatial coordinates in following code need to be updated for yours data.
 
-{{< highlight java >}}
+```java
 import java.io.File;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStores;
@@ -98,7 +98,7 @@ public class DataLakeToDataCube {
         }
     }
 }
-{{< / highlight >}}
+```
 
 
 # Output

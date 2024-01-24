@@ -19,7 +19,7 @@ Maven coordinates                        | Module info                  | Remark
 
 Note that all geographic coordinates below express latitude *before* longitude.
 
-{{< highlight java >}}
+```java
 import java.awt.Shape;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.GeodeticCalculator;
@@ -45,7 +45,7 @@ public class GeodeticPaths {
         System.out.printf("Java2D shape class for approximating this path: %s%n", path.getClass());
     }
 }
-{{< / highlight >}}
+```
 
 
 # Output

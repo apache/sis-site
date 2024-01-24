@@ -37,9 +37,9 @@ This process can be used with the [Apache SIS {{% version %}} binary bundle](dow
 If the [command-line tool](command-line.html) has been downloaded and installed, just query any CRS.
 For example:
 
-{{< highlight bash >}}
+```bash
 sis crs EPSG:6676
-{{< / highlight >}}
+```
 
 Alternatively if the [JavaFX application](javafx.html) is used, just start the application.
 It may be necessary to open a random data file for triggering the EPSG dataset initialization.
@@ -59,18 +59,18 @@ For using the installed EPSG geodetic dataset in your own application, apply *on
 Examples are shown below for Unix systems, assuming that the current directory is the directory where `apache-sis-{{% version %}}-bin.zip`
 has been unzipped (replace `myApp` and `MyMainClass` by the application to launch):
 
-{{< highlight bash >}}
+```bash
 export SIS_DATA=apache-sis-{{% version %}}/data
 java --class-path apache-sis-{{% version %}}/lib/sis-referencing.jar:myApp.jar MyMainClass
-{{< / highlight >}}
+```
 
 If the `SIS_DATA` environment variable cannot be set, Java property can be used as a fallback:
 
-{{< highlight bash >}}
+```bash
 java -Dderby.system.home=apache-sis-{{% version %}}/data/Databases \
      --class-path apache-sis-{{% version %}}/lib/sis-referencing.jar:myApp.jar \
      MyMainClass
-{{< / highlight >}}
+```
 
 Alternatively `SIS_DATA` or `derby.system.home` can be set to the path of any other directory which contain the same files.
 
@@ -98,7 +98,7 @@ The target database must be specified by users with *one* of the following choic
 The Maven dependency is as below (the Derby dependency can be replaced by another database driver
 if that database is specified by JNDI):
 
-{{< highlight xml >}}
+```xml
 <dependencies>
   <dependency>
     <groupId>org.apache.sis.non-free</groupId>
@@ -113,7 +113,7 @@ if that database is specified by JNDI):
     <scope>runtime</scope>
   </dependency>
 </dependencies>
-{{< / highlight >}}
+```
 
 See the [download](downloads.html#epsg) page for more information about Maven dependency declaration.
 
@@ -132,7 +132,7 @@ This dependency can be declared as below
 (see the [download](downloads.html#epsg) page for more information about Maven dependency declaration).
 Note that `sis-epsg` and `sis-embedded-data` should not be specified in the same project; only one is needed:
 
-{{< highlight xml >}}
+```xml
 <dependencies>
   <dependency>
     <groupId>org.apache.sis.non-free</groupId>
@@ -141,7 +141,7 @@ Note that `sis-epsg` and `sis-embedded-data` should not be specified in the same
     <scope>runtime</scope>
   </dependency>
 </dependencies>
-{{< / highlight >}}
+```
 
 The performance issue can be avoided if the JAR file is uncompressed.
 But uncompressed `sis-embedded-data.jar` file is more than 5 times larger than the compressed file.
@@ -168,7 +168,7 @@ EPSG datasets version 10 and later are not yet supported.**
 The data source can be specified by Java code as below
 (replace the `main` method by any method where initialization occurs):
 
-{{< highlight java >}}
+```java
 import javax.sql.DataSource;
 import org.apache.sis.setup.Configuration;
 
@@ -182,14 +182,14 @@ public void MyApp {
         return ds;
     }
 }
-{{< / highlight >}}
+```
 
 ## Registration by Java Naming and Directory Interface    {#jndi-java}
 
 Registration in JNDI can be done programmatically (by Java code) or by configuring XML files in some environments.
 Registration can be done by the following Java code, provided that a JNDI implementation is available on the classpath:
 
-{{< highlight java >}}
+```java
 // Example using PostgreSQL data source (org.postgresql.ds.PGSimpleDataSource)
 PGSimpleDataSource ds = new PGSimpleDataSource();
 ds.setDatabaseName("SpatialMetadata");
@@ -198,14 +198,14 @@ ds.setDatabaseName("SpatialMetadata");
 // Registration assuming that a JNDI implementation is available
 Context env = (Context) InitialContext.doLookup("java:comp/env");
 env.bind("jdbc/SpatialMetadata", ds);
-{{< / highlight >}}
+```
 
 If there is no JNDI environment, the `org.apache.sis.setup.Configuration` class can be used as a fallback:
 
-{{< highlight bash >}}
+```bash
 // Fallback if no JNDI environment is available.
 Configuration.current().setDatabase(() -> ds);
-{{< / highlight >}}
+```
 
 ## Registration in web application containers    {#jndi-webapp}
 
@@ -218,25 +218,25 @@ When Apache {{% SIS %}} is used in a JavaEE container, the data source can be co
 2. If using Derby, copy `derby.war` into the `$CATALINA_HOME/webapps` directory and specify the directory where
    the Derby databases are located (skip this step if another database is used):
 
-{{< highlight bash >}}
+```bash
 export JDK_JAVA_OPTIONS=-Dderby.system.home=$SIS_DATA/Databases
-{{< / highlight >}}
+```
 
 3. Declare the JNDI name in application `WEB-INF/web.xml` file:
 
-{{< highlight xml >}}
+```xml
 <resource-ref>
   <description>EPSG dataset and other metadata used by Apache SIS.</description>
   <res-ref-name>jdbc/SpatialMetadata</res-ref-name>
   <res-type>javax.sql.DataSource</res-type>
   <res-auth>Container</res-auth>
 </resource-ref>
-{{< / highlight >}}
+```
 
 4. Configure the data source in `$CATALINA_HOME/conf/context.xml` or in application `META-INF/context.xml` file
    (change attribute values as needed for the chosen JDBC driver):
 
-{{< highlight xml >}}
+```xml
 <Context crossContext="true">
   <WatchedResource>WEB-INF/web.xml</WatchedResource>
   <Resource name            = "jdbc/SpatialMetadata"
@@ -247,7 +247,7 @@ export JDK_JAVA_OPTIONS=-Dderby.system.home=$SIS_DATA/Databases
             driverClassName = "org.apache.derby.jdbc.EmbeddedDriver"
             url             = "jdbc:derby:SpatialMetadata"/>
 </Context>
-{{< / highlight >}}
+```
 
 5. If using Derby, verify on the `localhost:8080/derby/derbynet` page (skip this step if another database is used).
 

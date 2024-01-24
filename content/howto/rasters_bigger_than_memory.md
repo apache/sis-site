@@ -35,7 +35,7 @@ depending how the Coordinate Reference System (CRS) is encoded in the GeoTIFF fi
 
 The file name in following code need to be updated for yours data.
 
-{{< highlight java >}}
+```java
 import java.io.File;
 import java.util.Collection;
 import java.awt.Rectangle;
@@ -109,7 +109,7 @@ public class RasterBiggerThanMemory {
         System.out.printf("A sample value in the arbitrary tile: %d%n", tile.getSample(93710, 57680, 2));
     }
 }
-{{< / highlight >}}
+```
 
 
 # Output

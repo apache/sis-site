@@ -28,7 +28,7 @@ The `cdm-core` dependency can be omitted for netCDF-3 (a.k.a. "classic"),
 The file name, resource name and geographic coordinates
 in following code need to be updated for yours data.
 
-{{< highlight java >}}
+```java
 import java.io.File;
 import org.apache.sis.storage.Resource;
 import org.apache.sis.storage.Aggregate;
@@ -117,7 +117,7 @@ public class ReadNetCDF {
         System.out.println();
     }
 }
-{{< / highlight >}}
+```
 
 
 # Output

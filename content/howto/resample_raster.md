@@ -27,7 +27,7 @@ for example using Well Known Text (WKT) format.
 
 The file name in following code need to be updated for yours data.
 
-{{< highlight java >}}
+```java
 import org.apache.sis.coverage.grid.GridCoverage;
 import org.apache.sis.coverage.grid.GridCoverageProcessor;
 import org.apache.sis.image.Interpolation;
@@ -57,7 +57,7 @@ public class ResampleRaster {
         System.out.printf("Information about the image after reprojection:%n%s%n", data.getGridGeometry());
     }
 }
-{{< / highlight >}}
+```
 
 
 # Output

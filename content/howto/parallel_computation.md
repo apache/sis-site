@@ -22,7 +22,7 @@ Maven coordinates                 | Module info              | Remarks
 
 # Code example
 
-{{< highlight java >}}
+```java
 import java.awt.image.ImagingOpException;
 import java.awt.image.RenderedImage;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -57,4 +57,4 @@ public class ParallelTileComputation {
          */
     }
 }
-{{< / highlight >}}
+```

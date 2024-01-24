@@ -19,7 +19,7 @@ Maven coordinates                        | Module info                  | Remark
 
 Note that all geographic coordinates below express latitude *before* longitude.
 
-{{< highlight java >}}
+```java
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.gazetteer.MilitaryGridReferenceSystem;
@@ -48,7 +48,7 @@ public class MGRS {
         System.out.printf("Back to geographic coordinates: %s%n", reverse);
     }
 }
-{{< / highlight >}}
+```
 
 
 # Output

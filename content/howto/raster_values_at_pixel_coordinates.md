@@ -31,7 +31,7 @@ Maven coordinates                 | Module info              | Remarks
 
 The pixel coordinates in following code need to be updated for yours data.
 
-{{< highlight java >}}
+```java
 import java.awt.Point;
 import java.awt.image.RenderedImage;
 import javax.measure.Unit;
@@ -84,7 +84,7 @@ public class RasterValuesAtPixelCoordinates {
         System.out.printf("Value at (100,200) is %g %s.%n", value, unit);
     }
 }
-{{< / highlight >}}
+```
 
 
 # Output

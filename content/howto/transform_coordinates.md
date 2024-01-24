@@ -28,7 +28,7 @@ In general, results are more accurate and/or more reliable in presence of EPSG d
 
 Note that all geographic coordinates below express latitude *before* longitude.
 
-{{< highlight java >}}
+```java
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
@@ -65,7 +65,7 @@ public class TransformCoordinates {
         System.out.println("Target: " + ptDst);
     }
 }
-{{< / highlight >}}
+```
 
 
 # Output

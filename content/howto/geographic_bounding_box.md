@@ -22,7 +22,7 @@ depending how the Coordinate Reference System (CRS) is encoded in the GeoTIFF fi
 
 The file name in following code need to be updated for yours data.
 
-{{< highlight java >}}
+```java
 import java.io.File;
 import org.apache.sis.storage.Aggregate;
 import org.apache.sis.storage.DataStore;
@@ -51,7 +51,7 @@ public class GetBBOX {
         }
     }
 }
-{{< / highlight >}}
+```
 
 
 # Output

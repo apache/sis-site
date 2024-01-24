@@ -16,22 +16,22 @@ in their own application.
 Select "Apache {{% SIS %}} {{% version %}} binary" from the [downloads page](downloads.html) an unzip in any directory.
 The directory structure will be as below:
 
-{{< highlight text >}}
+```
 apache-sis-{{% version %}}
 ├─ bin
 ├─ conf
 ├─ data
 ├─ lib
 └─ log
-{{< / highlight >}}
+```
 
 The `bin` sub-directory contains a `sis` command for Unix systems (Linux or MacOS — we have not yet done a `sis.bat` file for Windows).
 The `bin` sub-directory can be added to the `PATH` environment variable for convenience, but this is not mandatory.
 Example:
 
-{{< highlight bash >}}
+```bash
 export PATH=$PWD/apache-sis-{{% version %}}/bin:$PATH
-{{< / highlight >}}
+```
 
 The remaining of this page assumes that the `bin` directory is on the search path.
 If not, the same examples can still be executed by replacing the `sis` command by `./apache-sis-{{% version %}}/bin/sis`.
@@ -56,9 +56,9 @@ See [issue SIS-545](https://issues.apache.org/jira/browse/SIS-545) for instructi
 Invoking `sis` without argument shows a summary of available commands and all options.
 For executing a command, the syntax is:
 
-{{< highlight bash >}}
+```bash
 sis <command> [options] [files]
-{{< / highlight >}}
+```
 
 Available commands are:
 
@@ -117,9 +117,9 @@ The [EPSG geodetic dataset](epsg.html) is a widely-used source of definitions fo
 Appache SIS provides a [list of supported codes](tables/CoordinateReferenceSystems.html), which can be queried from the command line.
 For example the following command prints the definition of the _"JGD2011 / Japan Plane Rectangular CS VIII"_ Coordinate Reference System:
 
-{{< highlight bash >}}
+```bash
 sis crs EPSG:6676
-{{< / highlight >}}
+```
 
 <details>
   <summary>Expected output (click to expand):</summary>
@@ -197,15 +197,15 @@ but in which the `ID["EPSG", 27572]` element has been intentionally omitted.
 Furthermore, the _“NTF (Paris) / Lambert zone II”_ name has been replaced by _“NTF (Paris) / zone to be discovered by the demo”_ name.
 Executing the following command:
 
-{{< highlight bash >}}
+```bash
 sis identifier https://sis.apache.org/examples/crs/MissingIdentifier.wkt
-{{< / highlight >}}
+```
 
 produces an output like below:
 
-{{< highlight text >}}
+```
 urn:ogc:def:crs:EPSG:9.9.1:27572  | NTF (Paris) / Lambert zone II
-{{< / highlight >}}
+```
 
 As we can see, Apache {{% SIS %}} has been able to find back the identifier code and the actual {{% CRS %}} name.
 
@@ -215,53 +215,53 @@ but declare an EPSG code for a {{% CRS %}} with (_latitude_, _longitude_) axes.
 Apache {{% SIS %}} can detect such mismatches.
 For example executing the following command:
 
-{{< highlight bash >}}
+```bash
 sis identifier https://sis.apache.org/examples/crs/WrongAxisOrder.wkt
-{{< / highlight >}}
+```
 
 produces an output like below:
 
-{{< highlight text >}}
+```
 !   urn:ogc:def:crs:EPSG:8.9:4979    | WGS 84
 
 Legend:
 !   Identified object matches definition provided by authority except for coordinate system axes.
-{{< / highlight >}}
+```
 
 Apache {{% SIS %}} can perform such analysis because it “understands” the {{% CRS %}} definition.
 This analysis capability can be tested by altering the {{% CRS %}} definition.
 The next example asks the identifier of a {{% CRS %}} which is normally defined as below:
 
-{{< highlight text >}}
+```
 ProjectedCRS["WGS 84 / Mercator 41",
   (... definition omitted for brevity ...)
     Method["Mercator (variant B)"],
     Parameter["Latitude of 1st standard parallel", -41.0],
   (... definition omitted for brevity ...)
-{{< / highlight >}}
+```
 
 However in this example, we will provide a {{% CRS %}} defined as below:
 
-{{< highlight text >}}
+```
 ProjectedCRS["Scaled Mercator",
   (... definition omitted for brevity ...)
     Method["Mercator (variant A)"],
     Parameter["Scale factor at natural origin", 0.7557992272019596"],
     Parameter["Latitude of natural origin", -0.0],
   (... definition omitted for brevity ...)
-{{< / highlight >}}
+```
 
 Executing the following command:
 
-{{< highlight bash >}}
+```bash
 sis identifier https://sis.apache.org/examples/crs/EquivalentDefinition.wkt
-{{< / highlight >}}
+```
 
 produces an output like below:
 
-{{< highlight text >}}
+```
 urn:ogc:def:crs:EPSG:9.9.1:3994  | WGS 84 / Mercator 41
-{{< / highlight >}}
+```
 
 In above example, Apache {{% SIS %}} used the fact that a
 _“Mercator (variant A)”_ projection with a _“Scale factor at natural origin”_ parameter value of 0.755799… on the WGS84 datum is numerically equivalent to a
@@ -286,65 +286,65 @@ The following example transform coordinates from the North American Datum 1927 (
 The example is run twice: once for cities in USA, then once for cities in Canada:
 (Note: the application may log warnings to the console. Those warnings can be ignored)
 
-{{< highlight bash >}}
+```bash
 wget https://sis.apache.org/examples/coordinates/AmericanCities.csv
 wget https://sis.apache.org/examples/coordinates/CanadianCities.csv
 sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 AmericanCities.csv
 sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 CanadianCities.csv
-{{< / highlight >}}
+```
 
 The first execution should print the following header, followed by transformed coordinate values.
 Note the operation code (EPSG:1173), domain of validity (United State) and accuracy.
 
-{{< highlight text >}}
+```
 # Source:      NAD27 (EPSG:4267)
 # Destination: WGS 84 (EPSG:4326)
 # Operations:  NAD27 to WGS 84 (4) (EPSG:1173)
 # Domain:      United States (USA) - onshore
 # Accuracy:    10.0 metres
-{{< / highlight >}}
+```
 
 The second execution should print the following header, followed by transformed coordinate values.
 Note that the operation code (EPSG:1172), domain of validity (Canada) and accuracy are not the same
 than in previous example.
 
-{{< highlight text >}}
+```
 # Source:      NAD27 (EPSG:4267)
 # Destination: WGS 84 (EPSG:4326)
 # Operations:  NAD27 to WGS 84 (3) (EPSG:1172)
 # Domain:      Canada - onshore and offshore
 # Accuracy:    20.0 metres
-{{< / highlight >}}
+```
 
 The difference between those two operations become more visible by adding the `--verbose` option
 to the above `sis transform` commands.
 This option shows the coordinate operation in Well Known Text (WKT) or pseudo-WKT format.
 When transforming coordinates in USA, the operation contains the following parameter values:
 
-{{< highlight text >}}
+```
 Method["Geocentric translations (geog2D domain)"],
   Parameter["X-axis translation", -8.0, Unit["metre", 1]],
   Parameter["Y-axis translation", 160.0, Unit["metre", 1]],
   Parameter["Z-axis translation", 176.0, Unit["metre", 1]]
-{{< / highlight >}}
+```
 
 But when transforming coordinates in Canada, the operation rather contains the following parameter values:
 
-{{< highlight text >}}
+```
 Method["Geocentric translations (geog2D domain)"],
   Parameter["X-axis translation", -10.0, Unit["metre", 1]],
   Parameter["Y-axis translation", 158.0, Unit["metre", 1]],
   Parameter["Z-axis translation", 187.0, Unit["metre", 1]],
-{{< / highlight >}}
+```
 
 As seen in the above examples, the parameter values differ slightly with the geographic area of the coordinates to transform.
 Those parameters could also be different if _datum shift grids_ are available. For example in USA:
 
-{{< highlight text >}}
+```
     Method["NADCON"],
       Parameter["Latitude difference file", "conus.las"],
       Parameter["Longitude difference file", "conus.los"],\
-{{< / highlight >}}
+```
 
 Java API for accessing functionalities shown in above examples are:
 
@@ -361,9 +361,9 @@ By default, the metadata are shown in a relatively compact tree-table format.
 But the metadata can optionally be exported as an {{% ISO %}} 19139 compliant XML document.
 The following example shows the metadata of a netCDF file accessible from the web:
 
-{{< highlight bash >}}
+```bash
     sis metadata https://github.com/opengeospatial/geoapi/raw/master/geoapi-conformance/src/main/resources/org/opengis/test/dataset/Cube4D_projected_float.nc
-{{< / highlight >}}
+```
 <details>
   <summary>Fragment of expected output (click to expand):</summary>
 <pre>Metadata

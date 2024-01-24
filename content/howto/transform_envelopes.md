@@ -27,7 +27,7 @@ Maven coordinates                           | Module info
 
 Note that all geographic coordinates below express latitude *before* longitude.
 
-{{< highlight java >}}
+```java
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
@@ -92,7 +92,7 @@ public class TransformEnvelopes {
         return result;
     }
 }
-{{< / highlight >}}
+```
 
 
 # Output

@@ -14,9 +14,9 @@ shall have the same license header, but with lines prefixed by `#` instead of `*
 Properties files distributed as-is in the JAR files can summarize the license on a single line for saving space,
 as below:
 
-{{< highlight text >}}
+```
 # Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.
-{{< / highlight >}}
+```
 
 # Naming convention    {#naming}
 
@@ -65,14 +65,14 @@ Isolate at the end of the imports section any import statements that are specifi
 This separation allows any branch to re-arrange the common import statements without generating
 conflicts with the platform-dependent import statements. Example:
 
-{{< highlight java >}}
+```java
 import java.io.File;
 import java.util.List;
 import org.opengis.metadata.Metadata;
 
 // Specific to the geoapi-3.1 and geoapi-4.0 branches:
 import org.opengis.feature.Feature;
-{{< / highlight >}}
+```
 
 The import statements can be rearranged automatically by the `ReorganizeImports` class in `buildSrc`.
 This tool requires checkouts of all three branches (`main`, `geoapi-3.1` and `geoapi-4.0`) in order
@@ -113,12 +113,12 @@ Formatting the code in a way that emphase their symmetrical nature, for example
 aligning identical terms in columns, can help to understand the overall pattern
 and to identify bugs. Example:
 
-{{< highlight java >}}
+```java
 if (x < xmin) xmin = x;
 if (x > xmax) xmax = x;
 if (y < ymin) ymin = y;
 if (y > ymax) ymax = y;
-{{< / highlight >}}
+```
 
 The decision to use standard or tabular format is made on a case-by-case basis.
 Of course, tabular format shall not be abused.

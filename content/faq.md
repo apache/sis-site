@@ -93,10 +93,10 @@ But Apache {{% SIS %}} rather defaults to axis order _as defined by the authorit
 but allows changing axis order to the (_x_, _y_) order after {{% CRS %}} creation.
 This change can be done with the following code:
 
-{{< highlight java >}}
+```java
 CoordinateReferenceSystem crs = ...; // CRS obtained by any means.
 crs = AbstractCRS.castOrCopy(crs).forConvention(AxesConvention.RIGHT_HANDED)
-{{< / highlight >}}
+```
 
 ### Is IdentifiedObjects.lookupEPSG(…) a reliable inverse of CRS.forCode(…)?   {#lookupReliability}
 
@@ -126,15 +126,15 @@ and the EPSG geodetic dataset defines geographic Coordinate Reference Systems th
 If a coordinate transformation seems to produce totally wrong values,
 the first thing to do should be to print the source and target Coordinate Reference Systems:
 
-{{< highlight java >}}
+```java
 System.out.println(sourceCRS);
 System.out.println(targetCRS);
-{{< / highlight >}}
+```
 
 Attention should be paid to the order of `AXIS` elements.
 In the example below, the Coordinate Reference System clearly uses (_latitude_, _longitude_) axis order:
 
-{{< highlight text >}}
+```
 GeodeticCRS["WGS 84",
   Datum["World Geodetic System 1984",
     Ellipsoid["WGS 84", 6378137.0, 298.257223563]],
@@ -142,7 +142,7 @@ GeodeticCRS["WGS 84",
     Axis["Geodetic latitude (Lat)", north],
     Axis["Geodetic longitude (Lon)", east],
     Unit["degree", 0.017453292519943295]]
-{{< / highlight >}}
+```
 
 If (_longitude_, _latitude_) axis order is really wanted, Apache {{% SIS %}} can be forced to that order [as described above](#axisOrder).
 
@@ -166,14 +166,14 @@ However ESRI and GDAL among others unconditionally use decimal degrees, ignoring
 (note: this remark does not apply to {{% WKT %}} 2).
 This problem can be identified by {{% WKT %}} inspection as in the following extract:
 
-{{< highlight text >}}
+```
 PROJCS["Lambert II étendu",
   GEOGCS["Nouvelle Triangulation Française", ...,
     PRIMEM["Paris", 2.337229167],
     UNIT["grad", 0.01570796326794897]]
   PROJECTION["Lambert_Conformal_Conic_1SP"],
   PARAMETER["latitude_of_origin", 46.8], ...]
-{{< / highlight >}}
+```
 
 The Paris prime meridian is located at approximately 2.597 gradians from Greenwich, which is 2.337 degrees.
 From this fact, we can see that the above {{% WKT %}} uses decimal degrees despite its `UNIT["grad"]` declaration.
@@ -240,13 +240,13 @@ Java Virtual Machine implements the GeoAPI interfaces on-the-fly, using the `jav
 See the `Proxy` Javadoc for details, keeping in mind that the {{% ISO %}}/{{% OGC %}} name of a `java.lang.Class` or
 `java.lang.reflect.Method` object can be obtained as below:
 
-{{< highlight java >}}
+```java
 UML uml = method.getAnnotation(UML.class);
 if (uml != null) {
     String name = uml.identifier();
     // Fetch the metadata here.
 }
-{{< / highlight >}}
+```
 
 This is indeed the approach taken by the `org.apache.sis.metadata.sql` package for providing an implementation
 of all GeoAPI metadata interfaces reading their values directly from a SQL database.
@@ -256,9 +256,9 @@ of all GeoAPI metadata interfaces reading their values directly from a SQL datab
 The classes given to the JAXB marshaller shall contain JAXB annotations,
 otherwise the following exception is thrown:
 
-{{< highlight text >}}
+```
 javax.xml.bind.JAXBException: class MyCustomClass nor any of its super class is known to this context.
-{{< / highlight >}}
+```
 
 The easiest workaround is to wrap the custom implementation into one of the implementations
 provided in the `org.apache.metadata.iso` package.

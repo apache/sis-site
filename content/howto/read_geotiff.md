@@ -28,7 +28,7 @@ depending how the Coordinate Reference System (CRS) is encoded in the GeoTIFF fi
 
 The file name and geospatial coordinates in following code need to be updated for yours data.
 
-{{< highlight java >}}
+```java
 import java.io.File;
 import java.util.Collection;
 import java.awt.image.ImagingOpException;
@@ -97,7 +97,7 @@ public class ReadGeoTIFF {
         return data;
     }
 }
-{{< / highlight >}}
+```
 
 
 # Output

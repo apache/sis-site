@@ -26,7 +26,7 @@ Replace that name in the shell commands below if another name is used.
 The Apache {{% SIS %}} source code can be cloned in that directory as below
 (lines starting with `#` are comments and can be ignored):
 
-{{< highlight bash >}}
+```bash
 mkdir ApacheSIS
 cd ApacheSIS
 git clone https://gitbox.apache.org/repos/asf/sis
@@ -36,7 +36,7 @@ git clone https://gitbox.apache.org/repos/asf/sis
 #
 # or Subversion (read-only):
 # svn checkout https://github.com/apache/sis/trunk
-{{< / highlight >}}
+```
 
 If JavaFX is available on the local machine,
 its JAR files location can be specified as below
@@ -45,20 +45,20 @@ The JavaFX application is excluded by default because it depends on
 the [JavaFX platform][JavaFX] which is distributed under GPL license
 (note that the SIS module stay under Apache 2 licence).
 
-{{< highlight bash >}}
+```bash
 # Syntax for Unix shell
 export PATH_TO_FX=/usr/lib/jvm/openjfx
-{{< / highlight >}}
+```
 
 Likewise the [EPSG geodetic dataset](epsg.html) is excluded by default for licensing reasons.
 
 Then, Apache {{% SIS %}} can be built as below:
 
-{{< highlight bash >}}
+```bash
 cd sis
 gradle assemble
 gradle publishToMavenLocal      # If use with Maven projects is desired.
-{{< / highlight >}}
+```
 
 Outputs will be located in the following sub-directories:
 
@@ -85,7 +85,7 @@ That directory is specified by the `SIS_DATA` environment variable and can be lo
 A convenient location is a subdirectory of the `ApacheSIS` directory created in the "basic checkout" section.
 For example (with `ApacheSIS` as the current directory):
 
-{{< highlight bash >}}
+```bash
 mkdir Data
 export SIS_DATA=$PWD/Data
 #
@@ -94,7 +94,7 @@ export SIS_DATA=$PWD/Data
 # file in user home directory.
 #
 echo export SIS_DATA=$SIS_DATA
-{{< / highlight >}}
+```
 
 
 ## Checkout non-free data    {#non-free}
@@ -107,16 +107,16 @@ but this section describes an alternative way more suitable to Apache {{% SIS %}
 Before to continue, make sure to agree with [EPSG terms of use][EPSG-ToU].
 Then following command can be executed with `ApacheSIS` as the current directory:
 
-{{< highlight bash >}}
+```bash
 # Executing this command imply agreement with EPSG terms of use.
 svn checkout https://svn.apache.org/repos/asf/sis/data/non-free/
-{{< / highlight >}}
+```
 
 Then copy or link the EPSG scripts in the directory where Apache {{% SIS %}} looks for optional data.
 Adjust the relative paths as needed if the `SIS_DATA` environment variable
 points to another location than the one used in above section:
 
-{{< highlight bash >}}
+```bash
 mkdir $SIS_DATA/Databases
 mkdir $SIS_DATA/Databases/ExternalSources
 cd $SIS_DATA/Databases/ExternalSources
@@ -124,7 +124,7 @@ ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/f
 ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/FKeys.sql   EPSG_FKeys.sql
 ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/Tables.sql  EPSG_Tables.sql
 cd -
-{{< / highlight >}}
+```
 
 This is sufficient for allowing Apache {{% SIS %}} to create the geodetic database
 without the need for `sis-epsg` or `sis-embedded-data` module on the classpath.
@@ -153,32 +153,32 @@ because Apache {{% SIS %}} always delete the temporary schema after tests comple
 regardless if the tests were successful or not.
 The role and database can be created by connecting to the server:
 
-{{< highlight bash >}}
+```bash
 psql --username=postgres
-{{< / highlight >}}
+```
 
 Then the role and database can be created by the following SQL instructions
 (replace `my_unix_user_name` by your actual user name):
 
-{{< highlight sql >}}
+```sql
 CREATE ROLE my_unix_user_name LOGIN;
 CREATE DATABASE "SpatialMetadataTest" WITH OWNER = my_unix_user_name;
 COMMENT ON DATABASE "SpatialMetadataTest" IS 'For Apache SIS tests only.';
 \connect "SpatialMetadataTest"
 CREATE EXTENSION postgis;
 \q
-{{< / highlight >}}
+```
 
 For opening access to that database without password, it may be necessary
 to add following line (ignoring comment lines) in the `pg_hba.conf` file.
 Location of this file is system-dependent, it may be `/var/lib/pgsql/data/`.
 The following lines should be inserted *before* the lines for user `all`:
 
-{{< highlight text >}}
+```
 # TYPE  DATABASE               USER                 ADDRESS         METHOD
 host    SpatialMetadataTest    my_unix_user_name    127.0.0.1/32    trust
 host    SpatialMetadataTest    my_unix_user_name    ::1/128         trust
-{{< / highlight >}}
+```
 
 The last step for allowing Apache {{% SIS %}} to run tests on PostgreSQL is to set the
 `org.apache.sis.test.extensive` Java property to `true` (see next section).
@@ -195,10 +195,10 @@ the `sis` directory (for example writing in `SpatialMetadataTest` database on Po
 or because those tests take a long time to execute.
 For enabling all tests, use the following command:
 
-{{< highlight bash >}}
+```bash
 cd sis
 gradle test --system-prop org.apache.sis.test.extensive=true
-{{< / highlight >}}
+```
 
 
 ## Switch to development branch    {#branches}
@@ -219,10 +219,10 @@ Developments on `geoapi-4.0` branch are merged to `geoapi-3.1` branch, which is 
 When commits reach `main` they become unmodifiable; the `git push --force` command is not allowed on that branch.
 Contributors to Apache {{% SIS %}} project should switch to the current development branch before submitting patches:
 
-{{< highlight bash >}}
+```bash
 cd sis
 git checkout geoapi-4.0
-{{< / highlight >}}
+```
 
 Note that those `geoapi-xxx` branches may disappear or be replaced by something else
 after {{% OGC %}} releases the corresponding GeoAPI versions.

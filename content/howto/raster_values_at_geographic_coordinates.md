@@ -32,7 +32,7 @@ Maven coordinates                 | Module info              | Remarks
 
 The geographic coordinates in following code need to be updated for yours data.
 
-{{< highlight java >}}
+```java
 import java.util.Map;
 import javax.measure.Unit;
 import org.apache.sis.coverage.grid.GridCoverage;
@@ -86,7 +86,7 @@ public class RasterValuesAtGeographicCoordinates {
         System.out.printf("- Value at %s is %g %s.%n", point, values[band], unit);
     }
 }
-{{< / highlight >}}
+```
 
 
 # Output

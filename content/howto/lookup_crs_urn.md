@@ -36,7 +36,7 @@ for finding its value.
 
 # Code example
 
-{{< highlight java >}}
+```java
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CRS;
@@ -82,7 +82,7 @@ public class LookupAuthorityCode {
                 + IdentifiedObjects.lookupURN(crs, null));
     }
 }
-{{< / highlight >}}
+```
 
 
 # Output

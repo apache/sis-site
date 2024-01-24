@@ -33,24 +33,24 @@ Then verify the signatures using the following (replace `src` by `bin` or `doc` 
 
 Using GNU Privacy Guard:
 
-{{< highlight bash >}}
+```bash
 gpg --import KEYS
 gpg --verify apache-sis-{{% version %}}-src.zip.asc
-{{< / highlight >}}
+```
 
 Using PGP version 6:
 
-{{< highlight bash >}}
+```bash
 pgp -ka KEYS
 pgp apache-sis-{{% version %}}-src.zip.asc
-{{< / highlight >}}
+```
 
 Using PGP version 5:
 
-{{< highlight bash >}}
+```bash
 pgpk -a KEYS
 pgpv apache-sis-{{% version %}}-src.zip.asc
-{{< / highlight >}}
+```
 
 
 ## Build from the sources    {#build}
@@ -60,11 +60,11 @@ It requires Java 18 or higher for building, but the compilation result can be ex
 For installing the JAR files in the local Maven repository, execute the following command
 from the SIS project root:
 
-{{< highlight bash >}}
+```bash
 cd apache-sis-{{% version %}}
 gradle assemble
 gradle publishToMavenLocal      # If use with Maven projects is desired.
-{{< / highlight >}}
+```
 
 JAR files will be in the `endorsed/build/libs/` sub-directory.
 An Open/LibreOffice add-in will be in `endorsed/build/bundle/`.
@@ -77,9 +77,9 @@ For including the JavaFX module in the build, define the `PATH_TO_FX` environmen
 with the path to the directory containing all JavaFX JAR files.
 Example on a Linux system (the path may vary):
 
-{{< highlight bash >}}
+```bash
 export PATH_TO_FX=/usr/lib/jvm/openjfx
-{{< / highlight >}}
+```
 
 The application will bundled in a ZIP file in the `optional/build/bundle` directory.
 To test, uncompress in any directory and execute `apache-​sis-​{{% version %}}/​bin/sisfx`.
@@ -91,9 +91,9 @@ Apache SIS 1.4 and later use the Java Platform Module System (JPMS).
 Consequently applications should declare SIS JAR files on their module-path rather than their class-path.
 The easiest way is to declare the whole directory like below:
 
-{{< highlight bash >}}
+```bash
 java --module-path apache-sis-{{% version %}}/lib
-{{< / highlight >}}
+```
 
 If the application using Apache SIS is not itself modularized,
 it may be necessary to add the `--add-modules ALL-MODULE-PATH` option.
@@ -109,7 +109,7 @@ An easy approach to integrate Apache {{% SIS %}} into a Java project uses the [A
 dependency management tool to automatically obtain the required Java Archives (JAR) files from the network.
 Below are examples of declarations in a `pom.xml` file for building a project with a SIS core module.
 
-{{< highlight xml >}}
+```xml
 <properties>
   <sis.version>{{% version %}}</sis.version>
 </properties>
@@ -129,7 +129,7 @@ Below are examples of declarations in a `pom.xml` file for building a project wi
     <scope>runtime</scope>
   </dependency>
 </dependencies>
-{{< / highlight >}}
+```
 
 The `sis-referencing` module in above example can be replaced by one or many of the following modules:
 
@@ -160,7 +160,7 @@ together with information about how to perform coordinate operations, their accu
 However usage of EPSG dataset requires acceptation of [EPSG terms of use][EPSG-ToU].
 If you accept those terms of use, then the following dependency can be added:
 
-{{< highlight xml >}}
+```xml
 <dependencies>
   <dependency>
     <groupId>org.apache.sis.non-free</groupId>
@@ -169,7 +169,7 @@ If you accept those terms of use, then the following dependency can be added:
     <scope>runtime</scope>
   </dependency>
 </dependencies>
-{{< / highlight >}}
+```
 
 Above dependency uses a read-only embedded Derby database.
 Note that the need to uncompress the `sis-embedded-data.jar` file

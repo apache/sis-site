@@ -24,7 +24,7 @@ see the [geographic bounding box](geographic_bounding_box.html) code example.
 
 The file name in following code need to be updated for yours data.
 
-{{< highlight java >}}
+```java
 import java.util.Map;
 import java.io.File;
 import java.io.StringWriter;
@@ -60,7 +60,7 @@ public class ExportMetadata {
         }
     }
 }
-{{< / highlight >}}
+```
 
 
 # Output
@@ -68,7 +68,7 @@ public class ExportMetadata {
 The output depends on the data and the locale.
 Below is an example:
 
-{{< highlight xml >}}
+```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mdb:MD_Metadata xmlns:cit="http://standards.iso.org/iso/19115/-3/cit/1.0"
                  xmlns:gco="http://standards.iso.org/iso/19115/-3/gco/1.0"
@@ -335,4 +335,4 @@ Below is an example:
     </mdb:MD_MetadataScope>
   </mdb:metadataScope>
 </mdb:MD_Metadata>
-{{< / highlight >}}
+```

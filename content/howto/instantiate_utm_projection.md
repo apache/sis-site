@@ -43,7 +43,7 @@ or the "AUTO" authority, but is required for examples using the "EPSG" authority
 Note that all geographic coordinates below express latitude *before* longitude,
 except in "AUTO2" authority code.
 
-{{< highlight java >}}
+```java
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CRS;
@@ -79,7 +79,7 @@ public class InstantiateUTM {
         System.out.println("EPSG:  " + Utilities.equalsIgnoreMetadata(crsFromPoint, crsFromCode));
     }
 }
-{{< / highlight >}}
+```
 
 
 # Output

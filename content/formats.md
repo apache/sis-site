@@ -95,7 +95,7 @@ The easiest way to open a file in read-only mode is as below.
 The `input` argument can be a `File`, `Path`, `URI`, `URL`, `InputStream`, `ReadableByteChannel`
 or a {{% JDBC %}} `DataSource` (non-exhaustive list).
 
-{{< highlight java >}}
+```java
 try (DataStore store = DataStores.open(input)) {
     // Assuming that we know that the data is a single raster:
     GridCoverageResource r = (GridCoverageResource) store;
@@ -106,7 +106,7 @@ try (DataStore store = DataStores.open(input)) {
     // Assuming that we know that the data is two-dimensional:
     RenderedImage image = coverage.render(null);
 }
-{{< / highlight >}}
+```
 
 Most of Apache {{% SIS %}} API is designed for multi-dimensional data.
 When requesting a `RenderedImage`, a two-dimensional slice must be specified,
@@ -126,7 +126,7 @@ HTTP is supported by the base SIS storage modules with no need for additional de
 Data files can also be located on Amazon S3 storage service.
 For accessing those data, add the following dependency to the Maven project:
 
-{{< highlight xml >}}
+```xml
 <dependencies>
   <dependency>
     <groupId>org.apache.sis.cloud</groupId>
@@ -135,18 +135,18 @@ For accessing those data, add the following dependency to the Maven project:
     <scope>runtime</scope>
   </dependency>
 </dependencies>
-{{< / highlight >}}
+```
 
 With above dependency on the classpath, it is possible to instantiate `java.nio.Path` object
 with a value of the form `"S3://bucket/pseudo-directory/file"`.
 Login and password can be specified in a `~/.aws/credentials` file like below
 (Apache SIS does not yet manage credentials by itself).
 
-{{< highlight config >}}
+```config
 [default]
 aws_access_key_id = <some value>
 aws_secret_access_key = <some value>
-{{< / highlight >}}
+```
 
 An alternative to above configuration is to set the
 `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.

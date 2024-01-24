@@ -35,7 +35,7 @@ where `$NEW_VERSION` and `$RELEASE_CANDIDATE` are environment variables introduc
 Some directories are Git checkout, other are ordinary directories. Any other layout can be used,
 provided that all relative paths in this page are adjusted accordingly.
 
-{{< highlight text >}}
+```
 <any root directory for SIS>
 ├─ $NEW_VERSION-RC
 ├─ main
@@ -53,11 +53,11 @@ provided that all relative paths in this page are adjusted accordingly.
    ├─ asf-staging
    ├─ javadoc
    └─ main
-{{< / highlight >}}
+```
 
 Create the above directory structure as below:
 
-{{< highlight bash >}}
+```bash
 mkdir site
 mkdir release
 git clone https://gitbox.apache.org/repos/asf/sis.git main
@@ -68,7 +68,7 @@ svn checkout https://dist.apache.org/repos/dist/dev/sis release/distribution
 cd site/main
 git worktree add ../asf-staging asf-staging
 git worktree add ../asf-site asf-site
-{{< / highlight >}}
+```
 
 
 ## Generate GPG key    {#generate-key}
@@ -82,27 +82,27 @@ The following steps provide a summary:
 Edit the `~/.gnupg/gpg.conf` configuration file and add the following configuration options,
 or edit the existing values if any:
 
-{{< highlight text >}}
+```
 personal-digest-preferences SHA512
 cert-digest-algo SHA512
 default-preference-list SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed
-{{< / highlight >}}
+```
 
 If a private key already exists for emails or other purposes, it may be a good idea to keep that key as the default one.
 Add or modify the following line in the `gpg.conf` file, replacing `<previous_key_id>` by the existing key identifier
 (a value like `621CC013`):
 
-{{< highlight text >}}
+```
 default-key <previous_key_id>
-{{< / highlight >}}
+```
 
 Generate 4096 bits RSA key pair using the following command-line. GPG will prompts for various informations.
 The list below the command suggests some values, keeping in mind that the new key should be used only for
 signing Apache software packages, not for daily emails.
 
-{{< highlight bash >}}
+```bash
 gpg --gen-key
-{{< / highlight >}}
+```
 
 * Kind of key: RSA and RSA (default). Do not create DSA key.
 * Key size: 4096 bits.
@@ -115,18 +115,18 @@ gpg --gen-key
 Verify the key information (replace _Real Name_ by the above-cited developer's name, keeping quotes in the command below).
 Note the key identifier, which is a value like `74383E9D`. This key identifier will be needed for the next steps.
 
-{{< highlight bash >}}
+```bash
 gpg --list-sigs "Real Name"
-{{< / highlight >}}
+```
 
 Sends the public key to a keys server (replace `<key_id>` by the above-cited key identifier).
 The default GPG configuration sends the key to `hkp://keys.gnupg.net`.
 Note that while there is many key servers, most of them synchronize changes with each other,
 so a key uploaded to one should be disseminated to the rest.
 
-{{< highlight bash >}}
+```bash
 gpg --send-key <key_id>
-{{< / highlight >}}
+```
 
 The key publication can be verified by going on the [MIT server][MIT],
 then entering the developer's "Real Name" in the _Search String_ field.
@@ -136,9 +136,9 @@ Generate a revocation certificate. This is not for immediate use, but generating
 is a safety in case the passphrase is lost. Keep the revocation certificate in a safe place,
 preferably on a removable device.
 
-{{< highlight bash >}}
+```bash
 gpg --output revocation_certificate.asc --gen-revoke <key_id>
-{{< / highlight >}}
+```
 
 
 ## Web of trust    {#trust}
@@ -148,12 +148,12 @@ the machine of the other Apache commiter, where `<key_to_use>` is the identifier
 Those operation should preferably be done in some event where the commiters can meet face-to-face.
 The other commiter should verify that the `gpg --fingerprint` command output matches the fingerprint of the key to sign.
 
-{{< highlight bash >}}
+```bash
 gpg --recv-keys <key_id>
 gpg --fingerprint <key_id>
 gpg --default-key <key_to_use> --sign-key <key_id>
 gpg --send-key <key_id>
-{{< / highlight >}}
+```
 
 The above-cited _Release Signing_ page provides more instructions.
 Then, the signed public key shall be appended to the `KEYS` file on the [SIS source code repository][source],
@@ -164,10 +164,10 @@ then copied to the [SIS distribution directory][dist].
 
 Edit the `~/.gradle/gradle.properties` file, making sure that the following properties are present:
 
-{{< highlight text >}}
+```
 org.gradle.java.home=<path to a Java installation>
 signing.gnupg.keyName=<your key ID>
-{{< / highlight >}}
+```
 
 
 ## Maven configuration    {#maven-config}
@@ -175,7 +175,7 @@ signing.gnupg.keyName=<your key ID>
 Edit the `~/.m2/setting.xml` file, making sure that the following fragments are present.
 Note that the [password can be enctypted](https://maven.apache.org/guides/mini/guide-encryption.html).
 
-{{< highlight xml >}}
+```xml
 <settings>
   <servers>
     <server>
@@ -185,7 +185,7 @@ Note that the [password can be enctypted](https://maven.apache.org/guides/mini/g
     </server>
   </servers>
 </settings>
-{{< / highlight >}}
+```
 
 
 # Specific release configuration    {#release-config}
@@ -194,13 +194,13 @@ For all instructions in this page, `$OLD_VERSION` and `$NEW_VERSION` stand for t
 number of the previous and the new release respectively, and `$RELEASE_CANDIDATE` stands for
 the current release attempt. Those versions shall be set on the command line like below (Unix):
 
-{{< highlight bash >}}
+```bash
 gpg --list-keys                     # For getting the value to put in <your key ID>
 export OLD_VERSION=1.3
 export NEW_VERSION={{% version %}}
 export RELEASE_CANDIDATE=1
 export SIGNING_KEY=<your key ID>    # hexadecimal number with 8 or 40 digits.
-{{< / highlight >}}
+```
 
 Make sure that the code signing key is the defauly key declared in `~/.gnupg/gpg.conf`
 during the Maven deployment phase.
@@ -217,11 +217,11 @@ Replace the `$OLD_VERSION` number by `$NEW_VERSION` in the values of following p
 
 Commit and merge with other branches up to main branch.
 
-{{< highlight bash >}}
+```bash
 git add --update
 git commit --message="Set version number and the EPSG geodetic dataset URL to expected values after release."
 # merge with main
-{{< / highlight >}}
+```
 
 Before to start the release process, we need to test more extensively the main branch.
 The tests described below often reveal errors that were unnoticed in daily builds.
@@ -231,21 +231,21 @@ First, ensure that a PostgreSQL server is running and listening to the default p
 see [PostgreSQL testing configuration](./source.html#postgres) for more details).
 Then execute the following commands and fix as much warnings as practical:
 
-{{< highlight bash >}}
+```bash
 systemctl start postgresql.service        # Optional — exact command depends on Linux distribution.
 gradle test --system-prop org.apache.sis.test.extensive=true
-{{< / highlight >}}
+```
 
 If the `SIS_DATA` environment variable was set during above build, unset it a try again.
 Ideally the build should be tested in both conditions (`SIS_DATA` set and unset).
 That test may be done in a separated shell (console window) in order to preserve
 the variable value in the shell performing the release.
 
-{{< highlight bash >}}
+```bash
 unset SIS_DATA
 echo $SIS_DATA
 gradle cleanTest test
-{{< / highlight >}}
+```
 
 
 ## Update the list of supported CRS    {#update-crs-list}
@@ -265,7 +265,7 @@ Those steps are also useful as additional tests, since failure to generate those
 
 * Run the following commands:
 
-  {{< highlight bash >}}
+  ```bash
   gradle assemble
 
   java --module-path endorsed/build/libs \
@@ -280,7 +280,7 @@ Those steps are also useful as additional tests, since failure to generate those
        --add-reads     org.apache.sis.referencing=org.opengis.geoapi.conformance,junit \
        --patch-module  org.apache.sis.referencing=endorsed/build/classes/java/test/org.apache.sis.referencing \
        --module org.apache.sis.referencing/org.apache.sis.referencing.report.CoordinateReferenceSystems
-  {{< / highlight >}}
+  ```
 
 * If successful, HTML files will be generated in the current directory.
   Open those files in a web browser and verify that information are okay,
@@ -288,9 +288,9 @@ Those steps are also useful as additional tests, since failure to generate those
 * If okay, move those two HTML files to the `../site/main/static/tables/` directory, overwriting previous files.
   Revert the hack in `AuthorityCodes` class, then commit:
 
-  {{< highlight bash >}}
+  ```bash
   git commit --message="Update the list CRS and operation methods supported by Apache SIS $NEW_VERSION."
-  {{< / highlight >}}
+  ```
 
 
 ## Prepare release notes    {#release-notes}
@@ -310,13 +310,13 @@ Update [JIRA][JIRA] tasks and prepare release notes as below:
 
 Commit to staging area (not published immediately):
 
-{{< highlight bash >}}
+```bash
 cd ../site/main
 cp content/release-notes/$OLD_VERSION.md content/release-notes/$NEW_VERSION.md
 # Edit release notes before to continue.
 git add content/release-notes/$NEW_VERSION.md
 git commit --message "Release notes for Apache SIS $NEW_VERSION."
-{{< / highlight >}}
+```
 
 
 # Create release artifacts    {#create-artifacts}
@@ -325,20 +325,20 @@ Execute the following commands.
 It is okay to checkout the branch in a separated directory if desired.
 The `SIS_RC_DIR` environment variable will specify that directory.
 
-{{< highlight bash >}}
+```bash
 cd ../main
 git checkout -b $NEW_VERSION-RC
 export SIS_RC_DIR=`pwd`
-{{< / highlight >}}
+```
 
 Remove the files and modules that are not intended to be released.
 For example, Apache source distribution shall not include Gradle wrapper binary.
 
-{{< highlight bash >}}
+```bash
 git rm .asf.yaml
 git rm -r gradlew gradlew.bat gradle/
 git rm -r incubator
-{{< / highlight >}}
+```
 
 Edit at least the files listed below for removing all occurrences of "incubator"
 (the search is easier to do after the removal of "incubator" directory):
@@ -351,11 +351,11 @@ Edit at least the files listed below for removing all occurrences of "incubator"
 
 Commit the removals:
 
-{{< highlight bash >}}
+```bash
 # Edit above-listed files before to continue.
 git add --update    # for the removal of <module> elements in pom.xml files.
 git commit --message="Remove the modules to be excluded from $NEW_VERSION release."
-{{< / highlight >}}
+```
 
 Update SIS version numbers by removing all occurrences of the `-SNAPSHOT` suffix
 at least in the following files:
@@ -368,11 +368,11 @@ at least in the following files:
 
 Then commit:
 
-{{< highlight bash >}}
+```bash
 git add --update
 gradle test
 git commit --message="Set version number to $NEW_VERSION."
-{{< / highlight >}}
+```
 
 
 ## Initialize the distribution directory    {#dist}
@@ -380,21 +380,21 @@ git commit --message="Set version number to $NEW_VERSION."
 Create the directory for the new version and release candidate within the distribution directory.
 The `$RELEASE_CANDIDATE` variable shall be the number of current release attempt.
 
-{{< highlight bash >}}
+```bash
 cd ../release/distribution
 svn update
 mkdir -p $NEW_VERSION/RC$RELEASE_CANDIDATE
 svn add $NEW_VERSION
 cd $NEW_VERSION/RC$RELEASE_CANDIDATE
 export DIST_DIR=`pwd`
-{{< / highlight >}}
+```
 
 Copy the `HEADER.html` file from the previous release.
 Update the file content if necessary.
 
-{{< highlight bash >}}
+```bash
 svn copy https://dist.apache.org/repos/dist/release/sis/$OLD_VERSION/HEADER.html .
-{{< / highlight >}}
+```
 
 
 ## Generate Javadoc    {#javadoc}
@@ -402,11 +402,11 @@ svn copy https://dist.apache.org/repos/dist/release/sis/$OLD_VERSION/HEADER.html
 Execute `gradle javadoc`. That command will fail. This is a known problem with the current Gradle build configuration.
 But it should have created a `javadoc.options` file that we will patch as below (`gedit` can be replaced by another editor):
 
-{{< highlight bash >}}
+```bash
 cd $SIS_RC_DIR
 gradle javadoc      # Fail. See workaround below.
 gedit endorsed/build/tmp/javadoc/javadoc.options
-{{< / highlight >}}
+```
 
 Apply the following changes:
 
@@ -415,15 +415,15 @@ Apply the following changes:
 * Delete all Java source files listed after the options, everything until the end of file.
 * Add the following line in-place of deleted lines (omit the `org.opengis.geoapi` module if not desired):
 
-{{< highlight text >}}
+```
 --module org.opengis.geoapi,org.apache.sis.util,org.apache.sis.metadata,org.apache.sis.referencing,org.apache.sis.referencing.gazetteer,org.apache.sis.feature,org.apache.sis.storage,org.apache.sis.storage.sql,org.apache.sis.storage.xml,org.apache.sis.storage.netcdf,org.apache.sis.storage.geotiff,org.apache.sis.storage.earthobservation,org.apache.sis.cloud.aws,org.apache.sis.portrayal,org.apache.sis.profile.france,org.apache.sis.profile.japan,org.apache.sis.openoffice,org.apache.sis.console,org.apache.sis.gui
-{{< / highlight >}}
+```
 
 The following commands temporarily create links to optional modules for inclusion in the Javadoc.
 The GeoAPI interfaces may also be copied if they should be bundled with the Javadoc.
 Then the Javadoc command is launched manually.
 
-{{< highlight bash >}}
+```bash
 cd endorsed/src
 ln -s ../../optional/src/org.apache.sis.gui
 cd -
@@ -438,12 +438,12 @@ javadoc @endorsed/build/tmp/javadoc/javadoc.options
 firefox endorsed/build/docs/javadoc/index.html                      # For verifying the result.
 rm    endorsed/src/org.apache.sis.gui
 rm -r endorsed/src/org.opengis.geoapi
-{{< / highlight >}}
+```
 
 Prepares the Javadoc ZIP file to be released.
 Then update the online Javadoc:
 
-{{< highlight bash >}}
+```bash
 cd endorsed/build/docs/
 mv javadoc apidocs
 zip -9 -r $DIST_DIR/apache-sis-$NEW_VERSION-doc.zip apidocs
@@ -454,7 +454,7 @@ mv $SIS_RC_DIR/endorsed/build/docs/apidocs/* .
 git checkout -- README.md
 git add --all
 git commit --message "Update javadoc for SIS $NEW_VERSION."
-{{< / highlight >}}
+```
 
 
 ## Publish Maven artifacts    {#publish-artifacts}
@@ -467,10 +467,10 @@ If there is any issue with the deployment, the staging repository can easily be 
 
 Execute the following:
 
-{{< highlight bash >}}
+```bash
 cd $SIS_RC_DIR/parent
 mvn clean install deploy --activate-profiles apache-release
-{{< / highlight >}}
+```
 
 Connect to the [Nexus repository][repository].
 The artifacts can be found under _Build Promotion_ → _Staging repositories_,
@@ -489,7 +489,7 @@ Build the project and publish in the Maven local repository.
 The `org.apache.sis.releaseVersion` property will cause Javadoc to be generated for earch artifact
 (this step is normally skipped because a bit long) and sign the artifacts.
 
-{{< highlight bash >}}
+```bash
 cd $SIS_RC_DIR
 git status      # Make sure that everything is clean.
 gradle clean
@@ -513,7 +513,7 @@ ll ~/.m2/repository/org/apache/sis/application/sis-javafx/$NEW_VERSION
 find ~/.m2/repository/org/apache/sis -name "sis-*-$NEW_VERSION-*.asc" -exec gpg --verify '{}' \;
 
 gradle publish --system-prop org.apache.sis.releaseVersion=$NEW_VERSION
-{{< / highlight >}}
+```
 
 In the [Nexus repository][repository], click on "Refresh".
 A new `org.apache.sis` item should appear in the _Repository_ column of _Build Promotion_ → _Staging repositories_.
@@ -531,14 +531,14 @@ Go to the directory that contains a checkout of `https://svn.apache.org/repos/as
 Those modules will not be part of the distribution (except on Maven), but we nevertheless need to ensure that they work.
 Replace occurrences of `<version>$OLD_VERSION</version>` by `<version>$NEW_VERSION</version>` in the `pom.xml` files.
 
-{{< highlight bash >}}
+```bash
 cd ../non-free
 svn update
 mvn clean install
 mvn javadoc:javadoc                   # Test that Javadoc can be generated.
 svn commit --message "Set version number and dependencies to $NEW_VERSION."
 mvn deploy --activate-profiles apache-release
-{{< / highlight >}}
+```
 
 Verify the staged artifacts in the [Nexus repository][repository].
 In the `sis-epsg-$NEW_VERSION.jar` file, verify that `META-INF/LICENSE` contains the EPSG terms of use.
@@ -559,15 +559,15 @@ By contrast, above Maven artifacts are only conveniences.
 We have already staged the Javadoc and binaries.
 Now stage the sources and cleanup:
 
-{{< highlight bash >}}
+```bash
 git archive --prefix apache-sis-$NEW_VERSION-src/ --output $DIST_DIR/apache-sis-$NEW_VERSION-src.zip $NEW_VERSION-RC
 cd $DIST_DIR
 zip -d apache-sis-$NEW_VERSION-bin.zip apache-sis-$NEW_VERSION/lib/org.apache.sis.openoffice.jar
-{{< / highlight >}}
+```
 
 Sign the source, Javadoc and binary artifacts:
 
-{{< highlight bash >}}
+```bash
 gpg --armor --detach-sign --default-key $SIGNING_KEY apache-sis-$NEW_VERSION-src.zip
 sha512sum apache-sis-$NEW_VERSION-src.zip > apache-sis-$NEW_VERSION-src.zip.sha512
 
@@ -576,14 +576,14 @@ sha512sum apache-sis-$NEW_VERSION-doc.zip > apache-sis-$NEW_VERSION-doc.zip.sha5
 
 gpg --armor --detach-sign --default-key $SIGNING_KEY apache-sis-$NEW_VERSION-bin.zip
 sha512sum apache-sis-$NEW_VERSION-bin.zip > apache-sis-$NEW_VERSION-bin.zip.sha512
-{{< / highlight >}}
+```
 
 Verify checksums and signatures:
 
-{{< highlight bash >}}
+```bash
 find . -name "*.sha512" -exec sha512sum --check '{}' \;
 find . -name "*.asc"    -exec gpg      --verify '{}' \;
-{{< / highlight >}}
+```
 
 
 # Integration test    {#integration-tests}
@@ -592,21 +592,21 @@ Create a temporary directory where Apache {{% SIS %}} will write the EPSG datase
 Force the Java version to the one supported by Apache SIS (adjust `JDK11_HOME` as needed).
 Specify the URL to the nexus repository, where `####` is the identifier of the "non-free" repository.
 
-{{< highlight bash >}}
+```bash
 export SIS_DATA=/tmp/apache-sis-data
 mkdir $SIS_DATA
 export JAVA_HOME=$JDK11_HOME
 export JDK_JAVA_OPTIONS="-enableassertions -Dorg.apache.sis.epsg.downloadURL"
 export JDK_JAVA_OPTIONS=$JDK_JAVA_OPTIONS=https://repository.apache.org/content/repositories/orgapachesis-####
 export JDK_JAVA_OPTIONS=$JDK_JAVA_OPTIONS/org/apache/sis/non-free/sis-epsg/$NEW_VERSION/sis-epsg-$NEW_VERSION.jar
-{{< / highlight >}}
+```
 
 
 ## Test the binary    {#test-binary}
 
 Unzip the binaries and execute the examples documented in the [command-line interface page](./command-line.html).
 
-{{< highlight bash >}}
+```bash
 cd /tmp
 unzip $DIST_DIR/apache-sis-$NEW_VERSION-bin.zip
 cd apache-sis-$NEW_VERSION
@@ -619,7 +619,7 @@ wget https://sis.apache.org/examples/coordinates/CanadianCities.csv
 ./bin/sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 AmericanCities.csv
 ./bin/sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 CanadianCities.csv
 ./bin/sisfx
-{{< / highlight >}}
+```
 
 
 ## Test the Maven artifacts    {#test-maven}
@@ -630,44 +630,44 @@ Then go to the `<url>` declaration of <repository>` each block and replace value
 of the temporary Maven repository created by Nexus.
 Usually, only the 3 last digits need to be updated.
 
-{{< highlight bash >}}
+```bash
 cd $SIS_RC_DIR/../release/test/maven
 # Edit <url> in pom.xml before to continue.
 mvn compile
 svn commit -m "Test project for SIS $NEW_VERSION-RC$RELEASE_CANDIDATE"
-{{< / highlight >}}
+```
 
 Clear the local Maven repository in order to force downloads from the Nexus repository, then test.
 This will also verify the checksums.
 
-{{< highlight bash >}}
+```bash
 rm -r $SIS_DATA/*
 rm -r ~/.m2/repository/org/apache/sis
 mvn package --show-version --strict-checksums
-{{< / highlight >}}
+```
 
 Verify that the EPSG dataset has been created, then cleanup:
 
-{{< highlight bash >}}
+```bash
 du --summarize --human-readable $SIS_DATA/Databases/SpatialMetadata
 mvn clean
-{{< / highlight >}}
+```
 
 
 ## Test the downloads    {#test-downloads}
 
 Stage the release candidate:
 
-{{< highlight bash >}}
+```bash
 cd $DIST_DIR
 svn add apache-sis-$NEW_VERSION-*
 cd ../..
 svn commit --message "SIS $NEW_VERSION release candidate $RELEASE_CANDIDATE"
-{{< / highlight >}}
+```
 
 Execute the following commands in any temporary directory for testing the sources:
 
-{{< highlight bash >}}
+```bash
 wget https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE/apache-sis-$NEW_VERSION-src.zip \
      https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE/apache-sis-$NEW_VERSION-src.zip.asc
 # Test
@@ -675,11 +675,11 @@ gpg --verify apache-sis-$NEW_VERSION-src.zip.asc
 unzip apache-sis-$NEW_VERSION-src.zip
 cd apache-sis-$NEW_VERSION-src
 gradle assemble
-{{< / highlight >}}
+```
 
 Execute the following commands in any temporary directory for testing the binary:
 
-{{< highlight bash >}}
+```bash
 wget https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE/apache-sis-$NEW_VERSION-bin.zip \
      https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE/apache-sis-$NEW_VERSION-bin.zip.asc
 # Test
@@ -689,7 +689,7 @@ cd apache-sis-$NEW_VERSION
 unset SIS_DATA
 ./bin/sis about --verbose
 ./bin/sis crs https://raw.githubusercontent.com/apache/sis/main/endorsed/src/org.apache.sis.referencing/test/org/apache/sis/referencing/crs/ProjectedCRS.xml --format WKT
-{{< / highlight >}}
+```
 
 
 # Prepare Web site    {#prepare-website}
@@ -708,7 +708,7 @@ Update the following files (e.g. the release date in `index.md`):
 Execute `hugo` and browse the documentation in the `public` repository.
 If okay, commit and copy to staging repository:
 
-{{< highlight bash >}}
+```bash
 git commit --message "Prepare documentation for the $NEW_VERSION release."
 
 # Copy to staging repository
@@ -725,7 +725,7 @@ find . -name "*.xml" -type f -exec sed -i 's/[[:space:]]*$//' '{}' \;
 git add --all
 git commit --message "Staging repository for the $NEW_VERSION release."
 git push
-{{< / highlight >}}
+```
 
 The new web site will be published in the [staging area](https://sis.staged.apache.org/).
 It will not yet be published on `https://sis.apache.org`.
@@ -749,15 +749,15 @@ It will not yet be published on `https://sis.apache.org`.
 
 Reply to the initial vote email and prepend to the original subject:
 
-{{< highlight text >}}
+```
 [CANCELED]
-{{< / highlight >}}
+```
 
 Delete the svn tag created by the release:perform step:
 
-{{< highlight bash >}}
+```bash
 svn delete https://svn.apache.org/repos/asf/sis/tags/$NEW_VERSION --message "deleting tag from rolled back release"
-{{< / highlight >}}
+```
 
 Drop the Nexus staging repository:
 
@@ -779,21 +779,21 @@ Check in the source and binary artifacts into distribution svn which will be pul
 The `dist/dev` svn is not mirrored, but the `dist/release` is.
 From any directory:
 
-{{< highlight bash >}}
+```bash
 svn move https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION/RC$RELEASE_CANDIDATE \
          https://dist.apache.org/repos/dist/release/sis/$NEW_VERSION \
     --message "Committing SIS Source and Binary Release Candidate $RELEASE_CANDIDATE for SIS-$NEW_VERSION."
 
 svn delete https://dist.apache.org/repos/dist/dev/sis/$NEW_VERSION \
     --message "Delete SIS $NEW_VERSION staging repository after release."
-{{< / highlight >}}
+```
 
 Verify release signatures.
 Download all source and binary artifacts into a new directory, then execute in that directory:
 
-{{< highlight bash >}}
+```bash
 find . -name "*.asc" -exec gpg --verify '{}' \;
-{{< / highlight >}}
+```
 
 The output shall report only good signatures.
 
@@ -820,10 +820,10 @@ The output shall report only good signatures.
 
 Delete the prior version:
 
-{{< highlight bash >}}
+```bash
 svn delete https://dist.apache.org/repos/dist/release/sis/$OLD_VERSION \
     --message "Archive SIS-$OLD_VERSION after release of SIS-$NEW_VERSION."
-{{< / highlight >}}
+```
 
 
 # Update main branch for the next development cycle    {#next-release}

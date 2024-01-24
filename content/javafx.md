@@ -18,9 +18,9 @@ Select "Apache {{% SIS %}} {{% version %}} binary" from the [downloads page](dow
 See the [command line](command-line.html) page for a description of the directory structure.
 For launching the application, execute (on Unix system):
 
-{{< highlight bash >}}
+```bash
 ./apache-sis-{{% version %}}/bin/sisfx
-{{< / highlight >}}
+```
 
 On first execution, the application will ask user to download the [JavaFX framework][JavaFX] (if not already done).
 That framework is not included in the Apache {{% SIS %}} binaries for licensing reasons (it is under GPL license).
