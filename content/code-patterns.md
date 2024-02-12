@@ -6,6 +6,9 @@ This page lists some recommended code pattern for developing or using Apache {{%
 
 {{< toc >}}
 
+
+
+
 # Referencing    {#referencing}
 
 This section lists recommended code pattern when using the `sis-referencing` module.
@@ -20,6 +23,9 @@ If a code needs to swap coordinates, this is probably an indication that the {{%
 Instead of patching the coordinate values, try to make sure that the _Source CRS_ (associated to the original data)
 and the _Target CRS_ (the coordinate space where to perform the work) are properly defined,
 and let the referencing engine performs the conversion from the source to the target {{% CRS %}}.
+
+
+
 
 # Rasters and coverages    {#coverage}
 
@@ -41,6 +47,8 @@ Some images are writable. But modifying pixel values should be done by invoking 
 Do not cast directly a `Raster` to `WritableRaster` even when the cast is safe,
 because some raster data may be shared by many tiles having identical content.
 Furthermore changes in pixel values may be lost if {@code releaseWritableTile(…)} is not invoked.
+
+
 
 
 # International    {#international}
@@ -84,6 +92,9 @@ for (int i=0; i<string.length();) {
 }
 ```
 
+
+
+
 # Logging    {#logging}
 
 Apache {{% SIS %}} uses the `java.util.logging` framework.
@@ -101,3 +112,36 @@ since developers use them for configuring their logging (verbosity, destination,
 All logging at `Level.INFO` or above shall be targeted to users or administrators, not to developers.
 In particular `Level.SEVERE` shall be reserved for critical errors that compromise the application stability —
 it shall not be used for exceptions thrown while parsing user data (file or database).
+
+
+
+
+# Compiler warnings    {#warnings}
+
+When a local variable in a method has the same name as a field in the enclosing class,
+some compilers emit a _"Local variable hides a field"_ warning.
+This warning can be disabled with a `@SuppressWarnings("LocalVariableHidesMemberVariable")` annotation.
+However, by convention Apache SIS applies this annotation only when the local variable should have the same value as the field.
+Otherwise, the warning should be resolved. When a code hides a field, it should be a statement such as
+`final Foo foo = this.foo;` or `final Foo foo = getFoo();` and may exist for the following reasons:
+
+* `this.foo` is non-final and we want to make sure that it is not modified by accident in the method.
+* `this.foo` is a volatile field, therefor should be read only once and cached in the method for performance.
+* `getFoo()` computes the value of `this.foo` lazily.
+
+
+
+
+# Javadoc    {#javadoc}
+
+Javadoc comments are written in HTML, not Markdown, both for historical reasons and because HTML allows richer semantic.
+For example, for formatting a text in italic, the Javadoc should choose the most appropriate of the following tags:
+
+* `<em>`   for emphasis. A screen reader may pronounce the words using verbal stress.
+* `<var>`  for a variable to show like a mathematical symbol.
+* `<dfn>`  for introducing a word defined by the nearby sentences.
+* `<cite>` for the title of a document, in particular an OGC/ISO standard.
+  Apache SIS uses also this tag for the name of a geodetic object in the EPSG geodetic database,
+  in which case the object definition is considered as a document.
+  This tag can also be used for section titles.
+* `<i>` for rendering in italic for any reason than the above reasons.
