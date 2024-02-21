@@ -233,7 +233,8 @@ Then execute the following commands and fix as much warnings as practical:
 
 ```bash
 systemctl start postgresql.service        # Optional — exact command depends on Linux distribution.
-gradle test --system-prop org.apache.sis.test.extensive=true
+export SIS_TEST_OPTIONS=extensive,postgresql
+gradle test
 ```
 
 If the `SIS_DATA` environment variable was set during above build, unset it a try again.
@@ -492,8 +493,7 @@ The `org.apache.sis.releaseVersion` property will cause Javadoc to be generated 
 ```bash
 cd $SIS_RC_DIR
 git status      # Make sure that everything is clean.
-gradle clean
-gradle test     --system-prop org.apache.sis.test.extensive=true
+gradle clean test
 gradle assemble
 mv --interactive optional/build/bundle/apache-sis-$NEW_VERSION.zip $DIST_DIR/apache-sis-$NEW_VERSION-bin.zip
 

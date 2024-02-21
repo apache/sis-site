@@ -146,7 +146,8 @@ The requirements are:
 * A role with the same name than Unix user name of the developer running tests.
 * An empty database named `"SpatialMetadataTest"`.
 * Above-cited role can connect to `SpatialMetadataTest` database without password.
-* `org.apache.sis.test.extensive` Java property set to `true`.
+* `org.apache.sis.test.postgresql` Java property set to `true` or the
+  `SIS_TEST_OPTIONS` environment variable contains `postgresql`.
 
 The `SpatialMetadataTest` database should stay empty when not running tests,
 because Apache {{% SIS %}} always delete the temporary schema after tests completion,
@@ -181,9 +182,9 @@ host    SpatialMetadataTest    my_unix_user_name    ::1/128         trust
 ```
 
 The last step for allowing Apache {{% SIS %}} to run tests on PostgreSQL is to set the
-`org.apache.sis.test.extensive` Java property to `true` (see next section).
+`org.apache.sis.test.postgresql` Java property or the
+`SIS_TEST_OPTIONS` environment variable (see next section).
 This requirement has been added for avoiding undesired interference with host.
-Note that this step is likely to change after Apache {{% SIS %}} upgrade to JUnit 5.
 
 
 ## Running extensive tests    {#tests}
@@ -197,7 +198,8 @@ For enabling all tests, use the following command:
 
 ```bash
 cd sis
-gradle test --system-prop org.apache.sis.test.extensive=true
+export SIS_TEST_OPTIONS=extensive,postgresql
+gradle test
 ```
 
 
