@@ -26,6 +26,7 @@ The examples are grouped in the following sections:
 * [Instantiate a Universal Transverse Mercator (UTM) projection](howto/instantiate_utm_projection.html)
 * [Instantiate a Pseudo Mercator (a.k.a. Google) projection](faq.html#google)
 * [Get the EPSG code or URN of an existing reference system](howto/lookup_crs_urn.html)
+* [Add vertical and temporal axes to an horizontal CRS](howto/compound_crs.html)
 * [Transform points between two reference systems](howto/transform_coordinates.html)
 * [Transform envelopes between two reference systems](howto/transform_envelopes.html)
 * [Parse and format MGRS codes](howto/parse_and_format_mgrs_codes.html)
