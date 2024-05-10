@@ -100,7 +100,7 @@ The reason is that command output may be targeted to a client, while the error m
 
 The following examples first show how to get a Coordinate Reference System (CRS) from different kinds of definitions.
 {{% CRS %}} contain necessary information for locating points on Earth.
-Those information include the geodetic datum, the map projection (if any), the axes and their units of measurement.
+Those information include the geodetic reference frame, the map projection (if any), the axes and their units of measurement.
 When two such {{% CRS %}} are known (the _source_ and the _target_), it is possible to convert or transform points between those {{% CRS %}}.
 However the coordinate operation depends not only on the source and target {{% CRS %}}, but also on the _area of interest_ as shown
 by the example transforming city coordinates in USA and in Canada.
