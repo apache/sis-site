@@ -1,29 +1,185 @@
+@charset "UTF-8";
 /*!
  * Licensed under the Apache License v2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  */
-body {
-  padding-top: 3.5rem;
-  padding-bottom: 1.5rem;
+
+/*
+ * ┌──────────────────────────────────────────────────────────┐
+ * │ Modifications to standard elements anywhere in the site. │
+ * └──────────────────────────────────────────────────────────┘
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
+body {
+  margin:      0;
+  padding-top: 3.5rem;
+  font-family: system-ui, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+}
+pre, code {
+  /* Avoid Monaco font, because box (or tree) symbols do not render well. */
+  font-family: Menlo,Consolas,"Courier New",monospace;
+  font-size:   0.875em;
+}
+pre code {
+  font-size: inherit;
+}
+.topbar, .left-bar {
+  background-color: #003366;
+}
+a {
+  text-decoration: none;
+  color: #1f618d;
+}
+a:hover {
+  color: #0a58ca;
+}
+a > code {
+  color: inherit;
+}
+summary {
+  display: list-item;
+  cursor:  pointer;
+}
+img {
+  vertical-align: middle;
+}
+footer {
+  padding-top: 1rem;
+  font-size: smaller;
+  color: gray;
+}
+footer p {
+  text-align: center;
+}
+footer a {
+  text-decoration: none;
+  color: gray;
+}
+
+/*
+ * ┌────────────────────────────────────────────────────┐
+ * │ Classes used in the top bar and in the page title. │
+ * └────────────────────────────────────────────────────┘
+ */
 img.apache-con {
-  width: auto;
+  width:  auto;
   height: 2.5rem;
 }
 img.sis-logo {
-  width: auto;
-  height: 4rem;
+  width:        auto;
+  height:       4rem;
   margin-right: 2rem;
 }
 p.page-title {
-  font-size: 2.5rem;
-  font-weight: bolder;
-  text-align: left;
-  margin-top: 2rem;
+  font-size:      2.5rem;
+  font-weight:    bolder;
+  text-align:     left;
+  margin-top:     2rem;
   padding-bottom: 0.75rem;
 }
+div.topbar {
+  position:        fixed;
+  display:         flex;
+  flex-wrap:       wrap;
+  align-items:     center;
+  justify-content: space-between;
+  padding-left:    1.0rem;
+  padding-right:   0.5rem;
+  padding-top:     0.5rem;
+  padding-bottom:  0.5rem;
+  top:             0;
+  right:           0;
+  left:            0;
+}
+a.topbar-brand {
+  margin-right:    1rem;
+  font-size:       1.5rem;
+  font-weight:     bolder;
+  color:           white;
+}
+a.topbar-brand:hover {
+  color: white;
+}
+ul.topbar-items {
+  display:        flex;
+  flex-direction: column;
+  list-style:     none;
+  padding-left:   0;
+  margin-top:     0;
+  margin-bottom:  0;
+}
+
+/*
+ * ┌─────────────────────────────────────────────────────────────────────────────┐
+ * │ Classes used in the main section, including the navigation bar on the left. │
+ * └─────────────────────────────────────────────────────────────────────────────┘
+ */
+.container {
+  width:        100%;
+  margin-right: auto;
+  margin-left:  auto;
+}
+.main-section {
+  display:    flex;
+  flex-wrap:  nowrap;
+  margin-top: 0;
+}
+.main-section > * {
+  flex-shrink: 0;
+  width:       100%;
+  max-width:   100%;
+  margin-top:  0;
+}
+.main-content {
+  flex: 1 0 0%;
+  padding-right: 1.5rem;
+  padding-left:  1.5rem;
+}
+.left-bar {
+  padding:     1rem;
+  width:      12rem;
+  min-height: 40rem;
+}
+.left-bar, ul.nav-pills {
+  display:        flex;
+  flex-direction: column;
+  flex-shrink:    0;
+  margin-top:     0;
+  margin-bottom:  0;
+  padding-left:   0.5rem;
+}
+ul.nav-pills {
+  flex-wrap:      wrap;
+  padding-left:   0;
+  list-style:     none;
+  position:       fixed;
+}
+a.nav-link {
+  display:         block;
+  padding:         0.5rem 1rem;
+  color:           #0d6efd;
+  text-decoration: none;
+}
+a.nav-link.inactive {
+  color: white;
+}
+ul.nav-pills a.nav-link.active {
+  color: white;
+  background-color: #0d6efd;
+}
+
+/*
+ * ┌────────────────────────────────────────┐
+ * │ Classes for the main content (article) │
+ * └────────────────────────────────────────┘
+ */
 main h1 {
-  margin-top: 3rem;
+  margin-top:    3rem;
   margin-bottom: 2rem;
   border-bottom: 2px solid rgb(192, 192, 192);
 }
@@ -31,18 +187,24 @@ main h2 {
   margin-top: 2rem;
 }
 main p {
-  text-align: justify;
-}
-main a {
-  text-decoration: none;
-  color: #1f618d;
+  text-align:    justify;
+  line-height:   1.4;
+  margin-bottom: 1rem;
 }
 main abbr[title] {
   text-decoration: none;
 }
-pre, code {
-  /* Avoid Monaco font, since box (or tree) symbols do not render well. */
-  font-family: Menlo,Consolas,"Courier New",monospace;
+main ol,
+main ul {
+  margin-top:    0;
+  margin-bottom: 1rem;
+  padding-left:  2rem;
+}
+main ol ol,
+main ol ul,
+main ul ul,
+main ul ol {
+  margin-bottom: 0.5rem;
 }
 main pre {
   /* Shall be small enough for avoiding space between box (or tree) symbols. */
@@ -51,12 +213,14 @@ main pre {
   padding-left:   1rem;
   padding-top:    0.5rem;
   padding-bottom: 0.5rem;
+  margin-top:     0;
+  margin-bottom:  1rem;
+  display:        block;
+  overflow:       auto;
 }
 main code {
-  color: inherit;
-  background-color: inherit;
-  border: none;
   padding: 2px 2px;
+  word-wrap: break-word;
 }
 main table {
   background-color: #F4F8FF;
@@ -110,17 +274,4 @@ table.images tr td img {
 }
 table.images tr td img:active {
   transform: scale(3);
-}
-
-.footer {
-  padding-top: 1rem;
-  font-size: smaller;
-  color: gray;
-}
-.footer p {
-  text-align: center;
-}
-.footer a {
-  text-decoration: none;
-  color: gray;
 }
