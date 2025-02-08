@@ -206,7 +206,7 @@ Internet Explorer users need to [install a plugin][mathml-plugin-ie].
 Firefox users can optionally install the [fonts for Mozilla's MathML engine][mathml-fonts] for better results.
 Note that a [JavaScript display engine][mathml-mathjax] is available for all browsers, but not yet used by SIS.
 
-[srcheaders]:       http://www.apache.org/legal/src-headers.html
+[srcheaders]:       https://www.apache.org/legal/src-headers.html
 [JLS-order]:        https://docs.oracle.com/javase/specs/jls/se11/html/jls-8.html#jls-8.1.1
 [mathml-W3C]:       https://www.w3.org/Math/
 [mathml-wolfram]:   https://reference.wolfram.com/language/XML/tutorial/MathML.html

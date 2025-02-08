@@ -19,7 +19,7 @@ The Project Management Committee (PMC) is the group of people with formal oversi
 * Peter Karich
 * Ross Laidlaw
 * Sean William McCleese
-* [Suresh Marru][sureshweb]
+* Suresh Marru
 
 ## Committers    {#committers}
 
@@ -51,13 +51,10 @@ Emeritus members are peoples who are no longer active (for example because they 
 but are still entitled to many of the rights and privileges of the position.
 Emeritus status indicates interest but not activity, as opposed to having resigned.
 
-* [Chris A. Mattmann][chrisweb]
+* Chris A. Mattmann
 * Gregory D. Reddin
 * Ian Holsman
 * Joe Schaefer
 * Patrick O'Leary
 * Paul Michael Ramirez
 * Travis Pinney
-
-[chrisweb]: http://sunset.usc.edu/~mattmann/
-[sureshweb]: http://people.apache.org/~smarru/
