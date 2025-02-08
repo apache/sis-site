@@ -35,50 +35,20 @@ For example users on Intel platforms need to choose `x64` (not `aarch64`) on the
 
 ## First look
 
-After those two steps are completed, user can see an application like below:
+After those two steps are completed, user can see an application like below
+(click on an image to expand):
 
-<div id="carousel" class="carousel slide" data-bs-ride="carousel">
-  <div class="carousel-inner" style="width:983.25px; height:650px">
-    <div class="carousel-item active">
-      <img style="width:795.75px; height:507px" src="images/application/Summary.png" class="d-block">
-      <div class="carousel-caption d-none d-md-block">
-        <h5>Main metadata (title, geographic extent…) in a summary pane</h5>
-      </div>
-    </div>
-    <div class="carousel-item">
-      <img style="width:747px; height:603px" src="images/application/Visual.png" class="d-block">
-      <div class="carousel-caption d-none d-md-block">
-        <h5>Visualizing raster data <span style="font-size:medium">(credit: JAXA GCOM)</span></h5>
-      </div>
-    </div>
-    <div class="carousel-item">
-      <img style="width:750.75px; height:522px" src="images/application/Data.png" class="d-block">
-      <div class="carousel-caption d-none d-md-block">
-        <h5>Viewing raster numerical values</h5>
-      </div>
-    </div>
-    <div class="carousel-item">
-      <img style="width:795.75px; height:516.75px" src="images/application/Metadata.png" class="d-block">
-      <div class="carousel-caption d-none d-md-block">
-        <h5>ISO 19115 metadata as a tree</h5>
-      </div>
-    </div>
-    <div class="carousel-item">
-      <img style="width:983.25px; height:500.25px" src="images/application/Isolines.png" class="d-block">
-      <div class="carousel-caption d-none d-md-block">
-        <h5>Drawing isolines on a raster</h5>
-      </div>
-    </div>
-  </div>
-  <button class="carousel-control-prev" type="button" data-bs-target="#carousel" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#carousel" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
-</div>
+<table class="images">
+  <tr>
+    <td><img style="width:265.25px; height:169.00px" src="images/application/Summary.png" title="Main metadata (title, geographic extent…) in a summary pane"></td>
+    <td><img style="width:249.00px; height:201.00px" src="images/application/Visual.png"  title="Visualizing raster data (credit: JAXA GCOM)"></td>
+    <td><img style="width:250.25px; height:174.00px" src="images/application/Data.png"    title="Viewing raster numerical values"></td>
+  </tr><tr>
+    <td><img style="width:265.25px; height:172.25px" src="images/application/Metadata.png" title="ISO 19115 metadata as a tree"></td>
+    <td><img style="width:327.75px; height:166.75px" src="images/application/Isolines.png" title="Drawing isolines on a raster"></td>
+    <td></td>
+  </tr>
+</table>
 
 
 # Open files
