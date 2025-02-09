@@ -1,113 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
 
-
-  <title>Apache SIS - Parallel computation</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
-        rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" media="screen" href="../syntax.css">
-  <link rel="stylesheet" type="text/css" media="screen" href="../sis.css">
-</head>
-
-<body>
-
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="../index.html"> Apache SIS™</a>
-    <ul class="navbar-nav me-auto mb-2 mb-md-0">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuAbout" data-bs-toggle="dropdown" aria-expanded="false">About</a>
-        <ul class="dropdown-menu" aria-labelledby="menuAbout">
-          <li><a class="dropdown-item" href="http://www.apache.org/licenses/">License</a></li>
-          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
-          <li><a class="dropdown-item" href="../team-list.html">Project Team</a></li>
-          <li><a class="dropdown-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy policy</a></li>
+  <head>
+    <title>Apache SIS - Parallel computation</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="../sis.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../syntax.css">
+  </head>
+  <body>
+    <div class="topbar">
+      <a class="topbar-brand" href="../index.html">Apache SIS™</a>
+      <ul class="topbar-items">
+        <li>
+          <a href="https://www.apache.org/events/current-event.html">
+             <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="main-section">
+      <nav class="left-bar">
+        <ul class="nav-pills">
+          <li><a class="nav-link  inactive " href="../index.html">Home</a></li>
+          <li><a class="nav-link  inactive " href="../about.html">About</a></li>
+          <li><a class="nav-link  inactive " href="../downloads.html">Downloads</a></li>
+          <li><a class="nav-link  active " href="../howto.html">How to…</a></li>
+          <li><a class="nav-link  inactive " href="../standards.html">Standards</a></li>
+          <li><a class="nav-link  inactive " href="../formats.html">Data formats</a></li>
+          <li><a class="nav-link  inactive " href="../epsg.html">EPSG Database</a></li>
+          <li><a class="nav-link  inactive " href="../javafx.html">Application (demo)</a></li>
+          <li><a class="nav-link  inactive " href="../documentation.html">Documentation</a></li>
         </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuDownload" data-bs-toggle="dropdown" aria-expanded="false">Download</a>
-        <ul class="dropdown-menu" aria-labelledby="menuDownload">
-          <li><a class="dropdown-item" href="../downloads.html">Downloads</a></li>
-          <li><a class="dropdown-item" href="../source.html">Checkout Sources</a></li>
-          <li><a class="dropdown-item" href="../epsg.html">EPSG Database</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuDocumentation" data-bs-toggle="dropdown" aria-expanded="false">Documentation</a>
-        <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
-          <li><a class="dropdown-item" href="../apidocs/index.html">Online Javadoc</a></li>
-          <li><a class="dropdown-item" href="../book/en/developer-guide.html">Developer Guide</a></li>
-          <li><a class="dropdown-item" href="../howto.html">How to…</a></li>
-          <li><a class="dropdown-item" href="../formats.html">Supported formats</a></li>
-          <li><a class="dropdown-item" href="../tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
-          <li><a class="dropdown-item" href="../tables/CoordinateOperationMethods.html">Map Projections</a></li>
-          <li><a class="dropdown-item" href="../code-patterns.html">Code Patterns</a></li>
-          <li><a class="dropdown-item" href="../faq.html">FAQ</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuContribute" data-bs-toggle="dropdown" aria-expanded="false">Contribute</a>
-        <ul class="dropdown-menu" aria-labelledby="menuContribute">
-          <li><a class="dropdown-item" href="../contributor.html">New Contributor</a></li>
-          <li><a class="dropdown-item" href="../coding-conventions.html">Coding Conventions</a></li>
-          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
-          <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
-          <li><a class="dropdown-item" href="https://github.com/apache/sis">GitHub mirror</a></li>
-          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="../release-management.html">Release management</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuASF" data-bs-toggle="dropdown" aria-expanded="false">The Foundation</a>
-        <ul class="dropdown-menu" aria-labelledby="menuASF">
-          <li><a class="dropdown-item" href="http://www.apache.org">The Foundation</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/foundation/sponsorship.html">Donate</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/security/">Security</a></li>
-        </ul>
-      </li>
-    </ul>
-    <ul class="navbar-nav ml-auto mb-2 mb-md-0">
-      <li class="nav-item">
-        <a href="https://www.apache.org/events/current-event.html">
-           <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
-        </a>
-      </li>
-    </ul>
-  </div>
-</nav>
-
-
-<div class="row flex-nowrap">
-  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width:13rem; min-height:40rem">
-    <ul class="nav nav-pills flex-column mb-auto position-fixed">
-      <li><a class="nav-link  text-white " href="../index.html">Home</a></li>
-      <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
-      <li><a class="nav-link  text-white " href="../downloads.html">Downloads</a></li>
-      <li><a class="nav-link  active " href="../howto.html">How to…</a></li>
-      <li><a class="nav-link  text-white " href="../standards.html">Standards</a></li>
-      <li><a class="nav-link  text-white " href="../formats.html">Data formats</a></li>
-      <li><a class="nav-link  text-white " href="../epsg.html">EPSG Database</a></li>
-      <li><a class="nav-link  text-white " href="../javafx.html">Application (demo)</a></li>
-      <li><a class="nav-link text-white" href="../apidocs/index.html">Online Javadoc</a></li>
-      <li><a class="nav-link text-white" href="../book/en/developer-guide.html">Developer Guide</a></li>
-      <li><a class="nav-link  text-white " href="../code-patterns.html">Code patterns</a></li>
-      <li><a class="nav-link  text-white " href="../faq.html">FAQ</a></li>
-    </ul>
-  </div>
-  <div class="col">
-    <main class="container">
-      <article>
-        <img src="../images/logo.png" class="sis-logo" align="left"/>
-        <p class="page-title">Parallel computation</p>
+      </nav>
+      <div class="main-content">
+        <main class="container">
+          <article>
+            <img src="../images/logo.png" class="sis-logo" align="left"/>
+            <p class="page-title">Parallel computation</p>
 
   <p>Some grid coverages will read or compute chunks of data only when first requested.
-For example when a coverage is the <a href="resample_raster.html">result of a reprojection</a>,
-or when a big coverage <a href="rasters_bigger_than_memory.html">uses deferred tile reading</a>.
+For example when a coverage is the <a href="../howto/resample_raster.html">result of a reprojection</a>,
+or when a big coverage <a href="../howto/rasters_bigger_than_memory.html">uses deferred tile reading</a>.
 However if tiles are always requested in the same thread,
 it will result in a sequential, mono-threaded computation.
 Furthermore it may cause a lot of seek or &ldquo;HTTP range&rdquo; operations if tiles are read in random order.
@@ -132,58 +66,52 @@ we need to inform Apache SIS in advance about which pixels are about to be reque
 </tbody>
 </table>
 <h1 id="code-example">Code example</h1>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.awt.image.ImagingOpException</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.awt.image.RenderedImage</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.coverage.grid.GridCoverage</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.image.ImageProcessor</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ParallelTileComputation</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="cm">/**
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.awt.image.ImagingOpException</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.awt.image.RenderedImage</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.coverage.grid.GridCoverage</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.image.ImageProcessor</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ParallelTileComputation</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="cm">/**
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * Demo entry point.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     *
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @param  args  ignored.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws ImagingOpException unchecked exception thrown if an error occurred while computing a tile.
-</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
-</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">GridCoverage</span> <span class="n">coverage</span> <span class="o">=</span> <span class="o">...;</span>        <span class="c1">// See &#34;Resample a raster&#34; code example.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">GridCoverage</span><span class="w"> </span><span class="n">coverage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...;</span><span class="w">        </span><span class="c1">// See &#34;Resample a raster&#34; code example.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * Get all data from the coverage, assuming that the grid is two-dimensional.
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * If there is three or more dimensions, the null value needs to be replaced
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * by a `GridExtent` specifying the two-dimensional slice to fetch.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
-</span></span><span class="line"><span class="cl">        <span class="n">RenderedImage</span> <span class="n">data</span> <span class="o">=</span> <span class="n">coverage</span><span class="o">.</span><span class="na">render</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">RenderedImage</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">coverage</span><span class="p">.</span><span class="na">render</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * With above `RenderedImage`, tiles are computed when first requested and cached for future uses.
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * If all tiles will be requested in the same thread, it results in a sequential tile computation.
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * For parallel computation using all available processors, we need to inform Apache SIS in advance
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * about which pixels will be requested. The `null` argument below means &#34;all pixels in the image&#34;.
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * Don&#39;t use that null argument if the image is very big!
-</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
-</span></span><span class="line"><span class="cl">        <span class="n">var</span> <span class="n">processor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ImageProcessor</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">        <span class="n">data</span> <span class="o">=</span> <span class="n">processor</span><span class="o">.</span><span class="na">prefetch</span><span class="o">(</span><span class="n">data</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="n">processor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ImageProcessor</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">processor</span><span class="p">.</span><span class="na">prefetch</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * See for example &#34;Get raster values at pixel coordinates&#34; for using this image.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
+</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div>
 
-
-      </article>
-    </main>
-    <footer class="footer">
-    <div class="container">
-      <p>
-        Copyright &copy; 2013-2023 The Apache Software Foundation, Licensed under the
-        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
-        Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
-      </p>
+          </article>
+        </main>
+        <footer>
+          <div class="container">
+            <p>Copyright &copy; 2013-2025 The Apache Software Foundation, Licensed under the
+            <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
+            Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+          </div>
+        </footer>
+      </div>
     </div>
-</footer>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
-
-</body>
+  </body>
 </html>

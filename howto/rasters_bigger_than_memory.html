@@ -1,109 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
 
-
-  <title>Apache SIS - Handle rasters bigger than memory</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
-        rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" media="screen" href="../syntax.css">
-  <link rel="stylesheet" type="text/css" media="screen" href="../sis.css">
-</head>
-
-<body>
-
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="../index.html"> Apache SIS™</a>
-    <ul class="navbar-nav me-auto mb-2 mb-md-0">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuAbout" data-bs-toggle="dropdown" aria-expanded="false">About</a>
-        <ul class="dropdown-menu" aria-labelledby="menuAbout">
-          <li><a class="dropdown-item" href="http://www.apache.org/licenses/">License</a></li>
-          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
-          <li><a class="dropdown-item" href="../team-list.html">Project Team</a></li>
-          <li><a class="dropdown-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy policy</a></li>
+  <head>
+    <title>Apache SIS - Handle rasters bigger than memory</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="../sis.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../syntax.css">
+  </head>
+  <body>
+    <div class="topbar">
+      <a class="topbar-brand" href="../index.html">Apache SIS™</a>
+      <ul class="topbar-items">
+        <li>
+          <a href="https://www.apache.org/events/current-event.html">
+             <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="main-section">
+      <nav class="left-bar">
+        <ul class="nav-pills">
+          <li><a class="nav-link  inactive " href="../index.html">Home</a></li>
+          <li><a class="nav-link  inactive " href="../about.html">About</a></li>
+          <li><a class="nav-link  inactive " href="../downloads.html">Downloads</a></li>
+          <li><a class="nav-link  active " href="../howto.html">How to…</a></li>
+          <li><a class="nav-link  inactive " href="../standards.html">Standards</a></li>
+          <li><a class="nav-link  inactive " href="../formats.html">Data formats</a></li>
+          <li><a class="nav-link  inactive " href="../epsg.html">EPSG Database</a></li>
+          <li><a class="nav-link  inactive " href="../javafx.html">Application (demo)</a></li>
+          <li><a class="nav-link  inactive " href="../documentation.html">Documentation</a></li>
         </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuDownload" data-bs-toggle="dropdown" aria-expanded="false">Download</a>
-        <ul class="dropdown-menu" aria-labelledby="menuDownload">
-          <li><a class="dropdown-item" href="../downloads.html">Downloads</a></li>
-          <li><a class="dropdown-item" href="../source.html">Checkout Sources</a></li>
-          <li><a class="dropdown-item" href="../epsg.html">EPSG Database</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuDocumentation" data-bs-toggle="dropdown" aria-expanded="false">Documentation</a>
-        <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
-          <li><a class="dropdown-item" href="../apidocs/index.html">Online Javadoc</a></li>
-          <li><a class="dropdown-item" href="../book/en/developer-guide.html">Developer Guide</a></li>
-          <li><a class="dropdown-item" href="../howto.html">How to…</a></li>
-          <li><a class="dropdown-item" href="../formats.html">Supported formats</a></li>
-          <li><a class="dropdown-item" href="../tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
-          <li><a class="dropdown-item" href="../tables/CoordinateOperationMethods.html">Map Projections</a></li>
-          <li><a class="dropdown-item" href="../code-patterns.html">Code Patterns</a></li>
-          <li><a class="dropdown-item" href="../faq.html">FAQ</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuContribute" data-bs-toggle="dropdown" aria-expanded="false">Contribute</a>
-        <ul class="dropdown-menu" aria-labelledby="menuContribute">
-          <li><a class="dropdown-item" href="../contributor.html">New Contributor</a></li>
-          <li><a class="dropdown-item" href="../coding-conventions.html">Coding Conventions</a></li>
-          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
-          <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
-          <li><a class="dropdown-item" href="https://github.com/apache/sis">GitHub mirror</a></li>
-          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="../release-management.html">Release management</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuASF" data-bs-toggle="dropdown" aria-expanded="false">The Foundation</a>
-        <ul class="dropdown-menu" aria-labelledby="menuASF">
-          <li><a class="dropdown-item" href="http://www.apache.org">The Foundation</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/foundation/sponsorship.html">Donate</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/security/">Security</a></li>
-        </ul>
-      </li>
-    </ul>
-    <ul class="navbar-nav ml-auto mb-2 mb-md-0">
-      <li class="nav-item">
-        <a href="https://www.apache.org/events/current-event.html">
-           <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
-        </a>
-      </li>
-    </ul>
-  </div>
-</nav>
-
-
-<div class="row flex-nowrap">
-  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width:13rem; min-height:40rem">
-    <ul class="nav nav-pills flex-column mb-auto position-fixed">
-      <li><a class="nav-link  text-white " href="../index.html">Home</a></li>
-      <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
-      <li><a class="nav-link  text-white " href="../downloads.html">Downloads</a></li>
-      <li><a class="nav-link  active " href="../howto.html">How to…</a></li>
-      <li><a class="nav-link  text-white " href="../standards.html">Standards</a></li>
-      <li><a class="nav-link  text-white " href="../formats.html">Data formats</a></li>
-      <li><a class="nav-link  text-white " href="../epsg.html">EPSG Database</a></li>
-      <li><a class="nav-link  text-white " href="../javafx.html">Application (demo)</a></li>
-      <li><a class="nav-link text-white" href="../apidocs/index.html">Online Javadoc</a></li>
-      <li><a class="nav-link text-white" href="../book/en/developer-guide.html">Developer Guide</a></li>
-      <li><a class="nav-link  text-white " href="../code-patterns.html">Code patterns</a></li>
-      <li><a class="nav-link  text-white " href="../faq.html">FAQ</a></li>
-    </ul>
-  </div>
-  <div class="col">
-    <main class="container">
-      <article>
-        <img src="../images/logo.png" class="sis-logo" align="left"/>
-        <p class="page-title">Handle rasters bigger than memory</p>
+      </nav>
+      <div class="main-content">
+        <main class="container">
+          <article>
+            <img src="../images/logo.png" class="sis-logo" align="left"/>
+            <p class="page-title">Handle rasters bigger than memory</p>
 
   <p>This example opens a big GeoTIFF file without reading the tiles immediately.
 Instead, tiles will be read only when requested by a call to the Java2D <code>RenderedImage.getTile(int, int)</code> method.
@@ -111,14 +45,14 @@ Loaded tiles are cached by soft references, i.e. they may be discarted and reloa
 This approach allows processing of raster data larger than memory,
 provided that the application does not request all tiles at once.
 It integrates well with operations provided by Apache <abbr title="Spatial Information System">SIS</abbr> such as
-<a href="resample_raster.html">raster resampling</a> and
-<a href="raster_values_at_geographic_coordinates.html">getting values at geographic coordinates</a>.</p>
+<a href="../howto/resample_raster.html">raster resampling</a> and
+<a href="../howto/raster_values_at_geographic_coordinates.html">getting values at geographic coordinates</a>.</p>
 <p>The approach demonstrated in this example has one drawback compared to the default behavior:
 the <code>DataStore</code> must be kept open during all the time that the <code>GridCoverage</code> is used.
 Consequently the <code>data</code> variable should not be used outside the <code>try</code> block in this example.</p>
 <p>The example in this page works with pixel coordinates.
 For working with geographic coordinates, see
-<a href="raster_values_at_geographic_coordinates.html">values at geographic coordinates</a> code example.</p>
+<a href="../howto/raster_values_at_geographic_coordinates.html">values at geographic coordinates</a> code example.</p>
 <h1 id="direct-dependencies">Direct dependencies</h1>
 <table>
 <thead>
@@ -145,80 +79,80 @@ For working with geographic coordinates, see
 depending how the Coordinate Reference System (CRS) is encoded in the GeoTIFF file.</p>
 <h1 id="code-example">Code example</h1>
 <p>The file name in following code need to be updated for yours data.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.File</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.util.Collection</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.awt.Rectangle</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.awt.image.Raster</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.awt.image.RenderedImage</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.awt.image.ImagingOpException</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.image.ImageProcessor</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.Resource</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.Aggregate</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.DataStore</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.DataStores</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.DataStoreException</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.GridCoverageResource</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.RasterLoadingStrategy</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.coverage.grid.GridCoverage</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RasterBiggerThanMemory</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="cm">/**
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.io.File</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Collection</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.awt.Rectangle</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.awt.image.Raster</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.awt.image.RenderedImage</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.awt.image.ImagingOpException</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.image.ImageProcessor</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.storage.Resource</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.storage.Aggregate</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.storage.DataStore</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.storage.DataStores</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.storage.DataStoreException</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.storage.GridCoverageResource</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.storage.RasterLoadingStrategy</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.coverage.grid.GridCoverage</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">RasterBiggerThanMemory</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="cm">/**
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * Demo entry point.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     *
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @param  args  ignored.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws DataStoreException if an error occurred while reading the raster.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws ImagingOpException unchecked exception thrown if an error occurred while loading a tile.
-</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
-</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">DataStoreException</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">(</span><span class="n">DataStore</span> <span class="n">store</span> <span class="o">=</span> <span class="n">DataStores</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&#34;TM250m.tiff&#34;</span><span class="o">)))</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">            <span class="n">Collection</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Resource</span><span class="o">&gt;</span> <span class="n">allImages</span> <span class="o">=</span> <span class="o">((</span><span class="n">Aggregate</span><span class="o">)</span> <span class="n">store</span><span class="o">).</span><span class="na">components</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">            <span class="n">GridCoverageResource</span> <span class="n">firstImage</span> <span class="o">=</span> <span class="o">(</span><span class="n">GridCoverageResource</span><span class="o">)</span> <span class="n">allImages</span><span class="o">.</span><span class="na">iterator</span><span class="o">().</span><span class="na">next</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">            <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">DataStoreException</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">DataStore</span><span class="w"> </span><span class="n">store</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DataStores</span><span class="p">.</span><span class="na">open</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">File</span><span class="p">(</span><span class="s">&#34;TM250m.tiff&#34;</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">Collection</span><span class="o">&lt;?</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Resource</span><span class="o">&gt;</span><span class="w"> </span><span class="n">allImages</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">((</span><span class="n">Aggregate</span><span class="p">)</span><span class="w"> </span><span class="n">store</span><span class="p">).</span><span class="na">components</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">GridCoverageResource</span><span class="w"> </span><span class="n">firstImage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">GridCoverageResource</span><span class="p">)</span><span class="w"> </span><span class="n">allImages</span><span class="p">.</span><span class="na">iterator</span><span class="p">().</span><span class="na">next</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * Following line requests to load data at `RenderedImage.getTile(…)` invocation time.
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * This is the key line of code for handling rasters larger than memory, but is effective
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * only if the file is tiled as in, for example, Cloud Optimized GeoTIFF (COG) convention.
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * Without this line, the default is to load all data at `GridCoverageResource.read(…)`
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * invocation time.
-</span></span></span><span class="line"><span class="cl"><span class="cm">             */</span>
-</span></span><span class="line"><span class="cl">            <span class="n">firstImage</span><span class="o">.</span><span class="na">setLoadingStrategy</span><span class="o">(</span><span class="n">RasterLoadingStrategy</span><span class="o">.</span><span class="na">AT_GET_TILE_TIME</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">            <span class="n">GridCoverage</span> <span class="n">data</span> <span class="o">=</span> <span class="n">firstImage</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">            <span class="n">printPixelValue</span><span class="o">(</span><span class="n">data</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">            <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">             */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">firstImage</span><span class="p">.</span><span class="na">setLoadingStrategy</span><span class="p">(</span><span class="n">RasterLoadingStrategy</span><span class="p">.</span><span class="na">AT_GET_TILE_TIME</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">GridCoverage</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">firstImage</span><span class="p">.</span><span class="na">read</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">printPixelValue</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * Contrarily to other examples, the `GridCoverage` fetched in deferred reading mode
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * can NOT be used outside this `try` block, because the `DataStore` must be open.
-</span></span></span><span class="line"><span class="cl"><span class="cm">             */</span>
-</span></span><span class="line"><span class="cl">        <span class="o">}</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">             */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="cm">/**
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * Prints the value of an arbitrary pixel.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     *
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @param data      the data from which to get sample values.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @param prefetch  whether to load some pixels in advance.
-</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
-</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printPixelValue</span><span class="o">(</span><span class="n">GridCoverage</span> <span class="n">data</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">prefetch</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">RenderedImage</span> <span class="n">image</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="na">render</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;The image has %d × %d tiles.%n&#34;</span><span class="o">,</span> <span class="n">image</span><span class="o">.</span><span class="na">getNumXTiles</span><span class="o">(),</span> <span class="n">image</span><span class="o">.</span><span class="na">getNumYTiles</span><span class="o">());</span>
-</span></span><span class="line"><span class="cl">        <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">printPixelValue</span><span class="p">(</span><span class="n">GridCoverage</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="n">prefetch</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">RenderedImage</span><span class="w"> </span><span class="n">image</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">.</span><span class="na">render</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="s">&#34;The image has %d × %d tiles.%n&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">image</span><span class="p">.</span><span class="na">getNumXTiles</span><span class="p">(),</span><span class="w"> </span><span class="n">image</span><span class="p">.</span><span class="na">getNumYTiles</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * If we know in advance which tiles will be requested, specifying them in advance allows
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * the GeoTIFF reader to use a better strategy than loading the tiles in random order.
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * This step is optional.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">prefetch</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">            <span class="n">var</span> <span class="n">processor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ImageProcessor</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">            <span class="n">image</span> <span class="o">=</span> <span class="n">processor</span><span class="o">.</span><span class="na">prefetch</span><span class="o">(</span><span class="n">image</span><span class="o">,</span> <span class="k">new</span> <span class="n">Rectangle</span><span class="o">(</span><span class="n">90000</span><span class="o">,</span> <span class="n">50000</span><span class="o">,</span> <span class="n">1000</span><span class="o">,</span> <span class="n">1000</span><span class="o">));</span>
-</span></span><span class="line"><span class="cl">        <span class="o">}</span>
-</span></span><span class="line"><span class="cl">        <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">prefetch</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="kd">var</span><span class="w"> </span><span class="n">processor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ImageProcessor</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">image</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">processor</span><span class="p">.</span><span class="na">prefetch</span><span class="p">(</span><span class="n">image</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Rectangle</span><span class="p">(</span><span class="n">90000</span><span class="p">,</span><span class="w"> </span><span class="n">50000</span><span class="p">,</span><span class="w"> </span><span class="n">1000</span><span class="p">,</span><span class="w"> </span><span class="n">1000</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * Get an arbitrary tile, then get an arbitrary sample value in an arbitrary band (the blue channel).
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * This example handles the tiles directly for demonstration purposes, but it could be simplified
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * by using `PixelIterator` instead.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
-</span></span><span class="line"><span class="cl">        <span class="n">Raster</span> <span class="n">tile</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="na">getTile</span><span class="o">(</span><span class="n">130</span><span class="o">,</span> <span class="n">80</span><span class="o">);</span>               <span class="c1">// This is where tile loading actually happen.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Got a tile starting at coordinates %d, %d.%n&#34;</span><span class="o">,</span> <span class="n">tile</span><span class="o">.</span><span class="na">getMinX</span><span class="o">(),</span> <span class="n">tile</span><span class="o">.</span><span class="na">getMinY</span><span class="o">());</span>
-</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;A sample value in the arbitrary tile: %d%n&#34;</span><span class="o">,</span> <span class="n">tile</span><span class="o">.</span><span class="na">getSample</span><span class="o">(</span><span class="n">93710</span><span class="o">,</span> <span class="n">57680</span><span class="o">,</span> <span class="n">2</span><span class="o">));</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
-<h1 id="output">Output</h1>
+</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Raster</span><span class="w"> </span><span class="n">tile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">image</span><span class="p">.</span><span class="na">getTile</span><span class="p">(</span><span class="n">130</span><span class="p">,</span><span class="w"> </span><span class="n">80</span><span class="p">);</span><span class="w">               </span><span class="c1">// This is where tile loading actually happen.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="s">&#34;Got a tile starting at coordinates %d, %d.%n&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">tile</span><span class="p">.</span><span class="na">getMinX</span><span class="p">(),</span><span class="w"> </span><span class="n">tile</span><span class="p">.</span><span class="na">getMinY</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="s">&#34;A sample value in the arbitrary tile: %d%n&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">tile</span><span class="p">.</span><span class="na">getSample</span><span class="p">(</span><span class="n">93710</span><span class="p">,</span><span class="w"> </span><span class="n">57680</span><span class="p">,</span><span class="w"> </span><span class="n">2</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h1 id="output">Output</h1>
 <p>The output depends on the raster data and the locale.
 Below is an example:</p>
 <pre tabindex="0"><code>The image has 240 × 120 tiles.
@@ -231,22 +165,16 @@ but instead was deferred at <code>image.getTile(…)</code> or <code>processor.p
 <pre tabindex="0"><code>FINE [GridCoverageResource] Loaded grid coverage between 90°S – 90°N and 180°W – 180°E from file “TM250m.tiff” in 0.779 seconds.
 </code></pre>
 
-      </article>
-    </main>
-    <footer class="footer">
-    <div class="container">
-      <p>
-        Copyright &copy; 2013-2023 The Apache Software Foundation, Licensed under the
-        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
-        Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
-      </p>
+          </article>
+        </main>
+        <footer>
+          <div class="container">
+            <p>Copyright &copy; 2013-2025 The Apache Software Foundation, Licensed under the
+            <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
+            Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+          </div>
+        </footer>
+      </div>
     </div>
-</footer>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
-
-</body>
+  </body>
 </html>

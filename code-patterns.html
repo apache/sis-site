@@ -1,109 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
 
-
-  <title>Apache SIS - Recommended code patterns</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
-        rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" media="screen" href="./syntax.css">
-  <link rel="stylesheet" type="text/css" media="screen" href="./sis.css">
-</head>
-
-<body>
-
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="./index.html"> Apache SIS™</a>
-    <ul class="navbar-nav me-auto mb-2 mb-md-0">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuAbout" data-bs-toggle="dropdown" aria-expanded="false">About</a>
-        <ul class="dropdown-menu" aria-labelledby="menuAbout">
-          <li><a class="dropdown-item" href="http://www.apache.org/licenses/">License</a></li>
-          <li><a class="dropdown-item" href="./mail-lists.html">Mailing Lists</a></li>
-          <li><a class="dropdown-item" href="./team-list.html">Project Team</a></li>
-          <li><a class="dropdown-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy policy</a></li>
+  <head>
+    <title>Apache SIS - Recommended code patterns</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="./sis.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="./syntax.css">
+  </head>
+  <body>
+    <div class="topbar">
+      <a class="topbar-brand" href="./index.html">Apache SIS™</a>
+      <ul class="topbar-items">
+        <li>
+          <a href="https://www.apache.org/events/current-event.html">
+             <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="main-section">
+      <nav class="left-bar">
+        <ul class="nav-pills">
+          <li><a class="nav-link  inactive " href="./index.html">Home</a></li>
+          <li><a class="nav-link  inactive " href="./about.html">About</a></li>
+          <li><a class="nav-link  inactive " href="./downloads.html">Downloads</a></li>
+          <li><a class="nav-link  inactive " href="./howto.html">How to…</a></li>
+          <li><a class="nav-link  inactive " href="./standards.html">Standards</a></li>
+          <li><a class="nav-link  inactive " href="./formats.html">Data formats</a></li>
+          <li><a class="nav-link  inactive " href="./epsg.html">EPSG Database</a></li>
+          <li><a class="nav-link  inactive " href="./javafx.html">Application (demo)</a></li>
+          <li><a class="nav-link  inactive " href="./documentation.html">Documentation</a></li>
         </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuDownload" data-bs-toggle="dropdown" aria-expanded="false">Download</a>
-        <ul class="dropdown-menu" aria-labelledby="menuDownload">
-          <li><a class="dropdown-item" href="./downloads.html">Downloads</a></li>
-          <li><a class="dropdown-item" href="./source.html">Checkout Sources</a></li>
-          <li><a class="dropdown-item" href="./epsg.html">EPSG Database</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuDocumentation" data-bs-toggle="dropdown" aria-expanded="false">Documentation</a>
-        <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
-          <li><a class="dropdown-item" href="./apidocs/index.html">Online Javadoc</a></li>
-          <li><a class="dropdown-item" href="./book/en/developer-guide.html">Developer Guide</a></li>
-          <li><a class="dropdown-item" href="./howto.html">How to…</a></li>
-          <li><a class="dropdown-item" href="./formats.html">Supported formats</a></li>
-          <li><a class="dropdown-item" href="./tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
-          <li><a class="dropdown-item" href="./tables/CoordinateOperationMethods.html">Map Projections</a></li>
-          <li><a class="dropdown-item" href="./code-patterns.html">Code Patterns</a></li>
-          <li><a class="dropdown-item" href="./faq.html">FAQ</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuContribute" data-bs-toggle="dropdown" aria-expanded="false">Contribute</a>
-        <ul class="dropdown-menu" aria-labelledby="menuContribute">
-          <li><a class="dropdown-item" href="./contributor.html">New Contributor</a></li>
-          <li><a class="dropdown-item" href="./coding-conventions.html">Coding Conventions</a></li>
-          <li><a class="dropdown-item" href="./mail-lists.html">Mailing Lists</a></li>
-          <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
-          <li><a class="dropdown-item" href="https://github.com/apache/sis">GitHub mirror</a></li>
-          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="./release-management.html">Release management</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuASF" data-bs-toggle="dropdown" aria-expanded="false">The Foundation</a>
-        <ul class="dropdown-menu" aria-labelledby="menuASF">
-          <li><a class="dropdown-item" href="http://www.apache.org">The Foundation</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/foundation/sponsorship.html">Donate</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/security/">Security</a></li>
-        </ul>
-      </li>
-    </ul>
-    <ul class="navbar-nav ml-auto mb-2 mb-md-0">
-      <li class="nav-item">
-        <a href="https://www.apache.org/events/current-event.html">
-           <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
-        </a>
-      </li>
-    </ul>
-  </div>
-</nav>
-
-
-<div class="row flex-nowrap">
-  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width:13rem; min-height:40rem">
-    <ul class="nav nav-pills flex-column mb-auto position-fixed">
-      <li><a class="nav-link  text-white " href="./index.html">Home</a></li>
-      <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
-      <li><a class="nav-link  text-white " href="./downloads.html">Downloads</a></li>
-      <li><a class="nav-link  text-white " href="./howto.html">How to…</a></li>
-      <li><a class="nav-link  text-white " href="./standards.html">Standards</a></li>
-      <li><a class="nav-link  text-white " href="./formats.html">Data formats</a></li>
-      <li><a class="nav-link  text-white " href="./epsg.html">EPSG Database</a></li>
-      <li><a class="nav-link  text-white " href="./javafx.html">Application (demo)</a></li>
-      <li><a class="nav-link text-white" href="./apidocs/index.html">Online Javadoc</a></li>
-      <li><a class="nav-link text-white" href="./book/en/developer-guide.html">Developer Guide</a></li>
-      <li><a class="nav-link  active " href="./code-patterns.html">Code patterns</a></li>
-      <li><a class="nav-link  text-white " href="./faq.html">FAQ</a></li>
-    </ul>
-  </div>
-  <div class="col">
-    <main class="container">
-      <article>
-        <img src="./images/logo.png" class="sis-logo" align="left"/>
-        <p class="page-title">Recommended code patterns</p>
+      </nav>
+      <div class="main-content">
+        <main class="container">
+          <article>
+            <img src="./images/logo.png" class="sis-logo" align="left"/>
+            <p class="page-title">Recommended code patterns</p>
 
   <p>This page lists some recommended code pattern for developing or using Apache <abbr title="Spatial Information System">SIS</abbr>.</p>
 <nav id="TableOfContents">
@@ -127,12 +61,14 @@
       </ul>
     </li>
     <li><a href="#logging">Logging   </a></li>
+    <li><a href="#warnings">Compiler warnings   </a></li>
+    <li><a href="#javadoc">Javadoc   </a></li>
   </ul>
 </nav>
 <h1 id="referencing">Referencing   </h1>
 <p>This section lists recommended code pattern when using the <code>sis-referencing</code> module.</p>
 <h2 id="axisOrder">Never explicitly swap coordinates for axis order   </h2>
-<p>The <a href="faq.html#axisOrder">axis order issue</a> causes lot of confusion,
+<p>The <a href="./faq.html#axisOrder">axis order issue</a> causes lot of confusion,
 and developers are sometimes tempted to swap their coordinate values in order to comply with some expected axis ordering.
 It should never be necessary, since the Apache <abbr title="Spatial Information System">SIS</abbr> referencing engine manages axis order transparently —
 provided that the Coordinate Reference System (CRS) definition is accurate.
@@ -145,7 +81,7 @@ and let the referencing engine performs the conversion from the source to the ta
 <h2 id="gridToCRS">Georeference images with affine transforms, <em>not</em> bounding boxes   </h2>
 <p>Many users define the geographic extent of an image by its corner locations.
 This approach may be ambiguous as it does not specify whether the (<var>x</var>,<var>y</var>) axes are interchanged
-(see the <a href="faq.html#axisOrder">axis order issue</a>) or if the <var>y</var> axis is oriented downward.
+(see the <a href="./faq.html#axisOrder">axis order issue</a>) or if the <var>y</var> axis is oriented downward.
 All images in SIS shall be georeferenced by at least an affine transform (more complex transforms are also possible),
 never by a rectangle or bounding box.
 In the two-dimensional case, the standard <code>java.awt.geom.Affine­Transform</code> class can be used.</p>
@@ -179,12 +115,12 @@ so <code>&quot;Foo bar&quot;</code> is sorted before both <code>&quot;FooBar&quo
 Some &ldquo;characters&rdquo; are actually represented using two consecutive <code>char</code> elements.
 Those &ldquo;characters&rdquo; are called <cite>code points</cite>.
 Consequently, when iterating over characters in a string, the following pattern should be used:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">string</span><span class="o">.</span><span class="na">length</span><span class="o">();)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="kd">final</span> <span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="na">codePointAt</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">    <span class="c1">// ... do some stuff ...
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">i</span> <span class="o">+=</span> <span class="n">Character</span><span class="o">.</span><span class="na">charCount</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
-<h1 id="logging">Logging   </h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;</span><span class="n">string</span><span class="p">.</span><span class="na">length</span><span class="p">();)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string</span><span class="p">.</span><span class="na">codePointAt</span><span class="p">(</span><span class="n">i</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// ... do some stuff ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">i</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">Character</span><span class="p">.</span><span class="na">charCount</span><span class="p">(</span><span class="n">c</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h1 id="logging">Logging   </h1>
 <p>Apache <abbr title="Spatial Information System">SIS</abbr> uses the <code>java.util.logging</code> framework.
 It does not necessarily means that all SIS users are forced to use this framework,
 as it is possible to use <code>java.util.logging</code> as an API and have logging redirected to another system.
@@ -198,24 +134,43 @@ since developers use them for configuring their logging (verbosity, destination,
 <p>All logging at <code>Level.INFO</code> or above shall be targeted to users or administrators, not to developers.
 In particular <code>Level.SEVERE</code> shall be reserved for critical errors that compromise the application stability —
 it shall not be used for exceptions thrown while parsing user data (file or database).</p>
+<h1 id="warnings">Compiler warnings   </h1>
+<p>When a local variable in a method has the same name as a field in the enclosing class,
+some compilers emit a <em>&ldquo;Local variable hides a field&rdquo;</em> warning.
+This warning can be disabled with a <code>@SuppressWarnings(&quot;LocalVariableHidesMemberVariable&quot;)</code> annotation.
+However, by convention Apache SIS applies this annotation only when the local variable should have the same value as the field.
+Otherwise, the warning should be resolved. When a code hides a field, it should be a statement such as
+<code>final Foo foo = this.foo;</code> or <code>final Foo foo = getFoo();</code> and may exist for the following reasons:</p>
+<ul>
+<li><code>this.foo</code> is non-final and we want to make sure that it is not modified by accident in the method.</li>
+<li><code>this.foo</code> is a volatile field, therefor should be read only once and cached in the method for performance.</li>
+<li><code>getFoo()</code> computes the value of <code>this.foo</code> lazily.</li>
+</ul>
+<h1 id="javadoc">Javadoc   </h1>
+<p>Javadoc comments are written in HTML, not Markdown, both for historical reasons and because HTML allows richer semantic.
+For example, for formatting a text in italic, the Javadoc should choose the most appropriate of the following tags:</p>
+<ul>
+<li><code>&lt;em&gt;</code>   for emphasis. A screen reader may pronounce the words using verbal stress.</li>
+<li><code>&lt;var&gt;</code>  for a variable to show like a mathematical symbol.</li>
+<li><code>&lt;dfn&gt;</code>  for introducing a word defined by the nearby sentences.</li>
+<li><code>&lt;cite&gt;</code> for the title of a document, in particular an OGC/ISO standard.
+Apache SIS uses also this tag for the name of a geodetic object in the EPSG geodetic database,
+in which case the object definition is considered as a document.
+This tag can also be used for section titles.</li>
+<li><code>&lt;i&gt;</code> for rendering in italic for any reason than the above reasons.</li>
+</ul>
 
 
-      </article>
-    </main>
-    <footer class="footer">
-    <div class="container">
-      <p>
-        Copyright &copy; 2013-2023 The Apache Software Foundation, Licensed under the
-        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
-        Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
-      </p>
+          </article>
+        </main>
+        <footer>
+          <div class="container">
+            <p>Copyright &copy; 2013-2025 The Apache Software Foundation, Licensed under the
+            <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
+            Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+          </div>
+        </footer>
+      </div>
     </div>
-</footer>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
-
-</body>
+  </body>
 </html>
