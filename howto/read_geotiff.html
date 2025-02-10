@@ -1,109 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
 
-
-  <title>Apache SIS - Read raster from a GeoTIFF file</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
-        rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" media="screen" href="../syntax.css">
-  <link rel="stylesheet" type="text/css" media="screen" href="../sis.css">
-</head>
-
-<body>
-
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="../index.html"> Apache SIS™</a>
-    <ul class="navbar-nav me-auto mb-2 mb-md-0">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuAbout" data-bs-toggle="dropdown" aria-expanded="false">About</a>
-        <ul class="dropdown-menu" aria-labelledby="menuAbout">
-          <li><a class="dropdown-item" href="http://www.apache.org/licenses/">License</a></li>
-          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
-          <li><a class="dropdown-item" href="../team-list.html">Project Team</a></li>
-          <li><a class="dropdown-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy policy</a></li>
+  <head>
+    <title>Apache SIS - Read raster from a GeoTIFF file</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="../sis.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../syntax.css">
+  </head>
+  <body>
+    <div class="topbar">
+      <a class="topbar-brand" href="../index.html">Apache SIS™</a>
+      <ul class="topbar-items">
+        <li>
+          <a href="https://www.apache.org/events/current-event.html">
+             <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="main-section">
+      <nav class="left-bar">
+        <ul class="nav-pills">
+          <li><a class="nav-link  inactive " href="../index.html">Home</a></li>
+          <li><a class="nav-link  inactive " href="../about.html">About</a></li>
+          <li><a class="nav-link  inactive " href="../downloads.html">Downloads</a></li>
+          <li><a class="nav-link  active " href="../howto.html">How to…</a></li>
+          <li><a class="nav-link  inactive " href="../standards.html">Standards</a></li>
+          <li><a class="nav-link  inactive " href="../formats.html">Data formats</a></li>
+          <li><a class="nav-link  inactive " href="../epsg.html">EPSG Database</a></li>
+          <li><a class="nav-link  inactive " href="../javafx.html">Application (demo)</a></li>
+          <li><a class="nav-link  inactive " href="../documentation.html">Documentation</a></li>
         </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuDownload" data-bs-toggle="dropdown" aria-expanded="false">Download</a>
-        <ul class="dropdown-menu" aria-labelledby="menuDownload">
-          <li><a class="dropdown-item" href="../downloads.html">Downloads</a></li>
-          <li><a class="dropdown-item" href="../source.html">Checkout Sources</a></li>
-          <li><a class="dropdown-item" href="../epsg.html">EPSG Database</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuDocumentation" data-bs-toggle="dropdown" aria-expanded="false">Documentation</a>
-        <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
-          <li><a class="dropdown-item" href="../apidocs/index.html">Online Javadoc</a></li>
-          <li><a class="dropdown-item" href="../book/en/developer-guide.html">Developer Guide</a></li>
-          <li><a class="dropdown-item" href="../howto.html">How to…</a></li>
-          <li><a class="dropdown-item" href="../formats.html">Supported formats</a></li>
-          <li><a class="dropdown-item" href="../tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
-          <li><a class="dropdown-item" href="../tables/CoordinateOperationMethods.html">Map Projections</a></li>
-          <li><a class="dropdown-item" href="../code-patterns.html">Code Patterns</a></li>
-          <li><a class="dropdown-item" href="../faq.html">FAQ</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuContribute" data-bs-toggle="dropdown" aria-expanded="false">Contribute</a>
-        <ul class="dropdown-menu" aria-labelledby="menuContribute">
-          <li><a class="dropdown-item" href="../contributor.html">New Contributor</a></li>
-          <li><a class="dropdown-item" href="../coding-conventions.html">Coding Conventions</a></li>
-          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
-          <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
-          <li><a class="dropdown-item" href="https://github.com/apache/sis">GitHub mirror</a></li>
-          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="../release-management.html">Release management</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuASF" data-bs-toggle="dropdown" aria-expanded="false">The Foundation</a>
-        <ul class="dropdown-menu" aria-labelledby="menuASF">
-          <li><a class="dropdown-item" href="http://www.apache.org">The Foundation</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/foundation/sponsorship.html">Donate</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/security/">Security</a></li>
-        </ul>
-      </li>
-    </ul>
-    <ul class="navbar-nav ml-auto mb-2 mb-md-0">
-      <li class="nav-item">
-        <a href="https://www.apache.org/events/current-event.html">
-           <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
-        </a>
-      </li>
-    </ul>
-  </div>
-</nav>
-
-
-<div class="row flex-nowrap">
-  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width:13rem; min-height:40rem">
-    <ul class="nav nav-pills flex-column mb-auto position-fixed">
-      <li><a class="nav-link  text-white " href="../index.html">Home</a></li>
-      <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
-      <li><a class="nav-link  text-white " href="../downloads.html">Downloads</a></li>
-      <li><a class="nav-link  active " href="../howto.html">How to…</a></li>
-      <li><a class="nav-link  text-white " href="../standards.html">Standards</a></li>
-      <li><a class="nav-link  text-white " href="../formats.html">Data formats</a></li>
-      <li><a class="nav-link  text-white " href="../epsg.html">EPSG Database</a></li>
-      <li><a class="nav-link  text-white " href="../javafx.html">Application (demo)</a></li>
-      <li><a class="nav-link text-white" href="../apidocs/index.html">Online Javadoc</a></li>
-      <li><a class="nav-link text-white" href="../book/en/developer-guide.html">Developer Guide</a></li>
-      <li><a class="nav-link  text-white " href="../code-patterns.html">Code patterns</a></li>
-      <li><a class="nav-link  text-white " href="../faq.html">FAQ</a></li>
-    </ul>
-  </div>
-  <div class="col">
-    <main class="container">
-      <article>
-        <img src="../images/logo.png" class="sis-logo" align="left"/>
-        <p class="page-title">Read raster from a GeoTIFF file</p>
+      </nav>
+      <div class="main-content">
+        <main class="container">
+          <article>
+            <img src="../images/logo.png" class="sis-logo" align="left"/>
+            <p class="page-title">Read raster from a GeoTIFF file</p>
 
   <p>This example reads data in GeoTIFF format.
 Contrarily to other formats such as PNG or JPEG,
@@ -112,7 +46,7 @@ For this reason, <code>GeoTiffStore</code> does not implement directly <code>Gri
 Instead, <code>GeoTiffStore</code> implements the <code>Aggregate</code> interface.</p>
 <p>This example assumes that the raster, optionally clipped to a subregion, can fit in memory.
 For potentially much bigger rasters,
-see <a href="rasters_bigger_than_memory.html">rasters bigger than memory</a> code example.</p>
+see <a href="../howto/rasters_bigger_than_memory.html">rasters bigger than memory</a> code example.</p>
 <h1 id="direct-dependencies">Direct dependencies</h1>
 <table>
 <thead>
@@ -139,75 +73,75 @@ see <a href="rasters_bigger_than_memory.html">rasters bigger than memory</a> cod
 depending how the Coordinate Reference System (CRS) is encoded in the GeoTIFF file.</p>
 <h1 id="code-example">Code example</h1>
 <p>The file name and geospatial coordinates in following code need to be updated for yours data.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.io.File</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.util.Collection</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.awt.image.ImagingOpException</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.Resource</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.Aggregate</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.DataStore</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.DataStores</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.DataStoreException</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.storage.GridCoverageResource</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.coverage.grid.GridCoverage</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.coverage.grid.GridGeometry</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.geometry.GeneralEnvelope</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CommonCRS</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ReadGeoTIFF</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="cm">/**
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.io.File</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Collection</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.awt.image.ImagingOpException</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.storage.Resource</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.storage.Aggregate</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.storage.DataStore</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.storage.DataStores</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.storage.DataStoreException</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.storage.GridCoverageResource</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.coverage.grid.GridCoverage</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.coverage.grid.GridGeometry</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.geometry.GeneralEnvelope</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.referencing.CommonCRS</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ReadGeoTIFF</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="cm">/**
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * Demo entry point.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     *
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @param  args  ignored.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws DataStoreException if an error occurred while reading the raster.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws ImagingOpException unchecked exception thrown if an error occurred while loading a tile.
-</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
-</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">DataStoreException</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">example</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">DataStoreException</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">example</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="cm">/**
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * Reads an example file and prints some information about it.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     *
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @return the raster data.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws DataStoreException if an error occurred while reading the raster.
-</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
-</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="n">GridCoverage</span> <span class="nf">example</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">DataStoreException</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">GridCoverage</span> <span class="n">data</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">(</span><span class="n">DataStore</span> <span class="n">store</span> <span class="o">=</span> <span class="n">DataStores</span><span class="o">.</span><span class="na">open</span><span class="o">(</span><span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="s">&#34;Aéroport.tiff&#34;</span><span class="o">)))</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">            <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">GridCoverage</span><span class="w"> </span><span class="nf">example</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">DataStoreException</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">GridCoverage</span><span class="w"> </span><span class="n">data</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">DataStore</span><span class="w"> </span><span class="n">store</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DataStores</span><span class="p">.</span><span class="na">open</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">File</span><span class="p">(</span><span class="s">&#34;Aéroport.tiff&#34;</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * This data store is an aggregate because a GeoTIFF file may contain many images.
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * Not all data stores are aggregate, so the following casts do not apply to all.
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * For this example, we know that the file is GeoTIFF and we take the first image.
-</span></span></span><span class="line"><span class="cl"><span class="cm">             */</span>
-</span></span><span class="line"><span class="cl">            <span class="n">Collection</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Resource</span><span class="o">&gt;</span> <span class="n">allImages</span> <span class="o">=</span> <span class="o">((</span><span class="n">Aggregate</span><span class="o">)</span> <span class="n">store</span><span class="o">).</span><span class="na">components</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">            <span class="n">GridCoverageResource</span> <span class="n">firstImage</span> <span class="o">=</span> <span class="o">(</span><span class="n">GridCoverageResource</span><span class="o">)</span> <span class="n">allImages</span><span class="o">.</span><span class="na">iterator</span><span class="o">().</span><span class="na">next</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">            <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">             */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">Collection</span><span class="o">&lt;?</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Resource</span><span class="o">&gt;</span><span class="w"> </span><span class="n">allImages</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">((</span><span class="n">Aggregate</span><span class="p">)</span><span class="w"> </span><span class="n">store</span><span class="p">).</span><span class="na">components</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">GridCoverageResource</span><span class="w"> </span><span class="n">firstImage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">GridCoverageResource</span><span class="p">)</span><span class="w"> </span><span class="n">allImages</span><span class="p">.</span><span class="na">iterator</span><span class="p">().</span><span class="na">next</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * Read the resource immediately and fully.
-</span></span></span><span class="line"><span class="cl"><span class="cm">             */</span>
-</span></span><span class="line"><span class="cl">            <span class="n">data</span> <span class="o">=</span> <span class="n">firstImage</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Information about the selected image:%n%s%n&#34;</span><span class="o">,</span> <span class="n">data</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">            <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">             */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">firstImage</span><span class="p">.</span><span class="na">read</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="s">&#34;Information about the selected image:%n%s%n&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * Read only a subset of the resource. The Area Of Interest can be specified
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * in any Coordinate Reference System (CRS). The envelope will be transformed
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * automatically to the CRS of the data (the data are not transformed).
 </span></span></span><span class="line"><span class="cl"><span class="cm">             * This example uses Universal Transverse Mercator (UTM) zone 31 North.
-</span></span></span><span class="line"><span class="cl"><span class="cm">             */</span>
-</span></span><span class="line"><span class="cl">            <span class="n">var</span> <span class="n">areaOfInterest</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GeneralEnvelope</span><span class="o">(</span><span class="n">CommonCRS</span><span class="o">.</span><span class="na">WGS84</span><span class="o">.</span><span class="na">universal</span><span class="o">(</span><span class="n">49</span><span class="o">,</span> <span class="n">2</span><span class="o">.</span><span class="na">5</span><span class="o">));</span>
-</span></span><span class="line"><span class="cl">            <span class="n">areaOfInterest</span><span class="o">.</span><span class="na">setRange</span><span class="o">(</span><span class="n">0</span><span class="o">,</span>   <span class="n">46600</span><span class="o">,</span>  <span class="n">467000</span><span class="o">);</span>       <span class="c1">// Minimal and maximal easting values (metres)
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">areaOfInterest</span><span class="o">.</span><span class="na">setRange</span><span class="o">(</span><span class="n">1</span><span class="o">,</span> <span class="n">5427000</span><span class="o">,</span> <span class="n">5428000</span><span class="o">);</span>       <span class="c1">// Minimal and maximal northing values (metres).
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">data</span> <span class="o">=</span> <span class="n">firstImage</span><span class="o">.</span><span class="na">read</span><span class="o">(</span><span class="k">new</span> <span class="n">GridGeometry</span><span class="o">(</span><span class="n">areaOfInterest</span><span class="o">),</span> <span class="kc">null</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;Information about the resource subset:%n%s%n&#34;</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">                              <span class="n">data</span><span class="o">.</span><span class="na">getGridGeometry</span><span class="o">().</span><span class="na">getExtent</span><span class="o">());</span>
-</span></span><span class="line"><span class="cl">        <span class="o">}</span>
-</span></span><span class="line"><span class="cl">        <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">             */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="kd">var</span><span class="w"> </span><span class="n">areaOfInterest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">GeneralEnvelope</span><span class="p">(</span><span class="n">CommonCRS</span><span class="p">.</span><span class="na">WGS84</span><span class="p">.</span><span class="na">universal</span><span class="p">(</span><span class="n">49</span><span class="p">,</span><span class="w"> </span><span class="n">2</span><span class="p">.</span><span class="na">5</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">areaOfInterest</span><span class="p">.</span><span class="na">setRange</span><span class="p">(</span><span class="n">0</span><span class="p">,</span><span class="w">   </span><span class="n">46600</span><span class="p">,</span><span class="w">  </span><span class="n">467000</span><span class="p">);</span><span class="w">       </span><span class="c1">// Minimal and maximal easting values (metres)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">areaOfInterest</span><span class="p">.</span><span class="na">setRange</span><span class="p">(</span><span class="n">1</span><span class="p">,</span><span class="w"> </span><span class="n">5427000</span><span class="p">,</span><span class="w"> </span><span class="n">5428000</span><span class="p">);</span><span class="w">       </span><span class="c1">// Minimal and maximal northing values (metres).</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">firstImage</span><span class="p">.</span><span class="na">read</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">GridGeometry</span><span class="p">(</span><span class="n">areaOfInterest</span><span class="p">),</span><span class="w"> </span><span class="kc">null</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="s">&#34;Information about the resource subset:%n%s%n&#34;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                              </span><span class="n">data</span><span class="p">.</span><span class="na">getGridGeometry</span><span class="p">().</span><span class="na">getExtent</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * By default, it is possible to continue to use the `GridCoverage` (but not the `Resource`) after
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * the `DataStore` has been closed because data are in memory. Note that it would not be the case
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * if deferred data loading was enabled has shown in &#34;Handle rasters bigger than memory&#34; example.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
-</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">data</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
-<h1 id="output">Output</h1>
+</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">data</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h1 id="output">Output</h1>
 <p>If logging at fine level is enabled, the logs should contain some entries like below.
 The &ldquo;Slowness&rdquo; level is an Apache SIS custom level for operations taking more than an arbitrary time limit.</p>
 <pre tabindex="0"><code>Slowness [GridCoverageResource] Loaded grid coverage between 48°59′N – 49°02′N and 2°31′E – 2°35′E from file “Aéroport.tiff” in 1.249 seconds.
@@ -245,22 +179,16 @@ Column: [   0 … 4145] (4146 cells)
 Row:    [3968 … 6655] (2688 cells)
 </code></pre>
 
-      </article>
-    </main>
-    <footer class="footer">
-    <div class="container">
-      <p>
-        Copyright &copy; 2013-2023 The Apache Software Foundation, Licensed under the
-        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
-        Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
-      </p>
+          </article>
+        </main>
+        <footer>
+          <div class="container">
+            <p>Copyright &copy; 2013-2025 The Apache Software Foundation, Licensed under the
+            <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
+            Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+          </div>
+        </footer>
+      </div>
     </div>
-</footer>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
-
-</body>
+  </body>
 </html>

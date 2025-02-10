@@ -1,109 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
 
-
-  <title>Apache SIS - Command-line interface</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
-        rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" media="screen" href="./syntax.css">
-  <link rel="stylesheet" type="text/css" media="screen" href="./sis.css">
-</head>
-
-<body>
-
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="./index.html"> Apache SIS™</a>
-    <ul class="navbar-nav me-auto mb-2 mb-md-0">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuAbout" data-bs-toggle="dropdown" aria-expanded="false">About</a>
-        <ul class="dropdown-menu" aria-labelledby="menuAbout">
-          <li><a class="dropdown-item" href="http://www.apache.org/licenses/">License</a></li>
-          <li><a class="dropdown-item" href="./mail-lists.html">Mailing Lists</a></li>
-          <li><a class="dropdown-item" href="./team-list.html">Project Team</a></li>
-          <li><a class="dropdown-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy policy</a></li>
+  <head>
+    <title>Apache SIS - Command-line interface</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="./sis.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="./syntax.css">
+  </head>
+  <body>
+    <div class="topbar">
+      <a class="topbar-brand" href="./index.html">Apache SIS™</a>
+      <ul class="topbar-items">
+        <li>
+          <a href="https://www.apache.org/events/current-event.html">
+             <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="main-section">
+      <nav class="left-bar">
+        <ul class="nav-pills">
+          <li><a class="nav-link  inactive " href="./index.html">Home</a></li>
+          <li><a class="nav-link  inactive " href="./about.html">About</a></li>
+          <li><a class="nav-link  inactive " href="./downloads.html">Downloads</a></li>
+          <li><a class="nav-link  inactive " href="./howto.html">How to…</a></li>
+          <li><a class="nav-link  inactive " href="./standards.html">Standards</a></li>
+          <li><a class="nav-link  inactive " href="./formats.html">Data formats</a></li>
+          <li><a class="nav-link  inactive " href="./epsg.html">EPSG Database</a></li>
+          <li><a class="nav-link  inactive " href="./javafx.html">Application (demo)</a></li>
+          <li><a class="nav-link  inactive " href="./documentation.html">Documentation</a></li>
         </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuDownload" data-bs-toggle="dropdown" aria-expanded="false">Download</a>
-        <ul class="dropdown-menu" aria-labelledby="menuDownload">
-          <li><a class="dropdown-item" href="./downloads.html">Downloads</a></li>
-          <li><a class="dropdown-item" href="./source.html">Checkout Sources</a></li>
-          <li><a class="dropdown-item" href="./epsg.html">EPSG Database</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuDocumentation" data-bs-toggle="dropdown" aria-expanded="false">Documentation</a>
-        <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
-          <li><a class="dropdown-item" href="./apidocs/index.html">Online Javadoc</a></li>
-          <li><a class="dropdown-item" href="./book/en/developer-guide.html">Developer Guide</a></li>
-          <li><a class="dropdown-item" href="./howto.html">How to…</a></li>
-          <li><a class="dropdown-item" href="./formats.html">Supported formats</a></li>
-          <li><a class="dropdown-item" href="./tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
-          <li><a class="dropdown-item" href="./tables/CoordinateOperationMethods.html">Map Projections</a></li>
-          <li><a class="dropdown-item" href="./code-patterns.html">Code Patterns</a></li>
-          <li><a class="dropdown-item" href="./faq.html">FAQ</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuContribute" data-bs-toggle="dropdown" aria-expanded="false">Contribute</a>
-        <ul class="dropdown-menu" aria-labelledby="menuContribute">
-          <li><a class="dropdown-item" href="./contributor.html">New Contributor</a></li>
-          <li><a class="dropdown-item" href="./coding-conventions.html">Coding Conventions</a></li>
-          <li><a class="dropdown-item" href="./mail-lists.html">Mailing Lists</a></li>
-          <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
-          <li><a class="dropdown-item" href="https://github.com/apache/sis">GitHub mirror</a></li>
-          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="./release-management.html">Release management</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuASF" data-bs-toggle="dropdown" aria-expanded="false">The Foundation</a>
-        <ul class="dropdown-menu" aria-labelledby="menuASF">
-          <li><a class="dropdown-item" href="http://www.apache.org">The Foundation</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/foundation/sponsorship.html">Donate</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/security/">Security</a></li>
-        </ul>
-      </li>
-    </ul>
-    <ul class="navbar-nav ml-auto mb-2 mb-md-0">
-      <li class="nav-item">
-        <a href="https://www.apache.org/events/current-event.html">
-           <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
-        </a>
-      </li>
-    </ul>
-  </div>
-</nav>
-
-
-<div class="row flex-nowrap">
-  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width:13rem; min-height:40rem">
-    <ul class="nav nav-pills flex-column mb-auto position-fixed">
-      <li><a class="nav-link  text-white " href="./index.html">Home</a></li>
-      <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
-      <li><a class="nav-link  text-white " href="./downloads.html">Downloads</a></li>
-      <li><a class="nav-link  text-white " href="./howto.html">How to…</a></li>
-      <li><a class="nav-link  text-white " href="./standards.html">Standards</a></li>
-      <li><a class="nav-link  text-white " href="./formats.html">Data formats</a></li>
-      <li><a class="nav-link  text-white " href="./epsg.html">EPSG Database</a></li>
-      <li><a class="nav-link  text-white " href="./javafx.html">Application (demo)</a></li>
-      <li><a class="nav-link text-white" href="./apidocs/index.html">Online Javadoc</a></li>
-      <li><a class="nav-link text-white" href="./book/en/developer-guide.html">Developer Guide</a></li>
-      <li><a class="nav-link  text-white " href="./code-patterns.html">Code patterns</a></li>
-      <li><a class="nav-link  text-white " href="./faq.html">FAQ</a></li>
-    </ul>
-  </div>
-  <div class="col">
-    <main class="container">
-      <article>
-        <img src="./images/logo.png" class="sis-logo" align="left"/>
-        <p class="page-title">Command-line interface</p>
+      </nav>
+      <div class="main-content">
+        <main class="container">
+          <article>
+            <img src="./images/logo.png" class="sis-logo" align="left"/>
+            <p class="page-title">Command-line interface</p>
 
   <p>A command-line interface is provided for extracting information from data files or authority codes,
 and for performing coordinate operations.
@@ -131,19 +65,19 @@ in their own application.</p>
   </ul>
 </nav>
 <h1 id="install">Installation   </h1>
-<p>Select &ldquo;Apache <abbr title="Spatial Information System">SIS</abbr> 1.4 binary&rdquo; from the <a href="downloads.html">downloads page</a> an unzip in any directory.
+<p>Select &ldquo;Apache <abbr title="Spatial Information System">SIS</abbr> 1.4 binary&rdquo; from the <a href="./downloads.html">downloads page</a> an unzip in any directory.
 The directory structure will be as below:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">apache-sis-1.4
-</span></span><span class="line"><span class="cl">├─ bin
-</span></span><span class="line"><span class="cl">├─ conf
-</span></span><span class="line"><span class="cl">├─ data
-</span></span><span class="line"><span class="cl">├─ lib
-</span></span><span class="line"><span class="cl">└─ log</span></span></code></pre></div>
-<p>The <code>bin</code> sub-directory contains a <code>sis</code> command for Unix systems (Linux or MacOS — we have not yet done a <code>sis.bat</code> file for Windows).
+<pre tabindex="0"><code>apache-sis-1.4
+├─ bin
+├─ conf
+├─ data
+├─ lib
+└─ log
+</code></pre><p>The <code>bin</code> sub-directory contains a <code>sis</code> command for Unix systems (Linux or MacOS — we have not yet done a <code>sis.bat</code> file for Windows).
 The <code>bin</code> sub-directory can be added to the <code>PATH</code> environment variable for convenience, but this is not mandatory.
 Example:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PWD</span>/apache-sis-1.4/bin:<span class="nv">$PATH</span></span></span></code></pre></div>
-<p>The remaining of this page assumes that the <code>bin</code> directory is on the search path.
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PWD</span>/apache-sis-1.4/bin:<span class="nv">$PATH</span>
+</span></span></code></pre></div><p>The remaining of this page assumes that the <code>bin</code> directory is on the search path.
 If not, the same examples can still be executed by replacing the <code>sis</code> command by <code>./apache-sis-1.4/bin/sis</code>.</p>
 <h2 id="dependencies">Optional dependencies   </h2>
 <p>Every JAR files present in the <code>lib</code> sub-directory will be included on the classpath during <code>sis</code> command execution.
@@ -161,8 +95,8 @@ If presents, the UCAR library should be detected and used automatically when SIS
 <h1 id="usage">Usage   </h1>
 <p>Invoking <code>sis</code> without argument shows a summary of available commands and all options.
 For executing a command, the syntax is:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis &lt;command&gt; <span class="o">[</span>options<span class="o">]</span> <span class="o">[</span>files<span class="o">]</span></span></span></code></pre></div>
-<p>Available commands are:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis &lt;command&gt; <span class="o">[</span>options<span class="o">]</span> <span class="o">[</span>files<span class="o">]</span>
+</span></span></code></pre></div><p>Available commands are:</p>
 <table>
   <tr><td><code>help</code></td>       <td>Show a help overview.</td></tr>
   <tr><td><code>about</code></td>      <td>Show information about Apache <abbr title="Spatial Information System">SIS</abbr> and system configuration.</td></tr>
@@ -194,7 +128,7 @@ The reason is that command output may be targeted to a client, while the error m
 <h1 id="examples">Examples   </h1>
 <p>The following examples first show how to get a Coordinate Reference System (CRS) from different kinds of definitions.
 <abbr title="Coordinate Reference System">CRS</abbr> contain necessary information for locating points on Earth.
-Those information include the geodetic datum, the map projection (if any), the axes and their units of measurement.
+Those information include the geodetic reference frame, the map projection (if any), the axes and their units of measurement.
 When two such <abbr title="Coordinate Reference System">CRS</abbr> are known (the <em>source</em> and the <em>target</em>), it is possible to convert or transform points between those <abbr title="Coordinate Reference System">CRS</abbr>.
 However the coordinate operation depends not only on the source and target <abbr title="Coordinate Reference System">CRS</abbr>, but also on the <em>area of interest</em> as shown
 by the example transforming city coordinates in USA and in Canada.
@@ -207,11 +141,11 @@ Then another example show how to get a wider set of metadata, with the <abbr tit
 <li><abbr title="Extensible Markup Language">XML</abbr> files conform to <em>Geographic Markup Language</em> (GML) schema version 3.2</li>
 </ul>
 <p>The easiest way to see a <abbr title="Coordinate Reference System">CRS</abbr> definition is to use an EPSG code.
-The <a href="epsg.html">EPSG geodetic dataset</a> is a widely-used source of definitions for thousands of Coordinate Reference Systems.
+The <a href="./epsg.html">EPSG geodetic dataset</a> is a widely-used source of definitions for thousands of Coordinate Reference Systems.
 Appache SIS provides a <a href="tables/CoordinateReferenceSystems.html">list of supported codes</a>, which can be queried from the command line.
 For example the following command prints the definition of the <em>&ldquo;JGD2011 / Japan Plane Rectangular CS VIII&rdquo;</em> Coordinate Reference System:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis crs EPSG:6676</span></span></code></pre></div>
-<details>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis crs EPSG:6676
+</span></span></code></pre></div><details>
   <summary>Expected output (click to expand):</summary>
 <pre>ProjectedCRS["JGD2011 / Japan Plane Rectangular CS VIII",
   BaseGeodCRS["JGD2011",
@@ -237,9 +171,9 @@ For example the following command prints the definition of the <em>&ldquo;JGD201
 </details>
 <br/>
 <p>The first time that a command requires the EPSG dataset, Apache <abbr title="Spatial Information System">SIS</abbr> will propose to download and install a local copy.
-This automatic download happens only when using the command-line tools described in this page or the <a href="javafx.html">JavaFX</a> application.
+This automatic download happens only when using the command-line tools described in this page or the <a href="./javafx.html">JavaFX</a> application.
 Developers who wish to use the EPSG dataset in their applications can use the Maven artifact
-documented in <a href="downloads.html#epsg">download</a> page.</p>
+documented in <a href="./downloads.html#epsg">download</a> page.</p>
 <p>The above output is compatible with version 2 of <em>Well Known Text</em> (WKT) format.
 The output format can be controlled as below:</p>
 <ul>
@@ -293,41 +227,41 @@ The following example reads a <abbr title="Well Known Text">WKT</abbr> for the <
 but in which the <code>ID[&quot;EPSG&quot;, 27572]</code> element has been intentionally omitted.
 Furthermore, the <em>“NTF (Paris) / Lambert zone II”</em> name has been replaced by <em>“NTF (Paris) / zone to be discovered by the demo”</em> name.
 Executing the following command:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis identifier https://sis.apache.org/examples/crs/MissingIdentifier.wkt</span></span></code></pre></div>
-<p>produces an output like below:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">urn:ogc:def:crs:EPSG:9.9.1:27572  | NTF (Paris) / Lambert zone II</span></span></code></pre></div>
-<p>As we can see, Apache <abbr title="Spatial Information System">SIS</abbr> has been able to find back the identifier code and the actual <abbr title="Coordinate Reference System">CRS</abbr> name.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis identifier https://sis.apache.org/examples/crs/MissingIdentifier.wkt
+</span></span></code></pre></div><p>produces an output like below:</p>
+<pre tabindex="0"><code>urn:ogc:def:crs:EPSG:9.9.1:27572  | NTF (Paris) / Lambert zone II
+</code></pre><p>As we can see, Apache <abbr title="Spatial Information System">SIS</abbr> has been able to find back the identifier code and the actual <abbr title="Coordinate Reference System">CRS</abbr> name.</p>
 <p>Sometimes a <abbr title="Well Known Text">WKT</abbr> declares wrongly an EPSG code.
 The most frequent case is a <abbr title="Well Known Text">WKT</abbr> that defines a Coordinate Reference System with (<em>longitude</em>, <em>latitude</em>) axes,
 but declare an EPSG code for a <abbr title="Coordinate Reference System">CRS</abbr> with (<em>latitude</em>, <em>longitude</em>) axes.
 Apache <abbr title="Spatial Information System">SIS</abbr> can detect such mismatches.
 For example executing the following command:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis identifier https://sis.apache.org/examples/crs/WrongAxisOrder.wkt</span></span></code></pre></div>
-<p>produces an output like below:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">!   urn:ogc:def:crs:EPSG:8.9:4979    | WGS 84
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">Legend:
-</span></span><span class="line"><span class="cl">!   Identified object matches definition provided by authority except for coordinate system axes.</span></span></code></pre></div>
-<p>Apache <abbr title="Spatial Information System">SIS</abbr> can perform such analysis because it “understands” the <abbr title="Coordinate Reference System">CRS</abbr> definition.
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis identifier https://sis.apache.org/examples/crs/WrongAxisOrder.wkt
+</span></span></code></pre></div><p>produces an output like below:</p>
+<pre tabindex="0"><code>!   urn:ogc:def:crs:EPSG:8.9:4979    | WGS 84
+
+Legend:
+!   Identified object matches definition provided by authority except for coordinate system axes.
+</code></pre><p>Apache <abbr title="Spatial Information System">SIS</abbr> can perform such analysis because it “understands” the <abbr title="Coordinate Reference System">CRS</abbr> definition.
 This analysis capability can be tested by altering the <abbr title="Coordinate Reference System">CRS</abbr> definition.
 The next example asks the identifier of a <abbr title="Coordinate Reference System">CRS</abbr> which is normally defined as below:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">ProjectedCRS[&#34;WGS 84 / Mercator 41&#34;,
-</span></span><span class="line"><span class="cl">  (... definition omitted for brevity ...)
-</span></span><span class="line"><span class="cl">    Method[&#34;Mercator (variant B)&#34;],
-</span></span><span class="line"><span class="cl">    Parameter[&#34;Latitude of 1st standard parallel&#34;, -41.0],
-</span></span><span class="line"><span class="cl">  (... definition omitted for brevity ...)</span></span></code></pre></div>
-<p>However in this example, we will provide a <abbr title="Coordinate Reference System">CRS</abbr> defined as below:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">ProjectedCRS[&#34;Scaled Mercator&#34;,
-</span></span><span class="line"><span class="cl">  (... definition omitted for brevity ...)
-</span></span><span class="line"><span class="cl">    Method[&#34;Mercator (variant A)&#34;],
-</span></span><span class="line"><span class="cl">    Parameter[&#34;Scale factor at natural origin&#34;, 0.7557992272019596&#34;],
-</span></span><span class="line"><span class="cl">    Parameter[&#34;Latitude of natural origin&#34;, -0.0],
-</span></span><span class="line"><span class="cl">  (... definition omitted for brevity ...)</span></span></code></pre></div>
-<p>Executing the following command:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis identifier https://sis.apache.org/examples/crs/EquivalentDefinition.wkt</span></span></code></pre></div>
-<p>produces an output like below:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">urn:ogc:def:crs:EPSG:9.9.1:3994  | WGS 84 / Mercator 41</span></span></code></pre></div>
-<p>In above example, Apache <abbr title="Spatial Information System">SIS</abbr> used the fact that a
+<pre tabindex="0"><code>ProjectedCRS[&#34;WGS 84 / Mercator 41&#34;,
+  (... definition omitted for brevity ...)
+    Method[&#34;Mercator (variant B)&#34;],
+    Parameter[&#34;Latitude of 1st standard parallel&#34;, -41.0],
+  (... definition omitted for brevity ...)
+</code></pre><p>However in this example, we will provide a <abbr title="Coordinate Reference System">CRS</abbr> defined as below:</p>
+<pre tabindex="0"><code>ProjectedCRS[&#34;Scaled Mercator&#34;,
+  (... definition omitted for brevity ...)
+    Method[&#34;Mercator (variant A)&#34;],
+    Parameter[&#34;Scale factor at natural origin&#34;, 0.7557992272019596&#34;],
+    Parameter[&#34;Latitude of natural origin&#34;, -0.0],
+  (... definition omitted for brevity ...)
+</code></pre><p>Executing the following command:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis identifier https://sis.apache.org/examples/crs/EquivalentDefinition.wkt
+</span></span></code></pre></div><p>produces an output like below:</p>
+<pre tabindex="0"><code>urn:ogc:def:crs:EPSG:9.9.1:3994  | WGS 84 / Mercator 41
+</code></pre><p>In above example, Apache <abbr title="Spatial Information System">SIS</abbr> used the fact that a
 <em>“Mercator (variant A)”</em> projection with a <em>“Scale factor at natural origin”</em> parameter value of 0.755799… on the WGS84 datum is numerically equivalent to a
 <em>“Mercator (variant B)”</em> projection with a <em>“Latitude of 1st standard parallel”</em> parameter value of 41° on the same datum.
 This recognition allowed SIS to return the EPSG:3994 code
@@ -355,41 +289,41 @@ The example is run twice: once for cities in USA, then once for cities in Canada
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">wget https://sis.apache.org/examples/coordinates/AmericanCities.csv
 </span></span><span class="line"><span class="cl">wget https://sis.apache.org/examples/coordinates/CanadianCities.csv
 </span></span><span class="line"><span class="cl">sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 AmericanCities.csv
-</span></span><span class="line"><span class="cl">sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 CanadianCities.csv</span></span></code></pre></div>
-<p>The first execution should print the following header, followed by transformed coordinate values.
+</span></span><span class="line"><span class="cl">sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 CanadianCities.csv
+</span></span></code></pre></div><p>The first execution should print the following header, followed by transformed coordinate values.
 Note the operation code (EPSG:1173), domain of validity (United State) and accuracy.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl"># Source:      NAD27 (EPSG:4267)
-</span></span><span class="line"><span class="cl"># Destination: WGS 84 (EPSG:4326)
-</span></span><span class="line"><span class="cl"># Operations:  NAD27 to WGS 84 (4) (EPSG:1173)
-</span></span><span class="line"><span class="cl"># Domain:      United States (USA) - onshore
-</span></span><span class="line"><span class="cl"># Accuracy:    10.0 metres</span></span></code></pre></div>
-<p>The second execution should print the following header, followed by transformed coordinate values.
+<pre tabindex="0"><code># Source:      NAD27 (EPSG:4267)
+# Destination: WGS 84 (EPSG:4326)
+# Operations:  NAD27 to WGS 84 (4) (EPSG:1173)
+# Domain:      United States (USA) - onshore
+# Accuracy:    10.0 metres
+</code></pre><p>The second execution should print the following header, followed by transformed coordinate values.
 Note that the operation code (EPSG:1172), domain of validity (Canada) and accuracy are not the same
 than in previous example.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl"># Source:      NAD27 (EPSG:4267)
-</span></span><span class="line"><span class="cl"># Destination: WGS 84 (EPSG:4326)
-</span></span><span class="line"><span class="cl"># Operations:  NAD27 to WGS 84 (3) (EPSG:1172)
-</span></span><span class="line"><span class="cl"># Domain:      Canada - onshore and offshore
-</span></span><span class="line"><span class="cl"># Accuracy:    20.0 metres</span></span></code></pre></div>
-<p>The difference between those two operations become more visible by adding the <code>--verbose</code> option
+<pre tabindex="0"><code># Source:      NAD27 (EPSG:4267)
+# Destination: WGS 84 (EPSG:4326)
+# Operations:  NAD27 to WGS 84 (3) (EPSG:1172)
+# Domain:      Canada - onshore and offshore
+# Accuracy:    20.0 metres
+</code></pre><p>The difference between those two operations become more visible by adding the <code>--verbose</code> option
 to the above <code>sis transform</code> commands.
 This option shows the coordinate operation in Well Known Text (WKT) or pseudo-WKT format.
 When transforming coordinates in USA, the operation contains the following parameter values:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">Method[&#34;Geocentric translations (geog2D domain)&#34;],
-</span></span><span class="line"><span class="cl">  Parameter[&#34;X-axis translation&#34;, -8.0, Unit[&#34;metre&#34;, 1]],
-</span></span><span class="line"><span class="cl">  Parameter[&#34;Y-axis translation&#34;, 160.0, Unit[&#34;metre&#34;, 1]],
-</span></span><span class="line"><span class="cl">  Parameter[&#34;Z-axis translation&#34;, 176.0, Unit[&#34;metre&#34;, 1]]</span></span></code></pre></div>
-<p>But when transforming coordinates in Canada, the operation rather contains the following parameter values:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">Method[&#34;Geocentric translations (geog2D domain)&#34;],
-</span></span><span class="line"><span class="cl">  Parameter[&#34;X-axis translation&#34;, -10.0, Unit[&#34;metre&#34;, 1]],
-</span></span><span class="line"><span class="cl">  Parameter[&#34;Y-axis translation&#34;, 158.0, Unit[&#34;metre&#34;, 1]],
-</span></span><span class="line"><span class="cl">  Parameter[&#34;Z-axis translation&#34;, 187.0, Unit[&#34;metre&#34;, 1]],</span></span></code></pre></div>
-<p>As seen in the above examples, the parameter values differ slightly with the geographic area of the coordinates to transform.
+<pre tabindex="0"><code>Method[&#34;Geocentric translations (geog2D domain)&#34;],
+  Parameter[&#34;X-axis translation&#34;, -8.0, Unit[&#34;metre&#34;, 1]],
+  Parameter[&#34;Y-axis translation&#34;, 160.0, Unit[&#34;metre&#34;, 1]],
+  Parameter[&#34;Z-axis translation&#34;, 176.0, Unit[&#34;metre&#34;, 1]]
+</code></pre><p>But when transforming coordinates in Canada, the operation rather contains the following parameter values:</p>
+<pre tabindex="0"><code>Method[&#34;Geocentric translations (geog2D domain)&#34;],
+  Parameter[&#34;X-axis translation&#34;, -10.0, Unit[&#34;metre&#34;, 1]],
+  Parameter[&#34;Y-axis translation&#34;, 158.0, Unit[&#34;metre&#34;, 1]],
+  Parameter[&#34;Z-axis translation&#34;, 187.0, Unit[&#34;metre&#34;, 1]],
+</code></pre><p>As seen in the above examples, the parameter values differ slightly with the geographic area of the coordinates to transform.
 Those parameters could also be different if <em>datum shift grids</em> are available. For example in USA:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">    Method[&#34;NADCON&#34;],
-</span></span><span class="line"><span class="cl">      Parameter[&#34;Latitude difference file&#34;, &#34;conus.las&#34;],
-</span></span><span class="line"><span class="cl">      Parameter[&#34;Longitude difference file&#34;, &#34;conus.los&#34;],\</span></span></code></pre></div>
-<p>Java API for accessing functionalities shown in above examples are:</p>
+<pre tabindex="0"><code>    Method[&#34;NADCON&#34;],
+      Parameter[&#34;Latitude difference file&#34;, &#34;conus.las&#34;],
+      Parameter[&#34;Longitude difference file&#34;, &#34;conus.los&#34;],\
+</code></pre><p>Java API for accessing functionalities shown in above examples are:</p>
 <ul>
 <li>Convenience static method in <code>org.apache.sis.referencing</code> package:
 <ul>
@@ -408,8 +342,8 @@ The data file given in argument can be a local file or a URL.
 By default, the metadata are shown in a relatively compact tree-table format.
 But the metadata can optionally be exported as an <abbr title="International Organization for Standardization">ISO</abbr> 19139 compliant XML document.
 The following example shows the metadata of a netCDF file accessible from the web:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">    sis metadata https://github.com/opengeospatial/geoapi/raw/master/geoapi-conformance/src/main/resources/org/opengis/test/dataset/Cube4D_projected_float.nc</span></span></code></pre></div>
-<details>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">    sis metadata https://github.com/opengeospatial/geoapi/raw/master/geoapi-conformance/src/main/resources/org/opengis/test/dataset/Cube4D_projected_float.nc
+</span></span></code></pre></div><details>
   <summary>Fragment of expected output (click to expand):</summary>
 <pre>Metadata
   ├─Identification info
@@ -467,22 +401,16 @@ If the operation requires the EPSG dataset, booting the Derby database also has 
 For such cases, it is more efficient to loop inside a small Java program using the <a href="apidocs/index.html">SIS API</a>.</p>
 
 
-      </article>
-    </main>
-    <footer class="footer">
-    <div class="container">
-      <p>
-        Copyright &copy; 2013-2023 The Apache Software Foundation, Licensed under the
-        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
-        Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
-      </p>
+          </article>
+        </main>
+        <footer>
+          <div class="container">
+            <p>Copyright &copy; 2013-2025 The Apache Software Foundation, Licensed under the
+            <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
+            Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+          </div>
+        </footer>
+      </div>
     </div>
-</footer>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
-
-</body>
+  </body>
 </html>

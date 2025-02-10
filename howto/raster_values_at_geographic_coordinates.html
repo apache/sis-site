@@ -1,109 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
 
-
-  <title>Apache SIS - Get raster values at geographic coordinates</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
-        rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" media="screen" href="../syntax.css">
-  <link rel="stylesheet" type="text/css" media="screen" href="../sis.css">
-</head>
-
-<body>
-
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="../index.html"> Apache SIS™</a>
-    <ul class="navbar-nav me-auto mb-2 mb-md-0">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuAbout" data-bs-toggle="dropdown" aria-expanded="false">About</a>
-        <ul class="dropdown-menu" aria-labelledby="menuAbout">
-          <li><a class="dropdown-item" href="http://www.apache.org/licenses/">License</a></li>
-          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
-          <li><a class="dropdown-item" href="../team-list.html">Project Team</a></li>
-          <li><a class="dropdown-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy policy</a></li>
+  <head>
+    <title>Apache SIS - Get raster values at geographic coordinates</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="../sis.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../syntax.css">
+  </head>
+  <body>
+    <div class="topbar">
+      <a class="topbar-brand" href="../index.html">Apache SIS™</a>
+      <ul class="topbar-items">
+        <li>
+          <a href="https://www.apache.org/events/current-event.html">
+             <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="main-section">
+      <nav class="left-bar">
+        <ul class="nav-pills">
+          <li><a class="nav-link  inactive " href="../index.html">Home</a></li>
+          <li><a class="nav-link  inactive " href="../about.html">About</a></li>
+          <li><a class="nav-link  inactive " href="../downloads.html">Downloads</a></li>
+          <li><a class="nav-link  active " href="../howto.html">How to…</a></li>
+          <li><a class="nav-link  inactive " href="../standards.html">Standards</a></li>
+          <li><a class="nav-link  inactive " href="../formats.html">Data formats</a></li>
+          <li><a class="nav-link  inactive " href="../epsg.html">EPSG Database</a></li>
+          <li><a class="nav-link  inactive " href="../javafx.html">Application (demo)</a></li>
+          <li><a class="nav-link  inactive " href="../documentation.html">Documentation</a></li>
         </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuDownload" data-bs-toggle="dropdown" aria-expanded="false">Download</a>
-        <ul class="dropdown-menu" aria-labelledby="menuDownload">
-          <li><a class="dropdown-item" href="../downloads.html">Downloads</a></li>
-          <li><a class="dropdown-item" href="../source.html">Checkout Sources</a></li>
-          <li><a class="dropdown-item" href="../epsg.html">EPSG Database</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuDocumentation" data-bs-toggle="dropdown" aria-expanded="false">Documentation</a>
-        <ul class="dropdown-menu" aria-labelledby="menuDocumentation">
-          <li><a class="dropdown-item" href="../apidocs/index.html">Online Javadoc</a></li>
-          <li><a class="dropdown-item" href="../book/en/developer-guide.html">Developer Guide</a></li>
-          <li><a class="dropdown-item" href="../howto.html">How to…</a></li>
-          <li><a class="dropdown-item" href="../formats.html">Supported formats</a></li>
-          <li><a class="dropdown-item" href="../tables/CoordinateReferenceSystems.html">Supported CRS</a></li>
-          <li><a class="dropdown-item" href="../tables/CoordinateOperationMethods.html">Map Projections</a></li>
-          <li><a class="dropdown-item" href="../code-patterns.html">Code Patterns</a></li>
-          <li><a class="dropdown-item" href="../faq.html">FAQ</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuContribute" data-bs-toggle="dropdown" aria-expanded="false">Contribute</a>
-        <ul class="dropdown-menu" aria-labelledby="menuContribute">
-          <li><a class="dropdown-item" href="../contributor.html">New Contributor</a></li>
-          <li><a class="dropdown-item" href="../coding-conventions.html">Coding Conventions</a></li>
-          <li><a class="dropdown-item" href="../mail-lists.html">Mailing Lists</a></li>
-          <li><a class="dropdown-item" href="https://issues.apache.org/jira/browse/SIS">Issue Tracker</a></li>
-          <li><a class="dropdown-item" href="https://github.com/apache/sis">GitHub mirror</a></li>
-          <li><a class="dropdown-item" href="https://cwiki.apache.org/confluence/display/SIS">Wiki</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="../release-management.html">Release management</a></li>
-        </ul>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="menuASF" data-bs-toggle="dropdown" aria-expanded="false">The Foundation</a>
-        <ul class="dropdown-menu" aria-labelledby="menuASF">
-          <li><a class="dropdown-item" href="http://www.apache.org">The Foundation</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/foundation/sponsorship.html">Donate</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/foundation/thanks.html">Thanks</a></li>
-          <li><a class="dropdown-item" href="http://www.apache.org/security/">Security</a></li>
-        </ul>
-      </li>
-    </ul>
-    <ul class="navbar-nav ml-auto mb-2 mb-md-0">
-      <li class="nav-item">
-        <a href="https://www.apache.org/events/current-event.html">
-           <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
-        </a>
-      </li>
-    </ul>
-  </div>
-</nav>
-
-
-<div class="row flex-nowrap">
-  <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width:13rem; min-height:40rem">
-    <ul class="nav nav-pills flex-column mb-auto position-fixed">
-      <li><a class="nav-link  text-white " href="../index.html">Home</a></li>
-      <li><a class="nav-link text-white" href="http://www.apache.org/licenses/">License</a></li>
-      <li><a class="nav-link  text-white " href="../downloads.html">Downloads</a></li>
-      <li><a class="nav-link  active " href="../howto.html">How to…</a></li>
-      <li><a class="nav-link  text-white " href="../standards.html">Standards</a></li>
-      <li><a class="nav-link  text-white " href="../formats.html">Data formats</a></li>
-      <li><a class="nav-link  text-white " href="../epsg.html">EPSG Database</a></li>
-      <li><a class="nav-link  text-white " href="../javafx.html">Application (demo)</a></li>
-      <li><a class="nav-link text-white" href="../apidocs/index.html">Online Javadoc</a></li>
-      <li><a class="nav-link text-white" href="../book/en/developer-guide.html">Developer Guide</a></li>
-      <li><a class="nav-link  text-white " href="../code-patterns.html">Code patterns</a></li>
-      <li><a class="nav-link  text-white " href="../faq.html">FAQ</a></li>
-    </ul>
-  </div>
-  <div class="col">
-    <main class="container">
-      <article>
-        <img src="../images/logo.png" class="sis-logo" align="left"/>
-        <p class="page-title">Get raster values at geographic coordinates</p>
+      </nav>
+      <div class="main-content">
+        <main class="container">
+          <article>
+            <img src="../images/logo.png" class="sis-logo" align="left"/>
+            <p class="page-title">Get raster values at geographic coordinates</p>
 
   <p>This example fetches values at given geospatial coordinates in a raster.
 The coordinates can be expressed in different Coordinate Reference System (CRS).
@@ -113,8 +47,8 @@ are done automatically.
 Raster data and spatiotemporal coordinates can have more than two dimensions.</p>
 <p>This example assumes a preloaded three-dimensional raster.
 For the loading part,
-see <a href="read_netcdf.html">read from a netCDF file</a>
-or <a href="read_geotiff.html">read from a GeoTIFF file</a>
+see <a href="../howto/read_netcdf.html">read from a netCDF file</a>
+or <a href="../howto/read_geotiff.html">read from a GeoTIFF file</a>
 code examples.</p>
 <p>Some file formats store values as integers for compactness reasons,
 but provide a <em>transfer function</em> for converting those integers to &ldquo;real world&rdquo; values.
@@ -139,60 +73,60 @@ This choice is specified by the boolean argument in the <code>data.​forConvert
 </table>
 <h1 id="code-example">Code example</h1>
 <p>The geographic coordinates in following code need to be updated for yours data.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.util.Map</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">javax.measure.Unit</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.coverage.grid.GridCoverage</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.geometry.GeneralDirectPosition</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.referencing.CommonCRS</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.apache.sis.measure.Units</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RasterValuesAtGeographicCoordinates</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="cm">/**
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Map</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">javax.measure.Unit</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.coverage.grid.GridCoverage</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.geometry.GeneralDirectPosition</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.referencing.CommonCRS</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.measure.Units</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">RasterValuesAtGeographicCoordinates</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="cm">/**
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * Demo entry point.
 </span></span></span><span class="line"><span class="cl"><span class="cm">     *
 </span></span></span><span class="line"><span class="cl"><span class="cm">     * @param  args  ignored.
-</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
-</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">GridCoverage</span> <span class="n">data</span> <span class="o">=</span> <span class="o">...;</span>      <span class="c1">// See &#34;Read netCDF&#34; or &#34;Read GeoTIFF&#34; code examples.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">GridCoverage</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...;</span><span class="w">      </span><span class="c1">// See &#34;Read netCDF&#34; or &#34;Read GeoTIFF&#34; code examples.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * Switch to a view of the data in the units of measurement.
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * Then get the unit of measurement of the first band (0).
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * If no unit is specified, fallback on dimensionless unit.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
-</span></span><span class="line"><span class="cl">        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="na">forConvertedValues</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">band</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl">        <span class="n">Unit</span><span class="o">&lt;?&gt;</span> <span class="n">unit</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="na">getSampleDimensions</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">band</span><span class="o">).</span><span class="na">getUnits</span><span class="o">().</span><span class="na">orElse</span><span class="o">(</span><span class="n">Units</span><span class="o">.</span><span class="na">UNITY</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">.</span><span class="na">forConvertedValues</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">band</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Unit</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">.</span><span class="na">getSampleDimensions</span><span class="p">().</span><span class="na">get</span><span class="p">(</span><span class="n">band</span><span class="p">).</span><span class="na">getUnits</span><span class="p">().</span><span class="na">orElse</span><span class="p">(</span><span class="n">Units</span><span class="p">.</span><span class="na">UNITY</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * Get raster values at geographic coordinates expressed in WGS84.
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * Coordinate values in this example are in (latitude, longitude) order.
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * Any compatible coordinate reference system (CRS) can be used below,
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * Apache SIS will automatically transform to the CRS used by the raster.
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * If the raster data are three-dimensional, a 3D CRS should be specified.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
-</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Evaluation at some (latitude, longitude) coordinates:&#34;</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">var</span> <span class="n">point</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GeneralDirectPosition</span><span class="o">(</span><span class="n">CommonCRS</span><span class="o">.</span><span class="na">WGS84</span><span class="o">.</span><span class="na">geographic</span><span class="o">());</span>
-</span></span><span class="line"><span class="cl">        <span class="n">GridCoverage</span><span class="o">.</span><span class="na">Evaluator</span> <span class="n">eval</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="na">evaluator</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">        <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;Evaluation at some (latitude, longitude) coordinates:&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="n">point</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">GeneralDirectPosition</span><span class="p">(</span><span class="n">CommonCRS</span><span class="p">.</span><span class="na">WGS84</span><span class="p">.</span><span class="na">geographic</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">GridCoverage</span><span class="p">.</span><span class="na">Evaluator</span><span class="w"> </span><span class="n">eval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">.</span><span class="na">evaluator</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * If the data are three-dimensional but we still want to use two-dimensional
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * coordinates, we need to specify a default value for the temporal dimension.
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * This code set the default to slice 0 (the first slice) in dimension 2.
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * Omit this line if the data are two-dimensional or if `point` has a 3D CRS.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
-</span></span><span class="line"><span class="cl">        <span class="n">eval</span><span class="o">.</span><span class="na">setDefaultSlice</span><span class="o">(</span><span class="n">Map</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">2</span><span class="o">,</span> <span class="n">0L</span><span class="o">));</span>
-</span></span><span class="line"><span class="cl">        <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">eval</span><span class="p">.</span><span class="na">setDefaultSlice</span><span class="p">(</span><span class="n">Map</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">2</span><span class="p">,</span><span class="w"> </span><span class="n">0L</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * The same `Evaluator` can be reused as often as needed for evaluating
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * at many points.
-</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span>
-</span></span><span class="line"><span class="cl">        <span class="n">point</span><span class="o">.</span><span class="na">setCoordinate</span><span class="o">(</span><span class="n">40</span><span class="o">,</span> <span class="o">-</span><span class="n">10</span><span class="o">);</span>           <span class="c1">// 40°N 10°W
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">double</span><span class="o">[]</span> <span class="n">values</span> <span class="o">=</span> <span class="n">eval</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">point</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;- Value at %s is %g %s.%n&#34;</span><span class="o">,</span> <span class="n">point</span><span class="o">,</span> <span class="n">values</span><span class="o">[</span><span class="n">band</span><span class="o">],</span> <span class="n">unit</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="n">point</span><span class="o">.</span><span class="na">setCoordinate</span><span class="o">(</span><span class="n">30</span><span class="o">,</span> <span class="o">-</span><span class="n">15</span><span class="o">);</span>           <span class="c1">// 30°N 15°W
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">values</span> <span class="o">=</span> <span class="n">eval</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">point</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">printf</span><span class="o">(</span><span class="s">&#34;- Value at %s is %g %s.%n&#34;</span><span class="o">,</span> <span class="n">point</span><span class="o">,</span> <span class="n">values</span><span class="o">[</span><span class="n">band</span><span class="o">],</span> <span class="n">unit</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div>
-<h1 id="output">Output</h1>
+</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">point</span><span class="p">.</span><span class="na">setCoordinate</span><span class="p">(</span><span class="n">40</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">10</span><span class="p">);</span><span class="w">           </span><span class="c1">// 40°N 10°W</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">double</span><span class="o">[]</span><span class="w"> </span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eval</span><span class="p">.</span><span class="na">apply</span><span class="p">(</span><span class="n">point</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="s">&#34;- Value at %s is %g %s.%n&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">point</span><span class="p">,</span><span class="w"> </span><span class="n">values</span><span class="o">[</span><span class="n">band</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">unit</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">point</span><span class="p">.</span><span class="na">setCoordinate</span><span class="p">(</span><span class="n">30</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">15</span><span class="p">);</span><span class="w">           </span><span class="c1">// 30°N 15°W</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eval</span><span class="p">.</span><span class="na">apply</span><span class="p">(</span><span class="n">point</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="s">&#34;- Value at %s is %g %s.%n&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">point</span><span class="p">,</span><span class="w"> </span><span class="n">values</span><span class="o">[</span><span class="n">band</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">unit</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h1 id="output">Output</h1>
 <p>The output depends on the raster data and the locale.
 Below is an example:</p>
 <pre tabindex="0"><code>Evaluation at some (latitude, longitude) coordinates:
@@ -200,22 +134,16 @@ Below is an example:</p>
 - Value at POINT(30 -15) is 0.619000 m.
 </code></pre>
 
-      </article>
-    </main>
-    <footer class="footer">
-    <div class="container">
-      <p>
-        Copyright &copy; 2013-2023 The Apache Software Foundation, Licensed under the
-        <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
-        Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.
-      </p>
+          </article>
+        </main>
+        <footer>
+          <div class="container">
+            <p>Copyright &copy; 2013-2025 The Apache Software Foundation, Licensed under the
+            <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
+            Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+          </div>
+        </footer>
+      </div>
     </div>
-</footer>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
-
-</body>
+  </body>
 </html>

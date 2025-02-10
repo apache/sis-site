@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <title>Apache SIS - Add vertical and temporal axes to an horizontal CRS</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="../sis.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../syntax.css">
+  </head>
+  <body>
+    <div class="topbar">
+      <a class="topbar-brand" href="../index.html">Apache SIS™</a>
+      <ul class="topbar-items">
+        <li>
+          <a href="https://www.apache.org/events/current-event.html">
+             <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="main-section">
+      <nav class="left-bar">
+        <ul class="nav-pills">
+          <li><a class="nav-link  inactive " href="../index.html">Home</a></li>
+          <li><a class="nav-link  inactive " href="../about.html">About</a></li>
+          <li><a class="nav-link  inactive " href="../downloads.html">Downloads</a></li>
+          <li><a class="nav-link  active " href="../howto.html">How to…</a></li>
+          <li><a class="nav-link  inactive " href="../standards.html">Standards</a></li>
+          <li><a class="nav-link  inactive " href="../formats.html">Data formats</a></li>
+          <li><a class="nav-link  inactive " href="../epsg.html">EPSG Database</a></li>
+          <li><a class="nav-link  inactive " href="../javafx.html">Application (demo)</a></li>
+          <li><a class="nav-link  inactive " href="../documentation.html">Documentation</a></li>
+        </ul>
+      </nav>
+      <div class="main-content">
+        <main class="container">
+          <article>
+            <img src="../images/logo.png" class="sis-logo" align="left"/>
+            <p class="page-title">Add vertical and temporal axes to an horizontal CRS</p>
+
+  <p>This example creates a 4-dimensional Coordinate Reference System (CRS)
+with an horizontal, a vertical and a temporal component.
+While it is possible to create a <code>CompoundCRS</code> programmatically,
+it is much easier to do that from authority codes when those codes exist.
+There is two syntaxes standardized by the Open Geospatial Consortium (OGC):
+One syntax using an identifier starting with <code>http://www.opengis.net/def/crs-compound</code>
+followed by the components in the query part of the URL,
+and a shorter but less common syntax starting with <code>urn:ogc:def:crs</code>.
+Apache SIS accepts both, illustrated below.</p>
+<h1 id="direct-dependencies">Direct dependencies</h1>
+<table>
+<thead>
+<tr>
+<th>Maven coordinates</th>
+<th>Module info</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>org.apache.sis.storage:sis-referencing</code></td>
+<td><code>org.apache.sis.referencing</code></td>
+</tr>
+</tbody>
+</table>
+<h1 id="code-example">Code example</h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.referencing.CRS</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Compound</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * Demo entry point.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     *
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @param  args  ignored.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @throws FactoryException if an error occurred while creating the CRS
+</span></span></span><span class="line"><span class="cl"><span class="cm">     *         or searching for a coordinate operation.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">FactoryException</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="n">crs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CRS</span><span class="p">.</span><span class="na">forCode</span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="s">&#34;http://www.opengis.net/def/crs-compound?&#34;</span><span class="o">+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="s">&#34;1=http://www.opengis.net/def/crs/epsg/0/4326&amp;&#34;</span><span class="o">+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="s">&#34;2=http://www.opengis.net/def/crs/epsg/0/5714&amp;&#34;</span><span class="w"> </span><span class="o">+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="s">&#34;3=http://www.opengis.net/def/crs/OGC/0/JulianDate&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * The following is a more compact way to request the same CRS.
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * If (longitude, latitude) axis order is desired, just replace
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * &#34;EPSG::4326&#34; by &#34;OGC::84&#34;.
+</span></span></span><span class="line"><span class="cl"><span class="cm">         */</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="n">alternative</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CRS</span><span class="p">.</span><span class="na">forCode</span><span class="p">(</span><span class="s">&#34;urn:ogc:def:crs,crs:EPSG::4326,crs:EPSG::5714,crs:OGC::JulianDate&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">crs</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;Compact alternative is equal: &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">crs</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">alternative</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>Alternatively, if the components are already available as <code>CoordinateReferenceSystem</code> object, the
+<a href="../apidocs/org.apache.sis.referencing/org/apache/sis/referencing/CRS.html#compound(org.opengis.referencing.crs.CoordinateReferenceSystem...)">compound method</a>
+can be invoked instead.</p>
+<h1 id="output">Output</h1>
+<pre tabindex="0"><code>CompoundCRS[&#34;WGS 84 + MSL height + Julian&#34;,
+  GeodeticCRS[&#34;WGS 84&#34;,
+    Datum[&#34;World Geodetic System 1984&#34;,
+      Ellipsoid[&#34;WGS 84&#34;, 6378137.0, 298.257223563]],
+    CS[ellipsoidal, 2],
+      Axis[&#34;Geodetic latitude (Lat)&#34;, north],
+      Axis[&#34;Geodetic longitude (Lon)&#34;, east],
+      Unit[&#34;degree&#34;, 0.017453292519943295],
+    Id[&#34;EPSG&#34;, 4326, &#34;9.9.1&#34;]],
+  VerticalCRS[&#34;MSL height&#34;,
+    VerticalDatum[&#34;Mean Sea Level&#34;],
+    CS[vertical, 1],
+      Axis[&#34;Gravity-related height (H)&#34;, up],
+      Unit[&#34;metre&#34;, 1],
+    Id[&#34;EPSG&#34;, 5714, &#34;9.9.1&#34;]],
+  TimeCRS[&#34;Julian&#34;,
+    TimeDatum[&#34;Julian&#34;, TimeOrigin[-4713-11-24T12:00:00.000]],
+    CS[temporal, 1],
+      Axis[&#34;Time (t)&#34;, future],
+      TimeUnit[&#34;day&#34;, 86400],
+    Id[&#34;OGC&#34;, &#34;JulianDate&#34;]],
+  Area[&#34;World.&#34;],
+  BBox[-90.00, -180.00, 90.00, 180.00]]
+
+Compact alternative is equal: true
+</code></pre>
+
+          </article>
+        </main>
+        <footer>
+          <div class="container">
+            <p>Copyright &copy; 2013-2025 The Apache Software Foundation, Licensed under the
+            <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
+            Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>
