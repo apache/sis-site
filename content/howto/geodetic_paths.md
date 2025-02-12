@@ -10,9 +10,9 @@ with the property that the azimuths at the two curve extremities are preserved.
 
 # Direct dependencies
 
-Maven coordinates                        | Module info                  | Remarks
----------------------------------------- | ---------------------------- | -------
-`org.apache.sis.storage:sis-referencing` | `org.apache.sis.referencing` |
+Maven coordinates                     | Module info
+------------------------------------- | ----------------------------
+`org.apache.sis.core:sis-referencing` | `org.apache.sis.referencing`
 
 
 # Code example

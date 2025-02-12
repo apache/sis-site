@@ -18,9 +18,9 @@ the same Apache {{% SIS %}} methods can transform efficiently _N_-dimensional en
 
 # Direct dependencies
 
-Maven coordinates                           | Module info
-------------------------------------------- | ----------------------------
-`org.apache.sis.storage:sis-referencing`    | `org.apache.sis.referencing`
+Maven coordinates                     | Module info
+------------------------------------- | ----------------------------
+`org.apache.sis.core:sis-referencing` | `org.apache.sis.referencing`
 
 
 # Code example

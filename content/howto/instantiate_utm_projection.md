@@ -31,7 +31,7 @@ The code example below instantiates the same {{% CRS %}} using the three approac
 
 Maven coordinates                           | Module info                           | Remarks
 ------------------------------------------- | ------------------------------------- | -----------------------------
-`org.apache.sis.storage:sis-referencing`    | `org.apache.sis.referencing`          |
+`org.apache.sis.core:sis-referencing`       | `org.apache.sis.referencing`          |
 `org.apache.sis.non-free:sis-embedded-data` | `org.apache.sis.referencing.database` | Optional. Non-Apache license.
 
 The [EPSG dependency](../epsg.html) is optional for examples using the `CommonCRS` enumeration

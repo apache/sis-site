@@ -16,9 +16,9 @@ Apache SIS accepts both, illustrated below.
 
 # Direct dependencies
 
-Maven coordinates                           | Module info
-------------------------------------------- | ----------------------------
-`org.apache.sis.storage:sis-referencing`    | `org.apache.sis.referencing`
+Maven coordinates                     | Module info
+------------------------------------- | ----------------------------
+`org.apache.sis.core:sis-referencing` | `org.apache.sis.referencing`
 
 
 # Code example
