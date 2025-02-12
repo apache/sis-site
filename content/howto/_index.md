@@ -33,6 +33,7 @@ The examples are grouped in the following sections:
 * [Union or intersection of envelopes in different reference systems](howto/envelopes_in_different_crs.html)
 * [Determine if two reference systems are functionally equal](howto/crs_equality.html)
 * [Compute geodetic distances and paths](howto/geodetic_paths.html)
+* [Extend with custom Coordinate Reference Systems](howto/custom_crs.html)
 
 
 # Metadata    {#metadata}
