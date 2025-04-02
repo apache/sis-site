@@ -11,7 +11,7 @@ This page lists some recommended code pattern for developing or using Apache {{%
 
 # Referencing    {#referencing}
 
-This section lists recommended code pattern when using the `sis-referencing` module.
+This section lists recommended code pattern when using or developing the `sis-referencing` module.
 
 ## Never explicitly swap coordinates for axis order    {#axisOrder}
 
@@ -29,7 +29,7 @@ and let the referencing engine performs the conversion from the source to the ta
 
 # Rasters and coverages    {#coverage}
 
-This section lists recommended code pattern when using the `sis-coverage` module.
+This section lists recommended code pattern when using or developing the `sis-coverage` module.
 
 ## Georeference images with affine transforms, _not_ bounding boxes    {#gridToCRS}
 
@@ -81,7 +81,7 @@ so `"Foo bar"` is sorted before both `"FooBar"` and `"Foobar"`.
 
 Since Java 1.5, characters are no longer restricted to 16 bits.
 Some "characters" are actually represented using two consecutive `char` elements.
-Those "characters" are called <cite>code points</cite>.
+Those "characters" are called _code points_.
 Consequently, when iterating over characters in a string, the following pattern should be used:
 
 ```java
@@ -98,14 +98,14 @@ for (int i=0; i<string.length();) {
 # Logging    {#logging}
 
 Apache {{% SIS %}} uses the `java.util.logging` framework.
-It does not necessarily means that all SIS users are forced to use this framework,
+It does not necessarily mean that all SIS users are forced to use this framework,
 as it is possible to use `java.util.logging` as an API and have logging redirected to another system.
-For example the logging can be redirect to SLF4J by adding the `jul-to-slf4j` dependency to a project.
+For example, the logging can be redirect to SLF4J by adding the `jul-to-slf4j` dependency to a project.
 
 The logger names are usually the package name of the class emitting log messages, but not necessarily.
 In particular, we do not follow this convention if the class is located in an internal package
-(`org.apache.sis.internal.*`) since those packages are considered privates.
-In such cases, the logger name should be the package name of the public class invoking the internal methods.
+(`org.apache.sis.internal.*`) since those packages are considered private.
+In such cases, the logger name should be the package name of the public class invoking the internal method.
 The reason for that rule is that logger names are considered part of the public API,
 since developers use them for configuring their logging (verbosity, destination, <i>etc.</i>).
 
@@ -122,11 +122,12 @@ When a local variable in a method has the same name as a field in the enclosing 
 some compilers emit a _"Local variable hides a field"_ warning.
 This warning can be disabled with a `@SuppressWarnings("LocalVariableHidesMemberVariable")` annotation.
 However, by convention Apache SIS applies this annotation only when the local variable should have the same value as the field.
-Otherwise, the warning should be resolved. When a code hides a field, it should be a statement such as
+Otherwise, the warning should be resolved by renaming a variable.
+When a code hides a field, it should be a statement such as
 `final Foo foo = this.foo;` or `final Foo foo = getFoo();` and may exist for the following reasons:
 
-* `this.foo` is non-final and we want to make sure that it is not modified by accident in the method.
-* `this.foo` is a volatile field, therefor should be read only once and cached in the method for performance.
+* `this.foo` is non-final and the developer wants to make sure that the field is not modified by accident in the method.
+* `this.foo` is a volatile field, therefore should be read only once and cached in the method for performance reasons.
 * `getFoo()` computes the value of `this.foo` lazily.
 
 
@@ -144,4 +145,4 @@ For example, for formatting a text in italic, the Javadoc should choose the most
   Apache SIS uses also this tag for the name of a geodetic object in the EPSG geodetic database,
   in which case the object definition is considered as a document.
   This tag can also be used for section titles.
-* `<i>` for rendering in italic for any reason than the above reasons.
+* `<i>` for rendering in italic for any reason other than the above reasons.

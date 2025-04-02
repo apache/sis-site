@@ -54,8 +54,8 @@ ProjectedCRS["North Pole Stereographic",
 
 A file with many CRS definitions may contain a lot of redundancy.
 For example, the `BaseGeodCRS` and `CS` elements are often repeated verbatim in many `ProjectedCRS` definitions.
-Apache SIS has a non-standard mechanism for declaring WKT fragments are reusing them in many CRS definitions.
-The fragment can be declared with a `SET` directive, and reused by prefixing the fragment name with `$`:
+Apache SIS has a non-standard mechanism for declaring WKT fragments and reusing them in many CRS definitions.
+The fragments can be declared with a `SET` directive, and reused by prefixing a fragment name with `$`.
 Example for the same CRS than above:
 
 ```wkt
@@ -85,10 +85,10 @@ The above examples are available with more explanations in a [text file][ESRI_CR
 
 # Java code
 
-The application needs to load the CRS definitions file in a Java code like below
+A Java application can load CRS definitions from above file like below
 (see the [Javadoc][WKTDictionary] for more information).
-Replace "MyOrg" by the chosen authority name and "MyCRS.txt" by the text file
-containing CRS definitions in WKT format:
+Replace `"MyOrg"` by the chosen authority name and `"MyRegistry.txt"` by the
+filename of the text file containing CRS definitions in WKT format:
 
 ```java
 package org.myorg;
@@ -102,22 +102,22 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.util.FactoryException;
 
-public class MyCRS extends WKTDictionary implements CRSAuthorityFactory {
-    MyCRS() throws IOException, FactoryException {
+public class MyRegistry extends WKTDictionary implements CRSAuthorityFactory {
+    MyRegistry() throws IOException, FactoryException {
         super(new DefaultCitation("MyOrg"));
-        try (BufferedReader source = Files.newBufferedReader(Path.of("MyCRS.txt"))) {
+        try (BufferedReader source = Files.newBufferedReader(Path.of("MyRegistry.txt"))) {
             load(source);
         }
     }
 }
 ```
 
-Finally, applications need to declare above class as a services in their `module-info.java`:
+Finally, the application needs to declare the above class as a service in its `module-info.java` file:
 
 ```java
 module org.myorg {
     requires org.apache.sis.referencing;
-    provides org.opengis.referencing.crs.CRSAuthorityFactory with org.myorg.MyCRS;
+    provides org.opengis.referencing.crs.CRSAuthorityFactory with org.myorg.MyRegistry;
 }
 ```
 
