@@ -133,6 +133,24 @@ When a code hides a field, it should be a statement such as
 
 
 
+# Imports order    {#imports}
+
+There is currently no strict rule about the order of `import` statements in Apache SIS code base, except one:
+if a class is different in the `main`, `geoapi-3.1` and `geoapi-4.0` branches, and if those differences imply
+different import statements, then the imports that are different should be grouped last with a comment.
+Example:
+
+```java
+// Specific to the geoapi-3.1 and geoapi-4.0 branches:
+import org.opengis.filter.Filter;
+import org.opengis.filter.Expression;
+```
+
+The purpose is to reduce the number of conflicts during the merges between branches.
+
+
+
+
 # Javadoc    {#javadoc}
 
 Javadoc comments are written in HTML, not Markdown, both for historical reasons and because HTML allows richer semantic.
