@@ -41,10 +41,10 @@ For example:
 sis crs EPSG:6676
 ```
 
-Alternatively if the [JavaFX application](javafx.html) is used, just start the application.
+Alternatively, if the [JavaFX application](javafx.html) is used, just start the application.
 It may be necessary to open a random data file for triggering the EPSG dataset initialization.
 In both cases, the first time that the command-line tool or JavaFX application needs to query EPSG,
-it will prompt the user for authorization to download EPSG geodetic dataset from Maven Central.
+it will prompt the user for authorization to download the EPSG geodetic dataset from Maven Central.
 If the user accepts EPSG terms of use, then a local copy of the EPSG geodetic dataset will be created
 and stored in the `apache-sis-{{% version %}}/data` sub-directory.
 
@@ -72,31 +72,54 @@ java -Dderby.system.home=apache-sis-{{% version %}}/data/Databases \
      MyMainClass
 ```
 
-Alternatively `SIS_DATA` or `derby.system.home` can be set to the path of any other directory which contain the same files.
+The `SIS_DATA` environment variable or `derby.system.home` Java property
+can be set to the path of any other directory which contain the same files.
 
 # Add a Maven dependency    {#maven}
 
-Maven projects can get the EPSG geodetic dataset automatically, _without any prompt for terms of use agreement_,
-if they add a `sis-epsg` or `sis-embedded-data` dependency (from `org.apache.sis.non-free` group) in their project.
+Maven projects can get the EPSG geodetic dataset automatically, _without any prompt for EPSG Terms of Use agreement_,
+if the users add a `sis-embedded-data` or `sis-epsg` dependency (from `org.apache.sis.non-free` group) in their project.
 Those two approaches have advantages and inconvenient described in following sub-sections.
-In both cases, we assume that developers who add those dependencies explicitly in their project agree with
-[EPSG terms of use][EPSG-ToU].
+In both cases, we assume that the developers who add those dependencies explicitly in their project
+have agreed with the [EPSG Terms of Use][EPSG-ToU].
+
+## As embedded database     {#maven-embedded}
+
+With `sis-embedded-data` artifact on the classpath, there is no need to setup environment variable, Java property or JNDI.
+However, this simplicity come at the cost of a larger download with no possibility to choose the database engine
+(i.e. the database software is fixed to Derby), and no possibility to add's user data (i.e. the database is read-only).
+This embedded data dependency can be declared as below
+(see the [download](downloads.html#epsg) page for more information about Maven dependency declaration).
+
+```xml
+<dependencies>
+  <dependency>
+    <groupId>org.apache.sis.non-free</groupId>
+    <artifactId>sis-embedded-data</artifactId>
+    <version>{{% version %}}</version>
+    <scope>runtime</scope>
+  </dependency>
+</dependencies>
+```
 
 ## As database installer     {#maven-epsg}
 
+For applications which already have a database engine, or which use a different version of the Derby database,
+it may be desirable to install the EPSG geodetic dataset in their existing database rather than having two databases in parallel.
 With `sis-epsg` artifact on the classpath, Apache {{% SIS %}} will create a local copy of EPSG database when first needed.
 The target database must be specified by users with *one* of the following choices:
 
-* Set the `SIS_DATA` environment variable to the path of an initially empty directory _(recommended)_.
-  The specified directory must exist, but sub-directories will be created as needed.
-* Set the `derby.system.home` Java property to the path of an initially empty directory,
-  or a directory that contain other Derby databases. The specified directory must exist.
-* Register a `DataSource` under the `java:comp/env/jdbc/SpatialMetadata` name in a JNDI directory
-  (see [next section](#jndi)). The database must exist but can be initially empty.
-* Set a `DataSource` [from Java code](./apidocs/org.apache.sis.util/org/apache/sis/setup/Configuration.html).
+* set the `SIS_DATA` environment variable to the path of an initially empty directory _(recommended for Derby users)_,
+* or set the `derby.system.home` Java property to the path of an initially empty directory
+  or a directory that contain other Derby databases,
+* or register a `DataSource` under the `java:comp/env/jdbc/SpatialMetadata` name in a JNDI directory
+  (see [next section](#jndi)),
+* or set a `DataSource` [from Java code](./apidocs/org.apache.sis.util/org/apache/sis/setup/Configuration.html).
 
-The Maven dependency is as below (the Derby dependency can be replaced by another database driver
-if that database is specified by JNDI):
+In all cases, the specified directory or database must exist but may be empty.
+Sub-directories or database schema will be created as needed.
+Then, the Maven dependency can be declared in a project as below,
+with the Derby dependency replaced by another database driver if desired:
 
 ```xml
 <dependencies>
@@ -115,41 +138,7 @@ if that database is specified by JNDI):
 </dependencies>
 ```
 
-See the [download](downloads.html#epsg) page for more information about Maven dependency declaration.
-
-## As embedded database     {#maven-embedded}
-
-With `sis-embedded-data` artifact on the classpath, there is no need to setup environment variable, Java property or JNDI.
-However this simplicity come with the following inconvenient:
-
-* a larger download,
-* no option for choosing which data to use (and consequently which license to accept),
-* no possibility to choose the database engine (i.e. the database software is fixed to Derby),
-* no possibility to add user data (i.e. the database is read-only),
-* slower execution of `CRS.forCode(…)` and `CRS.findCoordinateOperation(…)` methods, unless the JAR file is uncompressed.
-
-This dependency can be declared as below
-(see the [download](downloads.html#epsg) page for more information about Maven dependency declaration).
-Note that `sis-epsg` and `sis-embedded-data` should not be specified in the same project; only one is needed:
-
-```xml
-<dependencies>
-  <dependency>
-    <groupId>org.apache.sis.non-free</groupId>
-    <artifactId>sis-embedded-data</artifactId>
-    <version>{{% version %}}</version>
-    <scope>runtime</scope>
-  </dependency>
-</dependencies>
-```
-
-The performance issue can be avoided if the JAR file is uncompressed.
-But uncompressed `sis-embedded-data.jar` file is more than 5 times larger than the compressed file.
-Given that `CRS​.forCode(…)` and `CRS​.findCoordinateOperation(…)` should not be invoked too often,
-and that performance degradation does not apply to the `CoordinateOperation` instances created by those method calls,
-the JAR file is distributed on the Maven repository in its compressed form.
-If desired, better performance can be achieved by using one of the other configurations described in this page,
-or by uncompressing the `sis-embedded-data.jar` file locally.
+Note that `sis-epsg` and `sis-embedded-data` artifacts should not be specified in the same project. Only one is needed.
 
 # Use an existing EPSG database    {#existing}
 
@@ -160,8 +149,6 @@ The database must exist but can be empty, in which case it will be populated wit
 if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​{{% version %}}</code> dependency is on the classpath
 (see [above section](#maven-epsg)).
 If non-empty, the database should contain the tables created by SQL scripts downloaded from [EPSG][EPSG].
-**Note thas as of Apache SIS 1.2, only EPSG dataset version 9 is supported.
-EPSG datasets version 10 and later are not yet supported.**
 
 ## Registration by Java code    {#setup}
 
@@ -184,7 +171,7 @@ public void MyApp {
 }
 ```
 
-## Registration by Java Naming and Directory Interface    {#jndi-java}
+## Registration by Java Naming and Directory Interface    {#jndi}
 
 Registration in JNDI can be done programmatically (by Java code) or by configuring XML files in some environments.
 Registration can be done by the following Java code, provided that a JNDI implementation is available on the classpath:

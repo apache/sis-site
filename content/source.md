@@ -9,7 +9,7 @@ which is subject to licensing terms different than Apache ones.
 This page describes two ways to checkout Apache {{% SIS %}} source code:
 
 * A basic checkout with only the main repository, the most stable branch, and no configuration requirement.
-* A more advanced configuration for active SIS developments, using uncommitted (for now) API
+* A more advanced configuration for active {{% SIS %}} developments, using uncommitted (for now) API
   and including optional data for more extensive tests.
 
 It is possible to start with the basic checkout and migrate to the advanced configuration later,
@@ -21,21 +21,18 @@ or to cherry-pick only the interesting parts of the advanced configuration.
 # Basic installation    {#basic}
 
 Create an empty directory for the Apache {{% SIS %}} project.
-We use `ApacheSIS` directory name in this page, but that name can be anything.
+We use `SIS` directory name in this page, but that name can be anything.
 Replace that name in the shell commands below if another name is used.
 The Apache {{% SIS %}} source code can be cloned in that directory as below
 (lines starting with `#` are comments and can be ignored):
 
 ```bash
-mkdir ApacheSIS
-cd ApacheSIS
-git clone https://gitbox.apache.org/repos/asf/sis
-#
+mkdir SIS
+cd SIS
+git clone https://gitbox.apache.org/repos/asf/sis main
+
 # Alternatively, GitHub mirror can also be used:
-# git clone https://github.com/apache/sis
-#
-# or Subversion (read-only):
-# svn checkout https://github.com/apache/sis/trunk
+# git clone https://github.com/apache/sis main
 ```
 
 If JavaFX is available on the local machine,
@@ -43,21 +40,21 @@ its JAR files location can be specified as below
 (edit the `/usr/lib/jvm/openjfx` path as needed).
 The JavaFX application is excluded by default because it depends on
 the [JavaFX platform][JavaFX] which is distributed under GPL license
-(note that the SIS module stay under Apache 2 licence).
+(note that the Apache {{% SIS %}} module using JavaFX stay under Apache 2 licence).
 
 ```bash
 # Syntax for Unix shell
 export PATH_TO_FX=/usr/lib/jvm/openjfx
 ```
 
-Likewise the [EPSG geodetic dataset](epsg.html) is excluded by default for licensing reasons.
+Likewise, the [EPSG geodetic dataset](epsg.html) is excluded by default for licensing reasons.
 
 Then, Apache {{% SIS %}} can be built as below:
 
 ```bash
-cd sis
+cd main
 gradle assemble
-gradle publishToMavenLocal      # If use with Maven projects is desired.
+gradle publishToMavenLocal      # If usage with Maven projects is desired.
 ```
 
 Outputs will be located in the following sub-directories:
@@ -73,7 +70,7 @@ The remaining of this page describes optional configurations for more advanced d
 
 # Advanced installation    {#advanced}
 
-This section assumes that above-described basic checkout has been done.
+This section assumes that the above-described basic checkout has been done.
 All subsections below are optional, but the "Create data directory" one
 is recommended because some other subsections depend on it.
 
@@ -82,8 +79,8 @@ is recommended because some other subsections depend on it.
 
 Apache {{% SIS %}} needs a directory where to store database, datum shift files and other optional data.
 That directory is specified by the `SIS_DATA` environment variable and can be located anywhere.
-A convenient location is a subdirectory of the `ApacheSIS` directory created in the "basic checkout" section.
-For example (with `ApacheSIS` as the current directory):
+A convenient location is a subdirectory of the `SIS` directory created in the "basic checkout" section.
+For example (with `SIS` as the current directory):
 
 ```bash
 mkdir Data
@@ -105,34 +102,31 @@ of coordinate reference systems can be created from EPSG codes.
 The EPSG database can be [installed in various ways][epsg-install],
 but this section describes an alternative way more suitable to Apache {{% SIS %}} development.
 Before to continue, make sure to agree with [EPSG terms of use][EPSG-ToU].
-Then following command can be executed with `ApacheSIS` as the current directory:
+Then, the following command can be executed with `SIS` as the current directory:
 
 ```bash
 # Executing this command imply agreement with EPSG terms of use.
 svn checkout https://svn.apache.org/repos/asf/sis/data/non-free/
 ```
 
-Then copy or link the EPSG scripts in the directory where Apache {{% SIS %}} looks for optional data.
-Adjust the relative paths as needed if the `SIS_DATA` environment variable
-points to another location than the one used in above section:
+Then, link the EPSG scripts in the directory where Apache {{% SIS %}} looks for optional data.
+Adjust the relative paths as needed if the `main` and `non-free` repositories have been check out
+in other locations than the ones used in above section:
 
 ```bash
-mkdir $SIS_DATA/Databases
-mkdir $SIS_DATA/Databases/ExternalSources
-cd $SIS_DATA/Databases/ExternalSources
-ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/Data.sql    EPSG_Data.sql
-ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/FKeys.sql   EPSG_FKeys.sql
-ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/Tables.sql  EPSG_Tables.sql
+cd main/optional/src/org.apache.sis.referencing.epsg/main/org/apache/sis/referencing/factory/sql/epsg
+ln --symbolic ../../../../../../../../../../../../non-free/EPSG/* .
 cd -
 ```
 
-This is sufficient for allowing Apache {{% SIS %}} to create the geodetic database
-without the need for `sis-epsg` or `sis-embedded-data` module on the classpath.
-This setting is not done automatically because Apache projects cannot introduce
-non-free dependencies without explicit action from user.
-If this action is not taken, some JUnit tests requiring EPSG data may be skipped.
-If any EPSG file is updated, deleting the `$SIS_DATA/​Databases/​SpatialMetadata` directory
-is sufficient for causing Apache {{% SIS %}} to recreate the Derby database with new data.
+For creating the EPSG database from those scripts, delete the old Derby database (if it exists) and rebuild Apache {{% SIS %}}.
+Note that it may be useful to test {{% SIS %}} twice for making sure that all tests were run while the database was present.
+
+```bash
+cd main
+rm --recursive $SIS_DATA/Databases/SpatialMetadata
+gradle test --rerun
+```
 
 
 ## Configure PostgreSQL    {#postgres}
@@ -189,15 +183,15 @@ This requirement has been added for avoiding undesired interference with host.
 
 ## Running extensive tests    {#tests}
 
-A simple `gradle test` execution in the `sis` directory
+A simple `gradle test` execution in the `main` directory
 will build and test Apache {{% SIS %}} with the default set of JUnit tests.
 Some tests are skipped by default, either because they would have some effects outside
-the `sis` directory (for example writing in `SpatialMetadataTest` database on PostgreSQL),
+the `main` directory (for example writing in `SpatialMetadataTest` database on PostgreSQL),
 or because those tests take a long time to execute.
 For enabling all tests, use the following command:
 
 ```bash
-cd sis
+cd main
 export SIS_TEST_OPTIONS=extensive,postgresql
 gradle test
 ```
@@ -208,7 +202,7 @@ gradle test
 The source code repository contains `main`, `geoapi-3.1` and `geoapi-4.0` branches.
 Apache {{% SIS %}} releases are created from `main`, which depends on the latest GeoAPI version
 released by the Open Geospatial Consortium (OGC), currently [GeoAPI 3.0.2][geoapi-stable].
-However daily developments occur on the `geoapi-4.0` branch before to be merged (indirectly) to `main`.
+However, daily developments occur on the `geoapi-4.0` branch before to be merged (indirectly) to `main`.
 Those branches exist in order to experiment early new API and technologies — since they may impact
 the library design — while keeping the releases compatible with officially released API.
 In summary:
@@ -222,7 +216,7 @@ When commits reach `main` they become unmodifiable; the `git push --force` comma
 Contributors to Apache {{% SIS %}} project should switch to the current development branch before submitting patches:
 
 ```bash
-cd sis
+cd main
 git checkout geoapi-4.0
 ```
 
@@ -242,12 +236,14 @@ All resource files are copied to the build directory, except those with the foll
 
 The `properties` files are handled in a special way.
 Localized resources are provided in `*.properties` files as specified by the `java.util.Property­Resource­Bundle` standard class.
-However SIS does not use those resources files directly. Instead `*.properties` files are transformed into binary files having
-the same filename but the `.utf` extension. This conversion is done for efficiency, for convenience (the compiler applies the
-`java.text.Message­Format` _doubled single quotes_ rule itself), and for compile-time safety.
+However, Apache {{% SIS %}} does not use those resources files directly.
+Instead `*.properties` files are transformed into binary files having the same filename but the `.utf` extension.
+This conversion is done for efficiency,
+for convenience (the compiler applies the `java.text.Message­Format` _doubled single quotes_ rule itself),
+and for compile-time safety.
 
 In addition to generating the `*.utf` files, the resource compiler may modify the `*.java` files having the same name than the
-resource files. For example given a set of `Vocabulary*.properties` files (one for each supported language), the compiler will
+resource files. For example, given a set of `Vocabulary*.properties` files (one for each supported language), the compiler will
 generate the corresponding `Vocabulary*.utf` files, then look for a `Vocabulary.java` source file. If such source file is found
 and contains a public static inner class named `Keys`, then the compiler will rewrite the constants declared in that inner class
 with the list of keys found in the `Vocabulary*.properties` files.
@@ -265,11 +261,12 @@ and can be [browsed online][viewvc].
 Tags for Apache {{% SIS %}} versions 0.1 to 0.8 should be fetched from the [SVN repository][svn-sis-tags].
 The development branches on that repository were named `JDK8`, `JDK7`, `JDK6` and `trunk`.
 
-[subversion]:       http://subversion.apache.org
-[git]:              http://git-scm.com
+[subversion]:       https://subversion.apache.org
+[git]:              https://git-scm.com
 [viewvc]:           http://svn.apache.org/viewvc/sis/
+[JavaFX]:           https://openjfx.io/
 [epsg-install]:     epsg.html
 [EPSG-ToU]:         https://epsg.org/terms-of-use.html
 [svn-sis-tags]:     https://svn.apache.org/repos/asf/sis/tags/
-[geoapi-stable]:    http://www.geoapi.org/3.0/index.html
-[geoapi-snapshot]:  http://www.geoapi.org/snapshot/index.html
+[geoapi-stable]:    https://www.geoapi.org/3.0/index.html
+[geoapi-snapshot]:  https://www.geoapi.org/snapshot/index.html

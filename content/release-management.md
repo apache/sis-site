@@ -260,8 +260,8 @@ Those steps are also useful as additional tests, since failure to generate those
   They are temporary hacks for including deprecated codes in the CRS list to be generated
   (those codes will appear with strike for making clear that they are deprecated):
 
-   * Search `DEPRECATED=0` (it appears in a SQL fragment) and replace by `(DEPRECATED=0 OR TRUE)`.
-   * Comment-out the `if (table.showColumn != null)` block which appears just above the `DEPRECATED=0` occurrence.
+   * Search `DEPRECATED=FALSE` (it appears in a SQL fragment) and replace by `(DEPRECATED=FALSE OR TRUE)`.
+   * Comment-out the `if (table.showColumn != null)` block which appears just above the `DEPRECATED=FALSE` occurrence.
   <br><br>
 
 * Run the following commands:
@@ -417,7 +417,26 @@ Apply the following changes:
 * Add the following line in-place of deleted lines (omit the `org.opengis.geoapi` module if not desired):
 
 ```
---module org.opengis.geoapi,org.apache.sis.util,org.apache.sis.metadata,org.apache.sis.referencing,org.apache.sis.referencing.gazetteer,org.apache.sis.feature,org.apache.sis.storage,org.apache.sis.storage.sql,org.apache.sis.storage.xml,org.apache.sis.storage.netcdf,org.apache.sis.storage.geotiff,org.apache.sis.storage.earthobservation,org.apache.sis.cloud.aws,org.apache.sis.portrayal,org.apache.sis.profile.france,org.apache.sis.profile.japan,org.apache.sis.openoffice,org.apache.sis.console,org.apache.sis.gui
+--module \
+org.opengis.geoapi,\
+org.apache.sis.util,\
+org.apache.sis.metadata,\
+org.apache.sis.referencing,\
+org.apache.sis.referencing.gazetteer,\
+org.apache.sis.feature,\
+org.apache.sis.storage,\
+org.apache.sis.storage.sql,\
+org.apache.sis.storage.xml,\
+org.apache.sis.storage.netcdf,\
+org.apache.sis.storage.geotiff,\
+org.apache.sis.storage.earthobservation,\
+org.apache.sis.cloud.aws,\
+org.apache.sis.portrayal,\
+org.apache.sis.profile.france,\
+org.apache.sis.profile.japan,\
+org.apache.sis.openoffice,\
+org.apache.sis.console,\
+org.apache.sis.gui
 ```
 
 The following commands temporarily create links to optional modules for inclusion in the Javadoc.
@@ -688,7 +707,8 @@ unzip apache-sis-$NEW_VERSION-bin.zip
 cd apache-sis-$NEW_VERSION
 unset SIS_DATA
 ./bin/sis about --verbose
-./bin/sis crs https://raw.githubusercontent.com/apache/sis/main/endorsed/src/org.apache.sis.referencing/test/org/apache/sis/referencing/crs/ProjectedCRS.xml --format WKT
+./bin/sis crs --format WKT \
+https://raw.githubusercontent.com/apache/sis/main/endorsed/src/org.apache.sis.referencing/test/org/apache/sis/referencing/crs/ProjectedCRS.xml
 ```
 
 
