@@ -8,7 +8,7 @@ together with information about how to perform coordinate operations, their accu
 The EPSG dataset is owned and maintained by the [International Association of Oil & Gas producers][IOGP].
 Usage of EPSG dataset with Apache {{% SIS %}} is optional but strongly recommended:
 without that geodetic dataset, only a small subset of CRS definitions will be available
-(basically the constants enumerated in the [`CommonCRS`](apidocs/org/apache/sis/referencing/CommonCRS.html) Java class)
+(basically the constants enumerated in the [`CommonCRS`](apidocs/org.apache.sis.referencing/org/apache/sis/referencing/CommonCRS.html) Java class)
 unless full definitions are provided in _Well Known Text_ (WKT) or _Geographic Markup Language_ (GML) formats.
 Furthermore, coordinate operations between any given pair of CRS may be less accurate
 and their domains of validity may be unspecified if Apache {{% SIS %}} cannot query EPSG.
@@ -93,7 +93,7 @@ The target database must be specified by users with *one* of the following choic
   or a directory that contain other Derby databases. The specified directory must exist.
 * Register a `DataSource` under the `java:comp/env/jdbc/SpatialMetadata` name in a JNDI directory
   (see [next section](#jndi)). The database must exist but can be initially empty.
-* Set a `DataSource` [from Java code](./apidocs/org/apache/sis/setup/Configuration.html).
+* Set a `DataSource` [from Java code](./apidocs/org.apache.sis.util/org/apache/sis/setup/Configuration.html).
 
 The Maven dependency is as below (the Derby dependency can be replaced by another database driver
 if that database is specified by JNDI):

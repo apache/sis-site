@@ -100,7 +100,7 @@ echo export SIS_DATA=$SIS_DATA
 ## Checkout non-free data    {#non-free}
 
 The EPSG geodetic dataset is recommended for operations related to Coordinate Reference Systems.
-Without the EPSG database, only a [small subset](apidocs/org/apache/sis/referencing/CRS.html#forCode-java.lang.String-)
+Without the EPSG database, only a [small subset](apidocs/org.apache.sis.referencing/org/apache/sis/referencing/CRS.html#forCode(java.lang.String))
 of coordinate reference systems can be created from EPSG codes.
 The EPSG database can be [installed in various ways][epsg-install],
 but this section describes an alternative way more suitable to Apache {{% SIS %}} development.
