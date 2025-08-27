@@ -23,36 +23,38 @@ or to cherry-pick only the interesting parts of the advanced configuration.
 Create an empty directory for the Apache {{% SIS %}} project.
 We use `SIS` directory name in this page, but that name can be anything.
 Replace that name in the shell commands below if another name is used.
-The Apache {{% SIS %}} source code can be cloned in that directory as below
-(lines starting with `#` are comments and can be ignored):
+The Apache {{% SIS %}} source code can be cloned in that directory as below.
+This page uses Unix commands.
+Lines starting with `#` are comments and can be ignored.
 
 ```bash
 mkdir SIS
 cd SIS
-git clone https://gitbox.apache.org/repos/asf/sis main
+# Remember this directory for use in other shell commands on this page:
+export SIS_ROOT_DIR=$PWD
 
+git clone https://gitbox.apache.org/repos/asf/sis main
 # Alternatively, GitHub mirror can also be used:
 # git clone https://github.com/apache/sis main
 ```
 
 If JavaFX is available on the local machine,
-its JAR files location can be specified as below
-(edit the `/usr/lib/jvm/openjfx` path as needed).
+its JAR files location can be specified as below.
 The JavaFX application is excluded by default because it depends on
-the [JavaFX platform][JavaFX] which is distributed under GPL license
+the [JavaFX platform][JavaFX] which is distributed under GPL with Classpath Exception license
 (note that the Apache {{% SIS %}} module using JavaFX stay under Apache 2 licence).
 
 ```bash
-# Syntax for Unix shell
+# Edit the following path as needed.
 export PATH_TO_FX=/usr/lib/jvm/openjfx
 ```
 
 Likewise, the [EPSG geodetic dataset](epsg.html) is excluded by default for licensing reasons.
-
+Those data are optional and can be added as instructed in the [Checkout non-free data](#non-free) section.
 Then, Apache {{% SIS %}} can be built as below:
 
 ```bash
-cd main
+cd $SIS_ROOT_DIR/main
 gradle assemble
 gradle publishToMavenLocal      # If usage with Maven projects is desired.
 ```
@@ -80,11 +82,11 @@ is recommended because some other subsections depend on it.
 Apache {{% SIS %}} needs a directory where to store database, datum shift files and other optional data.
 That directory is specified by the `SIS_DATA` environment variable and can be located anywhere.
 A convenient location is a subdirectory of the `SIS` directory created in the "basic checkout" section.
-For example (with `SIS` as the current directory):
+For example:
 
 ```bash
-mkdir Data
-export SIS_DATA=$PWD/Data
+export SIS_DATA=$SIS_ROOT_DIR/Data
+mkdir $SIS_DATA
 #
 # For making that environment variable available in future shell sessions,
 # the output of following command can be added to .bash_profile or .bashrc
@@ -99,32 +101,38 @@ echo export SIS_DATA=$SIS_DATA
 The EPSG geodetic dataset is recommended for operations related to Coordinate Reference Systems.
 Without the EPSG database, only a [small subset](apidocs/org.apache.sis.referencing/org/apache/sis/referencing/CRS.html#forCode(java.lang.String))
 of coordinate reference systems can be created from EPSG codes.
-The EPSG database can be [installed in various ways][epsg-install],
-but this section describes an alternative way more suitable to Apache {{% SIS %}} development.
+The EPSG data can be used with one of the [existing artifacts][epsg-install].
+But in order to build those optional artifacts from the sources, the following instructions must be executed.
 Before to continue, make sure to agree with [EPSG terms of use][EPSG-ToU].
-Then, the following command can be executed with `SIS` as the current directory:
+Then, the following commands can be executed with `SIS` as the current directory:
 
 ```bash
+cd $SIS_ROOT_DIR
 # Executing this command imply agreement with EPSG terms of use.
 svn checkout https://svn.apache.org/repos/asf/sis/data/non-free/
+cd non-free/EPSG
+export EPSG_DIR=$PWD
 ```
 
-Then, link the EPSG scripts in the directory where Apache {{% SIS %}} looks for optional data.
-Adjust the relative paths as needed if the `main` and `non-free` repositories have been check out
-in other locations than the ones used in above section:
+Then, link the EPSG scripts in the directory where Apache {{% SIS %}} looks for optional data:
 
 ```bash
-cd main/optional/src/org.apache.sis.referencing.epsg/main/org/apache/sis/referencing/factory/sql/epsg
-ln --symbolic ../../../../../../../../../../../../non-free/EPSG/* .
+cd $SIS_ROOT_DIR/main
+cd optional/src/org.apache.sis.referencing.epsg/main/org/apache/sis/referencing/factory/sql/epsg
+ln --symbolic $EPSG_DIR/LICENSE.* .
+ln --symbolic $EPSG_DIR/*.sql .
 cd -
 ```
 
-For creating the EPSG database from those scripts, delete the old Derby database (if it exists) and rebuild Apache {{% SIS %}}.
-Note that it may be useful to test {{% SIS %}} twice for making sure that all tests were run while the database was present.
+Then, build Apache {{% SIS %}} with tests enabled.
+This is sufficient for creating automatically the embedded Derby database in the `sis-embedded-data` artifact.
+If the `SIS_DATA` environment variable is defined (which is recommended for better performance or for using datum shift grids),
+it may be desirable to delete the database in that directory for forcing Apache {{% SIS %}} to recreate it:
 
 ```bash
-cd main
+# Skip the following line if SIS_DATA is not used.
 rm --recursive $SIS_DATA/Databases/SpatialMetadata
+cd $SIS_ROOT_DIR/main
 gradle test --rerun
 ```
 
@@ -191,8 +199,8 @@ or because those tests take a long time to execute.
 For enabling all tests, use the following command:
 
 ```bash
-cd main
 export SIS_TEST_OPTIONS=extensive,postgresql
+cd $SIS_ROOT_DIR/main
 gradle test
 ```
 
@@ -216,7 +224,7 @@ When commits reach `main` they become unmodifiable; the `git push --force` comma
 Contributors to Apache {{% SIS %}} project should switch to the current development branch before submitting patches:
 
 ```bash
-cd main
+cd $SIS_ROOT_DIR
 git checkout geoapi-4.0
 ```
 
