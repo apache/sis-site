@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Staging discuss</title>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+    <p>
+      <b>To:</b> dev@sis.apache.org<br>
+      <b>Subject:</b> Apache <abbr title="Spatial Information System">SIS</abbr>
+      ${version} <abbr title="Release Candidate">RC</abbr>${candidate} available on staging repository
+    </p><p>
+      Apache
+      <abbr title="Spatial Information System">SIS</abbr> ${version}
+      <abbr title="Release Candidate">RC</abbr>${candidate}
+      has been deployed on a Maven staging repository for testing purpose.
+      Projects using Apache <abbr title="Spatial Information System">SIS</abbr> as a Maven dependency
+      are invited to try the release candidate and report issues on this mailing list.
+      The Maven coordinates are below (using the referencing module as an example):
+    </p>
+    <blockquote><pre>&lt;dependencies&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;org.apache.sis.core&lt;/groupId&gt;
+    &lt;artifactId&gt;sis-referencing&lt;/artifactId&gt;
+    &lt;version&gt;${version}&lt;/version&gt;
+  &lt;/dependency&gt;
+&lt;/dependencies&gt;
+&lt;repositories&gt;
+  &lt;repository&gt;
+    &lt;id&gt;sis.staging.parent&lt;/id&gt;
+    &lt;name&gt;SIS staging repository of Parent POM&lt;/name&gt;
+    &lt;url&gt;https://repository.apache.org/content/repositories/orgapachesis-${id.staging.parent}&lt;/url&gt;
+  &lt;/repository&gt;
+  &lt;repository&gt;
+    &lt;id&gt;sis.staging.main&lt;/id&gt;
+    &lt;name&gt;SIS staging repository of main artifacts&lt;/name&gt;
+    &lt;url&gt;https://repository.apache.org/content/repositories/orgapachesis-${id.staging}&lt;/url&gt;
+  &lt;/repository&gt;
+&lt;/repositories&gt;</pre></blockquote>
+
+    <p>
+      The version number is ${version} without <abbr title="Release Candidate">RC</abbr>${candidate} suffix because,
+      if the release candidate passes the vote, it will be deployed on the Maven Central repository with no change.
+      More release candidates may be created before the vote thread is started,
+      with a different <abbr>URL</abbr> for each candidate.
+    </p>
+  </body>
+</html>

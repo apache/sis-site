@@ -14,7 +14,7 @@ The intended audiences are SIS release managers.
 
 The instructions in this section need to be done only once per new release manager,
 or when configuring a new machine for performing the releases.
-If those steps have already been done, jump directly to the [configuration section](#configure).
+If those steps have already been done, jump directly to the [release configuration](#release-config) section.
 
 Before to perform a release, make sure that the following conditions hold:
 
@@ -31,18 +31,18 @@ Before to perform a release, make sure that the following conditions hold:
 ## Directory layout    {#directory-layout}
 
 The steps described in this page assume the following directory layout,
-where `$NEW_VERSION` and `$RELEASE_CANDIDATE` are environment variables introduced [later](#configure).
+where `$NEW_VERSION` and `$RELEASE_CANDIDATE` are environment variables introduced in the [release configuration](#release-config) section.
 Some directories are Git checkout, other are ordinary directories. Any other layout can be used,
 provided that all relative paths in this page are adjusted accordingly.
 
 ```
 <any root directory for SIS>
-├─ $NEW_VERSION-RC
 ├─ main
 ├─ non-free
 │  ├─ sis-embedded-data
 │  └─ sis-epsg
 ├─ release
+│  ├─ candidate
 │  ├─ distribution
 │  │  └─ $NEW_VERSION
 │  │     └─ RC$RELEASE_CANDIDATE
@@ -68,7 +68,12 @@ svn checkout https://dist.apache.org/repos/dist/dev/sis release/distribution
 cd site/main
 git worktree add ../asf-staging asf-staging
 git worktree add ../asf-site asf-site
+cd -
 ```
+
+Release managers should also configure all the optional parts documented in the [Checkout source code](source.html) page.
+In particular, the symbolic links to EPSG data should be created and the `PATH_TO_FX` environment variable should be set
+For allowing the optional modules to be built.
 
 
 ## Generate GPG key    {#generate-key}
@@ -96,7 +101,7 @@ Add or modify the following line in the `gpg.conf` file, replacing `<previous_ke
 default-key <previous_key_id>
 ```
 
-Generate 4096 bits RSA key pair using the following command-line. GPG will prompts for various informations.
+Generate 4096 bits RSA key pair using the following command-line. GPG will prompts for various information.
 The list below the command suggests some values, keeping in mind that the new key should be used only for
 signing Apache software packages, not for daily emails.
 
@@ -143,10 +148,10 @@ gpg --output revocation_certificate.asc --gen-revoke <key_id>
 
 ## Web of trust    {#trust}
 
-Have the key signed by at least three Apache commiters. This can be done by executing the following commands on
-the machine of the other Apache commiter, where `<key_to_use>` is the identifier of the other commiter's key.
-Those operation should preferably be done in some event where the commiters can meet face-to-face.
-The other commiter should verify that the `gpg --fingerprint` command output matches the fingerprint of the key to sign.
+Have the key signed by at least three Apache committers. This can be done by executing the following commands on
+the machine of the other Apache committer, where `<key_to_use>` is the identifier of the other committer's key.
+Those operation should preferably be done in some event where the committers can meet face-to-face.
+The other committer should verify that the `gpg --fingerprint` command output matches the fingerprint of the key to sign.
 
 ```bash
 gpg --recv-keys <key_id>
@@ -172,15 +177,15 @@ signing.gnupg.keyName=<your key ID>
 
 ## Maven configuration    {#maven-config}
 
-Edit the `~/.m2/setting.xml` file, making sure that the following fragments are present.
-Note that the [password can be enctypted](https://maven.apache.org/guides/mini/guide-encryption.html).
+Edit the `~/.m2/settings.xml` file, making sure that the following fragments are present.
+Note that the [password can be encrypted](https://maven.apache.org/guides/mini/guide-encryption.html).
 
 ```xml
 <settings>
   <servers>
     <server>
       <id>apache.releases.https</id>
-      <username>login for uploding to Maven Central</username>
+      <username>login for uploading to Maven Central</username>
       <password>password for uploading to Maven Central</password>
     </server>
   </servers>
@@ -196,32 +201,121 @@ the current release attempt. Those versions shall be set on the command line lik
 
 ```bash
 gpg --list-keys                     # For getting the value to put in <your key ID>
-export OLD_VERSION=1.3
+export OLD_VERSION=1.4
 export NEW_VERSION={{% version %}}
 export RELEASE_CANDIDATE=1
 export SIGNING_KEY=<your key ID>    # hexadecimal number with 8 or 40 digits.
 ```
 
-Make sure that the code signing key is the defauly key declared in `~/.gnupg/gpg.conf`
+Make sure that the code signing key is the default key declared in `~/.gnupg/gpg.conf`
 during the Maven deployment phase.
 
 
-# Review project status before branching    {#prereview}
+## Initialize the distribution directory    {#dist}
 
-Replace the `$OLD_VERSION` number by `$NEW_VERSION` in the values of following properties on the development branch:
+Create the directory for the new version and release candidate within the distribution directory.
+The `$RELEASE_CANDIDATE` variable shall be the number of current release attempt.
 
-* `DOWNLOAD_URL` in `endorsed/src/org.apache.sis.util/main/org/apache/sis/setup/OptionalInstallations.java` file
-  (note that the version number appears twice, and once more in `@since` Javadoc tag).
-* Review the `README.md` and `NOTICE` files in root directory.
-* Review the `README` file in `optional/src/org.apache.sis.gui/bundle/`.
+```bash
+cd release/distribution
+svn update
+mkdir -p $NEW_VERSION/RC$RELEASE_CANDIDATE
+svn add $NEW_VERSION
+cd $NEW_VERSION/RC$RELEASE_CANDIDATE
+export DIST_DIR=$PWD
+```
+
+Copy the `HEADER.html` file from the previous release.
+Update the file content if necessary.
+
+```bash
+svn copy https://dist.apache.org/repos/dist/release/sis/$OLD_VERSION/HEADER.html .
+```
+
+
+## Create the release candidate branch    {#create-branch}
+
+Replace the `$OLD_VERSION` number by `$NEW_VERSION` in the following files on the development branch
+(currently the `geoapi-4.0` branch). Check also if the content of those files needs update.
+
+* `NOTICE`
+* `README.md`
+* `optional/src/org.apache.sis.gui/bundle/README`
+* `endorsed/src/org.apache.sis.util/main/org/apache/sis/setup/OptionalInstallations.java`
+  * Appears in the `DOWNLOAD_URL` constant, in its Javadoc and in class `@since` Javadoc tag.
 
 Commit and merge with other branches up to main branch.
 
 ```bash
 git add --update
 git commit --message="Set version number and the EPSG geodetic dataset URL to expected values after release."
-# merge with main
+# merge with the main branch.
 ```
+
+Execute the following commands.
+This `candidate` directory will be reused for all release candidates,
+and can also be reused for next major releases if desired.
+
+```bash
+cd main
+git branch $NEW_VERSION-RC$RELEASE_CANDIDATE main
+
+# Skip this line if the worktree already exists from a previous release.
+git worktree add ../release/candidate -b $NEW_VERSION-RC$RELEASE_CANDIDATE
+
+cd ../release/candidate
+export SIS_RC_DIR=$PWD
+git checkout $NEW_VERSION-RC$RELEASE_CANDIDATE
+```
+
+Remove the files and modules that are not intended to be released.
+For example, Apache source distribution shall not include Gradle wrapper binary.
+
+```bash
+git rm .asf.yaml
+git rm -r gradlew gradlew.bat gradle/
+git rm -r incubator
+git rm optional/src/org.apache.sis.referencing.epsg/test/org/apache/sis/referencing/factory/sql/epsg/README.md
+```
+
+Edit at least the files listed below for removing all occurrences of "incubator"
+(the search is easier to do after the removal of "incubator" directory):
+
+* `endorsed/src/org.apache.sis.util/main/module-info.java`
+* `netbeans-project/nbproject/project.properties`
+* `netbeans-project/nbproject/project.xml`
+* `settings.gradle.kts`
+* `README.md`
+
+Commit the removals:
+
+```bash
+# Edit above-listed files before to continue.
+git add --update    # for the removal of <module> elements in pom.xml files.
+git commit --message="Remove the modules to be excluded from $NEW_VERSION release."
+```
+
+Update SIS version numbers by removing all occurrences of the `-SNAPSHOT` suffix
+at least in the following files:
+
+* `parent/pom.xml`
+* `gradle.properties`
+* `endorsed/src/org.apache.sis.openoffice/bundle/README.md`
+* `endorsed/src/org.apache.sis.util/main/org/apache/sis/util/Version.java`
+
+Then commit:
+
+```bash
+git add --update
+gradle test
+git commit --message="Set version number to $NEW_VERSION."
+```
+
+This branch may be rebased if problems are discovered in the next steps
+before the artifacts are deployed on the Maven staging repository.
+
+
+# Review project status before staging    {#prereview}
 
 Before to start the release process, we need to test more extensively the main branch.
 The tests described below often reveal errors that were unnoticed in daily builds.
@@ -229,7 +323,7 @@ It is better to detect and fix them before to create the release branch.
 First, ensure that a PostgreSQL server is running and listening to the default port on local host
 (optional but recommended for more exhaustive testing —
 see [PostgreSQL testing configuration](./source.html#postgres) for more details).
-Then execute the following commands and fix as much warnings as practical:
+Then, execute the following commands and fix as much warnings as practical:
 
 ```bash
 systemctl start postgresql.service        # Optional — exact command depends on Linux distribution.
@@ -237,7 +331,7 @@ export SIS_TEST_OPTIONS=extensive,postgresql
 gradle test
 ```
 
-If the `SIS_DATA` environment variable was set during above build, unset it a try again.
+If the `SIS_DATA` environment variable was set during above build, unset it and try again.
 Ideally the build should be tested in both conditions (`SIS_DATA` set and unset).
 That test may be done in a separated shell (console window) in order to preserve
 the variable value in the shell performing the release.
@@ -320,82 +414,124 @@ git commit --message "Release notes for Apache SIS $NEW_VERSION."
 ```
 
 
-# Create release artifacts    {#create-artifacts}
 
-Execute the following commands.
-It is okay to checkout the branch in a separated directory if desired.
-The `SIS_RC_DIR` environment variable will specify that directory.
+# Stage Maven artifacts    {#stage-artifacts}
 
-```bash
-cd ../main
-git checkout -b $NEW_VERSION-RC
-export SIS_RC_DIR=`pwd`
-```
+This section deploys Maven artifacts to the staging repository.
+The Maven artifacts are only convenience binaries, they are not the official Apache release.
+However, Maven artifacts are staged first because they make easy for developers to test in their project.
+If there is any issue, the staging repository can easily be dropped and recreated.
+Many release candidates may be staged before the final one is published to Maven Central.
 
-Remove the files and modules that are not intended to be released.
-For example, Apache source distribution shall not include Gradle wrapper binary.
 
-```bash
-git rm .asf.yaml
-git rm -r gradlew gradlew.bat gradle/
-git rm -r incubator
-```
+## Stage the parent POM    {#publish-parent}
 
-Edit at least the files listed below for removing all occurrences of "incubator"
-(the search is easier to do after the removal of "incubator" directory):
-
-* `endorsed/src/org.apache.sis.util/main/module-info.java`
-* `netbeans-project/nbproject/project.properties`
-* `netbeans-project/nbproject/project.xml`
-* `settings.gradle.kts`
-* `README.md`
-
-Commit the removals:
+Execute the following:
 
 ```bash
-# Edit above-listed files before to continue.
-git add --update    # for the removal of <module> elements in pom.xml files.
-git commit --message="Remove the modules to be excluded from $NEW_VERSION release."
+cd $SIS_RC_DIR/parent
+mvn clean install deploy --activate-profiles apache-release
 ```
 
-Update SIS version numbers by removing all occurrences of the `-SNAPSHOT` suffix
-at least in the following files:
+Connect to the [Nexus repository][repository].
+The artifacts can be found under _Build Promotion_ → _Staging repositories_,
+and searching for `org.apache.sis` in the _Repository_ column.
+Delete all `org/apache/sis/parent/$NEW_VERSION/parent-$NEW_VERSION-source-release.zip.*` files on the Nexus repository.
+They should not be there - source release will be deployed on another repository later.
+Then close this staging repository by clicking the checkbox for the open staging repositories
+(`org.apache.sis-<id>`) and press _Close_ in the menu bar.
+In the description field, specify _"Apache SIS parent POM"_.
+Keep the window open, we will need it again later.
 
-* `parent/pom.xml`
-* `gradle.properties`
-* `endorsed/src/org.apache.sis.openoffice/bundle/README.md`
-* `endorsed/src/org.apache.sis.util/main/org/apache/sis/util/Version.java`
-* `endorsed/src/org.apache.sis.referencing/test/org/apache/sis/referencing/factory/sql/epsg/README.md`
 
-Then commit:
+## Stage the project arfifacts    {#publish-main}
+
+Build the project and publish in the Maven local repository.
+The `org.apache.sis.releaseVersion` property will cause Javadoc to be generated for each artifact
+(this step is normally skipped because a bit long) and sign the artifacts.
 
 ```bash
-git add --update
-gradle test
-git commit --message="Set version number to $NEW_VERSION."
+cd $SIS_RC_DIR
+git status      # Make sure that everything is clean.
+gradle clean test
+gradle assemble
+mv --interactive optional/build/bundle/apache-sis-$NEW_VERSION.zip $DIST_DIR/apache-sis-$NEW_VERSION-bin.zip
+
+rm endorsed/build/docs/*        # For forcing a rerun.
+rm optional/build/docs/*
+cd optional/build/libs/
+ln ../../../endorsed/build/libs/*.jar .
+ln $PATH_TO_FX/*.jar .
+cd -
+gradle assemble --system-prop org.apache.sis.releaseVersion=$NEW_VERSION
+find -name "org.apache.sis.*-javadoc.jar" -exec zip -d '{}' errors.log \;
+gradle publishToMavenLocal --system-prop org.apache.sis.releaseVersion=$NEW_VERSION
+
+# Check that the Javadoc archives do not have a size close to zero.
+ll ~/.m2/repository/org/apache/sis/core/sis-referencing/$NEW_VERSION
+ll ~/.m2/repository/org/apache/sis/application/sis-javafx/$NEW_VERSION
+find ~/.m2/repository/org/apache/sis -name "sis-*-$NEW_VERSION-*.asc" -exec gpg --verify '{}' \;
+
+gradle publish --system-prop org.apache.sis.releaseVersion=$NEW_VERSION
 ```
 
+In the [Nexus repository][repository], click on "Refresh".
+A new `org.apache.sis` item should appear in the _Repository_ column of _Build Promotion_ → _Staging repositories_.
+Perform the following verifications:
 
-## Initialize the distribution directory    {#dist}
+* Navigate through the content and check that Javadoc, source and JAR files have `.asc` (GPG signature) and `.sha1` files.
+* Select any `*-javadoc.jar` file and click on the _Archive Browser_ tab on the right side.
+  Select any `*.html` file which is known to use some of the custom taglets defined in `buildSrc`.
+  Click on that file and verify that the custom elements are rendered properly.
+* In the `non-free/sis-epsg-$NEW_VERSION.jar` file, verify that `META-INF/LICENSE` contains the EPSG terms of use.
 
-Create the directory for the new version and release candidate within the distribution directory.
-The `$RELEASE_CANDIDATE` variable shall be the number of current release attempt.
+Then close this staging repository.
+In the description field, specify _"Apache SIS main artifacts"_.
+Click on the `org.apache.sis-<id>` link in order to get the URL to the temporary Maven repository created by Nexus.
+We will announce later (in the _Put the release candidate up for a vote_ section) on the `dev@` mailing list
+the availability of this temporary repository for testing purpose.
+
+
+## Test the Maven artifacts    {#test-maven}
+
+Go to the test Maven project in the `release/test/maven` directory.
+Open the root `pom.xml` file and set the `<version>` number to the SIS release to be tested.
+Then go to the `<url>` declaration of each `<repository>` element and replace their value by
+the URL of the temporary Maven repositories created by Nexus.
+Usually, only the 3 last digits need to be modified.
 
 ```bash
-cd ../release/distribution
-svn update
-mkdir -p $NEW_VERSION/RC$RELEASE_CANDIDATE
-svn add $NEW_VERSION
-cd $NEW_VERSION/RC$RELEASE_CANDIDATE
-export DIST_DIR=`pwd`
+cd $SIS_RC_DIR/../release/test/maven
+# Edit <url> in pom.xml before to continue.
+mvn compile
+svn commit -m "Test project for SIS $NEW_VERSION-RC$RELEASE_CANDIDATE"
 ```
 
-Copy the `HEADER.html` file from the previous release.
-Update the file content if necessary.
+Clear the local Maven repository in order to force downloads from the Nexus repository, then test.
+This test uses a temporary `SIS_DATA` directory for testing the creation of the EPSG database.
+The value of the environment variable set below can be replaced by any other temporary directory.
 
 ```bash
-svn copy https://dist.apache.org/repos/dist/release/sis/$OLD_VERSION/HEADER.html .
+export SIS_DATA=/tmp/Apache_SIS_data
+mkdir $SIS_DATA
+rm --recursive ~/.m2/repository/org/apache/sis
+mvn package --show-version --strict-checksums
 ```
+
+Verify that the EPSG dataset has been created, then cleanup:
+
+```bash
+du --summarize --human-readable $SIS_DATA/Databases/SpatialMetadata
+mvn clean
+```
+
+
+## Send an email asking for early testing
+
+Announce the staged Maven artifacts on the `dev@` mailing list. This is not yet a vote.
+The intent is to allow Apache SIS consumers to try early the release candidate in their project,
+so they can report regressions.
+A template is available [here](templates/staging-discuss.html).
 
 
 ## Generate Javadoc    {#javadoc}
@@ -479,98 +615,6 @@ git commit --message "Update javadoc for SIS $NEW_VERSION."
 
 ## Publish Maven artifacts    {#publish-artifacts}
 
-This section publishes artifacts to the staging repository.
-If there is any issue with the deployment, the staging repository can easily be dropped and recreated.
-
-
-### Stage the parent POM    {#publish-parent}
-
-Execute the following:
-
-```bash
-cd $SIS_RC_DIR/parent
-mvn clean install deploy --activate-profiles apache-release
-```
-
-Connect to the [Nexus repository][repository].
-The artifacts can be found under _Build Promotion_ → _Staging repositories_,
-and searching for `org.apache.sis` in the _Repository_ column.
-Delete all `org/apache/sis/parent/$NEW_VERSION/parent-$NEW_VERSION-source-release.zip.*` files on the Nexus repository.
-They should not be there - source release will be deployed on another repository later.
-Then close this staging repository by clicking the checkbox for the open staging repositories
-(`org.apache.sis-<id>`) and press _Close_ in the menu bar.
-In the description field, specify _"Apache SIS parent POM"_.
-Keep the window open, we will need it again later.
-
-
-### Stage the project arfifacts    {#publish-main}
-
-Build the project and publish in the Maven local repository.
-The `org.apache.sis.releaseVersion` property will cause Javadoc to be generated for earch artifact
-(this step is normally skipped because a bit long) and sign the artifacts.
-
-```bash
-cd $SIS_RC_DIR
-git status      # Make sure that everything is clean.
-gradle clean test
-gradle assemble
-mv --interactive optional/build/bundle/apache-sis-$NEW_VERSION.zip $DIST_DIR/apache-sis-$NEW_VERSION-bin.zip
-
-rm endorsed/build/docs/*        # For forcing a rerun.
-rm optional/build/docs/*
-cd optional/build/libs/
-ln ../../../endorsed/build/libs/*.jar .
-ln $PATH_TO_FX/*.jar .
-cd -
-gradle assemble --system-prop org.apache.sis.releaseVersion=$NEW_VERSION
-find -name "org.apache.sis.*-javadoc.jar" -exec zip -d '{}' errors.log \;
-gradle publishToMavenLocal --system-prop org.apache.sis.releaseVersion=$NEW_VERSION
-
-# Check that the Javadoc archives do not have a size close to zero.
-ll ~/.m2/repository/org/apache/sis/core/sis-referencing/$NEW_VERSION
-ll ~/.m2/repository/org/apache/sis/application/sis-javafx/$NEW_VERSION
-find ~/.m2/repository/org/apache/sis -name "sis-*-$NEW_VERSION-*.asc" -exec gpg --verify '{}' \;
-
-gradle publish --system-prop org.apache.sis.releaseVersion=$NEW_VERSION
-```
-
-In the [Nexus repository][repository], click on "Refresh".
-A new `org.apache.sis` item should appear in the _Repository_ column of _Build Promotion_ → _Staging repositories_.
-Navigate through the artifact tree and make sure that all Javadoc, source and jar files have `.asc` (GPG signature) and `.sha1` files.
-Select any `*-javadoc.jar` file and click on the <cite>Archive Browser</cite> tab on the right side.
-Select any `*.html` file which is known to use some of the custom taglets defined in `buildSrc`.
-Click on that file and verify that the custom elements are rendered properly.
-Then close this staging repository.
-In the description field, specify _"Apache SIS main artifacts"_.
-
-
-### Stage the non-free resources    {#publish-nonfree}
-
-Go to the directory that contains a checkout of `https://svn.apache.org/repos/asf/sis/data/non-free/sis-epsg`.
-Those modules will not be part of the distribution (except on Maven), but we nevertheless need to ensure that they work.
-Replace occurrences of `<version>$OLD_VERSION</version>` by `<version>$NEW_VERSION</version>` in the `pom.xml` files.
-
-```bash
-cd ../non-free
-svn update
-mvn clean install
-mvn javadoc:javadoc                   # Test that Javadoc can be generated.
-svn commit --message "Set version number and dependencies to $NEW_VERSION."
-mvn deploy --activate-profiles apache-release
-```
-
-Verify the staged artifacts in the [Nexus repository][repository].
-In the `sis-epsg-$NEW_VERSION.jar` file, verify that `META-INF/LICENSE` contains the EPSG terms of use.
-Delete all `org/apache/sis/non-free/$NEW_VERSION/non-free-$NEW_VERSION-source-release.zip.*` files.
-Delete all `org/apache/sis/non-free/sis-epsg/$NEW_VERSION/sis-epsg-$NEW_VERSION-source.jar.*` files.
-Then close this staging repository.
-In the description field, specify _"Apache SIS non-free resources"_.
-
-Click on the `org.apache.sis-<id>` link in order to get the URL to the temporary Maven repository created by Nexus.
-We will announce later (in the _Put the release candidate up for a vote_ section) on the `dev@` mailing list
-the availability of this temporary repository for testing purpose.
-
-
 ## Stage the source, binary and Javadoc artifacts    {#stage}
 
 The official Apache releases are the files in the `$DIST_DIR` directory.
@@ -638,38 +682,6 @@ wget https://sis.apache.org/examples/coordinates/CanadianCities.csv
 ./bin/sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 AmericanCities.csv
 ./bin/sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 CanadianCities.csv
 ./bin/sisfx
-```
-
-
-## Test the Maven artifacts    {#test-maven}
-
-Go to the test Maven project.
-Open the root `pom.xml` file and set the `<version>` number to the SIS release to be tested.
-Then go to the `<url>` declaration of <repository>` each block and replace value by the URL
-of the temporary Maven repository created by Nexus.
-Usually, only the 3 last digits need to be updated.
-
-```bash
-cd $SIS_RC_DIR/../release/test/maven
-# Edit <url> in pom.xml before to continue.
-mvn compile
-svn commit -m "Test project for SIS $NEW_VERSION-RC$RELEASE_CANDIDATE"
-```
-
-Clear the local Maven repository in order to force downloads from the Nexus repository, then test.
-This will also verify the checksums.
-
-```bash
-rm -r $SIS_DATA/*
-rm -r ~/.m2/repository/org/apache/sis
-mvn package --show-version --strict-checksums
-```
-
-Verify that the EPSG dataset has been created, then cleanup:
-
-```bash
-du --summarize --human-readable $SIS_DATA/Databases/SpatialMetadata
-mvn clean
 ```
 
 
