@@ -356,7 +356,6 @@ Those steps are also useful as additional tests, since failure to generate those
 
    * Search `DEPRECATED=FALSE` (it appears in a SQL fragment) and replace by `(DEPRECATED=FALSE OR TRUE)`.
    * Comment-out the `if (table.showColumn != null)` block which appears just above the `DEPRECATED=FALSE` occurrence.
-  <br><br>
 
 * Run the following commands:
 

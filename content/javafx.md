@@ -12,6 +12,10 @@ But it can give an idea of what is available there.
 
 {{< toc >}}
 
+# Requirements    {#requirements}
+The application requires Java 22 or later and JavaFX 20 or later.
+If JavaFX is not found, a wizard will propose to download it.
+
 # Installation    {#install}
 
 Select "Apache {{% SIS %}} {{% version %}} binary" from the [downloads page](downloads.html) an unzip in any directory.
