@@ -367,11 +367,9 @@ Those steps are also useful as additional tests, since failure to generate those
        --patch-module org.apache.sis.referencing=endorsed/build/classes/java/test/org.apache.sis.referencing \
        --module org.apache.sis.referencing/org.apache.sis.referencing.report.CoordinateOperationMethods
 
-  # Following requires a build of NetBeans project for fetching test dependencies. This may change in a future version.
   java --module-path endorsed/build/libs:netbeans-project/build/dependencies \
        --add-modules   org.opengis.geoapi.conformance,org.apache.derby.tools,org.apache.derby.engine \
        --limit-modules org.opengis.geoapi.conformance,org.apache.derby.tools,org.apache.derby.engine,org.apache.sis.referencing \
-       --add-reads     org.apache.sis.referencing=org.opengis.geoapi.conformance,junit \
        --patch-module  org.apache.sis.referencing=endorsed/build/classes/java/test/org.apache.sis.referencing \
        --module org.apache.sis.referencing/org.apache.sis.referencing.report.CoordinateReferenceSystems
   ```
