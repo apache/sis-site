@@ -350,13 +350,6 @@ the [CoordinateOperationMethods](./tables/CoordinateOperationMethods.html)
 and [CoordinateReferenceSystems](./tables/CoordinateReferenceSystems.html) pages.
 Those steps are also useful as additional tests, since failure to generate those pages may reveal problems.
 
-* Open the `AuthorityCodes` class and apply the following changes **without committing them.**
-  They are temporary hacks for including deprecated codes in the CRS list to be generated
-  (those codes will appear with strike for making clear that they are deprecated):
-
-   * Search `DEPRECATED=FALSE` (it appears in a SQL fragment) and replace by `(DEPRECATED=FALSE OR TRUE)`.
-   * Comment-out the `if (table.showColumn != null)` block which appears just above the `DEPRECATED=FALSE` occurrence.
-
 * Run the following commands:
 
   ```bash
@@ -367,9 +360,9 @@ Those steps are also useful as additional tests, since failure to generate those
        --patch-module org.apache.sis.referencing=endorsed/build/classes/java/test/org.apache.sis.referencing \
        --module org.apache.sis.referencing/org.apache.sis.referencing.report.CoordinateOperationMethods
 
-  java --module-path endorsed/build/libs:netbeans-project/build/dependencies \
-       --add-modules   org.opengis.geoapi.conformance,org.apache.derby.tools,org.apache.derby.engine \
-       --limit-modules org.opengis.geoapi.conformance,org.apache.derby.tools,org.apache.derby.engine,org.apache.sis.referencing \
+  java --module-path endorsed/build/libs \
+       --add-modules   org.apache.derby.tools,org.apache.derby.engine \
+       --limit-modules org.apache.derby.tools,org.apache.derby.engine,org.apache.sis.referencing \
        --patch-module  org.apache.sis.referencing=endorsed/build/classes/java/test/org.apache.sis.referencing \
        --module org.apache.sis.referencing/org.apache.sis.referencing.report.CoordinateReferenceSystems
   ```

@@ -49,9 +49,9 @@ Some standards are implemented partially, others almost fully.
     <td></td>
     <td>Data quality</td>
   </tr><tr>
-    <td>ISO 19111:2007</td>
-    <td>OGC Topic 2</td>
     <td>ISO 19111:2019</td>
+    <td><a href="https://docs.ogc.org/as/18-005r8/18-005r8.pdf">OGC Topic 2</a></td>
+    <td></td>
     <td>Spatial referencing by coordinates</td>
   </tr><tr>
     <td>ISO 19111-2:2009</td>
@@ -64,9 +64,9 @@ Some standards are implemented partially, others almost fully.
     <td>ISO 19112:2019</td>
     <td>Spatial referencing by geographic identifier</td>
   </tr><tr>
-    <td>ISO 19162:2015</td>
-    <td><a href="http://docs.opengeospatial.org/is/12-063r5/12-063r5.html">OGC 12-063</a></td>
     <td>ISO 19162:2019</td>
+    <td><a href="https://www.ogc.org/fr/standards/wkt-crs/">OGC WKT-CRS</a></td>
+    <td></td>
     <td>Well-known text representation of coordinate reference systems</td>
   </tr><tr>
     <td></td>
