@@ -62,25 +62,25 @@ The EPSG code of some UTM projections can be determined as below, where <em>zone
 <p>The code example below instantiates the same <abbr title="Coordinate Reference System">CRS</abbr> using the three approaches.</p>
 <h1 id="direct-dependencies">Direct dependencies</h1>
 <table>
-<thead>
-<tr>
-<th>Maven coordinates</th>
-<th>Module info</th>
-<th>Remarks</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>org.apache.sis.core:sis-referencing</code></td>
-<td><code>org.apache.sis.referencing</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>org.apache.sis.non-free:sis-embedded-data</code></td>
-<td><code>org.apache.sis.referencing.database</code></td>
-<td>Optional. Non-Apache license.</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Maven coordinates</th>
+          <th>Module info</th>
+          <th>Remarks</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>org.apache.sis.core:sis-referencing</code></td>
+          <td><code>org.apache.sis.referencing</code></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td><code>org.apache.sis.non-free:sis-embedded-data</code></td>
+          <td><code>org.apache.sis.referencing.database</code></td>
+          <td>Optional. Non-Apache license.</td>
+      </tr>
+  </tbody>
 </table>
 <p>The <a href="../epsg.html">EPSG dependency</a> is optional for examples using the <code>CommonCRS</code> enumeration
 or the &ldquo;AUTO&rdquo; authority, but is required for examples using the &ldquo;EPSG&rdquo; authority.</p>
@@ -91,7 +91,6 @@ except in &ldquo;AUTO2&rdquo; authority code.</p>
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.opengis.util.FactoryException</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.referencing.CRS</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.referencing.CommonCRS</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.util.Utilities</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">InstantiateUTM</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="cm">/**
@@ -118,8 +117,8 @@ except in &ldquo;AUTO2&rdquo; authority code.</p>
 </span></span></span><span class="line"><span class="cl"><span class="cm">         * Compare the results.
 </span></span></span><span class="line"><span class="cl"><span class="cm">         */</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;Are the CRS equivalent?&#34;</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;AUTO2: &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Utilities</span><span class="p">.</span><span class="na">equalsIgnoreMetadata</span><span class="p">(</span><span class="n">crsFromPoint</span><span class="p">,</span><span class="w"> </span><span class="n">crsFromAUTO2</span><span class="p">));</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;EPSG:  &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Utilities</span><span class="p">.</span><span class="na">equalsIgnoreMetadata</span><span class="p">(</span><span class="n">crsFromPoint</span><span class="p">,</span><span class="w"> </span><span class="n">crsFromCode</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;AUTO2: &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">CRS</span><span class="p">.</span><span class="na">equivalent</span><span class="p">(</span><span class="n">crsFromPoint</span><span class="p">,</span><span class="w"> </span><span class="n">crsFromAUTO2</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&#34;EPSG:  &#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">CRS</span><span class="p">.</span><span class="na">equivalent</span><span class="p">(</span><span class="n">crsFromPoint</span><span class="p">,</span><span class="w"> </span><span class="n">crsFromCode</span><span class="p">));</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div><h1 id="output">Output</h1>

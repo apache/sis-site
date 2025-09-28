@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <title>Apache SIS - SIS 1.5 Release notes</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="../sis.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../syntax.css">
+  </head>
+  <body>
+    <div class="topbar">
+      <a class="topbar-brand" href="../index.html">Apache SIS™</a>
+      <ul class="topbar-items">
+        <li>
+          <a href="https://www.apache.org/events/current-event.html">
+             <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="main-section">
+      <nav class="left-bar">
+        <ul class="nav-pills">
+          <li><a class="nav-link  inactive " href="../index.html">Home</a></li>
+          <li><a class="nav-link  inactive " href="../about.html">About</a></li>
+          <li><a class="nav-link  inactive " href="../downloads.html">Downloads</a></li>
+          <li><a class="nav-link  inactive " href="../howto.html">How to…</a></li>
+          <li><a class="nav-link  inactive " href="../standards.html">Standards</a></li>
+          <li><a class="nav-link  inactive " href="../formats.html">Data formats</a></li>
+          <li><a class="nav-link  inactive " href="../epsg.html">EPSG Database</a></li>
+          <li><a class="nav-link  inactive " href="../javafx.html">Application (demo)</a></li>
+          <li><a class="nav-link  inactive " href="../documentation.html">Documentation</a></li>
+        </ul>
+      </nav>
+      <div class="main-content">
+        <main class="container">
+          <article>
+            <img src="../images/logo.png" class="sis-logo" align="left"/>
+            <p class="page-title">SIS 1.5 Release notes</p>
+
+  <ul>
+<li>Release date: <strong>2025-10-03</strong></li>
+<li>Next release</li>
+<li><a href="../release-notes/1.4.html">Previous release</a></li>
+<li><a href="../release-notes/1.5.html#compatibility">Incompatible changes</a></li>
+<li><a href="../release-notes/1.5.html#issues">Noticeable changes</a></li>
+<li>Requirement: Java 11</li>
+</ul>
+<p>This release contains the upgrade of EPSG geodetic dataset from version 9 to version 12,
+which implies an upgrade from ISO 19111:2007 to ISO 19111:2019.
+This release also contains various bug fixes improving the stability.
+A GeoTIFF writer and a binding to GDAL for two-dimensional rasters have been added.</p>
+<h1 id="compatibility">Incompatible changes   </h1>
+<p>The following changes in Apache SIS 1.5 are incompatibles with the previous release (SIS 1.4):</p>
+<ul>
+<li>In <code>org.apache.sis.util.collection.IntegerList</code>, the <code>removeLast()</code> return type changed from <code>int</code> to <code>Integer</code>
+for compatibility with the <code>java.util.SequencedCollection</code> interface introduced in Java 21.</li>
+<li>In <code>org.apache.sis.coverage.grid.GridDerivation</code>, the <code>getSubsampling()</code> and <code>getSubsamplingOffsets()</code> return type changed from <code>int[]</code> to <code>long[]</code> (SIS-605)</li>
+<li>In <code>org.apache.sis.feature.AbstractIdentifiedType</code>, the <code>getDesignation()</code> and <code>getDescription()</code> methods now return <code>Optional&lt;InternationalString&gt;</code>.</li>
+<li>In <code>org.apache.sis.referencing.operation.AbstractCoordinateOperation</code>, the <code>getInterpolationCRS()</code> method now returns an <code>Optional</code>.</li>
+<li>In <code>org.apache.sis.referencing.operation.DefaultConversion</code>, the <code>specialize(…)</code> method has its <code>Class</code> argument removed.</li>
+<li>In <code>org.apache.sis.metadata.iso.distribution.DefaultDigitalTransferOptions</code>, the type of <code>transferFrequency</code> property changed from <code>PeriodDuration</code> to <code>java.time.temporal.TemporalAmount</code>.</li>
+<li>In <code>org.apache.sis.referencing.datum.TimeDependentBWP</code>, the return type of <code>getTimeReference()</code> changed from <code>java.util.Date</code> to <code>java.time.temporal.Temporal</code>.</li>
+<li>In <code>org.apache.sis.referencing.datum.BursaWolfParameters</code>, the argument of <code>getPositionVectorTransformation(Date)</code> changed to <code>java.time.temporal.Temporal</code>.
+There is no method overloading for avoiding ambiguity in the common case where argument is null.</li>
+<li>In <code>org.apache.sis.setup.OptionKey</code>, the parameterized type of the  <code>TIMEZONE</code> value changed from <code>java.util.TimeZone</code> to <code>java.time.ZoneId</code>.</li>
+<li>In <code>org.apache.sis.xml.XML</code>, values associated to the <code>TIMEZONE</code> property are now of type <code>java.time.ZoneId</code>.
+However, the (un)marshaller continue to accept also <code>java.util.TimeZone</code> when user sets the value.</li>
+<li>The <code>org.opengis.referencing.datum.PixelInCell</code> code list has been replaced by the <code>org.apache.sis.coverage.grid.PixelInCell</code> enumeration,
+except in the now deprecated <code>DefaultImageDatum</code>. This is in preparation for the <code>PixelInCell</code> code list removal from ISO 19111:2019.</li>
+<li><code>org.apache.sis.storage.sql.SQLStore</code> became abstract. The concrete class is now <code>org.apache.sis.storage.sql.SimpleFeatureStore</code> (SIS-603).</li>
+</ul>
+<h1 id="issues">Noticeable changes   </h1>
+<h2 id="deprecations">Deprecations</h2>
+<p>Among the deprecated methods, the following one is worth a notice because of its wide use:</p>
+<ul>
+<li>In <code>org.apache.sis.geometry.GeneralDirectPosition</code>, the <code>setCoordinate(double...)</code> method has been deprecated.
+The replacement is <code>setCoordinates</code> (plural form).</li>
+</ul>
+<h2 id="features">New Features   </h2>
+<ul>
+<li><a href="https://issues.apache.org/jira/browse/SIS-589">SIS-589</a> — Add a GeoTIFF writer</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-604">SIS-604</a> — GDAL data store for reading rasters</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-583">SIS-583</a> — Implementation of OGC Symbology Encoding</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-233">SIS-233</a> — Equidistant Cylindrical (EPSG:1028)</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-599">SIS-599</a> — Robinson projection</li>
+</ul>
+<h2 id="improvements">Improvements   </h2>
+<ul>
+<li><a href="https://issues.apache.org/jira/browse/SIS-518">SIS-518</a> — Update EPSG geodetic dataset to version 10.x</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-592">SIS-592</a> — Upgrade from ISO 19111:2007 to 19111:2019</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-612">SIS-612</a> — Upgrade from ISO 19162:2015 to ISO 19162:2019</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-490">SIS-490</a> — Compound CRS creation through codes: OGC/Time</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-302">SIS-302</a> — Implement the spherical case of EllipsoidToCentric</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-384">SIS-384</a> — (Affine → Passthrough → Affine) should be simplified as (Affine → Passthrough) or (Passthrough → Affine)</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-593">SIS-593</a> — Resolve auxiliary files relatively to GML or WKT file providing parameter values</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-594">SIS-594</a> — Accept transform steps with swapped (source, target) CRS</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-595">SIS-595</a> — AbstractMathTransform.tryConcatenate(…) needs more context</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-608">SIS-608</a> — Improve robutness of SQLStore</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-609">SIS-609</a> — SQLStore should accept &ldquo;sis:identifier&rdquo; in queries</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-387">SIS-387</a> — Automatically resolve links in metadata document</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-470">SIS-470</a> — MD_ReferenceSystemTypeCode at XML marshalling time</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-596">SIS-596</a> — Better encapsulation of modules internal</li>
+</ul>
+<h2 id="bugs">Bug fixes   </h2>
+<ul>
+<li><a href="https://issues.apache.org/jira/browse/SIS-619">SIS-619</a> — Wrong parameter names in Affine parametric transformation</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-606">SIS-606</a> — SQLStore fails if a table contains 2 foreigner keys referencing the same table</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-607">SIS-607</a> — CoverageAggregator does not handle image mosaic correctly</li>
+</ul>
+<h2 id="tasks">Tasks   </h2>
+<ul>
+<li><a href="https://issues.apache.org/jira/browse/SIS-457">SIS-457</a> — Migrate tests to JUnit 5</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-602">SIS-602</a> — Fix compatiblity with Java 22</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-597">SIS-597</a> — Remove usages of Projection sub-interfaces</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-562">SIS-562</a> — Deprecate and remove NullArgumentException</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-500">SIS-500</a> — Deprecate (for removal) InterpolatedMolodenskyTransform</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-611">SIS-611</a> — Drop $SIS_DATA/Databases/ExternalSources directory</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-603">SIS-603</a> — Make SQLStore abstract for allowing more customization</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-605">SIS-605</a> — Express subsamplings as long integers</li>
+</ul>
+
+
+          </article>
+        </main>
+        <footer>
+          <div class="container">
+            <p>Copyright &copy; 2013-2025 The Apache Software Foundation, Licensed under the
+            <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
+            Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>

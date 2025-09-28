@@ -46,22 +46,22 @@ After those steps, custom Coordinate Reference Systems can be created
 in the same way as for EPSG definitions, with calls to <code>CRS.forCode(String)</code>.</p>
 <h1 id="direct-dependencies">Direct dependencies</h1>
 <table>
-<thead>
-<tr>
-<th>Maven coordinates</th>
-<th>Module info</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>org.apache.sis.core:sis-metadata</code></td>
-<td><code>org.apache.sis.metadata</code></td>
-</tr>
-<tr>
-<td><code>org.apache.sis.core:sis-referencing</code></td>
-<td><code>org.apache.sis.referencing</code></td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Maven coordinates</th>
+          <th>Module info</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>org.apache.sis.core:sis-metadata</code></td>
+          <td><code>org.apache.sis.metadata</code></td>
+      </tr>
+      <tr>
+          <td><code>org.apache.sis.core:sis-referencing</code></td>
+          <td><code>org.apache.sis.referencing</code></td>
+      </tr>
+  </tbody>
 </table>
 <h1 id="example-of-crs-definitions">Example of CRS definitions</h1>
 <p>The first step is to choose an authority name.
@@ -93,8 +93,8 @@ ProjectedCRS[&#34;North Pole Stereographic&#34;,
 </code></pre><h2 id="more-compact-definitions-non-standard">More compact definitions (non-standard)</h2>
 <p>A file with many CRS definitions may contain a lot of redundancy.
 For example, the <code>BaseGeodCRS</code> and <code>CS</code> elements are often repeated verbatim in many <code>ProjectedCRS</code> definitions.
-Apache SIS has a non-standard mechanism for declaring WKT fragments are reusing them in many CRS definitions.
-The fragment can be declared with a <code>SET</code> directive, and reused by prefixing the fragment name with <code>$</code>:
+Apache SIS has a non-standard mechanism for declaring WKT fragments and reusing them in many CRS definitions.
+The fragments can be declared with a <code>SET</code> directive, and reused by prefixing a fragment name with <code>$</code>.
 Example for the same CRS than above:</p>
 <pre tabindex="0"><code class="language-wkt" data-lang="wkt">SET WGS84_BASE =
  BaseGeodCRS[&#34;WGS 1984&#34;,
@@ -117,10 +117,10 @@ ProjectedCRS[&#34;North Pole Azimuthal Equidistant&#34;,
  Id[&#34;MyOrg&#34;, 102016]]
 </code></pre><p>The above examples are available with more explanations in a <a href="https://sis.apache.org/apidocs/org.apache.sis.referencing/org/apache/sis/io/wkt/doc-files/ESRI.txt">text file</a>.</p>
 <h1 id="java-code">Java code</h1>
-<p>The application needs to load the CRS definitions file in a Java code like below
+<p>A Java application can load CRS definitions from above file like below
 (see the <a href="https://sis.apache.org/apidocs/org.apache.sis.referencing/org/apache/sis/io/wkt/WKTDictionary.html">Javadoc</a> for more information).
-Replace &ldquo;MyOrg&rdquo; by the chosen authority name and &ldquo;MyCRS.txt&rdquo; by the text file
-containing CRS definitions in WKT format:</p>
+Replace <code>&quot;MyOrg&quot;</code> by the chosen authority name and <code>&quot;MyRegistry.txt&quot;</code> by the
+filename of the text file containing CRS definitions in WKT format:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nn">org.myorg</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.io.BufferedReader</span><span class="p">;</span><span class="w">
@@ -132,18 +132,18 @@ containing CRS definitions in WKT format:</p>
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.opengis.referencing.crs.CRSAuthorityFactory</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.opengis.util.FactoryException</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyCRS</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">WKTDictionary</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">CRSAuthorityFactory</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">MyCRS</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="p">,</span><span class="w"> </span><span class="n">FactoryException</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyRegistry</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">WKTDictionary</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">CRSAuthorityFactory</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">MyRegistry</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="p">,</span><span class="w"> </span><span class="n">FactoryException</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">super</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">DefaultCitation</span><span class="p">(</span><span class="s">&#34;MyOrg&#34;</span><span class="p">));</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">BufferedReader</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Files</span><span class="p">.</span><span class="na">newBufferedReader</span><span class="p">(</span><span class="n">Path</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&#34;MyCRS.txt&#34;</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">BufferedReader</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Files</span><span class="p">.</span><span class="na">newBufferedReader</span><span class="p">(</span><span class="n">Path</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&#34;MyRegistry.txt&#34;</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">load</span><span class="p">(</span><span class="n">source</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
-</span></span></span></code></pre></div><p>Finally, applications need to declare above class as a services in their <code>module-info.java</code>:</p>
+</span></span></span></code></pre></div><p>Finally, the application needs to declare the above class as a service in its <code>module-info.java</code> file:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">module</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">myorg</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">requires</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">apache</span><span class="p">.</span><span class="na">sis</span><span class="p">.</span><span class="na">referencing</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">provides</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">opengis</span><span class="p">.</span><span class="na">referencing</span><span class="p">.</span><span class="na">crs</span><span class="p">.</span><span class="na">CRSAuthorityFactory</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">myorg</span><span class="p">.</span><span class="na">MyCRS</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">provides</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">opengis</span><span class="p">.</span><span class="na">referencing</span><span class="p">.</span><span class="na">crs</span><span class="p">.</span><span class="na">CRSAuthorityFactory</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">myorg</span><span class="p">.</span><span class="na">MyRegistry</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div><p>Alternatively, non-modular applications can register in <code>META-INF/services/</code> instead.</p>
 <h1 id="usage">Usage</h1>
