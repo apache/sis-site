@@ -1,8 +1,9 @@
 ---
-title: Recommended code patterns
+title: Recommended code patterns for SIS users
 ---
 
-This page lists some recommended code pattern for developing or using Apache {{% SIS %}}.
+This page lists some recommended code pattern for using Apache {{% SIS %}}.
+Coding conventions for {{% SIS %}} developers are in [a separated page](coding-conventions.html).
 
 {{< toc >}}
 
@@ -10,8 +11,6 @@ This page lists some recommended code pattern for developing or using Apache {{%
 
 
 # Referencing    {#referencing}
-
-This section lists recommended code pattern when using or developing the `sis-referencing` module.
 
 ## Never explicitly swap coordinates for axis order    {#axisOrder}
 
@@ -28,8 +27,6 @@ and let the referencing engine performs the conversion from the source to the ta
 
 
 # Rasters and coverages    {#coverage}
-
-This section lists recommended code pattern when using or developing the `sis-coverage` module.
 
 ## Georeference images with affine transforms, _not_ bounding boxes    {#gridToCRS}
 
@@ -53,8 +50,6 @@ Furthermore changes in pixel values may be lost if {@code releaseWritableTile(â€
 
 # International    {#international}
 
-This section lists recommended code pattern for internationalization.
-
 ## Specify timezone    {#timezone}
 
 Geospatial data often cover a wide geographic area, spanning many time zones.
@@ -64,8 +59,8 @@ Some Apache {{% SIS %}} objects have `Locale` and `TimeZone` information.
 Such locale and timezone are given to `java.text.DateFormat` or `java.util.Calendar` constructors among others.
 
 When reading dates or timestamps from a {{% JDBC %}} database,
-always use the `ResultSet` method accepting a `Calendar` argument, when such method is available.
-For example prefer the `getTimestamp(int, Calendar)` method instead of `getTimestamp(int)`.
+consider using a `ResultSet` method accepting a `Calendar` argument when such method is available.
+For example, prefer the `getTimestamp(int, Calendar)` method instead of `getTimestamp(int)`.
 The `Calendar` object should has been created with the appropriate timezone.
 
 ## Replace underscores by spaces before sorting    {#sort}
@@ -91,76 +86,3 @@ for (int i=0; i<string.length();) {
     i += Character.charCount(c);
 }
 ```
-
-
-
-
-# Logging    {#logging}
-
-Apache {{% SIS %}} uses the `java.util.logging` framework.
-It does not necessarily mean that all SIS users are forced to use this framework,
-as it is possible to use `java.util.logging` as an API and have logging redirected to another system.
-For example, the logging can be redirect to SLF4J by adding the `jul-to-slf4j` dependency to a project.
-
-The logger names are usually the package name of the class emitting log messages, but not necessarily.
-In particular, we do not follow this convention if the class is located in an internal package
-(`org.apache.sis.internal.*`) since those packages are considered private.
-In such cases, the logger name should be the package name of the public class invoking the internal method.
-The reason for that rule is that logger names are considered part of the public API,
-since developers use them for configuring their logging (verbosity, destination, <i>etc.</i>).
-
-All logging at `Level.INFO` or above shall be targeted to users or administrators, not to developers.
-In particular `Level.SEVERE` shall be reserved for critical errors that compromise the application stability â€”
-it shall not be used for exceptions thrown while parsing user data (file or database).
-
-
-
-
-# Compiler warnings    {#warnings}
-
-When a local variable in a method has the same name as a field in the enclosing class,
-some compilers emit a _"Local variable hides a field"_ warning.
-This warning can be disabled with a `@SuppressWarnings("LocalVariableHidesMemberVariable")` annotation.
-However, by convention Apache SIS applies this annotation only when the local variable should have the same value as the field.
-Otherwise, the warning should be resolved by renaming a variable.
-When a code hides a field, it should be a statement such as
-`final Foo foo = this.foo;` or `final Foo foo = getFoo();` and may exist for the following reasons:
-
-* `this.foo` is non-final and the developer wants to make sure that the field is not modified by accident in the method.
-* `this.foo` is a volatile field, therefore should be read only once and cached in the method for performance reasons.
-* `getFoo()` computes the value of `this.foo` lazily.
-
-
-
-
-# Imports order    {#imports}
-
-There is currently no strict rule about the order of `import` statements in Apache SIS code base, except one:
-if a class is different in the `main`, `geoapi-3.1` and `geoapi-4.0` branches, and if those differences imply
-different import statements, then the imports that are different should be grouped last with a comment.
-Example:
-
-```java
-// Specific to the geoapi-3.1 and geoapi-4.0 branches:
-import org.opengis.filter.Filter;
-import org.opengis.filter.Expression;
-```
-
-The purpose is to reduce the number of conflicts during the merges between branches.
-
-
-
-
-# Javadoc    {#javadoc}
-
-Javadoc comments are written in HTML, not Markdown, both for historical reasons and because HTML allows richer semantic.
-For example, for formatting a text in italic, the Javadoc should choose the most appropriate of the following tags:
-
-* `<em>`   for emphasis. A screen reader may pronounce the words using verbal stress.
-* `<var>`  for a variable to show like a mathematical symbol.
-* `<dfn>`  for introducing a word defined by the nearby sentences.
-* `<cite>` for the title of a document, in particular an OGC/ISO standard.
-  Apache SIS uses also this tag for the name of a geodetic object in the EPSG geodetic database,
-  in which case the object definition is considered as a document.
-  This tag can also be used for section titles.
-* `<i>` for rendering in italic for any reason other than the above reasons.

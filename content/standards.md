@@ -21,7 +21,7 @@ Some standards are implemented partially, others almost fully.
   </tr><tr>
     <td>ISO 19103:2015</td>
     <td></td>
-    <td></td>
+    <td>ISO 19103:2024</td>
     <td>Conceptual schema language</td>
   </tr><tr>
     <td>ISO 19115-1:2014/Amd 1:2018</td>
@@ -46,18 +46,13 @@ Some standards are implemented partially, others almost fully.
   </tr><tr>
     <td>ISO 19157:2013/Amd 1:2018</td>
     <td></td>
-    <td></td>
+    <td>ISO 19157-1:2023</td>
     <td>Data quality</td>
   </tr><tr>
     <td>ISO 19111:2019</td>
     <td><a href="https://docs.ogc.org/as/18-005r8/18-005r8.pdf">OGC Topic 2</a></td>
     <td></td>
     <td>Spatial referencing by coordinates</td>
-  </tr><tr>
-    <td>ISO 19111-2:2009</td>
-    <td></td>
-    <td>ISO 19111:2019</td>
-    <td>Referencing — extension for parametric values</td>
   </tr><tr>
     <td>ISO 19112:2003</td>
     <td></td>

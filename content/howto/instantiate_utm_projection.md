@@ -48,7 +48,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.Utilities;
 
 public class InstantiateUTM {
     /**
@@ -75,8 +74,8 @@ public class InstantiateUTM {
          * Compare the results.
          */
         System.out.println("Are the CRS equivalent?");
-        System.out.println("AUTO2: " + Utilities.equalsIgnoreMetadata(crsFromPoint, crsFromAUTO2));
-        System.out.println("EPSG:  " + Utilities.equalsIgnoreMetadata(crsFromPoint, crsFromCode));
+        System.out.println("AUTO2: " + CRS.equivalent(crsFromPoint, crsFromAUTO2));
+        System.out.println("EPSG:  " + CRS.equivalent(crsFromPoint, crsFromCode));
     }
 }
 ```

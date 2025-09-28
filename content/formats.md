@@ -36,13 +36,18 @@ in which case the root resource will be `Aggregate`.
     <td><code>org.apache.sis.storage</code></td>
     <td><code>Aggregate</code>, <code>FeatureSet</code>, <code>GridCoverageResource</code></td>
   </tr><tr>
-    <td>(Big) GeoTIFF</td>
+    <td>GDAL⁽¹⁾</td>
     <td>Read</td>
+    <td><code>org.apache.sis.storage.gdal</code></td>
+    <td><code>Aggregate</code></td>
+  </tr><tr>
+    <td>GeoTIFF⁽²⁾</td>
+    <td>Read/Write</td>
     <td><code>org.apache.sis.storage.geotiff</code></td>
     <td><code>Aggregate</code>, <code>GridCoverageResource</code></td>
   </tr><tr>
     <td>{{% GML %}} ({{% CRS %}} only)</td>
-    <td>Read/write⁽¹⁾</td>
+    <td>Read/write⁽³⁾</td>
     <td><code>org.apache.sis.referencing</code></td>
     <td><code>Resource</code></td>
   </tr><tr>
@@ -52,7 +57,7 @@ in which case the root resource will be `Aggregate`.
     <td><code>FeatureSet</code></td>
   </tr><tr>
     <td>{{% ISO %}} 19115 {{% XML %}}</td>
-    <td>Read/write⁽¹⁾</td>
+    <td>Read/write⁽³⁾</td>
     <td><code>org.apache.sis.metadata</code></td>
     <td><code>Resource</code></td>
   </tr><tr>
@@ -66,13 +71,13 @@ in which case the root resource will be `Aggregate`.
     <td><code>org.apache.sis.storage.netcdf</code></td>
     <td><code>Aggregate</code>, <code>FeatureSet</code>, <code>GridCoverageResource</code></td>
   </tr><tr>
-    <td>{{% SQL %}}⁽²⁾</td>
+    <td>{{% SQL %}}⁽¹⁾</td>
     <td>Read</td>
     <td><code>org.apache.sis.storage.sql</code></td>
     <td><code>Aggregate</code>, <code>FeatureSet</code></td>
   </tr><tr>
     <td>{{% WKT %}} ({{% CRS %}} only)</td>
-    <td>Read/write⁽¹⁾</td>
+    <td>Read/write⁽³⁾</td>
     <td><code>org.apache.sis.referencing</code></td>
     <td><code>Resource</code></td>
   </tr><tr>
@@ -84,9 +89,11 @@ in which case the root resource will be `Aggregate`.
 </table>
 
 **Notes:**
-1. {{% GML %}}, {{% WKT %}} and {{% ISO %}} 19115 cannot yet be written
+1. GDAL and {{% SQL %}} are not file formats but rather connections to
+   a library through Panama or to a database throught {{% JDBC %}} driver.
+2. Includes the Big GeoTIFF (read/write) and Cloud Optimized GeoTIFF (read-only) variants.
+3. {{% GML %}}, {{% WKT %}} and {{% ISO %}} 19115 cannot yet be written
 throught the `DataStore` API. They require the use of specific API.
-2. {{% SQL %}} is not a file format but rather a connection to a database throught {{% JDBC %}} driver.
 
 
 # How to read

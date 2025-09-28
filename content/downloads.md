@@ -13,7 +13,7 @@ See the `NOTICE` file contained in each release artifact for applicable copyrigh
 
 # Download ZIP files    {#bundles}
 
-Apache {{% SIS %}} is distributed in the form of Java source code in a multi-modules Apache Maven project.
+Apache {{% SIS %}} is distributed in the form of Java source code in a Gradle project (to be migrated to Maven 4 later).
 For convenience, Javadoc and pre-compiled JAR files are available as separated downloads.
 The precompiled JAR files contain most modules and mandatory dependencies.
 Optional dependencies (JAXB implementation, UCAR netCDF library, Amazon SDK) are not included.
@@ -56,7 +56,7 @@ pgpv apache-sis-{{% version %}}-src.zip.asc
 ## Build from the sources    {#build}
 
 If the source files were donwloaded instead of the binaries, the sources will need to be built by Gradle.
-It requires Java 18 or higher for building, but the compilation result can be executed on Java 11 or higher.
+It requires Java 22 or higher for building, but the compilation result can be executed on Java 11 or higher.
 For installing the JAR files in the local Maven repository, execute the following command
 from the SIS project root:
 
@@ -110,22 +110,18 @@ dependency management tool to automatically obtain the required Java Archives (J
 Below are examples of declarations in a `pom.xml` file for building a project with a SIS core module.
 
 ```xml
-<properties>
-  <sis.version>{{% version %}}</sis.version>
-</properties>
-
 <dependencies>
   <dependency>
     <groupId>org.apache.sis.core</groupId>
     <artifactId>sis-referencing</artifactId>
-    <version>${sis.version}</version>
+    <version>{{% version %}}</version>
   </dependency>
 
   <!-- The following dependency can be omitted if XML support is not desired. -->
   <dependency>
     <groupId>org.glassfish.jaxb</groupId>
     <artifactId>jaxb-runtime</artifactId>
-    <version>4.0.4</version>
+    <version>4.0.5</version>
     <scope>runtime</scope>
   </dependency>
 </dependencies>
@@ -144,6 +140,7 @@ The `sis-referencing` module in above example can be replaced by one or many of 
   <tr><td>Features and rasters from NetCDF</td> <td><code>org.apache.sis.storage.netcdf</code></td>           <td><code>org.apache.sis.storage</code></td>     <td><code>sis-netcdf</code></td></tr>
   <tr><td>Raster data from GeoTIFF</td>         <td><code>org.apache.sis.storage.geotiff</code></td>          <td><code>org.apache.sis.storage</code></td>     <td><code>sis-geotiff</code></td></tr>
   <tr><td>Raster data from Landsat</td>         <td><code>org.apache.sis.storage.earthobservation</code></td> <td><code>org.apache.sis.storage</code></td>     <td><code>sis-earth-observation</code></td></tr>
+  <tr><td>Raster data from GDAL library</td>    <td><code>org.apache.sis.storage.gdal</code></td>             <td><code>org.apache.sis.storage</code></td>     <td><code>sis-gdal</code></td></tr>
   <tr><td>Raster data from GCOM (JAXA)</td>     <td><code>org.apache.sis.profile.japan</code></td>            <td><code>org.apache.sis.profile</code></td>     <td><code>sis-japan-profile</code></td></tr>
   <tr><td>Connection to storages on cloud</td>  <td><code>org.apache.sis.cloud.aws</code></td>                <td><code>org.apache.sis.cloud</code></td>       <td><code>sis-cloud-aws</code></td></tr>
   <tr><td>Console application</td>              <td><code>org.apache.sis.console</code></td>                  <td><code>org.apache.sis.application</code></td> <td><code>sis-console</code></td></tr>
@@ -165,7 +162,7 @@ If you accept those terms of use, then the following dependency can be added:
   <dependency>
     <groupId>org.apache.sis.non-free</groupId>
     <artifactId>sis-embedded-data</artifactId>
-    <version>${sis.version}</version>
+    <version>{{% version %}}</version>
     <scope>runtime</scope>
   </dependency>
 </dependencies>

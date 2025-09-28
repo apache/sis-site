@@ -14,13 +14,13 @@ For library users:
 
 * [How to…](howto.html)
 * [Online Javadoc](apidocs/index.html)
-* [Developer Guide](book/en/developer-guide.html)
-* [Code patterns](code-patterns.html)
-* [FAQ](faq.html)
+* [Developer guide](book/en/developer-guide.html)
+* [Recommended code patterns](code-patterns.html)
+* [Frequently Asked Questions](faq.html)
 
 For library developers:
 
-* [Coding Conventions](coding-conventions.html)
+* [Coding conventions](coding-conventions.html)
 * [Release management](release-management.html)
-* [Issue Tracker](https://issues.apache.org/jira/browse/SIS)
+* [Issues tracker](https://issues.apache.org/jira/browse/SIS)
 * [Wiki](https://cwiki.apache.org/confluence/display/SIS)

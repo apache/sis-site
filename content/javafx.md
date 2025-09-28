@@ -5,10 +5,9 @@ title: JavaFX application
 Apache {{% SIS %}} provides an optional JavaFX application for testing SIS capability to read,
 transform and visualize data files.
 (note: a [command line interface](command-line.html) is also available).
-The graphical application is in early development stage and very far from providing
-all services that we can expect from a Geographic Information System (GIS).
-Furthermore this application covers a very small subset of Apache {{% SIS %}} capabilities.
-But it can give an idea of what is available there.
+The graphical application does not provide all services that we can expect from a Geographic Information System (GIS)
+and covers a subset of Apache {{% SIS %}} capabilities.
+But it can give an idea of what is available.
 
 {{< toc >}}
 
@@ -40,7 +39,7 @@ For example users on Intel platforms need to choose `x64` (not `aarch64`) on the
 ## First look
 
 After those two steps are completed, user can see an application like below
-(click on an image to expand):
+(hover on an image to expand):
 
 <table class="images">
   <tr>

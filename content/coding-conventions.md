@@ -1,10 +1,14 @@
 ---
-title: Coding conventions
+title: Coding conventions for SIS developers
 ---
 
 This page describes some coding conventions applied in Apache {{% SIS %}} development.
+Note that the [recommended code patterns for SIS users](code-patterns.html) apply also to {{% SIS %}} development.
 
 {{< toc >}}
+
+
+
 
 # License header    {#license}
 
@@ -18,9 +22,30 @@ as below:
 # Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.
 ```
 
+
+
+
+# Public API    {#public-api}
+
+The public API is made of all public types in all exported packages,
+i.e. packages declared in non-qualified `exports` statements in the `module-info.java` file.
+All other classes are for SIS usage only and may change without warning in any future release.
+Those classes are excluded from Javadoc and normally not accessible to users.
+Contrarily to previous SIS versions, there is no longer any particular naming convention for internal package.
+They may or may not have `internal` in their name.
+
+## Substitution for non-available JDK classes    {#substitutions}
+
+When using a JDK 12+ class that does not exist on JDK 11, define a class such as `JDK12` in
+the `org.apache.sis.pending.jdk` package with the minimal amount of needed functionalities,
+provided that it can be done with reasonable effort.
+This packages is internal (non-exported).
+
+
+
+
 # Naming convention    {#naming}
 
-Classes that do not implement an interface are usually not prefixed, even if abstract.
 Classes implementing GeoAPI interfaces usually (but not always) begin with `Abstract`, `Default`, `Simple` or `General` prefix.
 
 * The `Abstract` prefix is used when a class is abstract according {{% ISO %}} specifications — it may or may not be be abstract in the Java sense.
@@ -31,28 +56,17 @@ Classes implementing GeoAPI interfaces usually (but not always) begin with `Abst
 Example: the `GeneralEnvelope` class is an implementation of `Envelope` interface for the multi-dimensional case.
 The `Envelope2D` class is another implementation of the same interface specialized for the two-dimensional case.
 
-## Internal packages    {#internal}
+Member fields do not have any particular prefix (no `m_` prefix).
 
-The public API is made of all public classes in all exported packages,
-i.e. packages declared in non-qualified `exports` statements in the `module-info.java` file.
-All other classes are for SIS usage only and may change without warning in any future release.
-Those classes are excluded from Javadoc and normally not accessible to users.
-Contrarily to previous SIS versions, there is no longer any particular convention for internal package names.
-They may or may not have `internal` in their name.
 
-### Substitution for non-existent classes    {#substitutions}
 
-When using a JDK 12+ class that does not exist on JDK 11, define a class of the same name in a
-`org.apache.sis.pending.jdk` sub-package with the minimal amount of needed functionalities,
-provided that it can be done with reasonable effort.
-Those packages are internal (non-exported).
 
 # Code formatting    {#formatting}
 
-Apache {{% SIS %}} uses the standard Java conventions, except for the 80 characters line length restriction.
-The conventions listed below are guidelines. Some exceptions to those conventions can occur but should
-be rare (see [exceptions to coding conventions](#tabular-formatting)).
-
+Apache {{% SIS %}} uses the standard Java conventions,
+except the 80 characters line length restriction which is relaxed.
+The conventions listed below are guidelines.
+Some [exceptions to coding conventions](#tabular-formatting) can occur but should be rare.
 For making merges between branches easier, refrain from doing massive code reformatting unless:
 
 * the modified files do not yet exist on the other branches;
@@ -61,9 +75,10 @@ For making merges between branches easier, refrain from doing massive code refor
 
 ## Import statements    {#imports}
 
-Isolate at the end of the imports section any import statements that are specific to a platform.
-This separation allows any branch to re-arrange the common import statements without generating
-conflicts with the platform-dependent import statements. Example:
+There is currently no strict rule about the order of `import` statements in Apache SIS code base, except one:
+if a class is different in the `main`, `geoapi-3.1` and `geoapi-4.0` branches, and if those differences imply
+different import statements, then the imports that are different should be grouped last with a comment.
+Example:
 
 ```java
 import java.io.File;
@@ -71,40 +86,37 @@ import java.util.List;
 import org.opengis.metadata.Metadata;
 
 // Specific to the geoapi-3.1 and geoapi-4.0 branches:
-import org.opengis.feature.Feature;
+import org.opengis.filter.Filter;
+import org.opengis.filter.Expression;
 ```
 
+The purpose is to reduce the number of conflicts during the merges between branches.
 The import statements can be rearranged automatically by the `ReorganizeImports` class in `buildSrc`.
 This tool requires checkouts of all three branches (`main`, `geoapi-3.1` and `geoapi-4.0`) in order
 to identify which imports are branch-specific.
 
-## Spaces and line length    {#spaces}
+## Spaces, brackets and keywords    {#spaces}
 
-* **Indentation:** Use a consistent space indents and never use tabs.
-  + Use 4 space indents for Java files.
+* **Indentation:**
+  + Use 4 space indents (not tab) for Java files.
   + Use 2 space indents for XML files, because {{% ISO %}}/{{% OGC %}} {{% XML %}} schemas tend to have a very deep structure.
-* **Space after keyword:** Put a space after `if`, `else`, `for`, `try`, `catch` and similar keywords
-  (not after method names).
-* **Trailing Whitespaces:** Remove all trailing whitespaces.
-  + Eclipse users can use the _Source_ - _Cleanup_ option to accomplish this.
-  + NetBeans users can use the use the _Source_ - _Remove trailing spaces_ on a file-by-file basis,
-    or set the _Preferences_ - _Editor_ - _On Save_ - _Remove trailing whitespaces_ option.
-* **Line wrapping:** Use 120-column line width for Java code and Javadoc.
-  Some exceptions to this rule may exist for preserving tabular structures, but should be rare.
-
-## Brackets    {#brackets}
-
-* **Curly brackets:** The `{` and `}` brackets are mandatory for `if`, `else`, `while` and other blocks,
-  except if the instruction after the keyword is on the same line (e.g. `else if`).
-
-## Member declarations    {#declarations}
-
-* Class, method and field declarations shall use the keywords in the following order.
-  This is known as the "customary order" in the [Java Language Specification][JLS-order]:
-  + `public`, `protected` or `private`,
-  + `abstract` or `static`,
-  + `final`.
-* Member fields do not have any particular prefix (no `m_` prefix).
+* **Spaces:**
+  * Put a space after `if`, `else`, `for`, `try`, `catch` and similar keywords (not after method names).
+  * Remove all trailing whitespaces at the end of lines.
+    + Eclipse users can use the _Source_ - _Cleanup_ option to accomplish this.
+    + NetBeans users can use the use the _Source_ - _Remove trailing spaces_ on a file-by-file basis,
+      or set the _Preferences_ - _Editor_ - _On Save_ - _Remove trailing whitespaces_ option.
+* **Line wrapping:**
+  *  Use 120-column line width for Java code and Javadoc.
+  * Some exceptions to above rule may exist for preserving tabular structures, but should be rare.
+* **Curly brackets:**
+  * The `{` and `}` brackets are mandatory for `if`, `else`, `while` and other blocks,
+    except if the instruction after the keyword is on the same line (e.g. `else if`).
+* **Member declarations:**
+  * Keywords should appear in the "customary order" of the [Java Language Specification][JLS-order]:
+    `public`, `protected` or `private`, then `abstract` or `static`, finally `final`.
+  * The `var` keyword should be used only if the type is obvious on the same line,
+    e.g. before a `new` statement or a cast.
 
 ## Exceptions to coding conventions    {#tabular-formatting}
 
@@ -120,14 +132,22 @@ if (y < ymin) ymin = y;
 if (y > ymax) ymax = y;
 ```
 
+The `var` keyword may also be used aven when the type is not obvious if doing so simplify merges between branches.
+For example, a method returning `Feature` on the GeoAPI 3.1 branch may return `AbstractFeature` on the GeoAPI 3.0 branch.
 The decision to use standard or tabular format is made on a case-by-case basis.
 Of course, tabular format shall not be abused.
 
+
+
+
 # Documentation formatting    {#javadoc}
 
-Apache {{% SIS %}} uses the standard Javadoc conventions, except for the 80 characters line length restriction.
-Javadoc lines should not exceed 120 characters, but exceptions to this rule may exist for preserving the
-structure of `<table>` elements.
+Javadoc comments are written in HTML, not Markdown,
+both for historical reasons and because HTML allows richer semantic.
+Apache {{% SIS %}} uses the standard Javadoc conventions,
+except for the 80 characters line length restriction which is relaxed.
+Javadoc lines should not exceed 120 characters,
+but exceptions to this rule may exist for preserving the structure of `<table>` elements.
 
 ## Javadoc annotations    {#javadoc-tags}
 
@@ -139,20 +159,18 @@ SIS uses standard javadoc annotations. The meaning of some tags are refined as b
   A separated `@author` tag is added for each developer.
   The intent is to allow other developers to know to who to ask questions if needed.
 
-In addition, the Java code in `buildSrc` provides the following custom javadoc taglets:
-
-Javadoc tag    | Description
--------------- | -------------------------------------------------------------------------------------------
-`{@include}`   | Include the content of a given HTML file below a `<h2>` section having the given title.
-
-### Where to use @since and @version tags    {#since-tag}
-
 The `@since` and `@version` Javadoc tags should be used only on classes, interfaces, enumerations, methods or fields
 that are part of public API. They should not be put on package-private classes or classes in non-exported packages.
 The reason is that non-public classes can be moved, splitted or merged without warning,
 which gives confusing meaning to the `@since` tag.
 Furthermore, restricting the use of those tags to public API is also a way to remind developers
 that the class that they are editing is part of public API, so backward-compatibility concerns apply.
+
+In addition, the Java code in `buildSrc` provides the following custom javadoc taglets:
+
+Javadoc tag    | Description
+-------------- | -------------------------------------------------------------------------------------------
+`{@include}`   | Include the content of a given HTML file below a `<h2>` section having the given title.
 
 ## HTML elements    {#html}
 
@@ -162,6 +180,18 @@ For example:
 * Instead of "`<code>Foo</code>`", use "`{@code Foo}`".
 * Instead of "`a &lt; b &lt; c`", use "`{@literal a < b < c}`".
 * Instead of "`<pre>Foo</pre>`" for a Java listing, use "`{@snippet lang=java : Foo}`".
+
+When many HTML tags produce the same visual effect, choose the one with proper semantic.
+For example, for formatting a text in italic, choose the most appropriate of the following tags:
+
+* `<em>`   for emphasis. A screen reader may pronounce the words using verbal stress.
+* `<var>`  for a variable to show like a mathematical symbol.
+* `<dfn>`  for introducing a word defined by the nearby sentences.
+* `<cite>` for the title of a document, in particular an OGC/ISO standard.
+  Apache SIS uses also this tag for the name of a geodetic object in the EPSG geodetic database,
+  in which case the object definition is considered as a document.
+  This tag can also be used for section titles.
+* `<i>` for rendering in italic for any reason other than the above reasons.
 
 ### Paragraphs    {#paragraph}
 
@@ -205,6 +235,53 @@ MathML is supported natively in Firefox, Safari and Opera.
 Internet Explorer users need to [install a plugin][mathml-plugin-ie].
 Firefox users can optionally install the [fonts for Mozilla's MathML engine][mathml-fonts] for better results.
 Note that a [JavaScript display engine][mathml-mathjax] is available for all browsers, but not yet used by SIS.
+
+
+
+
+# Compiler warnings    {#warnings}
+
+When a local variable in a method has the same name as a field in the enclosing class,
+some compilers emit a _"Local variable hides a field"_ warning.
+This warning can be disabled with a `@SuppressWarnings` annotation.
+However, by convention Apache SIS applies this annotation only when the local variable should have the same value as the field.
+Otherwise, the warning should be resolved by renaming a variable.
+When a code hides a field, it should be a statement such as:
+
+```java
+@SuppressWarnings("LocalVariableHidesMemberVariable")
+final Foo foo = this.foo;   // May also be `getFoo()`
+```
+
+Those statements may exist for the following reasons:
+
+* `this.foo` is non-final and the developer wants to make sure that the field is not modified by accident in the method.
+* `this.foo` is a volatile field, therefore should be read only once and cached in the method for performance reasons.
+* `getFoo()` computes the value of `this.foo` lazily.
+
+
+
+
+# Logging    {#logging}
+
+Apache {{% SIS %}} uses the `java.util.logging` framework.
+It does not necessarily mean that all SIS users are forced to use this framework,
+as it is possible to use `java.util.logging` as an API and have logging redirected to another system.
+For example, the logging can be redirect to SLF4J by adding the `jul-to-slf4j` dependency to a project.
+
+The logger names are usually the package name of the class emitting log messages, but not necessarily.
+In particular, we do not follow this convention if the class is located in an internal package
+(`org.apache.sis.internal.*`) since those packages are considered private.
+In such cases, the logger name should be the package name of the public class invoking the internal method.
+The reason for that rule is that logger names are considered part of the public API,
+since developers use them for configuring their logging (verbosity, destination, <i>etc.</i>).
+
+All logging at `Level.INFO` or above shall be targeted to users or administrators, not to developers.
+In particular `Level.SEVERE` shall be reserved for critical errors that compromise the application stability —
+it shall not be used for exceptions thrown while parsing user data (file or database).
+
+
+
 
 [srcheaders]:       https://www.apache.org/legal/src-headers.html
 [JLS-order]:        https://docs.oracle.com/javase/specs/jls/se11/html/jls-8.html#jls-8.1.1
