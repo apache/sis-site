@@ -63,28 +63,30 @@ can be invoked instead.
 
 ```
 CompoundCRS["WGS 84 + MSL height + Julian",
-  GeodeticCRS["WGS 84",
-    Datum["World Geodetic System 1984",
-      Ellipsoid["WGS 84", 6378137.0, 298.257223563]],
+  GeographicCRS["WGS 84",
+    Ensemble["World Geodetic System 1984 ensemble",
+      (... ensemble members omitted for brevity ...)
+      Ellipsoid["WGS 84", 6378137.0, 298.257223563],
+      EnsembleAccuracy[2.0]],
     CS[ellipsoidal, 2],
-      Axis["Geodetic latitude (Lat)", north],
-      Axis["Geodetic longitude (Lon)", east],
+      Axis["Latitude (B)", north],
+      Axis["Longitude (L)", east],
       Unit["degree", 0.017453292519943295],
-    Id["EPSG", 4326, "9.9.1"]],
+    Id["EPSG", 4326, "12.026"]],
   VerticalCRS["MSL height",
     VerticalDatum["Mean Sea Level"],
     CS[vertical, 1],
       Axis["Gravity-related height (H)", up],
       Unit["metre", 1],
-    Id["EPSG", 5714, "9.9.1"]],
+    Id["EPSG", 5714, "12.026"]],
   TimeCRS["Julian",
     TimeDatum["Julian", TimeOrigin[-4713-11-24T12:00:00.000]],
     CS[temporal, 1],
       Axis["Time (t)", future],
       TimeUnit["day", 86400],
     Id["OGC", "JulianDate"]],
-  Area["World."],
-  BBox[-90.00, -180.00, 90.00, 180.00]]
+  Usage[
+    BBox[-90.00, -180.00, 90.00, 180.00]]]
 
 Compact alternative is equal: true
 ```

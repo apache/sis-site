@@ -23,4 +23,5 @@ For library developers:
 * [Coding conventions](coding-conventions.html)
 * [Release management](release-management.html)
 * [Issues tracker](https://issues.apache.org/jira/browse/SIS)
+* [Nightly builds](https://ci-builds.apache.org/job/SIS/)
 * [Wiki](https://cwiki.apache.org/confluence/display/SIS)

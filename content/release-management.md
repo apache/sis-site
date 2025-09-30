@@ -455,6 +455,10 @@ ln $PATH_TO_FX/*.jar .
 cd -
 gradle assemble --system-prop org.apache.sis.releaseVersion=$NEW_VERSION
 find -name "org.apache.sis.*-javadoc.jar" -exec zip -d '{}' errors.log \;
+
+# Following 3 lines is because we have not yet been able to get the `--no-fonts` Javadoc option to work with Gradle.
+find -name "org.apache.sis.*-javadoc.jar" -exec zip -d '{}' resource-files/fonts/* \;
+find -name "org.apache.sis.*-javadoc.jar" -exec zip -d '{}' legal/dejavufonts.md \;
 gradle publishToMavenLocal --system-prop org.apache.sis.releaseVersion=$NEW_VERSION
 
 # Check that the Javadoc archives do not have a size close to zero.
@@ -476,7 +480,7 @@ Perform the following verifications:
 * In the `non-free/sis-epsg-$NEW_VERSION.jar` file, verify that `META-INF/LICENSE` contains the EPSG terms of use.
 
 Then close this staging repository.
-In the description field, specify _"Apache SIS main artifacts"_.
+In the description field, specify `Apache SIS $NEW_VERSION-RC$RELEASE_CANDIDATE` (replace by actual values).
 Click on the `org.apache.sis-<id>` link in order to get the URL to the temporary Maven repository created by Nexus.
 We will announce later (in the _Put the release candidate up for a vote_ section) on the `dev@` mailing list
 the availability of this temporary repository for testing purpose.
@@ -498,12 +502,9 @@ svn commit -m "Test project for SIS $NEW_VERSION-RC$RELEASE_CANDIDATE"
 ```
 
 Clear the local Maven repository in order to force downloads from the Nexus repository, then test.
-This test uses a temporary `SIS_DATA` directory for testing the creation of the EPSG database.
-The value of the environment variable set below can be replaced by any other temporary directory.
 
 ```bash
-export SIS_DATA=/tmp/Apache_SIS_data
-mkdir $SIS_DATA
+unset SIS_DATA
 rm --recursive ~/.m2/repository/org/apache/sis
 mvn package --show-version --strict-checksums
 ```
@@ -539,6 +540,8 @@ Apply the following changes:
 
 * Move all `-classpath` content to `--module-path`.
 * Add the value of `$PATH_TO_FX` environment variable to the module-path.
+* Remove the `--no-fonts` option.
+* Add the `-use` and `--since 1.1,1.2,1.3,1.4,1.5` options (edit the list of releases).
 * Delete all Java source files listed after the options, everything until the end of file.
 * Add the following line in-place of deleted lines (omit the `org.opengis.geoapi` module if not desired):
 
@@ -549,6 +552,8 @@ org.apache.sis.util,\
 org.apache.sis.metadata,\
 org.apache.sis.referencing,\
 org.apache.sis.referencing.gazetteer,\
+org.apache.sis.referencing.epsg,\
+org.apache.sis.referencing.database,\
 org.apache.sis.feature,\
 org.apache.sis.storage,\
 org.apache.sis.storage.sql,\
@@ -556,6 +561,7 @@ org.apache.sis.storage.xml,\
 org.apache.sis.storage.netcdf,\
 org.apache.sis.storage.geotiff,\
 org.apache.sis.storage.earthobservation,\
+org.apache.sis.storage.gdal,\
 org.apache.sis.cloud.aws,\
 org.apache.sis.portrayal,\
 org.apache.sis.profile.france,\
@@ -571,7 +577,8 @@ Then the Javadoc command is launched manually.
 
 ```bash
 cd endorsed/src
-ln -s ../../optional/src/org.apache.sis.gui
+ln -s ../../optional/src/org.apache.sis.* .
+rm -r org.apache.sis.test.*
 cd -
 
 # Replace "../../GeoAPI/3.0.2" by the path to a GeoAPI 3.0.2 checkout, or omit those lines.
@@ -616,6 +623,8 @@ Now stage the sources and cleanup:
 git archive --prefix apache-sis-$NEW_VERSION-src/ --output $DIST_DIR/apache-sis-$NEW_VERSION-src.zip $NEW_VERSION-RC
 cd $DIST_DIR
 zip -d apache-sis-$NEW_VERSION-bin.zip apache-sis-$NEW_VERSION/lib/org.apache.sis.openoffice.jar
+zip -d apache-sis-$NEW_VERSION-bin.zip apache-sis-$NEW_VERSION/lib/org.apache.sis.referencing.epsg.jar
+zip -d apache-sis-$NEW_VERSION-bin.zip apache-sis-$NEW_VERSION/lib/lib/org.apache.sis.referencing.database.jar
 ```
 
 Sign the source, Javadoc and binary artifacts:
@@ -641,17 +650,17 @@ find . -name "*.asc"    -exec gpg      --verify '{}' \;
 
 # Integration test    {#integration-tests}
 
-Create a temporary directory where Apache {{% SIS %}} will write the EPSG dataset.
 Force the Java version to the one supported by Apache SIS (adjust `JDK11_HOME` as needed).
-Specify the URL to the nexus repository, where `####` is the identifier of the "non-free" repository.
+Specify the URL to the nexus repository, where `####` is the identifier of the staging repository.
 
 ```bash
-export SIS_DATA=/tmp/apache-sis-data
-mkdir $SIS_DATA
+unset SIS_DATA
 export JAVA_HOME=$JDK11_HOME
 export JDK_JAVA_OPTIONS="-enableassertions -Dorg.apache.sis.epsg.downloadURL"
 export JDK_JAVA_OPTIONS=$JDK_JAVA_OPTIONS=https://repository.apache.org/content/repositories/orgapachesis-####
-export JDK_JAVA_OPTIONS=$JDK_JAVA_OPTIONS/org/apache/sis/non-free/sis-epsg/$NEW_VERSION/sis-epsg-$NEW_VERSION.jar
+
+# Add the following if debugging is needed
+export JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=127.0.0.1:8000"
 ```
 
 
@@ -663,12 +672,12 @@ Unzip the binaries and execute the examples documented in the [command-line inte
 cd /tmp
 unzip $DIST_DIR/apache-sis-$NEW_VERSION-bin.zip
 cd apache-sis-$NEW_VERSION
-wget https://sis.apache.org/examples/coordinates/AmericanCities.csv
-wget https://sis.apache.org/examples/coordinates/CanadianCities.csv
+wget https://sis.staged.apache.org/examples/coordinates/AmericanCities.csv
+wget https://sis.staged.apache.org/examples/coordinates/CanadianCities.csv
 ./bin/sis crs EPSG:6676
-./bin/sis identifier https://sis.apache.org/examples/crs/MissingIdentifier.wkt
-./bin/sis identifier https://sis.apache.org/examples/crs/WrongAxisOrder.wkt
-./bin/sis identifier https://sis.apache.org/examples/crs/EquivalentDefinition.wkt
+./bin/sis identifier https://sis.staged.apache.org/examples/crs/MissingIdentifier.wkt
+./bin/sis identifier https://sis.staged.apache.org/examples/crs/WrongAxisOrder.wkt
+./bin/sis identifier https://sis.staged.apache.org/examples/crs/EquivalentDefinition.wkt
 ./bin/sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 AmericanCities.csv
 ./bin/sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 CanadianCities.csv
 ./bin/sisfx
@@ -745,7 +754,7 @@ find . -name "*.xml" -type f -exec sed -i 's/[[:space:]]*$//' '{}' \;
 
 # Commit
 git add --all
-git commit --message "Staging repository for the $NEW_VERSION release."
+git commit --message "Staging web site for the SIS $NEW_VERSION release."
 git push
 ```
 

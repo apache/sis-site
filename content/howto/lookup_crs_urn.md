@@ -90,6 +90,6 @@ public class LookupAuthorityCode {
 ```
 Identifier declared in the CRS: null
 Searching in EPSG database: 27572
-Same, but more generic: urn:ogc:def:crs:EPSG:9.9.1:27572
+Same, but more generic: urn:ogc:def:crs:EPSG:12.026:27572
 
 ```
