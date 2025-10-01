@@ -495,7 +495,7 @@ the URL of the temporary Maven repositories created by Nexus.
 Usually, only the 3 last digits need to be modified.
 
 ```bash
-cd $SIS_RC_DIR/../release/test/maven
+cd $SIS_RC_DIR/../test/maven
 # Edit <url> in pom.xml before to continue.
 mvn compile
 svn commit -m "Test project for SIS $NEW_VERSION-RC$RELEASE_CANDIDATE"
@@ -610,8 +610,6 @@ git commit --message "Update javadoc for SIS $NEW_VERSION."
 ```
 
 
-## Publish Maven artifacts    {#publish-artifacts}
-
 ## Stage the source, binary and Javadoc artifacts    {#stage}
 
 The official Apache releases are the files in the `$DIST_DIR` directory.
@@ -620,11 +618,12 @@ We have already staged the Javadoc and binaries.
 Now stage the sources and cleanup:
 
 ```bash
-git archive --prefix apache-sis-$NEW_VERSION-src/ --output $DIST_DIR/apache-sis-$NEW_VERSION-src.zip $NEW_VERSION-RC
+cd $SIS_RC_DIR
+git archive --prefix apache-sis-$NEW_VERSION-src/ --output $DIST_DIR/apache-sis-$NEW_VERSION-src.zip $NEW_VERSION-RC$RELEASE_CANDIDATE
 cd $DIST_DIR
 zip -d apache-sis-$NEW_VERSION-bin.zip apache-sis-$NEW_VERSION/lib/org.apache.sis.openoffice.jar
 zip -d apache-sis-$NEW_VERSION-bin.zip apache-sis-$NEW_VERSION/lib/org.apache.sis.referencing.epsg.jar
-zip -d apache-sis-$NEW_VERSION-bin.zip apache-sis-$NEW_VERSION/lib/lib/org.apache.sis.referencing.database.jar
+zip -d apache-sis-$NEW_VERSION-bin.zip apache-sis-$NEW_VERSION/lib/org.apache.sis.referencing.database.jar
 ```
 
 Sign the source, Javadoc and binary artifacts:
@@ -648,13 +647,14 @@ find . -name "*.asc"    -exec gpg      --verify '{}' \;
 ```
 
 
-# Integration test    {#integration-tests}
+## Test the binary    {#test-binary}
 
 Force the Java version to the one supported by Apache SIS (adjust `JDK11_HOME` as needed).
 Specify the URL to the nexus repository, where `####` is the identifier of the staging repository.
 
 ```bash
 unset SIS_DATA
+unset PATH_TO_FX
 export JAVA_HOME=$JDK11_HOME
 export JDK_JAVA_OPTIONS="-enableassertions -Dorg.apache.sis.epsg.downloadURL"
 export JDK_JAVA_OPTIONS=$JDK_JAVA_OPTIONS=https://repository.apache.org/content/repositories/orgapachesis-####
@@ -662,9 +662,6 @@ export JDK_JAVA_OPTIONS=$JDK_JAVA_OPTIONS=https://repository.apache.org/content/
 # Add the following if debugging is needed
 export JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=127.0.0.1:8000"
 ```
-
-
-## Test the binary    {#test-binary}
 
 Unzip the binaries and execute the examples documented in the [command-line interface page](./command-line.html).
 
@@ -680,6 +677,7 @@ wget https://sis.staged.apache.org/examples/coordinates/CanadianCities.csv
 ./bin/sis identifier https://sis.staged.apache.org/examples/crs/EquivalentDefinition.wkt
 ./bin/sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 AmericanCities.csv
 ./bin/sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 CanadianCities.csv
+rm --recursive data/Databases/SpatialMetadata  # For testing EPSG download from GUI.
 ./bin/sisfx
 ```
 
@@ -766,8 +764,6 @@ It will not yet be published on `https://sis.apache.org`.
 
 * Create a VOTE email thread on `dev@` to record votes as replies.
   A template is available [here](templates/release-vote.html).
-* Create a DISCUSS email thread on `dev@` for any vote questions.
-  A template is available [here](templates/release-discuss.html).
 * Perform a review of the release and cast your vote:
 * a -1 vote does not necessarily mean that the vote must be redone, however it is usually a good idea
   to rollback the release if a -1 vote is received. See _Recovering from a vetoed release_ below.
@@ -841,7 +837,6 @@ The output shall report only good signatures.
 
 ## Announce the release    {#announce}
 
-* WAIT 24 hours after committing releases for mirrors to replicate.
 * Publish the web site updates:
   * On the `asf-site` branch, execute `git merge asf-staging` and push.
 * Make an announcement about the release on the `dev@`, `users@`, and `announce@` mailing lists.
