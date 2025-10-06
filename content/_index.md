@@ -29,6 +29,7 @@ The API and the data encodings follow [international standards](standards.html) 
   * Read Landsat (groups of GeoTIFF files).
   * Read ESRI BIL/BIP/BSQ and read/write ERSI ASCII Grid.
   * Read/write World Files with any image format supported by Image I/O.
+  * If the [GDAL library][GDAL] is installed, read other two-dimensional raster formats supported by GDAL.
 * Feature formats:
   * Read [Moving Feature Comma Separated Values (CSV) encoding][MF_CSV].
   * Read [Moving Feature netCDF encoding][netCDF_MF].
@@ -89,3 +90,4 @@ are also provided for allowing users to experiment some SIS functionalities befo
 [MF_CSV]:    https://docs.opengeospatial.org/is/14-084r2/14-084r2.html
 [JSR_385]:   https://jcp.org/en/jsr/detail?id=385
 [seshat]:    https://unitsofmeasurement.github.io/seshat/
+[GDAL]:      https://gdal.org/
