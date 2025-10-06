@@ -72,13 +72,18 @@ in which case the root resource will be <code>Aggregate</code>.</p>
     <td><code>org.apache.sis.storage</code></td>
     <td><code>Aggregate</code>, <code>FeatureSet</code>, <code>GridCoverageResource</code></td>
   </tr><tr>
-    <td>(Big) GeoTIFF</td>
+    <td>GDAL⁽¹⁾</td>
     <td>Read</td>
+    <td><code>org.apache.sis.storage.gdal</code></td>
+    <td><code>Aggregate</code></td>
+  </tr><tr>
+    <td>GeoTIFF⁽²⁾</td>
+    <td>Read/Write</td>
     <td><code>org.apache.sis.storage.geotiff</code></td>
     <td><code>Aggregate</code>, <code>GridCoverageResource</code></td>
   </tr><tr>
     <td><abbr title="Geographic Markup Language">GML</abbr> (<abbr title="Coordinate Reference System">CRS</abbr> only)</td>
-    <td>Read/write⁽¹⁾</td>
+    <td>Read/write⁽³⁾</td>
     <td><code>org.apache.sis.referencing</code></td>
     <td><code>Resource</code></td>
   </tr><tr>
@@ -88,7 +93,7 @@ in which case the root resource will be <code>Aggregate</code>.</p>
     <td><code>FeatureSet</code></td>
   </tr><tr>
     <td><abbr title="International Organization for Standardization">ISO</abbr> 19115 <abbr title="Extensible Markup Language">XML</abbr></td>
-    <td>Read/write⁽¹⁾</td>
+    <td>Read/write⁽³⁾</td>
     <td><code>org.apache.sis.metadata</code></td>
     <td><code>Resource</code></td>
   </tr><tr>
@@ -102,13 +107,13 @@ in which case the root resource will be <code>Aggregate</code>.</p>
     <td><code>org.apache.sis.storage.netcdf</code></td>
     <td><code>Aggregate</code>, <code>FeatureSet</code>, <code>GridCoverageResource</code></td>
   </tr><tr>
-    <td><abbr title="Structured Query Language">SQL</abbr>⁽²⁾</td>
+    <td><abbr title="Structured Query Language">SQL</abbr>⁽¹⁾</td>
     <td>Read</td>
     <td><code>org.apache.sis.storage.sql</code></td>
     <td><code>Aggregate</code>, <code>FeatureSet</code></td>
   </tr><tr>
     <td><abbr title="Well Known Text">WKT</abbr> (<abbr title="Coordinate Reference System">CRS</abbr> only)</td>
-    <td>Read/write⁽¹⁾</td>
+    <td>Read/write⁽³⁾</td>
     <td><code>org.apache.sis.referencing</code></td>
     <td><code>Resource</code></td>
   </tr><tr>
@@ -120,9 +125,11 @@ in which case the root resource will be <code>Aggregate</code>.</p>
 </table>
 <p><strong>Notes:</strong></p>
 <ol>
+<li>GDAL and <abbr title="Structured Query Language">SQL</abbr> are not file formats but rather connections to
+a library through Panama or to a database throught <abbr title="Java DataBase Connectivity">JDBC</abbr> driver.</li>
+<li>Includes the Big GeoTIFF (read/write) and Cloud Optimized GeoTIFF (read-only) variants.</li>
 <li><abbr title="Geographic Markup Language">GML</abbr>, <abbr title="Well Known Text">WKT</abbr> and <abbr title="International Organization for Standardization">ISO</abbr> 19115 cannot yet be written
 throught the <code>DataStore</code> API. They require the use of specific API.</li>
-<li><abbr title="Structured Query Language">SQL</abbr> is not a file format but rather a connection to a database throught <abbr title="Java DataBase Connectivity">JDBC</abbr> driver.</li>
 </ol>
 <h1 id="how-to-read">How to read</h1>
 <p>The easiest way to open a file in read-only mode is as below.
@@ -155,7 +162,7 @@ For accessing those data, add the following dependency to the Maven project:</p>
 </span></span><span class="line"><span class="cl">  <span class="nt">&lt;dependency&gt;</span>
 </span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.apache.sis.cloud<span class="nt">&lt;/groupId&gt;</span>
 </span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>sis-cloud-aws<span class="nt">&lt;/artifactId&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>1.4<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>1.5<span class="nt">&lt;/version&gt;</span>
 </span></span><span class="line"><span class="cl">    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
 </span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
 </span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependencies&gt;</span>

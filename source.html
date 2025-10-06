@@ -39,14 +39,14 @@
             <img src="./images/logo.png" class="sis-logo" align="left"/>
             <p class="page-title">Checkout source code</p>
 
-  <p>Apache <abbr title="Spatial Information System">SIS</abbr> source code is maintained using <a href="http://git-scm.com">Git</a> version control,
-completed by optional data maintained using <a href="http://subversion.apache.org">Subversion</a> version control.
+  <p>Apache <abbr title="Spatial Information System">SIS</abbr> source code is maintained using <a href="https://git-scm.com">Git</a> version control,
+completed by optional data maintained using <a href="https://subversion.apache.org">Subversion</a> version control.
 Optional data include in particular the <a href="./epsg.html">EPSG geodetic dataset</a>,
 which is subject to licensing terms different than Apache ones.
 This page describes two ways to checkout Apache <abbr title="Spatial Information System">SIS</abbr> source code:</p>
 <ul>
 <li>A basic checkout with only the main repository, the most stable branch, and no configuration requirement.</li>
-<li>A more advanced configuration for active SIS developments, using uncommitted (for now) API
+<li>A more advanced configuration for active <abbr title="Spatial Information System">SIS</abbr> developments, using uncommitted (for now) API
 and including optional data for more extensive tests.</li>
 </ul>
 <p>It is possible to start with the basic checkout and migrate to the advanced configuration later,
@@ -69,32 +69,32 @@ or to cherry-pick only the interesting parts of the advanced configuration.</p>
 </nav>
 <h1 id="basic">Basic installation   </h1>
 <p>Create an empty directory for the Apache <abbr title="Spatial Information System">SIS</abbr> project.
-We use <code>ApacheSIS</code> directory name in this page, but that name can be anything.
+We use <code>SIS</code> directory name in this page, but that name can be anything.
 Replace that name in the shell commands below if another name is used.
-The Apache <abbr title="Spatial Information System">SIS</abbr> source code can be cloned in that directory as below
-(lines starting with <code>#</code> are comments and can be ignored):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mkdir ApacheSIS
-</span></span><span class="line"><span class="cl"><span class="nb">cd</span> ApacheSIS
-</span></span><span class="line"><span class="cl">git clone https://gitbox.apache.org/repos/asf/sis
-</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+The Apache <abbr title="Spatial Information System">SIS</abbr> source code can be cloned in that directory as below.
+This page uses Unix commands.
+Lines starting with <code>#</code> are comments and can be ignored.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mkdir SIS
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> SIS
+</span></span><span class="line"><span class="cl"><span class="c1"># Remember this directory for use in other shell commands on this page:</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SIS_ROOT_DIR</span><span class="o">=</span><span class="nv">$PWD</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">git clone https://gitbox.apache.org/repos/asf/sis main
 </span></span><span class="line"><span class="cl"><span class="c1"># Alternatively, GitHub mirror can also be used:</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># git clone https://github.com/apache/sis</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># or Subversion (read-only):</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># svn checkout https://github.com/apache/sis/trunk</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># git clone https://github.com/apache/sis main</span>
 </span></span></code></pre></div><p>If JavaFX is available on the local machine,
-its JAR files location can be specified as below
-(edit the <code>/usr/lib/jvm/openjfx</code> path as needed).
+its JAR files location can be specified as below.
 The JavaFX application is excluded by default because it depends on
-the [JavaFX platform][JavaFX] which is distributed under GPL license
-(note that the SIS module stay under Apache 2 licence).</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Syntax for Unix shell</span>
+the <a href="https://openjfx.io/">JavaFX platform</a> which is distributed under GPL with Classpath Exception license
+(note that the Apache <abbr title="Spatial Information System">SIS</abbr> module using JavaFX stay under Apache 2 licence).</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Edit the following path as needed.</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH_TO_FX</span><span class="o">=</span>/usr/lib/jvm/openjfx
-</span></span></code></pre></div><p>Likewise the <a href="./epsg.html">EPSG geodetic dataset</a> is excluded by default for licensing reasons.</p>
-<p>Then, Apache <abbr title="Spatial Information System">SIS</abbr> can be built as below:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> sis
+</span></span></code></pre></div><p>Likewise, the <a href="./epsg.html">EPSG geodetic dataset</a> is excluded by default for licensing reasons.
+Those data are optional and can be added as instructed in the <a href="./source.html#non-free">Checkout non-free data</a> section.
+Then, Apache <abbr title="Spatial Information System">SIS</abbr> can be built as below:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> <span class="nv">$SIS_ROOT_DIR</span>/main
 </span></span><span class="line"><span class="cl">gradle assemble
-</span></span><span class="line"><span class="cl">gradle publishToMavenLocal      <span class="c1"># If use with Maven projects is desired.</span>
+</span></span><span class="line"><span class="cl">gradle publishToMavenLocal      <span class="c1"># If usage with Maven projects is desired.</span>
 </span></span></code></pre></div><p>Outputs will be located in the following sub-directories:</p>
 <ul>
 <li><code>endorsed/build/libs/</code>   for the JAR files of the core library and its dependencies.</li>
@@ -105,16 +105,16 @@ the [JavaFX platform][JavaFX] which is distributed under GPL license
 </ul>
 <p>The remaining of this page describes optional configurations for more advanced developments.</p>
 <h1 id="advanced">Advanced installation   </h1>
-<p>This section assumes that above-described basic checkout has been done.
+<p>This section assumes that the above-described basic checkout has been done.
 All subsections below are optional, but the &ldquo;Create data directory&rdquo; one
 is recommended because some other subsections depend on it.</p>
 <h2 id="data">Create data directory   </h2>
 <p>Apache <abbr title="Spatial Information System">SIS</abbr> needs a directory where to store database, datum shift files and other optional data.
 That directory is specified by the <code>SIS_DATA</code> environment variable and can be located anywhere.
-A convenient location is a subdirectory of the <code>ApacheSIS</code> directory created in the &ldquo;basic checkout&rdquo; section.
-For example (with <code>ApacheSIS</code> as the current directory):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mkdir Data
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SIS_DATA</span><span class="o">=</span><span class="nv">$PWD</span>/Data
+A convenient location is a subdirectory of the <code>SIS</code> directory created in the &ldquo;basic checkout&rdquo; section.
+For example:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SIS_DATA</span><span class="o">=</span><span class="nv">$SIS_ROOT_DIR</span>/Data
+</span></span><span class="line"><span class="cl">mkdir <span class="nv">$SIS_DATA</span>
 </span></span><span class="line"><span class="cl"><span class="c1">#</span>
 </span></span><span class="line"><span class="cl"><span class="c1"># For making that environment variable available in future shell sessions,</span>
 </span></span><span class="line"><span class="cl"><span class="c1"># the output of following command can be added to .bash_profile or .bashrc</span>
@@ -123,32 +123,32 @@ For example (with <code>ApacheSIS</code> as the current directory):</p>
 </span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="nb">export</span> <span class="nv">SIS_DATA</span><span class="o">=</span><span class="nv">$SIS_DATA</span>
 </span></span></code></pre></div><h2 id="non-free">Checkout non-free data   </h2>
 <p>The EPSG geodetic dataset is recommended for operations related to Coordinate Reference Systems.
-Without the EPSG database, only a <a href="apidocs/org/apache/sis/referencing/CRS.html#forCode-java.lang.String-">small subset</a>
+Without the EPSG database, only a <a href="apidocs/org.apache.sis.referencing/org/apache/sis/referencing/CRS.html#forCode%28java.lang.String%29">small subset</a>
 of coordinate reference systems can be created from EPSG codes.
-The EPSG database can be <a href="./epsg.html">installed in various ways</a>,
-but this section describes an alternative way more suitable to Apache <abbr title="Spatial Information System">SIS</abbr> development.
+The EPSG data can be used with one of the <a href="./epsg.html">existing artifacts</a>.
+But in order to build those optional artifacts from the sources, the following instructions must be executed.
 Before to continue, make sure to agree with <a href="https://epsg.org/terms-of-use.html">EPSG terms of use</a>.
-Then following command can be executed with <code>ApacheSIS</code> as the current directory:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Executing this command imply agreement with EPSG terms of use.</span>
+Then, the following commands can be executed with <code>SIS</code> as the current directory:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> <span class="nv">$SIS_ROOT_DIR</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Executing this command imply agreement with EPSG terms of use.</span>
 </span></span><span class="line"><span class="cl">svn checkout https://svn.apache.org/repos/asf/sis/data/non-free/
-</span></span></code></pre></div><p>Then copy or link the EPSG scripts in the directory where Apache <abbr title="Spatial Information System">SIS</abbr> looks for optional data.
-Adjust the relative paths as needed if the <code>SIS_DATA</code> environment variable
-points to another location than the one used in above section:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mkdir <span class="nv">$SIS_DATA</span>/Databases
-</span></span><span class="line"><span class="cl">mkdir <span class="nv">$SIS_DATA</span>/Databases/ExternalSources
-</span></span><span class="line"><span class="cl"><span class="nb">cd</span> <span class="nv">$SIS_DATA</span>/Databases/ExternalSources
-</span></span><span class="line"><span class="cl">ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/Data.sql    EPSG_Data.sql
-</span></span><span class="line"><span class="cl">ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/FKeys.sql   EPSG_FKeys.sql
-</span></span><span class="line"><span class="cl">ln -s ../../../non-free/sis-epsg/src/main/resources/org/apache/sis/referencing/factory/sql/epsg/Tables.sql  EPSG_Tables.sql
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> non-free/EPSG
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">EPSG_DIR</span><span class="o">=</span><span class="nv">$PWD</span>
+</span></span></code></pre></div><p>Then, link the EPSG scripts in the directory where Apache <abbr title="Spatial Information System">SIS</abbr> looks for optional data:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> <span class="nv">$SIS_ROOT_DIR</span>/main
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> optional/src/org.apache.sis.referencing.epsg/main/org/apache/sis/referencing/factory/sql/epsg
+</span></span><span class="line"><span class="cl">ln --symbolic <span class="nv">$EPSG_DIR</span>/LICENSE.* .
+</span></span><span class="line"><span class="cl">ln --symbolic <span class="nv">$EPSG_DIR</span>/*.sql .
 </span></span><span class="line"><span class="cl"><span class="nb">cd</span> -
-</span></span></code></pre></div><p>This is sufficient for allowing Apache <abbr title="Spatial Information System">SIS</abbr> to create the geodetic database
-without the need for <code>sis-epsg</code> or <code>sis-embedded-data</code> module on the classpath.
-This setting is not done automatically because Apache projects cannot introduce
-non-free dependencies without explicit action from user.
-If this action is not taken, some JUnit tests requiring EPSG data may be skipped.
-If any EPSG file is updated, deleting the <code>$SIS_DATA/​Databases/​SpatialMetadata</code> directory
-is sufficient for causing Apache <abbr title="Spatial Information System">SIS</abbr> to recreate the Derby database with new data.</p>
-<h2 id="postgres">Configure PostgreSQL   </h2>
+</span></span></code></pre></div><p>Then, build Apache <abbr title="Spatial Information System">SIS</abbr> with tests enabled.
+This is sufficient for creating automatically the embedded Derby database in the <code>sis-embedded-data</code> artifact.
+If the <code>SIS_DATA</code> environment variable is defined (which is recommended for better performance or for using datum shift grids),
+it may be desirable to delete the database in that directory for forcing Apache <abbr title="Spatial Information System">SIS</abbr> to recreate it:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Skip the following line if SIS_DATA is not used.</span>
+</span></span><span class="line"><span class="cl">rm --recursive <span class="nv">$SIS_DATA</span>/Databases/SpatialMetadata
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> <span class="nv">$SIS_ROOT_DIR</span>/main
+</span></span><span class="line"><span class="cl">gradle <span class="nb">test</span> --rerun
+</span></span></code></pre></div><h2 id="postgres">Configure PostgreSQL   </h2>
 <p>Apache <abbr title="Spatial Information System">SIS</abbr> is tested with Derby, HSQL and PostgreSQL databases.
 Derby and HSQL are tested automatically using temporary databases in memory.
 But testing on PostgreSQL requires the creation of a dedicated database on the developer platform.
@@ -186,32 +186,32 @@ host    SpatialMetadataTest    my_unix_user_name    ::1/128         trust
 <code>SIS_TEST_OPTIONS</code> environment variable (see next section).
 This requirement has been added for avoiding undesired interference with host.</p>
 <h2 id="tests">Running extensive tests   </h2>
-<p>A simple <code>gradle test</code> execution in the <code>sis</code> directory
+<p>A simple <code>gradle test</code> execution in the <code>main</code> directory
 will build and test Apache <abbr title="Spatial Information System">SIS</abbr> with the default set of JUnit tests.
 Some tests are skipped by default, either because they would have some effects outside
-the <code>sis</code> directory (for example writing in <code>SpatialMetadataTest</code> database on PostgreSQL),
+the <code>main</code> directory (for example writing in <code>SpatialMetadataTest</code> database on PostgreSQL),
 or because those tests take a long time to execute.
 For enabling all tests, use the following command:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> sis
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SIS_TEST_OPTIONS</span><span class="o">=</span>extensive,postgresql
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SIS_TEST_OPTIONS</span><span class="o">=</span>extensive,postgresql
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> <span class="nv">$SIS_ROOT_DIR</span>/main
 </span></span><span class="line"><span class="cl">gradle <span class="nb">test</span>
 </span></span></code></pre></div><h2 id="branches">Switch to development branch   </h2>
 <p>The source code repository contains <code>main</code>, <code>geoapi-3.1</code> and <code>geoapi-4.0</code> branches.
 Apache <abbr title="Spatial Information System">SIS</abbr> releases are created from <code>main</code>, which depends on the latest GeoAPI version
-released by the Open Geospatial Consortium (OGC), currently <a href="http://www.geoapi.org/3.0/index.html">GeoAPI 3.0.2</a>.
-However daily developments occur on the <code>geoapi-4.0</code> branch before to be merged (indirectly) to <code>main</code>.
+released by the Open Geospatial Consortium (OGC), currently <a href="https://www.geoapi.org/3.0/index.html">GeoAPI 3.0.2</a>.
+However, daily developments occur on the <code>geoapi-4.0</code> branch before to be merged (indirectly) to <code>main</code>.
 Those branches exist in order to experiment early new API and technologies — since they may impact
 the library design — while keeping the releases compatible with officially released API.
 In summary:</p>
 <ul>
 <li>The <code>geoapi-4.0</code> branch implements interfaces defined in GeoAPI 4.0 snapshots.</li>
-<li>The <code>geoapi-3.1</code> branch implements interfaces defined in <a href="http://www.geoapi.org/snapshot/index.html">GeoAPI 3.1 snapshots</a>.</li>
-<li>The <code>main</code> implements interfaces defined by the <a href="http://www.geoapi.org/3.0/index.html">GeoAPI 3.0.2 stable release</a>.</li>
+<li>The <code>geoapi-3.1</code> branch implements interfaces defined in <a href="https://www.geoapi.org/snapshot/index.html">GeoAPI 3.1 snapshots</a>.</li>
+<li>The <code>main</code> implements interfaces defined by the <a href="https://www.geoapi.org/3.0/index.html">GeoAPI 3.0.2 stable release</a>.</li>
 </ul>
 <p>Developments on <code>geoapi-4.0</code> branch are merged to <code>geoapi-3.1</code> branch, which is then merged to <code>main</code>.
 When commits reach <code>main</code> they become unmodifiable; the <code>git push --force</code> command is not allowed on that branch.
 Contributors to Apache <abbr title="Spatial Information System">SIS</abbr> project should switch to the current development branch before submitting patches:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> sis
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> <span class="nv">$SIS_ROOT_DIR</span>
 </span></span><span class="line"><span class="cl">git checkout geoapi-4.0
 </span></span></code></pre></div><p>Note that those <code>geoapi-xxx</code> branches may disappear or be replaced by something else
 after <abbr title="Open Geospatial Consortium">OGC</abbr> releases the corresponding GeoAPI versions.</p>
@@ -226,11 +226,13 @@ All resource files are copied to the build directory, except those with the foll
 </ul>
 <p>The <code>properties</code> files are handled in a special way.
 Localized resources are provided in <code>*.properties</code> files as specified by the <code>java.util.Property­Resource­Bundle</code> standard class.
-However SIS does not use those resources files directly. Instead <code>*.properties</code> files are transformed into binary files having
-the same filename but the <code>.utf</code> extension. This conversion is done for efficiency, for convenience (the compiler applies the
-<code>java.text.Message­Format</code> <em>doubled single quotes</em> rule itself), and for compile-time safety.</p>
+However, Apache <abbr title="Spatial Information System">SIS</abbr> does not use those resources files directly.
+Instead <code>*.properties</code> files are transformed into binary files having the same filename but the <code>.utf</code> extension.
+This conversion is done for efficiency,
+for convenience (the compiler applies the <code>java.text.Message­Format</code> <em>doubled single quotes</em> rule itself),
+and for compile-time safety.</p>
 <p>In addition to generating the <code>*.utf</code> files, the resource compiler may modify the <code>*.java</code> files having the same name than the
-resource files. For example given a set of <code>Vocabulary*.properties</code> files (one for each supported language), the compiler will
+resource files. For example, given a set of <code>Vocabulary*.properties</code> files (one for each supported language), the compiler will
 generate the corresponding <code>Vocabulary*.utf</code> files, then look for a <code>Vocabulary.java</code> source file. If such source file is found
 and contains a public static inner class named <code>Keys</code>, then the compiler will rewrite the constants declared in that inner class
 with the list of keys found in the <code>Vocabulary*.properties</code> files.</p>
@@ -239,7 +241,7 @@ This plugin is used automatically by Gradle.</p>
 <h1 id="history">History   </h1>
 <p>The build system before Apache <abbr title="Spatial Information System">SIS</abbr> 1.4 was Maven.
 Migration to Gradle was necessary for partial support of Module Source Hierarchy.
-All developments and tags prior Apache <abbr title="Spatial Information System">SIS</abbr> 1.0 were done on a <a href="http://subversion.apache.org">Subversion</a> repository
+All developments and tags prior Apache <abbr title="Spatial Information System">SIS</abbr> 1.0 were done on a <a href="https://subversion.apache.org">Subversion</a> repository
 and can be <a href="http://svn.apache.org/viewvc/sis/">browsed online</a>.
 Tags for Apache <abbr title="Spatial Information System">SIS</abbr> versions 0.1 to 0.8 should be fetched from the <a href="https://svn.apache.org/repos/asf/sis/tags/">SVN repository</a>.
 The development branches on that repository were named <code>JDK8</code>, <code>JDK7</code>, <code>JDK6</code> and <code>trunk</code>.</p>

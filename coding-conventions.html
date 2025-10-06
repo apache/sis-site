@@ -2,7 +2,7 @@
 <html lang="en">
 
   <head>
-    <title>Apache SIS - Coding conventions</title>
+    <title>Apache SIS - Coding conventions for SIS developers</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="./sis.css">
@@ -37,37 +37,29 @@
         <main class="container">
           <article>
             <img src="./images/logo.png" class="sis-logo" align="left"/>
-            <p class="page-title">Coding conventions</p>
+            <p class="page-title">Coding conventions for SIS developers</p>
 
-  <p>This page describes some coding conventions applied in Apache <abbr title="Spatial Information System">SIS</abbr> development.</p>
+  <p>This page describes some coding conventions applied in Apache <abbr title="Spatial Information System">SIS</abbr> development.
+Note that the <a href="./code-patterns.html">recommended code patterns for SIS users</a> apply also to <abbr title="Spatial Information System">SIS</abbr> development.</p>
 <nav id="TableOfContents">
   <ul>
     <li><a href="#license">License header   </a></li>
-    <li><a href="#naming">Naming convention   </a>
+    <li><a href="#public-api">Public API   </a>
       <ul>
-        <li><a href="#internal">Internal packages   </a>
-          <ul>
-            <li><a href="#substitutions">Substitution for non-existent classes   </a></li>
-          </ul>
-        </li>
+        <li><a href="#substitutions">Substitution for non-available JDK classes   </a></li>
       </ul>
     </li>
+    <li><a href="#naming">Naming convention   </a></li>
     <li><a href="#formatting">Code formatting   </a>
       <ul>
         <li><a href="#imports">Import statements   </a></li>
-        <li><a href="#spaces">Spaces and line length   </a></li>
-        <li><a href="#brackets">Brackets   </a></li>
-        <li><a href="#declarations">Member declarations   </a></li>
+        <li><a href="#spaces">Spaces, brackets and keywords   </a></li>
         <li><a href="#tabular-formatting">Exceptions to coding conventions   </a></li>
       </ul>
     </li>
     <li><a href="#javadoc">Documentation formatting   </a>
       <ul>
-        <li><a href="#javadoc-tags">Javadoc annotations   </a>
-          <ul>
-            <li><a href="#since-tag">Where to use @since and @version tags   </a></li>
-          </ul>
-        </li>
+        <li><a href="#javadoc-tags">Javadoc annotations   </a></li>
         <li><a href="#html">HTML elements   </a>
           <ul>
             <li><a href="#paragraph">Paragraphs   </a></li>
@@ -77,6 +69,8 @@
         <li><a href="#mathml">MathML elements   </a></li>
       </ul>
     </li>
+    <li><a href="#warnings">Compiler warnings   </a></li>
+    <li><a href="#logging">Logging   </a></li>
   </ul>
 </nav>
 <h1 id="license">License header   </h1>
@@ -86,9 +80,20 @@ shall have the same license header, but with lines prefixed by <code>#</code> in
 Properties files distributed as-is in the JAR files can summarize the license on a single line for saving space,
 as below:</p>
 <pre tabindex="0"><code># Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.
-</code></pre><h1 id="naming">Naming convention   </h1>
-<p>Classes that do not implement an interface are usually not prefixed, even if abstract.
-Classes implementing GeoAPI interfaces usually (but not always) begin with <code>Abstract</code>, <code>Default</code>, <code>Simple</code> or <code>General</code> prefix.</p>
+</code></pre><h1 id="public-api">Public API   </h1>
+<p>The public API is made of all public types in all exported packages,
+i.e. packages declared in non-qualified <code>exports</code> statements in the <code>module-info.java</code> file.
+All other classes are for SIS usage only and may change without warning in any future release.
+Those classes are excluded from Javadoc and normally not accessible to users.
+Contrarily to previous SIS versions, there is no longer any particular naming convention for internal package.
+They may or may not have <code>internal</code> in their name.</p>
+<h2 id="substitutions">Substitution for non-available JDK classes   </h2>
+<p>When using a JDK 12+ class that does not exist on JDK 11, define a class such as <code>JDK12</code> in
+the <code>org.apache.sis.pending.jdk</code> package with the minimal amount of needed functionalities,
+provided that it can be done with reasonable effort.
+This packages is internal (non-exported).</p>
+<h1 id="naming">Naming convention   </h1>
+<p>Classes implementing GeoAPI interfaces usually (but not always) begin with <code>Abstract</code>, <code>Default</code>, <code>Simple</code> or <code>General</code> prefix.</p>
 <ul>
 <li>The <code>Abstract</code> prefix is used when a class is abstract according <abbr title="International Organization for Standardization">ISO</abbr> specifications — it may or may not be be abstract in the Java sense.</li>
 <li>The <code>General</code> prefix is used when an implementation is designed for use in the general case,
@@ -97,77 +102,74 @@ as opposed to other implementations specialized for a fixed number of dimensions
 </ul>
 <p>Example: the <code>GeneralEnvelope</code> class is an implementation of <code>Envelope</code> interface for the multi-dimensional case.
 The <code>Envelope2D</code> class is another implementation of the same interface specialized for the two-dimensional case.</p>
-<h2 id="internal">Internal packages   </h2>
-<p>The public API is made of all public classes in all exported packages,
-i.e. packages declared in non-qualified <code>exports</code> statements in the <code>module-info.java</code> file.
-All other classes are for SIS usage only and may change without warning in any future release.
-Those classes are excluded from Javadoc and normally not accessible to users.
-Contrarily to previous SIS versions, there is no longer any particular convention for internal package names.
-They may or may not have <code>internal</code> in their name.</p>
-<h3 id="substitutions">Substitution for non-existent classes   </h3>
-<p>When using a JDK 12+ class that does not exist on JDK 11, define a class of the same name in a
-<code>org.apache.sis.pending.jdk</code> sub-package with the minimal amount of needed functionalities,
-provided that it can be done with reasonable effort.
-Those packages are internal (non-exported).</p>
+<p>Member fields do not have any particular prefix (no <code>m_</code> prefix).</p>
 <h1 id="formatting">Code formatting   </h1>
-<p>Apache <abbr title="Spatial Information System">SIS</abbr> uses the standard Java conventions, except for the 80 characters line length restriction.
-The conventions listed below are guidelines. Some exceptions to those conventions can occur but should
-be rare (see <a href="./coding-conventions.html#tabular-formatting">exceptions to coding conventions</a>).</p>
-<p>For making merges between branches easier, refrain from doing massive code reformatting unless:</p>
+<p>Apache <abbr title="Spatial Information System">SIS</abbr> uses the standard Java conventions,
+except the 80 characters line length restriction which is relaxed.
+The conventions listed below are guidelines.
+Some <a href="./coding-conventions.html#tabular-formatting">exceptions to coding conventions</a> can occur but should be rare.
+For making merges between branches easier, refrain from doing massive code reformatting unless:</p>
 <ul>
 <li>the modified files do not yet exist on the other branches;</li>
 <li>or the modified lines are known to be identical on all active branches (merges work well in such cases);</li>
 <li>or the committer is willing to resolve the merge conflicts.</li>
 </ul>
 <h2 id="imports">Import statements   </h2>
-<p>Isolate at the end of the imports section any import statements that are specific to a platform.
-This separation allows any branch to re-arrange the common import statements without generating
-conflicts with the platform-dependent import statements. Example:</p>
+<p>There is currently no strict rule about the order of <code>import</code> statements in Apache SIS code base, except one:
+if a class is different in the <code>main</code>, <code>geoapi-3.1</code> and <code>geoapi-4.0</code> branches, and if those differences imply
+different import statements, then the imports that are different should be grouped last with a comment.
+Example:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.io.File</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.opengis.metadata.Metadata</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// Specific to the geoapi-3.1 and geoapi-4.0 branches:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.opengis.feature.Feature</span><span class="p">;</span><span class="w">
-</span></span></span></code></pre></div><p>The import statements can be rearranged automatically by the <code>ReorganizeImports</code> class in <code>buildSrc</code>.
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.opengis.filter.Filter</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.opengis.filter.Expression</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><p>The purpose is to reduce the number of conflicts during the merges between branches.
+The import statements can be rearranged automatically by the <code>ReorganizeImports</code> class in <code>buildSrc</code>.
 This tool requires checkouts of all three branches (<code>main</code>, <code>geoapi-3.1</code> and <code>geoapi-4.0</code>) in order
 to identify which imports are branch-specific.</p>
-<h2 id="spaces">Spaces and line length   </h2>
+<h2 id="spaces">Spaces, brackets and keywords   </h2>
 <ul>
-<li><strong>Indentation:</strong> Use a consistent space indents and never use tabs.
+<li><strong>Indentation:</strong>
 <ul>
-<li>Use 4 space indents for Java files.</li>
+<li>Use 4 space indents (not tab) for Java files.</li>
 <li>Use 2 space indents for XML files, because <abbr title="International Organization for Standardization">ISO</abbr>/<abbr title="Open Geospatial Consortium">OGC</abbr> <abbr title="Extensible Markup Language">XML</abbr> schemas tend to have a very deep structure.</li>
 </ul>
 </li>
-<li><strong>Space after keyword:</strong> Put a space after <code>if</code>, <code>else</code>, <code>for</code>, <code>try</code>, <code>catch</code> and similar keywords
-(not after method names).</li>
-<li><strong>Trailing Whitespaces:</strong> Remove all trailing whitespaces.
+<li><strong>Spaces:</strong>
+<ul>
+<li>Put a space after <code>if</code>, <code>else</code>, <code>for</code>, <code>try</code>, <code>catch</code> and similar keywords (not after method names).</li>
+<li>Remove all trailing whitespaces at the end of lines.
 <ul>
 <li>Eclipse users can use the <em>Source</em> - <em>Cleanup</em> option to accomplish this.</li>
 <li>NetBeans users can use the use the <em>Source</em> - <em>Remove trailing spaces</em> on a file-by-file basis,
 or set the <em>Preferences</em> - <em>Editor</em> - <em>On Save</em> - <em>Remove trailing whitespaces</em> option.</li>
 </ul>
 </li>
-<li><strong>Line wrapping:</strong> Use 120-column line width for Java code and Javadoc.
-Some exceptions to this rule may exist for preserving tabular structures, but should be rare.</li>
-</ul>
-<h2 id="brackets">Brackets   </h2>
-<ul>
-<li><strong>Curly brackets:</strong> The <code>{</code> and <code>}</code> brackets are mandatory for <code>if</code>, <code>else</code>, <code>while</code> and other blocks,
-except if the instruction after the keyword is on the same line (e.g. <code>else if</code>).</li>
-</ul>
-<h2 id="declarations">Member declarations   </h2>
-<ul>
-<li>Class, method and field declarations shall use the keywords in the following order.
-This is known as the &ldquo;customary order&rdquo; in the <a href="https://docs.oracle.com/javase/specs/jls/se11/html/jls-8.html#jls-8.1.1">Java Language Specification</a>:
-<ul>
-<li><code>public</code>, <code>protected</code> or <code>private</code>,</li>
-<li><code>abstract</code> or <code>static</code>,</li>
-<li><code>final</code>.</li>
 </ul>
 </li>
-<li>Member fields do not have any particular prefix (no <code>m_</code> prefix).</li>
+<li><strong>Line wrapping:</strong>
+<ul>
+<li>Use 120-column line width for Java code and Javadoc.</li>
+<li>Some exceptions to above rule may exist for preserving tabular structures, but should be rare.</li>
+</ul>
+</li>
+<li><strong>Curly brackets:</strong>
+<ul>
+<li>The <code>{</code> and <code>}</code> brackets are mandatory for <code>if</code>, <code>else</code>, <code>while</code> and other blocks,
+except if the instruction after the keyword is on the same line (e.g. <code>else if</code>).</li>
+</ul>
+</li>
+<li><strong>Member declarations:</strong>
+<ul>
+<li>Keywords should appear in the &ldquo;customary order&rdquo; of the <a href="https://docs.oracle.com/javase/specs/jls/se11/html/jls-8.html#jls-8.1.1">Java Language Specification</a>:
+<code>public</code>, <code>protected</code> or <code>private</code>, then <code>abstract</code> or <code>static</code>, finally <code>final</code>.</li>
+<li>The <code>var</code> keyword should be used only if the type is obvious on the same line,
+e.g. before a <code>new</code> statement or a cast.</li>
+</ul>
+</li>
 </ul>
 <h2 id="tabular-formatting">Exceptions to coding conventions   </h2>
 <p>Many mathematical operations in a two-dimensional space (or more) have symmetry.
@@ -178,12 +180,17 @@ and to identify bugs. Example:</p>
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">xmax</span><span class="p">)</span><span class="w"> </span><span class="n">xmax</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ymin</span><span class="p">)</span><span class="w"> </span><span class="n">ymin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ymax</span><span class="p">)</span><span class="w"> </span><span class="n">ymax</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="p">;</span><span class="w">
-</span></span></span></code></pre></div><p>The decision to use standard or tabular format is made on a case-by-case basis.
+</span></span></span></code></pre></div><p>The <code>var</code> keyword may also be used aven when the type is not obvious if doing so simplify merges between branches.
+For example, a method returning <code>Feature</code> on the GeoAPI 3.1 branch may return <code>AbstractFeature</code> on the GeoAPI 3.0 branch.
+The decision to use standard or tabular format is made on a case-by-case basis.
 Of course, tabular format shall not be abused.</p>
 <h1 id="javadoc">Documentation formatting   </h1>
-<p>Apache <abbr title="Spatial Information System">SIS</abbr> uses the standard Javadoc conventions, except for the 80 characters line length restriction.
-Javadoc lines should not exceed 120 characters, but exceptions to this rule may exist for preserving the
-structure of <code>&lt;table&gt;</code> elements.</p>
+<p>Javadoc comments are written in HTML, not Markdown,
+both for historical reasons and because HTML allows richer semantic.
+Apache <abbr title="Spatial Information System">SIS</abbr> uses the standard Javadoc conventions,
+except for the 80 characters line length restriction which is relaxed.
+Javadoc lines should not exceed 120 characters,
+but exceptions to this rule may exist for preserving the structure of <code>&lt;table&gt;</code> elements.</p>
 <h2 id="javadoc-tags">Javadoc annotations   </h2>
 <p>SIS uses standard javadoc annotations. The meaning of some tags are refined as below:</p>
 <ul>
@@ -193,28 +200,27 @@ structure of <code>&lt;table&gt;</code> elements.</p>
 A separated <code>@author</code> tag is added for each developer.
 The intent is to allow other developers to know to who to ask questions if needed.</li>
 </ul>
-<p>In addition, the Java code in <code>buildSrc</code> provides the following custom javadoc taglets:</p>
-<table>
-<thead>
-<tr>
-<th>Javadoc tag</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>{@include}</code></td>
-<td>Include the content of a given HTML file below a <code>&lt;h2&gt;</code> section having the given title.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="since-tag">Where to use @since and @version tags   </h3>
 <p>The <code>@since</code> and <code>@version</code> Javadoc tags should be used only on classes, interfaces, enumerations, methods or fields
 that are part of public API. They should not be put on package-private classes or classes in non-exported packages.
 The reason is that non-public classes can be moved, splitted or merged without warning,
 which gives confusing meaning to the <code>@since</code> tag.
 Furthermore, restricting the use of those tags to public API is also a way to remind developers
 that the class that they are editing is part of public API, so backward-compatibility concerns apply.</p>
+<p>In addition, the Java code in <code>buildSrc</code> provides the following custom javadoc taglets:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Javadoc tag</th>
+          <th>Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>{@include}</code></td>
+          <td>Include the content of a given HTML file below a <code>&lt;h2&gt;</code> section having the given title.</td>
+      </tr>
+  </tbody>
+</table>
 <h2 id="html">HTML elements   </h2>
 <p>HTML tags and entities shall be used only when there is no equivalent Javadoc tag.
 For example:</p>
@@ -222,6 +228,18 @@ For example:</p>
 <li>Instead of &ldquo;<code>&lt;code&gt;Foo&lt;/code&gt;</code>&rdquo;, use &ldquo;<code>{@code Foo}</code>&rdquo;.</li>
 <li>Instead of &ldquo;<code>a &amp;lt; b &amp;lt; c</code>&rdquo;, use &ldquo;<code>{@literal a &lt; b &lt; c}</code>&rdquo;.</li>
 <li>Instead of &ldquo;<code>&lt;pre&gt;Foo&lt;/pre&gt;</code>&rdquo; for a Java listing, use &ldquo;<code>{@snippet lang=java : Foo}</code>&rdquo;.</li>
+</ul>
+<p>When many HTML tags produce the same visual effect, choose the one with proper semantic.
+For example, for formatting a text in italic, choose the most appropriate of the following tags:</p>
+<ul>
+<li><code>&lt;em&gt;</code>   for emphasis. A screen reader may pronounce the words using verbal stress.</li>
+<li><code>&lt;var&gt;</code>  for a variable to show like a mathematical symbol.</li>
+<li><code>&lt;dfn&gt;</code>  for introducing a word defined by the nearby sentences.</li>
+<li><code>&lt;cite&gt;</code> for the title of a document, in particular an OGC/ISO standard.
+Apache SIS uses also this tag for the name of a geodetic object in the EPSG geodetic database,
+in which case the object definition is considered as a document.
+This tag can also be used for section titles.</li>
+<li><code>&lt;i&gt;</code> for rendering in italic for any reason other than the above reasons.</li>
 </ul>
 <h3 id="paragraph">Paragraphs   </h3>
 <p>Usages of the <code>&lt;p&gt;</code> tag should be relatively rare, since we use CSS styles (see below)
@@ -235,50 +253,50 @@ In such cases, <code>&lt;p&gt;</code> shall have a matching <code>&lt;/p&gt;</co
 <p>Avoid using HTML attributes other than <code>class</code> as much as possible.
 Instead, rely on styling. Some HTML tags having a style definition in Apache <abbr title="Spatial Information System">SIS</abbr> are:</p>
 <table>
-<thead>
-<tr>
-<th>HTML tag</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>&lt;div class=&quot;note&quot;&gt;</code></td>
-<td>Indented text with smaller font, used for notes or examples.</td>
-</tr>
-<tr>
-<td><code>&lt;div class=&quot;warning&quot;&gt;</code></td>
-<td>Text in red color, used for warning about probable API changes.</td>
-</tr>
-<tr>
-<td><code>&lt;ul&gt;</code> and <code>&lt;ol&gt;</code></td>
-<td>Default list styles with few space between items (suitable for compact lists).</td>
-</tr>
-<tr>
-<td><code>&lt;ul class=&quot;verbose&quot;&gt;</code></td>
-<td>A list style with space between items. Used for lists having verbose (multi-lines) items.</td>
-</tr>
-<tr>
-<td><code>&lt;table class=&quot;compact&quot;&gt;</code></td>
-<td>Table without border and no space between rows. Used for lists with columns alignment.</td>
-</tr>
-<tr>
-<td><code>&lt;table class=&quot;sis&quot;&gt;</code></td>
-<td>Table with a border, blue headers, light background and some space between columns.</td>
-</tr>
-<tr>
-<td><code>&lt;th class=&quot;hsep&quot;&gt;</code></td>
-<td>In SIS tables, draw a line on the top border. Used for drawing table section separators.</td>
-</tr>
-<tr>
-<td><code>&lt;th class=&quot;sep&quot;&gt;</code></td>
-<td>In SIS tables, draw a bright line on the left border. Used for drawing column separators.</td>
-</tr>
-<tr>
-<td><code>&lt;td class=&quot;sep&quot;&gt;</code></td>
-<td>In SIS tables, draw a bright line on the left border. Used for drawing column separators.</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>HTML tag</th>
+          <th>Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>&lt;div class=&quot;note&quot;&gt;</code></td>
+          <td>Indented text with smaller font, used for notes or examples.</td>
+      </tr>
+      <tr>
+          <td><code>&lt;div class=&quot;warning&quot;&gt;</code></td>
+          <td>Text in red color, used for warning about probable API changes.</td>
+      </tr>
+      <tr>
+          <td><code>&lt;ul&gt;</code> and <code>&lt;ol&gt;</code></td>
+          <td>Default list styles with few space between items (suitable for compact lists).</td>
+      </tr>
+      <tr>
+          <td><code>&lt;ul class=&quot;verbose&quot;&gt;</code></td>
+          <td>A list style with space between items. Used for lists having verbose (multi-lines) items.</td>
+      </tr>
+      <tr>
+          <td><code>&lt;table class=&quot;compact&quot;&gt;</code></td>
+          <td>Table without border and no space between rows. Used for lists with columns alignment.</td>
+      </tr>
+      <tr>
+          <td><code>&lt;table class=&quot;sis&quot;&gt;</code></td>
+          <td>Table with a border, blue headers, light background and some space between columns.</td>
+      </tr>
+      <tr>
+          <td><code>&lt;th class=&quot;hsep&quot;&gt;</code></td>
+          <td>In SIS tables, draw a line on the top border. Used for drawing table section separators.</td>
+      </tr>
+      <tr>
+          <td><code>&lt;th class=&quot;sep&quot;&gt;</code></td>
+          <td>In SIS tables, draw a bright line on the left border. Used for drawing column separators.</td>
+      </tr>
+      <tr>
+          <td><code>&lt;td class=&quot;sep&quot;&gt;</code></td>
+          <td>In SIS tables, draw a bright line on the left border. Used for drawing column separators.</td>
+      </tr>
+  </tbody>
 </table>
 <h2 id="mathml">MathML elements   </h2>
 <p>The source code occasionally uses MathML for formulas that are difficult to render with only Unicode characters.
@@ -294,6 +312,35 @@ For an introduction to MathML, see:</p>
 Internet Explorer users need to <a href="https://info.wiris.com/mathplayer-info">install a plugin</a>.
 Firefox users can optionally install the <a href="https://developer.mozilla.org/en-US/docs/Web/MathML/Fonts">fonts for Mozilla&rsquo;s MathML engine</a> for better results.
 Note that a <a href="https://www.mathjax.org/">JavaScript display engine</a> is available for all browsers, but not yet used by SIS.</p>
+<h1 id="warnings">Compiler warnings   </h1>
+<p>When a local variable in a method has the same name as a field in the enclosing class,
+some compilers emit a <em>&ldquo;Local variable hides a field&rdquo;</em> warning.
+This warning can be disabled with a <code>@SuppressWarnings</code> annotation.
+However, by convention Apache SIS applies this annotation only when the local variable should have the same value as the field.
+Otherwise, the warning should be resolved by renaming a variable.
+When a code hides a field, it should be a statement such as:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@SuppressWarnings</span><span class="p">(</span><span class="s">&#34;LocalVariableHidesMemberVariable&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">final</span><span class="w"> </span><span class="n">Foo</span><span class="w"> </span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">foo</span><span class="p">;</span><span class="w">   </span><span class="c1">// May also be `getFoo()`</span><span class="w">
+</span></span></span></code></pre></div><p>Those statements may exist for the following reasons:</p>
+<ul>
+<li><code>this.foo</code> is non-final and the developer wants to make sure that the field is not modified by accident in the method.</li>
+<li><code>this.foo</code> is a volatile field, therefore should be read only once and cached in the method for performance reasons.</li>
+<li><code>getFoo()</code> computes the value of <code>this.foo</code> lazily.</li>
+</ul>
+<h1 id="logging">Logging   </h1>
+<p>Apache <abbr title="Spatial Information System">SIS</abbr> uses the <code>java.util.logging</code> framework.
+It does not necessarily mean that all SIS users are forced to use this framework,
+as it is possible to use <code>java.util.logging</code> as an API and have logging redirected to another system.
+For example, the logging can be redirect to SLF4J by adding the <code>jul-to-slf4j</code> dependency to a project.</p>
+<p>The logger names are usually the package name of the class emitting log messages, but not necessarily.
+In particular, we do not follow this convention if the class is located in an internal package
+(<code>org.apache.sis.internal.*</code>) since those packages are considered private.
+In such cases, the logger name should be the package name of the public class invoking the internal method.
+The reason for that rule is that logger names are considered part of the public API,
+since developers use them for configuring their logging (verbosity, destination, <i>etc.</i>).</p>
+<p>All logging at <code>Level.INFO</code> or above shall be targeted to users or administrators, not to developers.
+In particular <code>Level.SEVERE</code> shall be reserved for critical errors that compromise the application stability —
+it shall not be used for exceptions thrown while parsing user data (file or database).</p>
 
 
           </article>

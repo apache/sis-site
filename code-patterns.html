@@ -2,7 +2,7 @@
 <html lang="en">
 
   <head>
-    <title>Apache SIS - Recommended code patterns</title>
+    <title>Apache SIS - Recommended code patterns for SIS users</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="./sis.css">
@@ -37,9 +37,10 @@
         <main class="container">
           <article>
             <img src="./images/logo.png" class="sis-logo" align="left"/>
-            <p class="page-title">Recommended code patterns</p>
+            <p class="page-title">Recommended code patterns for SIS users</p>
 
-  <p>This page lists some recommended code pattern for developing or using Apache <abbr title="Spatial Information System">SIS</abbr>.</p>
+  <p>This page lists some recommended code pattern for using Apache <abbr title="Spatial Information System">SIS</abbr>.
+Coding conventions for <abbr title="Spatial Information System">SIS</abbr> developers are in <a href="./coding-conventions.html">a separated page</a>.</p>
 <nav id="TableOfContents">
   <ul>
     <li><a href="#referencing">Referencing   </a>
@@ -60,13 +61,9 @@
         <li><a href="#unicode-loop">Loop over character sequences using code points   </a></li>
       </ul>
     </li>
-    <li><a href="#logging">Logging   </a></li>
-    <li><a href="#warnings">Compiler warnings   </a></li>
-    <li><a href="#javadoc">Javadoc   </a></li>
   </ul>
 </nav>
 <h1 id="referencing">Referencing   </h1>
-<p>This section lists recommended code pattern when using the <code>sis-referencing</code> module.</p>
 <h2 id="axisOrder">Never explicitly swap coordinates for axis order   </h2>
 <p>The <a href="./faq.html#axisOrder">axis order issue</a> causes lot of confusion,
 and developers are sometimes tempted to swap their coordinate values in order to comply with some expected axis ordering.
@@ -77,7 +74,6 @@ Instead of patching the coordinate values, try to make sure that the <em>Source 
 and the <em>Target CRS</em> (the coordinate space where to perform the work) are properly defined,
 and let the referencing engine performs the conversion from the source to the target <abbr title="Coordinate Reference System">CRS</abbr>.</p>
 <h1 id="coverage">Rasters and coverages   </h1>
-<p>This section lists recommended code pattern when using the <code>sis-coverage</code> module.</p>
 <h2 id="gridToCRS">Georeference images with affine transforms, <em>not</em> bounding boxes   </h2>
 <p>Many users define the geographic extent of an image by its corner locations.
 This approach may be ambiguous as it does not specify whether the (<var>x</var>,<var>y</var>) axes are interchanged
@@ -92,7 +88,6 @@ Do not cast directly a <code>Raster</code> to <code>WritableRaster</code> even w
 because some raster data may be shared by many tiles having identical content.
 Furthermore changes in pixel values may be lost if {@code releaseWritableTile(…)} is not invoked.</p>
 <h1 id="international">International   </h1>
-<p>This section lists recommended code pattern for internationalization.</p>
 <h2 id="timezone">Specify timezone   </h2>
 <p>Geospatial data often cover a wide geographic area, spanning many time zones.
 Timezone are sometimes specified as metadata in the header of data files to be read,
@@ -100,8 +95,8 @@ or is sometimes fixed to <abbr title="Universal Time Coordinated">UTC</abbr> by 
 Some Apache <abbr title="Spatial Information System">SIS</abbr> objects have <code>Locale</code> and <code>TimeZone</code> information.
 Such locale and timezone are given to <code>java.text.DateFormat</code> or <code>java.util.Calendar</code> constructors among others.</p>
 <p>When reading dates or timestamps from a <abbr title="Java DataBase Connectivity">JDBC</abbr> database,
-always use the <code>ResultSet</code> method accepting a <code>Calendar</code> argument, when such method is available.
-For example prefer the <code>getTimestamp(int, Calendar)</code> method instead of <code>getTimestamp(int)</code>.
+consider using a <code>ResultSet</code> method accepting a <code>Calendar</code> argument when such method is available.
+For example, prefer the <code>getTimestamp(int, Calendar)</code> method instead of <code>getTimestamp(int)</code>.
 The <code>Calendar</code> object should has been created with the appropriate timezone.</p>
 <h2 id="sort">Replace underscores by spaces before sorting   </h2>
 <p>Before to sort programmatic names for human reading, consider replacing all occurrences of the underscore character
@@ -113,53 +108,14 @@ so <code>&quot;Foo bar&quot;</code> is sorted before both <code>&quot;FooBar&quo
 <h2 id="unicode-loop">Loop over character sequences using code points   </h2>
 <p>Since Java 1.5, characters are no longer restricted to 16 bits.
 Some &ldquo;characters&rdquo; are actually represented using two consecutive <code>char</code> elements.
-Those &ldquo;characters&rdquo; are called <cite>code points</cite>.
+Those &ldquo;characters&rdquo; are called <em>code points</em>.
 Consequently, when iterating over characters in a string, the following pattern should be used:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;</span><span class="n">string</span><span class="p">.</span><span class="na">length</span><span class="p">();)</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string</span><span class="p">.</span><span class="na">codePointAt</span><span class="p">(</span><span class="n">i</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// ... do some stuff ...</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">i</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">Character</span><span class="p">.</span><span class="na">charCount</span><span class="p">(</span><span class="n">c</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
-</span></span></span></code></pre></div><h1 id="logging">Logging   </h1>
-<p>Apache <abbr title="Spatial Information System">SIS</abbr> uses the <code>java.util.logging</code> framework.
-It does not necessarily means that all SIS users are forced to use this framework,
-as it is possible to use <code>java.util.logging</code> as an API and have logging redirected to another system.
-For example the logging can be redirect to SLF4J by adding the <code>jul-to-slf4j</code> dependency to a project.</p>
-<p>The logger names are usually the package name of the class emitting log messages, but not necessarily.
-In particular, we do not follow this convention if the class is located in an internal package
-(<code>org.apache.sis.internal.*</code>) since those packages are considered privates.
-In such cases, the logger name should be the package name of the public class invoking the internal methods.
-The reason for that rule is that logger names are considered part of the public API,
-since developers use them for configuring their logging (verbosity, destination, <i>etc.</i>).</p>
-<p>All logging at <code>Level.INFO</code> or above shall be targeted to users or administrators, not to developers.
-In particular <code>Level.SEVERE</code> shall be reserved for critical errors that compromise the application stability —
-it shall not be used for exceptions thrown while parsing user data (file or database).</p>
-<h1 id="warnings">Compiler warnings   </h1>
-<p>When a local variable in a method has the same name as a field in the enclosing class,
-some compilers emit a <em>&ldquo;Local variable hides a field&rdquo;</em> warning.
-This warning can be disabled with a <code>@SuppressWarnings(&quot;LocalVariableHidesMemberVariable&quot;)</code> annotation.
-However, by convention Apache SIS applies this annotation only when the local variable should have the same value as the field.
-Otherwise, the warning should be resolved. When a code hides a field, it should be a statement such as
-<code>final Foo foo = this.foo;</code> or <code>final Foo foo = getFoo();</code> and may exist for the following reasons:</p>
-<ul>
-<li><code>this.foo</code> is non-final and we want to make sure that it is not modified by accident in the method.</li>
-<li><code>this.foo</code> is a volatile field, therefor should be read only once and cached in the method for performance.</li>
-<li><code>getFoo()</code> computes the value of <code>this.foo</code> lazily.</li>
-</ul>
-<h1 id="javadoc">Javadoc   </h1>
-<p>Javadoc comments are written in HTML, not Markdown, both for historical reasons and because HTML allows richer semantic.
-For example, for formatting a text in italic, the Javadoc should choose the most appropriate of the following tags:</p>
-<ul>
-<li><code>&lt;em&gt;</code>   for emphasis. A screen reader may pronounce the words using verbal stress.</li>
-<li><code>&lt;var&gt;</code>  for a variable to show like a mathematical symbol.</li>
-<li><code>&lt;dfn&gt;</code>  for introducing a word defined by the nearby sentences.</li>
-<li><code>&lt;cite&gt;</code> for the title of a document, in particular an OGC/ISO standard.
-Apache SIS uses also this tag for the name of a geodetic object in the EPSG geodetic database,
-in which case the object definition is considered as a document.
-This tag can also be used for section titles.</li>
-<li><code>&lt;i&gt;</code> for rendering in italic for any reason than the above reasons.</li>
-</ul>
-
+</span></span></span></code></pre></div>
 
           </article>
         </main>

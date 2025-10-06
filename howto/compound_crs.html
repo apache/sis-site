@@ -50,18 +50,18 @@ and a shorter but less common syntax starting with <code>urn:ogc:def:crs</code>.
 Apache SIS accepts both, illustrated below.</p>
 <h1 id="direct-dependencies">Direct dependencies</h1>
 <table>
-<thead>
-<tr>
-<th>Maven coordinates</th>
-<th>Module info</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>org.apache.sis.core:sis-referencing</code></td>
-<td><code>org.apache.sis.referencing</code></td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Maven coordinates</th>
+          <th>Module info</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>org.apache.sis.core:sis-referencing</code></td>
+          <td><code>org.apache.sis.referencing</code></td>
+      </tr>
+  </tbody>
 </table>
 <h1 id="code-example">Code example</h1>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.referencing.CRS</span><span class="p">;</span><span class="w">
@@ -93,32 +93,34 @@ Apache SIS accepts both, illustrated below.</p>
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div><p>Alternatively, if the components are already available as <code>CoordinateReferenceSystem</code> object, the
-<a href="../apidocs/org.apache.sis.referencing/org/apache/sis/referencing/CRS.html#compound(org.opengis.referencing.crs.CoordinateReferenceSystem...)">compound method</a>
+<a href="../apidocs/org.apache.sis.referencing/org/apache/sis/referencing/CRS.html#compound%28org.opengis.referencing.crs.CoordinateReferenceSystem...%29">compound method</a>
 can be invoked instead.</p>
 <h1 id="output">Output</h1>
 <pre tabindex="0"><code>CompoundCRS[&#34;WGS 84 + MSL height + Julian&#34;,
-  GeodeticCRS[&#34;WGS 84&#34;,
-    Datum[&#34;World Geodetic System 1984&#34;,
-      Ellipsoid[&#34;WGS 84&#34;, 6378137.0, 298.257223563]],
+  GeographicCRS[&#34;WGS 84&#34;,
+    Ensemble[&#34;World Geodetic System 1984 ensemble&#34;,
+      (... ensemble members omitted for brevity ...)
+      Ellipsoid[&#34;WGS 84&#34;, 6378137.0, 298.257223563],
+      EnsembleAccuracy[2.0]],
     CS[ellipsoidal, 2],
-      Axis[&#34;Geodetic latitude (Lat)&#34;, north],
-      Axis[&#34;Geodetic longitude (Lon)&#34;, east],
+      Axis[&#34;Latitude (B)&#34;, north],
+      Axis[&#34;Longitude (L)&#34;, east],
       Unit[&#34;degree&#34;, 0.017453292519943295],
-    Id[&#34;EPSG&#34;, 4326, &#34;9.9.1&#34;]],
+    Id[&#34;EPSG&#34;, 4326, &#34;12.026&#34;]],
   VerticalCRS[&#34;MSL height&#34;,
     VerticalDatum[&#34;Mean Sea Level&#34;],
     CS[vertical, 1],
       Axis[&#34;Gravity-related height (H)&#34;, up],
       Unit[&#34;metre&#34;, 1],
-    Id[&#34;EPSG&#34;, 5714, &#34;9.9.1&#34;]],
+    Id[&#34;EPSG&#34;, 5714, &#34;12.026&#34;]],
   TimeCRS[&#34;Julian&#34;,
     TimeDatum[&#34;Julian&#34;, TimeOrigin[-4713-11-24T12:00:00.000]],
     CS[temporal, 1],
       Axis[&#34;Time (t)&#34;, future],
       TimeUnit[&#34;day&#34;, 86400],
     Id[&#34;OGC&#34;, &#34;JulianDate&#34;]],
-  Area[&#34;World.&#34;],
-  BBox[-90.00, -180.00, 90.00, 180.00]]
+  Usage[
+    BBox[-90.00, -180.00, 90.00, 180.00]]]
 
 Compact alternative is equal: true
 </code></pre>

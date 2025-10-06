@@ -57,7 +57,11 @@ in their own application.</p>
       <ul>
         <li><a href="#crs">Print Coordinate Reference Systems (CRS) definition   </a></li>
         <li><a href="#identifier">Getting a verified EPSG identifier from a Coordinate Reference System   </a></li>
-        <li><a href="#coordinateOperation">Performing coordinate conversions or transformations   </a></li>
+        <li><a href="#coordinateOperation">Performing coordinate conversions or transformations   </a>
+          <ul>
+            <li><a href="#using-a-specific-coordinate-operation">Using a specific coordinate operation</a></li>
+          </ul>
+        </li>
         <li><a href="#metadata">Extracting ISO 19115 Metadata   </a></li>
       </ul>
     </li>
@@ -65,20 +69,20 @@ in their own application.</p>
   </ul>
 </nav>
 <h1 id="install">Installation   </h1>
-<p>Select &ldquo;Apache <abbr title="Spatial Information System">SIS</abbr> 1.4 binary&rdquo; from the <a href="./downloads.html">downloads page</a> an unzip in any directory.
+<p>Select &ldquo;Apache <abbr title="Spatial Information System">SIS</abbr> 1.5 binary&rdquo; from the <a href="./downloads.html">downloads page</a> an unzip in any directory.
 The directory structure will be as below:</p>
-<pre tabindex="0"><code>apache-sis-1.4
+<pre tabindex="0"><code>apache-sis-1.5
 ├─ bin
 ├─ conf
 ├─ data
 ├─ lib
 └─ log
-</code></pre><p>The <code>bin</code> sub-directory contains a <code>sis</code> command for Unix systems (Linux or MacOS — we have not yet done a <code>sis.bat</code> file for Windows).
+</code></pre><p>The <code>bin</code> sub-directory contains a <code>sis</code> command for Unix systems and a <code>sis.bat</code> command for Windows systems.
 The <code>bin</code> sub-directory can be added to the <code>PATH</code> environment variable for convenience, but this is not mandatory.
 Example:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PWD</span>/apache-sis-1.4/bin:<span class="nv">$PATH</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PWD</span>/apache-sis-1.5/bin:<span class="nv">$PATH</span>
 </span></span></code></pre></div><p>The remaining of this page assumes that the <code>bin</code> directory is on the search path.
-If not, the same examples can still be executed by replacing the <code>sis</code> command by <code>./apache-sis-1.4/bin/sis</code>.</p>
+If not, the same examples can still be executed by replacing the <code>sis</code> command by <code>./apache-sis-1.5/bin/sis</code>.</p>
 <h2 id="dependencies">Optional dependencies   </h2>
 <p>Every JAR files present in the <code>lib</code> sub-directory will be included on the classpath during <code>sis</code> command execution.
 By default, the <code>lib</code> directory contains the <code>sis-*.jar</code> files together with GeoAPI, JAXB and Apache Derby dependencies.
@@ -105,6 +109,7 @@ For executing a command, the syntax is:</p>
   <tr><td><code>crs</code></td>        <td>Show Coordinate Reference System (CRS) information for the given file or code.</td></tr>
   <tr><td><code>identifier</code></td> <td>Show identifiers for metadata and referencing systems in the given file.</td></tr>
   <tr><td><code>transform</code></td>  <td>Convert or transform coordinates from given source <abbr title="Coordinate Reference System">CRS</abbr> to target <abbr title="Coordinate Reference System">CRS</abbr>.</td></tr>
+  <tr><td><code>translate</code></td>  <td>Read resources and rewrite them in another format.</td></tr>
 </table>
 <p>The set of legal options and the expected number of file arguments depend on the command being executed.
 However all commands support the <code>--help</code> option, which lists the options available for that command.
@@ -112,6 +117,7 @@ Available options will be from the following list:</p>
 <table>
   <tr><td><code>--sourceCRS</code></td> <td>The Coordinate Reference System of input data.</td></tr>
   <tr><td><code>--targetCRS</code></td> <td>The Coordinate Reference System of output data.</td></tr>
+  <tr><td><code>--operation</code></td> <td>The Coordinate Operation from source CRS to target CRS (optional).</td></tr>
   <tr><td><code>--format</code></td>    <td>The output format: <code>xml</code>, <code>wkt</code>, <code>wkt1</code> or <code>text</code>.</td></tr>
   <tr><td><code>--locale</code></td>    <td>The locale to use for the command output.</td></tr>
   <tr><td><code>--timezone</code></td>  <td>The timezone for the dates to be formatted.</td></tr>
@@ -148,7 +154,7 @@ For example the following command prints the definition of the <em>&ldquo;JGD201
 </span></span></code></pre></div><details>
   <summary>Expected output (click to expand):</summary>
 <pre>ProjectedCRS["JGD2011 / Japan Plane Rectangular CS VIII",
-  BaseGeodCRS["JGD2011",
+  BaseGeogCRS["JGD2011",
     Datum["Japanese Geodetic Datum 2011",
       Ellipsoid["GRS 1980", 6378137.0, 298.257222101]],
     Unit["degree", 0.017453292519943295]],
@@ -163,10 +169,11 @@ For example the following command prints the definition of the <em>&ldquo;JGD201
     Axis["Northing (X)", north],
     Axis["Easting (Y)", east],
     Unit["metre", 1],
-  Scope["Large and medium scale topographic mapping, cadastral and engineering survey."],
-  Area["Japan - onshore - Honshu between approximately 137°45'E and 139°E - Niigata-ken; Nagano-ken; Yamanashi-ken; Shizuoka-ken."],
-  BBox[34.54, 137.32, 38.58, 139.91],
-  Id["EPSG", 6676, "9.9.1", URI["urn:ogc:def:crs:EPSG:9.9.1:6676"]],
+  Usage[
+    Scope["Cadastre, engineering survey, topographic mapping (large and medium scale)."],
+    Area["Japan - onshore - Honshu between approximately 137°45'E and 139°E - Niigata-ken; Nagano-ken; Yamanashi-ken; Shizuoka-ken."],
+    BBox[34.54, 137.32, 38.58, 139.91]],
+  Id["EPSG", 6676, "12.026", URI["urn:ogc:def:crs:EPSG:12.026:6676"]],
   Remark["Replaces JGD2000 / Japan Plane Rectangular CS VIII (CRS code 2450) with effect from 21st October 2011."]]</pre>
 </details>
 <br/>
@@ -229,7 +236,7 @@ Furthermore, the <em>“NTF (Paris) / Lambert zone II”</em> name has been repl
 Executing the following command:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis identifier https://sis.apache.org/examples/crs/MissingIdentifier.wkt
 </span></span></code></pre></div><p>produces an output like below:</p>
-<pre tabindex="0"><code>urn:ogc:def:crs:EPSG:9.9.1:27572  | NTF (Paris) / Lambert zone II
+<pre tabindex="0"><code>urn:ogc:def:crs:EPSG:12.026:27572  | NTF (Paris) / Lambert zone II
 </code></pre><p>As we can see, Apache <abbr title="Spatial Information System">SIS</abbr> has been able to find back the identifier code and the actual <abbr title="Coordinate Reference System">CRS</abbr> name.</p>
 <p>Sometimes a <abbr title="Well Known Text">WKT</abbr> declares wrongly an EPSG code.
 The most frequent case is a <abbr title="Well Known Text">WKT</abbr> that defines a Coordinate Reference System with (<em>longitude</em>, <em>latitude</em>) axes,
@@ -238,7 +245,7 @@ Apache <abbr title="Spatial Information System">SIS</abbr> can detect such misma
 For example executing the following command:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis identifier https://sis.apache.org/examples/crs/WrongAxisOrder.wkt
 </span></span></code></pre></div><p>produces an output like below:</p>
-<pre tabindex="0"><code>!   urn:ogc:def:crs:EPSG:8.9:4979    | WGS 84
+<pre tabindex="0"><code>!   urn:ogc:def:crs:EPSG:12.026:4979    | WGS 84
 
 Legend:
 !   Identified object matches definition provided by authority except for coordinate system axes.
@@ -260,7 +267,7 @@ The next example asks the identifier of a <abbr title="Coordinate Reference Syst
 </code></pre><p>Executing the following command:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis identifier https://sis.apache.org/examples/crs/EquivalentDefinition.wkt
 </span></span></code></pre></div><p>produces an output like below:</p>
-<pre tabindex="0"><code>urn:ogc:def:crs:EPSG:9.9.1:3994  | WGS 84 / Mercator 41
+<pre tabindex="0"><code>urn:ogc:def:crs:EPSG:12.026:3994  | WGS 84 / Mercator 41
 </code></pre><p>In above example, Apache <abbr title="Spatial Information System">SIS</abbr> used the fact that a
 <em>“Mercator (variant A)”</em> projection with a <em>“Scale factor at natural origin”</em> parameter value of 0.755799… on the WGS84 datum is numerically equivalent to a
 <em>“Mercator (variant B)”</em> projection with a <em>“Latitude of 1st standard parallel”</em> parameter value of 41° on the same datum.
@@ -286,10 +293,8 @@ can also have an influence; while optional, that area should be specified when i
 <p>The following example transform coordinates from the North American Datum 1927 (EPSG:4267) to WGS84 (EPSG:4326).
 The example is run twice: once for cities in USA, then once for cities in Canada:
 (Note: the application may log warnings to the console. Those warnings can be ignored)</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">wget https://sis.apache.org/examples/coordinates/AmericanCities.csv
-</span></span><span class="line"><span class="cl">wget https://sis.apache.org/examples/coordinates/CanadianCities.csv
-</span></span><span class="line"><span class="cl">sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 AmericanCities.csv
-</span></span><span class="line"><span class="cl">sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 CanadianCities.csv
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 https://sis.apache.org/examples/coordinates/AmericanCities.csv
+</span></span><span class="line"><span class="cl">sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 https://sis.apache.org/examples/coordinates/CanadianCities.csv
 </span></span></code></pre></div><p>The first execution should print the following header, followed by transformed coordinate values.
 Note the operation code (EPSG:1173), domain of validity (United State) and accuracy.</p>
 <pre tabindex="0"><code># Source:      NAD27 (EPSG:4267)
@@ -336,6 +341,17 @@ Those parameters could also be different if <em>datum shift grids</em> are avail
 </ul>
 </li>
 </ul>
+<h3 id="using-a-specific-coordinate-operation">Using a specific coordinate operation</h3>
+<p>Above conversions and transformations can also be performed by specifying explicitly the coordinate operation to use,
+instead of letting Apache <abbr title="Spatial Information System">SIS</abbr> infers the operation from the source and target <abbr title="Coordinate Reference System">CRS</abbr>.
+For example, for forcing the use of the coordinate operation for Canada,
+the &ldquo;<code>--operation EPSG:1693</code>&rdquo; option can be provided instead of the <code>--sourceCRS</code> and <code>--targetCRS</code> pair of options.
+The coordinate operation and the <abbr title="Coordinate Reference System">CRS</abbr> can also be <abbr title="Well Known Text">WKT</abbr> or <abbr title="Geographic Markup Language">GML</abbr> files,
+in which case they do not need to exist in the EPSG database.</p>
+<p>If the <code>--operation</code> option is provided, then the <code>--sourceCRS</code> and <code>--targetCRS</code> options become optional.
+But if the source and/or target <abbr title="Coordinate Reference System">CRS</abbr> are nevertheless specified together with the operation,
+then the operation is used in the middle of a chain of operations,
+and conversions from/to the specified <abbr title="Coordinate Reference System">CRS</abbr> are concatenated before/after the specified operation.</p>
 <h2 id="metadata">Extracting ISO 19115 Metadata   </h2>
 <p>Apache <abbr title="Spatial Information System">SIS</abbr> can read the header of a data file and print the metadata in an <abbr title="International Organization for Standardization">ISO</abbr> 19115 structure.
 The data file given in argument can be a local file or a URL.
