@@ -559,6 +559,7 @@ Now stage the sources and cleanup:</p>
 <p>Force the Java version to the one supported by Apache SIS (adjust <code>JDK11_HOME</code> as needed).
 Specify the URL to the nexus repository, where <code>####</code> is the identifier of the staging repository.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">unset</span> SIS_DATA
+</span></span><span class="line"><span class="cl"><span class="nb">unset</span> PATH_TO_FX
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">JAVA_HOME</span><span class="o">=</span><span class="nv">$JDK11_HOME</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">JDK_JAVA_OPTIONS</span><span class="o">=</span><span class="s2">&#34;-enableassertions -Dorg.apache.sis.epsg.downloadURL&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">JDK_JAVA_OPTIONS</span><span class="o">=</span><span class="nv">$JDK_JAVA_OPTIONS</span><span class="o">=</span>https://repository.apache.org/content/repositories/orgapachesis-####
@@ -577,6 +578,7 @@ Specify the URL to the nexus repository, where <code>####</code> is the identifi
 </span></span><span class="line"><span class="cl">./bin/sis identifier https://sis.staged.apache.org/examples/crs/EquivalentDefinition.wkt
 </span></span><span class="line"><span class="cl">./bin/sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 AmericanCities.csv
 </span></span><span class="line"><span class="cl">./bin/sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 CanadianCities.csv
+</span></span><span class="line"><span class="cl">rm --recursive data/Databases/SpatialMetadata  <span class="c1"># For testing EPSG download from GUI.</span>
 </span></span><span class="line"><span class="cl">./bin/sisfx
 </span></span></code></pre></div><h2 id="test-downloads">Test the downloads   </h2>
 <p>Stage the release candidate:</p>
@@ -638,8 +640,6 @@ It will not yet be published on <code>https://sis.apache.org</code>.</p>
 <ul>
 <li>Create a VOTE email thread on <code>dev@</code> to record votes as replies.
 A template is available <a href="templates/release-vote.html">here</a>.</li>
-<li>Create a DISCUSS email thread on <code>dev@</code> for any vote questions.
-A template is available <a href="templates/release-discuss.html">here</a>.</li>
 <li>Perform a review of the release and cast your vote:</li>
 <li>a -1 vote does not necessarily mean that the vote must be redone, however it is usually a good idea
 to rollback the release if a -1 vote is received. See <em>Recovering from a vetoed release</em> below.</li>
@@ -696,7 +696,6 @@ Download all source and binary artifacts into a new directory, then execute in t
 </ul>
 <h2 id="announce">Announce the release   </h2>
 <ul>
-<li>WAIT 24 hours after committing releases for mirrors to replicate.</li>
 <li>Publish the web site updates:
 <ul>
 <li>On the <code>asf-site</code> branch, execute <code>git merge asf-staging</code> and push.</li>

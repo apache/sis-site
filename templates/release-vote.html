@@ -13,28 +13,26 @@
       This is a call for a vote on the following Apache <abbr title="Spatial Information System">SIS</abbr>
       ${version} release candidate ${candidate} artifacts:
     </p>
-    <ul>
-      <li><p>Change log/release notes:<br>
-          https://sis.staged.apache.org/release-notes/${version}.html</p></li>
-      <li><p>All Release Artifacts:<br>
-          https://dist.apache.org/repos/dist/dev/sis/${version}/RC1/</p></li>
-      <li><p>PGP release keys (signed using GnuPG):<br>
-          https://downloads.apache.org/sis/KEYS</p></li>
-      <li><p>Maven staging repository:
-<pre>&lt;repositories&gt;
+    <blockquote>
+      <p>Change log/release notes:<br>
+         https://sis.staged.apache.org/release-notes/${version}.html</p>
+      <p>All Release Artifacts:<br>
+         https://dist.apache.org/repos/dist/dev/sis/${version}/RC1/</p>
+      <p>PGP release keys (signed using GnuPG):<br>
+         <a href="https://downloads.apache.org/sis/KEYS">https://downloads.apache.org/sis/KEYS</a></p>
+      <p>Maven staging repository:</p>
+      <pre>&lt;repositories&gt;
   &lt;repository&gt;
     &lt;id>sis.staging&lt;/id&gt;
     &lt;name><abbr title="Spatial Information System">SIS</abbr> staging repository&lt;/name&gt;
     &lt;url>https://repository.apache.org/content/repositories/orgapachesis-{XXX}&lt;/url&gt;
   &lt;/repository&gt;
-&lt;/repositories&gt;</pre><p></li>
-      <li><p>Web site <a href="https://sis.staged.apache.org/">https://sis.staged.apache.org/</a>
-          except for Javadoc which will be updated the release day.
-          The developer guide is also a work in progress not yet updated.</p></li>
-    </ul>
-
+&lt;/repositories&gt;</pre>
+      <p>Web site except for Javadoc (which will be updated the release day):<br>
+         <a href="https://sis.staged.apache.org/">https://sis.staged.apache.org/</a></p>
+    </blockquote>
     <p>
-      Please verify the artifacts and vote. The vote will be open for 72 hours.
+      Please verify the artifacts and vote. The vote will be open for at least 72 hours.
       Closing date may be changed to a later day if testers need more time.
     </p>
 <pre>[ ] +1  approve
@@ -44,7 +42,22 @@
     <p>
       If no issue is reported, the content of above staging repositories will be moved as-is (no recompilation)
       to Apache mirrors and Maven Central repository when the release will happen.
-      If blocking issues are reported, a new staging repository at a new URL will be created for the second release candidate.
+      If blocking issues are reported, a new staging repository at a new URL will be created for another release candidate.
+      Some tips to validate the release before you vote:
     </p>
+    <ul>
+      <li>For reference, the Apache release guide —
+          <a href="https://www.apache.org/legal/release-policy.html">https://www.apache.org/legal/release-policy.html</a></li>
+      <li>Download the source files from compressed files and build (requires Gradle 8.8).</li>
+      <li>Verify the distribution for the required LICENSE and NOTICE files.</li>
+      <li>Verify if all the staged files are signed and the signature is verifiable.</li>
+      <li>Verify if the signing key in the project's KEYS file is hosted on a public server.</li>
+      <li>Download the binary version and run some examples described in
+          <a href="https://sis.staged.apache.org/command-line.html">https://sis.staged.apache.org/command-line.html</a>.
+          For running with <abbr>EPSG</abbr> data, execute the following command first:</li>
+    </ul>
+    <blockquote><pre>export JDK_JAVA_OPTIONS="-Dorg.apache.sis.epsg.downloadURL=https://repository.apache.org/content/repositories/orgapachesis-1062"</pre></blockquote>
+
+    <p>Thanks for your time in validating the release and voting.</p>
   </body>
 </html>
