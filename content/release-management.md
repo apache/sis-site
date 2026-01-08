@@ -327,7 +327,7 @@ Then, execute the following commands and fix as much warnings as practical:
 
 ```bash
 systemctl start postgresql.service        # Optional — exact command depends on Linux distribution.
-export SIS_TEST_OPTIONS=extensive,postgresql
+export SIS_TEST_OPTIONS=epsg,extensive,postgresql
 gradle test
 ```
 

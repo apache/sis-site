@@ -50,6 +50,15 @@ Furthermore changes in pixel values may be lost if {@code releaseWritableTile(â€
 
 # International    {#international}
 
+## Choose the right calendar    {#calendar}
+
+Be aware that the parsing and formatting methods of `java.time.Instant` do not use
+the same calendar as `java.text.DateFormat` for dates before October 15, 1582.
+The `java.time` classes use the proleptic Gregorian calendar while `java.text`
+switches to the proleptic Julian calendar before October 15, 1582.
+In particular, conversions between Julian days and dates require the Julian calendar,
+i.e. the use of `java.text` instead of `java.time`.
+
 ## Specify timezone    {#timezone}
 
 Geospatial data often cover a wide geographic area, spanning many time zones.

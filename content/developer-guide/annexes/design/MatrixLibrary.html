@@ -61,6 +61,14 @@
             The usual workaround is to compare floating point numbers with some tolerance threshold.
             Unfortunately it is difficult to choose a threshold that catch a wide range of rounding errors
             without wrongly considering legitimate datum shifts as rounding errors (see previous point).</p></li>
+        <li><p>NaN (Not-A-Number) values need to be handled in a special way.
+            In standard IEEE 754 arithmetic, any operation involving a NaN value produces NaN.
+            In Apache <abbr>SIS</abbr>, it is necessary to make a special case where NaN × 0 = 0.
+            This arithmetic is correct when NaN is interpreted as a real and finite value that should exist but is unknown
+            (note that this arithmetic would be incorrect if NaN could also mean that the value does not exist at all or may be infinite,
+            but these interpretations are not used by Apache <abbr>SIS</abbr> in the context of matrix operations for affine transformations).
+            The NaN × 0 operation happens when an axis does not depend on the coordinate having a NaN value,
+            in which case it is important to have NaN × 0 = 0.</p></li>
       </ul>
       <p>
         As a consequence of above points, accuracy of a matrix library is more important than performance for a <abbr>GIS</abbr> like Apache <abbr>SIS</abbr>.
