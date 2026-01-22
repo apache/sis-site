@@ -22,7 +22,7 @@ The most notable methods are:
 
 ### How do I transform a coordinate?    {#transform-point}
 
-See the ["How to…"](howto.html#referencing) page for Java code examples.
+See the ["How to…"](howto/index.html#referencing) page for Java code examples.
 Those examples get Coordinate Reference Systems (CRS) instances in various ways
 and apply coordinate operations between two reference systems.
 

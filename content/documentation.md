@@ -12,7 +12,7 @@ Supported features:
 
 For library users:
 
-* [How to…](howto.html)
+* [How to…](howto/index.html)
 * [Online Javadoc](apidocs/index.html)
 * [Developer guide](book/en/developer-guide.html)
 * [Recommended code patterns](code-patterns.html)
