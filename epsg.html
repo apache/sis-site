@@ -25,7 +25,7 @@
           <li><a class="nav-link  inactive " href="./index.html">Home</a></li>
           <li><a class="nav-link  inactive " href="./about.html">About</a></li>
           <li><a class="nav-link  inactive " href="./downloads.html">Downloads</a></li>
-          <li><a class="nav-link  inactive " href="./howto.html">How to…</a></li>
+          <li><a class="nav-link  inactive " href="./howto/index.html">How to…</a></li>
           <li><a class="nav-link  inactive " href="./standards.html">Standards</a></li>
           <li><a class="nav-link  inactive " href="./formats.html">Data formats</a></li>
           <li><a class="nav-link  active " href="./epsg.html">EPSG Database</a></li>
@@ -39,7 +39,7 @@
             <img src="./images/logo.png" class="sis-logo" align="left"/>
             <p class="page-title">How to use EPSG geodetic dataset</p>
 
-  <p>The <a href="https://epsg.org/">EPSG geodetic dataset</a> is a de-facto standard providing
+  <p>The <a href="https://epsg.org/">EPSG geodetic dataset</a> is a widely-used database providing
 <a href="tables/CoordinateReferenceSystems.html">thousands of Coordinate Reference System (CRS) definitions</a>
 together with information about how to perform coordinate operations, their accuracies and their domains of validity.
 The EPSG dataset is owned and maintained by the <a href="https://www.iogp.org/">International Association of Oil &amp; Gas producers</a>.
@@ -75,6 +75,7 @@ of the information provided that numeric equivalence is achieved.</li>
         <li><a href="#maven-epsg">As database installer    </a></li>
       </ul>
     </li>
+    <li><a href="#ask-user">Ask user&rsquo;s permission then download   </a></li>
     <li><a href="#existing">Use an existing EPSG database   </a>
       <ul>
         <li><a href="#setup">Registration by Java code   </a></li>
@@ -166,6 +167,34 @@ with the Derby dependency replaced by another database driver if desired:</p>
 </span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
 </span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependencies&gt;</span>
 </span></span></code></pre></div><p>Note that <code>sis-epsg</code> and <code>sis-embedded-data</code> artifacts should not be specified in the same project. Only one is needed.</p>
+<h1 id="ask-user">Ask user&rsquo;s permission then download   </h1>
+<p>If an application does not want to bundle EPSG data by default,
+either for licensing reasons or for saving space, the application can ask user&rsquo;s permission the first time
+that EPSG data are needed, then (if agreed) download and install the data automatically.
+It can be done with a Java code similar to the following:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.setup.OptionalInstallations</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">OptionalInstallDialog</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">OptionalInstallations</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">OptionalInstallDialog</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">super</span><span class="p">(</span><span class="s">&#34;text/plain&#34;</span><span class="p">);</span><span class="w">     </span><span class="c1">// Desired format for the `license` argument below.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">askUserAgreement</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">authority</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">license</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="s">&#34;EPSG&#34;</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">authority</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span><span class="w">    </span><span class="c1">// If not interested in data other than EPSG.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">license</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// Ask here to user if she wants to download the EPSG data.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// Ask here to user if she accepts the EPSG terms of use.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>The above class needs to be declared as an implementation of the <code>InstallationResources</code> service in <code>module-info.java</code>
+or, if the application does not use Java modules, in the <code>META-INF/services/org.apache.sis.setup.InstallationResources</code> file.
+In addition, the <code>SIS_DATA</code> environment variable needs to be set to the destination directory where to write data on the user&rsquo;s machine.
+With this configuration, Apache SIS will automatically asks for user agreement and, if agreed, download EPSG data when first needed.
+This approach can be combined with the next section for writing the EPSG data in a custom database.</p>
 <h1 id="existing">Use an existing EPSG database   </h1>
 <p>Applications can use their own EPSG database.
 In addition of Derby, Apache <abbr title="Spatial Information System">SIS</abbr> is also tested on HSQL and PostgreSQL.
@@ -252,7 +281,7 @@ fetching the data source from the <code>context.xml</code> file.</p>
         </main>
         <footer>
           <div class="container">
-            <p>Copyright &copy; 2013-2025 The Apache Software Foundation, Licensed under the
+            <p>Copyright &copy; 2013-2026 The Apache Software Foundation, Licensed under the
             <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
             Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
           </div>
