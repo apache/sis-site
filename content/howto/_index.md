@@ -29,11 +29,15 @@ The examples are grouped in the following sections:
 * [Add vertical and temporal axes to an horizontal CRS](howto/compound_crs.html)
 * [Transform points between two reference systems](howto/transform_coordinates.html)
 * [Transform envelopes between two reference systems](howto/transform_envelopes.html)
-* [Parse and format MGRS codes](howto/parse_and_format_mgrs_codes.html)
 * [Union or intersection of envelopes in different reference systems](howto/envelopes_in_different_crs.html)
 * [Determine if two reference systems are functionally equal](howto/crs_equality.html)
 * [Compute geodetic distances and paths](howto/geodetic_paths.html)
 * [Extend with custom Coordinate Reference Systems](howto/custom_crs.html)
+
+
+# Referencing by identifiers    {#referencing-by-identifiers}
+
+* [Parse and format MGRS codes](howto/parse_and_format_mgrs_codes.html)
 
 
 # Metadata    {#metadata}

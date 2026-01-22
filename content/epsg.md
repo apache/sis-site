@@ -2,7 +2,7 @@
 title: How to use EPSG geodetic dataset
 ---
 
-The [EPSG geodetic dataset][EPSG] is a de-facto standard providing
+The [EPSG geodetic dataset][EPSG] is a widely-used database providing
 [thousands of Coordinate Reference System (CRS) definitions](tables/CoordinateReferenceSystems.html)
 together with information about how to perform coordinate operations, their accuracies and their domains of validity.
 The EPSG dataset is owned and maintained by the [International Association of Oil & Gas producers][IOGP].
@@ -28,6 +28,9 @@ are incompatible with Apache license. The following items are quoted from those 
 In order to use the EPSG geodetic dataset with Apache {{% SIS %}}, apply *one* of the following choices:
 
 {{< toc >}}
+
+
+
 
 # Install a local copy with command-line tool    {#command-line}
 
@@ -74,6 +77,9 @@ java -Dderby.system.home=apache-sis-{{% version %}}/data/Databases \
 
 The `SIS_DATA` environment variable or `derby.system.home` Java property
 can be set to the path of any other directory which contain the same files.
+
+
+
 
 # Add a Maven dependency    {#maven}
 
@@ -139,6 +145,46 @@ with the Derby dependency replaced by another database driver if desired:
 ```
 
 Note that `sis-epsg` and `sis-embedded-data` artifacts should not be specified in the same project. Only one is needed.
+
+
+
+
+# Ask user's permission then download    {#ask-user}
+
+If an application does not want to bundle EPSG data by default,
+either for licensing reasons or for saving space, the application can ask user's permission the first time
+that EPSG data are needed, then (if agreed) download and install the data automatically.
+It can be done with a Java code similar to the following:
+
+```java
+import org.apache.sis.setup.OptionalInstallations;
+
+public class OptionalInstallDialog extends OptionalInstallations {
+    public OptionalInstallDialog() {
+        super("text/plain");     // Desired format for the `license` argument below.
+    }
+
+    @Override
+    protected boolean askUserAgreement(String authority, String license) {
+        if ("EPSG".equals(authority)) {
+            return false;    // If not interested in data other than EPSG.
+        } else if (license == null) {
+            // Ask here to user if she wants to download the EPSG data.
+        } else {
+            // Ask here to user if she accepts the EPSG terms of use.
+        }
+    }
+}
+```
+
+The above class needs to be declared as an implementation of the `InstallationResources` service in `module-info.java`
+or, if the application does not use Java modules, in the `META-INF/services/org.apache.sis.setup.InstallationResources` file.
+In addition, the `SIS_DATA` environment variable needs to be set to the destination directory where to write data on the user's machine.
+With this configuration, Apache SIS will automatically asks for user agreement and, if agreed, download EPSG data when first needed.
+This approach can be combined with the next section for writing the EPSG data in a custom database.
+
+
+
 
 # Use an existing EPSG database    {#existing}
 
