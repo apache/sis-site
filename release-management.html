@@ -229,7 +229,7 @@ number of the previous and the new release respectively, and <code>$RELEASE_CAND
 the current release attempt. Those versions shall be set on the command line like below (Unix):</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gpg --list-keys                     <span class="c1"># For getting the value to put in &lt;your key ID&gt;</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">OLD_VERSION</span><span class="o">=</span>1.4
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">NEW_VERSION</span><span class="o">=</span>1.5
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">NEW_VERSION</span><span class="o">=</span>1.6
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">RELEASE_CANDIDATE</span><span class="o">=</span><span class="m">1</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SIGNING_KEY</span><span class="o">=</span>&lt;your key ID&gt;    <span class="c1"># hexadecimal number with 8 or 40 digits.</span>
 </span></span></code></pre></div><p>Make sure that the code signing key is the default key declared in <code>~/.gnupg/gpg.conf</code>
@@ -323,8 +323,9 @@ Then, execute the following commands and fix as much warnings as practical:</p>
 Ideally the build should be tested in both conditions (<code>SIS_DATA</code> set and unset).
 That test may be done in a separated shell (console window) in order to preserve
 the variable value in the shell performing the release.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">unset</span> SIS_DATA
-</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="nv">$SIS_DATA</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="nv">$SIS_DATA</span>
+</span></span><span class="line"><span class="cl"><span class="nb">unset</span> SIS_DATA
+</span></span><span class="line"><span class="cl"><span class="nb">unset</span> SIS_TEST_OPTIONS
 </span></span><span class="line"><span class="cl">gradle cleanTest <span class="nb">test</span>
 </span></span></code></pre></div><h2 id="update-crs-list">Update the list of supported CRS   </h2>
 <p>The following steps regenerate
@@ -457,7 +458,7 @@ Usually, only the 3 last digits need to be modified.</p>
 </span></span><span class="line"><span class="cl">rm --recursive ~/.m2/repository/org/apache/sis
 </span></span><span class="line"><span class="cl">mvn package --show-version --strict-checksums
 </span></span></code></pre></div><p>Verify that the EPSG dataset has been created, then cleanup:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">du --summarize --human-readable <span class="nv">$SIS_DATA</span>/Databases/SpatialMetadata
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">du --summarize --human-readable with-epsg/target/Databases/SpatialMetadata
 </span></span><span class="line"><span class="cl">mvn clean
 </span></span></code></pre></div><h2 id="send-an-email-asking-for-early-testing">Send an email asking for early testing</h2>
 <p>Announce the staged Maven artifacts on the <code>dev@</code> mailing list. This is not yet a vote.
@@ -475,7 +476,7 @@ But it should have created a <code>javadoc.options</code> file that we will patc
 <li>Move all <code>-classpath</code> content to <code>--module-path</code>.</li>
 <li>Add the value of <code>$PATH_TO_FX</code> environment variable to the module-path.</li>
 <li>Remove the <code>--no-fonts</code> option.</li>
-<li>Add the <code>-use</code> and <code>--since 1.1,1.2,1.3,1.4,1.5</code> options (edit the list of releases).</li>
+<li>Add the <code>-use</code> and <code>--since 1.1,1.2,1.3,1.4,1.5,1.6</code> options (edit the list of releases).</li>
 <li>Delete all Java source files listed after the options, everything until the end of file.</li>
 <li>Add the following line in-place of deleted lines (omit the <code>org.opengis.geoapi</code> module if not desired):</li>
 </ul>
