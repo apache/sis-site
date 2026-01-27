@@ -337,8 +337,9 @@ That test may be done in a separated shell (console window) in order to preserve
 the variable value in the shell performing the release.
 
 ```bash
-unset SIS_DATA
 echo $SIS_DATA
+unset SIS_DATA
+unset SIS_TEST_OPTIONS
 gradle cleanTest test
 ```
 
@@ -512,7 +513,7 @@ mvn package --show-version --strict-checksums
 Verify that the EPSG dataset has been created, then cleanup:
 
 ```bash
-du --summarize --human-readable $SIS_DATA/Databases/SpatialMetadata
+du --summarize --human-readable with-epsg/target/Databases/SpatialMetadata
 mvn clean
 ```
 
@@ -541,7 +542,7 @@ Apply the following changes:
 * Move all `-classpath` content to `--module-path`.
 * Add the value of `$PATH_TO_FX` environment variable to the module-path.
 * Remove the `--no-fonts` option.
-* Add the `-use` and `--since 1.1,1.2,1.3,1.4,1.5` options (edit the list of releases).
+* Add the `-use` and `--since 1.1,1.2,1.3,1.4,1.5,1.6` options (edit the list of releases).
 * Delete all Java source files listed after the options, everything until the end of file.
 * Add the following line in-place of deleted lines (omit the `org.opengis.geoapi` module if not desired):
 

@@ -145,7 +145,7 @@ sis crs EPSG:6676
     Scope["Cadastre, engineering survey, topographic mapping (large and medium scale)."],
     Area["Japan - onshore - Honshu between approximately 137°45'E and 139°E - Niigata-ken; Nagano-ken; Yamanashi-ken; Shizuoka-ken."],
     BBox[34.54, 137.32, 38.58, 139.91]],
-  Id["EPSG", 6676, "12.026", URI["urn:ogc:def:crs:EPSG:12.026:6676"]],
+  Id["EPSG", 6676, "12.047", URI["urn:ogc:def:crs:EPSG:12.047:6676"]],
   Remark["Replaces JGD2000 / Japan Plane Rectangular CS VIII (CRS code 2450) with effect from 21st October 2011."]]</pre>
 </details>
 <br/>
@@ -207,7 +207,7 @@ sis identifier https://sis.apache.org/examples/crs/MissingIdentifier.wkt
 produces an output like below:
 
 ```
-urn:ogc:def:crs:EPSG:12.026:27572  | NTF (Paris) / Lambert zone II
+urn:ogc:def:crs:EPSG:12.047:27572  | NTF (Paris) / Lambert zone II
 ```
 
 As we can see, Apache {{% SIS %}} has been able to find back the identifier code and the actual {{% CRS %}} name.
@@ -225,7 +225,7 @@ sis identifier https://sis.apache.org/examples/crs/WrongAxisOrder.wkt
 produces an output like below:
 
 ```
-!   urn:ogc:def:crs:EPSG:12.026:4979    | WGS 84
+!   urn:ogc:def:crs:EPSG:12.047:4979    | WGS 84
 
 Legend:
 !   Identified object matches definition provided by authority except for coordinate system axes.
@@ -263,7 +263,7 @@ sis identifier https://sis.apache.org/examples/crs/EquivalentDefinition.wkt
 produces an output like below:
 
 ```
-urn:ogc:def:crs:EPSG:12.026:3994  | WGS 84 / Mercator 41
+urn:ogc:def:crs:EPSG:12.047:3994  | WGS 84 / Mercator 41
 ```
 
 In above example, Apache {{% SIS %}} used the fact that a
