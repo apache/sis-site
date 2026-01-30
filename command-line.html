@@ -69,9 +69,9 @@ in their own application.</p>
   </ul>
 </nav>
 <h1 id="install">Installation   </h1>
-<p>Select &ldquo;Apache <abbr title="Spatial Information System">SIS</abbr> 1.5 binary&rdquo; from the <a href="./downloads.html">downloads page</a> an unzip in any directory.
+<p>Select &ldquo;Apache <abbr title="Spatial Information System">SIS</abbr> 1.6 binary&rdquo; from the <a href="./downloads.html">downloads page</a> an unzip in any directory.
 The directory structure will be as below:</p>
-<pre tabindex="0"><code>apache-sis-1.5
+<pre tabindex="0"><code>apache-sis-1.6
 ├─ bin
 ├─ conf
 ├─ data
@@ -80,9 +80,9 @@ The directory structure will be as below:</p>
 </code></pre><p>The <code>bin</code> sub-directory contains a <code>sis</code> command for Unix systems and a <code>sis.bat</code> command for Windows systems.
 The <code>bin</code> sub-directory can be added to the <code>PATH</code> environment variable for convenience, but this is not mandatory.
 Example:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PWD</span>/apache-sis-1.5/bin:<span class="nv">$PATH</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PWD</span>/apache-sis-1.6/bin:<span class="nv">$PATH</span>
 </span></span></code></pre></div><p>The remaining of this page assumes that the <code>bin</code> directory is on the search path.
-If not, the same examples can still be executed by replacing the <code>sis</code> command by <code>./apache-sis-1.5/bin/sis</code>.</p>
+If not, the same examples can still be executed by replacing the <code>sis</code> command by <code>./apache-sis-1.6/bin/sis</code>.</p>
 <h2 id="dependencies">Optional dependencies   </h2>
 <p>Every JAR files present in the <code>lib</code> sub-directory will be included on the classpath during <code>sis</code> command execution.
 By default, the <code>lib</code> directory contains the <code>sis-*.jar</code> files together with GeoAPI, JAXB and Apache Derby dependencies.
@@ -173,7 +173,7 @@ For example the following command prints the definition of the <em>&ldquo;JGD201
     Scope["Cadastre, engineering survey, topographic mapping (large and medium scale)."],
     Area["Japan - onshore - Honshu between approximately 137°45'E and 139°E - Niigata-ken; Nagano-ken; Yamanashi-ken; Shizuoka-ken."],
     BBox[34.54, 137.32, 38.58, 139.91]],
-  Id["EPSG", 6676, "12.026", URI["urn:ogc:def:crs:EPSG:12.026:6676"]],
+  Id["EPSG", 6676, "12.047", URI["urn:ogc:def:crs:EPSG:12.047:6676"]],
   Remark["Replaces JGD2000 / Japan Plane Rectangular CS VIII (CRS code 2450) with effect from 21st October 2011."]]</pre>
 </details>
 <br/>
@@ -236,7 +236,7 @@ Furthermore, the <em>“NTF (Paris) / Lambert zone II”</em> name has been repl
 Executing the following command:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis identifier https://sis.apache.org/examples/crs/MissingIdentifier.wkt
 </span></span></code></pre></div><p>produces an output like below:</p>
-<pre tabindex="0"><code>urn:ogc:def:crs:EPSG:12.026:27572  | NTF (Paris) / Lambert zone II
+<pre tabindex="0"><code>urn:ogc:def:crs:EPSG:12.047:27572  | NTF (Paris) / Lambert zone II
 </code></pre><p>As we can see, Apache <abbr title="Spatial Information System">SIS</abbr> has been able to find back the identifier code and the actual <abbr title="Coordinate Reference System">CRS</abbr> name.</p>
 <p>Sometimes a <abbr title="Well Known Text">WKT</abbr> declares wrongly an EPSG code.
 The most frequent case is a <abbr title="Well Known Text">WKT</abbr> that defines a Coordinate Reference System with (<em>longitude</em>, <em>latitude</em>) axes,
@@ -245,7 +245,7 @@ Apache <abbr title="Spatial Information System">SIS</abbr> can detect such misma
 For example executing the following command:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis identifier https://sis.apache.org/examples/crs/WrongAxisOrder.wkt
 </span></span></code></pre></div><p>produces an output like below:</p>
-<pre tabindex="0"><code>!   urn:ogc:def:crs:EPSG:12.026:4979    | WGS 84
+<pre tabindex="0"><code>!   urn:ogc:def:crs:EPSG:12.047:4979    | WGS 84
 
 Legend:
 !   Identified object matches definition provided by authority except for coordinate system axes.
@@ -267,7 +267,7 @@ The next example asks the identifier of a <abbr title="Coordinate Reference Syst
 </code></pre><p>Executing the following command:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis identifier https://sis.apache.org/examples/crs/EquivalentDefinition.wkt
 </span></span></code></pre></div><p>produces an output like below:</p>
-<pre tabindex="0"><code>urn:ogc:def:crs:EPSG:12.026:3994  | WGS 84 / Mercator 41
+<pre tabindex="0"><code>urn:ogc:def:crs:EPSG:12.047:3994  | WGS 84 / Mercator 41
 </code></pre><p>In above example, Apache <abbr title="Spatial Information System">SIS</abbr> used the fact that a
 <em>“Mercator (variant A)”</em> projection with a <em>“Scale factor at natural origin”</em> parameter value of 0.755799… on the WGS84 datum is numerically equivalent to a
 <em>“Mercator (variant B)”</em> projection with a <em>“Latitude of 1st standard parallel”</em> parameter value of 41° on the same datum.
