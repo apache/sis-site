@@ -840,7 +840,7 @@ The output shall report only good signatures.
 
 * Publish the web site updates:
   * On the `asf-site` branch, execute `git merge asf-staging` and push.
-* Make an announcement about the release on the `dev@`, `users@`, and `announce@` mailing lists.
+* Make an announcement about the release on the `dev@`, `users@`, `geospatial@` and `announce@` mailing lists.
   A template is available [here](templates/release-announce.html).
   The email needs to be sent from an `@apache.org` email address
   and the message format must be RAW text only (no HTML).

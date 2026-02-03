@@ -178,9 +178,9 @@ See [How to use EPSG geodetic dataset](epsg.html) page for more information.
 [maven]:    http://maven.apache.org/
 [keys]:     https://www.apache.org/dist/sis/KEYS
 [license]:  http://www.apache.org/licenses/LICENSE-2.0
-[src]:      http://www.apache.org/dyn/closer.cgi/sis/{{% version %}}/apache-sis-{{% version %}}-src.zip
-[doc]:      http://www.apache.org/dyn/closer.cgi/sis/{{% version %}}/apache-sis-{{% version %}}-doc.zip
-[bin]:      http://www.apache.org/dyn/closer.cgi/sis/{{% version %}}/apache-sis-{{% version %}}-bin.zip
+[src]:      http://www.apache.org/dyn/closer.lua/sis/{{% version %}}/apache-sis-{{% version %}}-src.zip
+[doc]:      http://www.apache.org/dyn/closer.lua/sis/{{% version %}}/apache-sis-{{% version %}}-doc.zip
+[bin]:      http://www.apache.org/dyn/closer.lua/sis/{{% version %}}/apache-sis-{{% version %}}-bin.zip
 [src-PGP]:  https://www.apache.org/dist/sis/{{% version %}}/apache-sis-{{% version %}}-src.zip.asc
 [doc-PGP]:  https://www.apache.org/dist/sis/{{% version %}}/apache-sis-{{% version %}}-doc.zip.asc
 [bin-PGP]:  https://www.apache.org/dist/sis/{{% version %}}/apache-sis-{{% version %}}-bin.zip.asc
