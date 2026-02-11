@@ -176,17 +176,17 @@ and writable Derby database, or to install the EPSG dataset on HSQL or PostgreSQ
 See [How to use EPSG geodetic dataset](epsg.html) page for more information.
 
 [maven]:    http://maven.apache.org/
-[keys]:     https://www.apache.org/dist/sis/KEYS
+[keys]:     https://downloads.apache.org/sis/KEYS
 [license]:  http://www.apache.org/licenses/LICENSE-2.0
 [src]:      http://www.apache.org/dyn/closer.lua/sis/{{% version %}}/apache-sis-{{% version %}}-src.zip
 [doc]:      http://www.apache.org/dyn/closer.lua/sis/{{% version %}}/apache-sis-{{% version %}}-doc.zip
 [bin]:      http://www.apache.org/dyn/closer.lua/sis/{{% version %}}/apache-sis-{{% version %}}-bin.zip
-[src-PGP]:  https://www.apache.org/dist/sis/{{% version %}}/apache-sis-{{% version %}}-src.zip.asc
-[doc-PGP]:  https://www.apache.org/dist/sis/{{% version %}}/apache-sis-{{% version %}}-doc.zip.asc
-[bin-PGP]:  https://www.apache.org/dist/sis/{{% version %}}/apache-sis-{{% version %}}-bin.zip.asc
-[src-SHA]:  https://www.apache.org/dist/sis/{{% version %}}/apache-sis-{{% version %}}-src.zip.sha512
-[doc-SHA]:  https://www.apache.org/dist/sis/{{% version %}}/apache-sis-{{% version %}}-doc.zip.sha512
-[bin-SHA]:  https://www.apache.org/dist/sis/{{% version %}}/apache-sis-{{% version %}}-bin.zip.sha512
+[src-PGP]:  https://downloads.apache.org/sis/{{% version %}}/apache-sis-{{% version %}}-src.zip.asc
+[doc-PGP]:  https://downloads.apache.org/sis/{{% version %}}/apache-sis-{{% version %}}-doc.zip.asc
+[bin-PGP]:  https://downloads.apache.org/sis/{{% version %}}/apache-sis-{{% version %}}-bin.zip.asc
+[src-SHA]:  https://downloads.apache.org/sis/{{% version %}}/apache-sis-{{% version %}}-src.zip.sha512
+[doc-SHA]:  https://downloads.apache.org/sis/{{% version %}}/apache-sis-{{% version %}}-doc.zip.sha512
+[bin-SHA]:  https://downloads.apache.org/sis/{{% version %}}/apache-sis-{{% version %}}-bin.zip.sha512
 [EPSG]:     https://epsg.org/
 [EPSG-ToU]: https://epsg.org/terms-of-use.html
 [JavaFX]:   https://openjfx.io/
