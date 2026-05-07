@@ -80,6 +80,15 @@ A [command-line tool](command-line.html) and a [JavaFX application](javafx.html)
 are also provided for allowing users to experiment some SIS functionalities before writing code.
 
 
+## Backward compatibility policy    {#compatibility}
+
+Most of SIS public API is stable.
+If an API needs to be changed, the old API is annotated as deprecated and a Javadoc comment explains the replacement.
+If the API is deprecated for removal, it is usually kept for only one release and effectively removed in the next one.
+Therefore, if an API seems to have disappeared after an Apache SIS upgrade, the migration path can be identified by
+incrementing the version one-by-one. The `@version` tag gives the last version when a class got a significant change.
+
+
 [geoapi]:    https://www.geoapi.org/
 [GML]:       https://www.ogc.org/standards/gml
 [SF_SQL]:    https://www.ogc.org/standards/sfs
