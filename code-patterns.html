@@ -10,7 +10,7 @@
   </head>
   <body>
     <div class="topbar">
-      <a class="topbar-brand" href="./index.html">Apache SIS™</a>
+      <a class="topbar-brand" href="./index.html">Apache <abbr title="Spatial Information System">SIS</abbr>™</a>
       <ul class="topbar-items">
         <li>
           <a href="https://www.apache.org/events/current-event.html">
@@ -43,29 +43,29 @@
 Coding conventions for <abbr title="Spatial Information System">SIS</abbr> developers are in <a href="./coding-conventions.html">a separated page</a>.</p>
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#referencing">Referencing   </a>
+    <li><a href="#referencing">Referencing</a>
       <ul>
-        <li><a href="#axisOrder">Never explicitly swap coordinates for axis order   </a></li>
+        <li><a href="#axisOrder">Never explicitly swap coordinates for axis order</a></li>
       </ul>
     </li>
-    <li><a href="#coverage">Rasters and coverages   </a>
+    <li><a href="#coverage">Rasters and coverages</a>
       <ul>
         <li><a href="#gridToCRS">Georeference images with affine transforms, <em>not</em> bounding boxes</a></li>
         <li><a href="#do-not-cast-raster-to-writableraster">Do not cast <code>Raster</code> to <code>WritableRaster</code></a></li>
       </ul>
     </li>
-    <li><a href="#international">International   </a>
+    <li><a href="#international">International</a>
       <ul>
-        <li><a href="#calendar">Choose the right calendar   </a></li>
-        <li><a href="#timezone">Specify timezone   </a></li>
-        <li><a href="#sort">Replace underscores by spaces before sorting   </a></li>
-        <li><a href="#unicode-loop">Loop over character sequences using code points   </a></li>
+        <li><a href="#calendar">Choose the right calendar</a></li>
+        <li><a href="#timezone">Specify timezone</a></li>
+        <li><a href="#sort">Replace underscores by spaces before sorting</a></li>
+        <li><a href="#unicode-loop">Loop over character sequences using code points</a></li>
       </ul>
     </li>
   </ul>
 </nav>
-<h1 id="referencing">Referencing   </h1>
-<h2 id="axisOrder">Never explicitly swap coordinates for axis order   </h2>
+<h1 id="referencing">Referencing</h1>
+<h2 id="axisOrder">Never explicitly swap coordinates for axis order</h2>
 <p>The <a href="./faq.html#axisOrder">axis order issue</a> causes lot of confusion,
 and developers are sometimes tempted to swap their coordinate values in order to comply with some expected axis ordering.
 It should never be necessary, since the Apache <abbr title="Spatial Information System">SIS</abbr> referencing engine manages axis order transparently —
@@ -74,8 +74,8 @@ If a code needs to swap coordinates, this is probably an indication that the <ab
 Instead of patching the coordinate values, try to make sure that the <em>Source CRS</em> (associated to the original data)
 and the <em>Target CRS</em> (the coordinate space where to perform the work) are properly defined,
 and let the referencing engine performs the conversion from the source to the target <abbr title="Coordinate Reference System">CRS</abbr>.</p>
-<h1 id="coverage">Rasters and coverages   </h1>
-<h2 id="gridToCRS">Georeference images with affine transforms, <em>not</em> bounding boxes   </h2>
+<h1 id="coverage">Rasters and coverages</h1>
+<h2 id="gridToCRS">Georeference images with affine transforms, <em>not</em> bounding boxes</h2>
 <p>Many users define the geographic extent of an image by its corner locations.
 This approach may be ambiguous as it does not specify whether the (<var>x</var>,<var>y</var>) axes are interchanged
 (see the <a href="./faq.html#axisOrder">axis order issue</a>) or if the <var>y</var> axis is oriented downward.
@@ -88,15 +88,15 @@ In the two-dimensional case, the standard <code>java.awt.geom.Affine­Transform<
 Do not cast directly a <code>Raster</code> to <code>WritableRaster</code> even when the cast is safe,
 because some raster data may be shared by many tiles having identical content.
 Furthermore changes in pixel values may be lost if {@code releaseWritableTile(…)} is not invoked.</p>
-<h1 id="international">International   </h1>
-<h2 id="calendar">Choose the right calendar   </h2>
+<h1 id="international">International</h1>
+<h2 id="calendar">Choose the right calendar</h2>
 <p>Be aware that the parsing and formatting methods of <code>java.time.Instant</code> do not use
 the same calendar as <code>java.text.DateFormat</code> for dates before October 15, 1582.
 The <code>java.time</code> classes use the proleptic Gregorian calendar while <code>java.text</code>
 switches to the proleptic Julian calendar before October 15, 1582.
 In particular, conversions between Julian days and dates require the Julian calendar,
 i.e. the use of <code>java.text</code> instead of <code>java.time</code>.</p>
-<h2 id="timezone">Specify timezone   </h2>
+<h2 id="timezone">Specify timezone</h2>
 <p>Geospatial data often cover a wide geographic area, spanning many time zones.
 Timezone are sometimes specified as metadata in the header of data files to be read,
 or is sometimes fixed to <abbr title="Universal Time Coordinated">UTC</abbr> by applications managing world-wide data.
@@ -106,14 +106,14 @@ Such locale and timezone are given to <code>java.text.DateFormat</code> or <code
 consider using a <code>ResultSet</code> method accepting a <code>Calendar</code> argument when such method is available.
 For example, prefer the <code>getTimestamp(int, Calendar)</code> method instead of <code>getTimestamp(int)</code>.
 The <code>Calendar</code> object should has been created with the appropriate timezone.</p>
-<h2 id="sort">Replace underscores by spaces before sorting   </h2>
+<h2 id="sort">Replace underscores by spaces before sorting</h2>
 <p>Before to sort programmatic names for human reading, consider replacing all occurrences of the underscore character
 (<code>'_'</code>) by the space character (<code>' '</code>). The ASCII value of the underscore character is greater than <code>'Z'</code> but lower
 than <code>'a'</code>, which sometimes produce unexpected sort results.
 For example <code>&quot;Foo_bar&quot;</code> is sorted <em>between</em> <code>&quot;FooBar&quot;</code> and <code>&quot;Foobar&quot;</code>.
 The space character produces more consistent sort results because its ASCII value is less than any printable character,
 so <code>&quot;Foo bar&quot;</code> is sorted before both <code>&quot;FooBar&quot;</code> and <code>&quot;Foobar&quot;</code>.</p>
-<h2 id="unicode-loop">Loop over character sequences using code points   </h2>
+<h2 id="unicode-loop">Loop over character sequences using code points</h2>
 <p>Since Java 1.5, characters are no longer restricted to 16 bits.
 Some &ldquo;characters&rdquo; are actually represented using two consecutive <code>char</code> elements.
 Those &ldquo;characters&rdquo; are called <em>code points</em>.
@@ -122,7 +122,7 @@ Consequently, when iterating over characters in a string, the following pattern 
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string</span><span class="p">.</span><span class="na">codePointAt</span><span class="p">(</span><span class="n">i</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// ... do some stuff ...</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">i</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">Character</span><span class="p">.</span><span class="na">charCount</span><span class="p">(</span><span class="n">c</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div>
 
           </article>
@@ -131,7 +131,17 @@ Consequently, when iterating over characters in a string, the following pattern 
           <div class="container">
             <p>Copyright &copy; 2013-2026 The Apache Software Foundation, Licensed under the
             <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
-            Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+            Apache <abbr title="Spatial Information System">SIS</abbr>,
+            Apache, the Apache logo are trademarks of The Apache Software Foundation.</p>
+            <p>
+              <a href="https://www.apache.org/">Foundation</a> |
+              <a href="https://www.apache.org/events/current-event.html">Events</a> |
+              <a href="https://www.apache.org/licenses/">License</a> |
+              <a href="https://www.apache.org/security/">Security</a> |
+              <a href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a> |
+              <a href="https://www.apache.org/foundation/thanks.html">Thanks</a> |
+              <a href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy</a>
+            </p>
           </div>
         </footer>
       </div>

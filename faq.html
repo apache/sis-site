@@ -10,7 +10,7 @@
   </head>
   <body>
     <div class="topbar">
-      <a class="topbar-brand" href="./index.html">Apache SIS™</a>
+      <a class="topbar-brand" href="./index.html">Apache <abbr title="Spatial Information System">SIS</abbr>™</a>
       <ul class="topbar-items">
         <li>
           <a href="https://www.apache.org/events/current-event.html">
@@ -42,50 +42,50 @@
   <p>This page lists some Frequently Asked Questions (FAQ) when using Apache <abbr title="Spatial Information System">SIS</abbr>.</p>
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#referencing">Referencing   </a>
+    <li><a href="#referencing">Referencing</a>
       <ul>
-        <li><a href="#referencing-intro">Getting started   </a>
+        <li><a href="#referencing-intro">Getting started</a>
           <ul>
-            <li><a href="#getCRS">How do I get a Coordinate Reference System?   </a></li>
-            <li><a href="#transform-point">How do I transform a coordinate?   </a></li>
-            <li><a href="#operation-methods">Which map projections are supported?   </a></li>
+            <li><a href="#getCRS">How do I get a Coordinate Reference System?</a></li>
+            <li><a href="#transform-point">How do I transform a coordinate?</a></li>
+            <li><a href="#operation-methods">Which map projections are supported?</a></li>
           </ul>
         </li>
-        <li><a href="#crs">Coordinate Reference Systems   </a>
+        <li><a href="#crs">Coordinate Reference Systems</a>
           <ul>
-            <li><a href="#google">What is the Google projection?   </a></li>
-            <li><a href="#axisOrder">What is the axis order issue and how is it addressed?   </a></li>
-            <li><a href="#lookupReliability">Is IdentifiedObjects.lookupEPSG(…) a reliable inverse of CRS.forCode(…)?  </a></li>
-            <li><a href="#crsHashCode">Are CRS objects safe for use as keys in HashMap?   </a></li>
+            <li><a href="#google">What is the Google projection?</a></li>
+            <li><a href="#axisOrder">What is the axis order issue and how is it addressed?</a></li>
+            <li><a href="#lookupReliability">Is IdentifiedObjects.lookupEPSG(…) a reliable inverse of CRS.forCode(…)?</a></li>
+            <li><a href="#crsHashCode">Are CRS objects safe for use as keys in HashMap?</a></li>
           </ul>
         </li>
-        <li><a href="#transforms">Coordinate transformations   </a>
+        <li><a href="#transforms">Coordinate transformations</a>
           <ul>
-            <li><a href="#axisOrderInTransforms">My transformed coordinates are totally wrong!   </a></li>
-            <li><a href="#projectionName">I have correct axis order but my transformed coordinates are still wrong.  </a></li>
-            <li><a href="#parameterUnits">I just used the WKT of a well-known authority and my transformed coordinates are still wrong!   </a></li>
-            <li><a href="#BursaWolf">I verified all the above and still have an error of about one kilometer.   </a></li>
-            <li><a href="#slightDifferences">I get slightly different results depending on the environment I’m running in.   </a></li>
-            <li><a href="#toWGS84">Can I always expect a transform from an arbitrary CRS to WGS84 to succeed?   </a></li>
+            <li><a href="#axisOrderInTransforms">My transformed coordinates are totally wrong!</a></li>
+            <li><a href="#projectionName">I have correct axis order but my transformed coordinates are still wrong.</a></li>
+            <li><a href="#parameterUnits">I just used the WKT of a well-known authority and my transformed coordinates are still wrong!</a></li>
+            <li><a href="#BursaWolf">I verified all the above and still have an error of about one kilometer.</a></li>
+            <li><a href="#slightDifferences">I get slightly different results depending on the environment I’m running in.</a></li>
+            <li><a href="#toWGS84">Can I always expect a transform from an arbitrary CRS to WGS84 to succeed?</a></li>
           </ul>
         </li>
       </ul>
     </li>
-    <li><a href="#metadata">Metadata   </a>
+    <li><a href="#metadata">Metadata</a>
       <ul>
-        <li><a href="#metadata-implementation">Custom implementations   </a>
+        <li><a href="#metadata-implementation">Custom implementations</a>
           <ul>
-            <li><a href="#metadata-proxy">My metadata are stored in a database-like framework. Implementing every GeoAPI interfaces for them is impractical.   </a></li>
-            <li><a href="#metadata-unknownClass">I cannot marshall my custom implementation.   </a></li>
+            <li><a href="#metadata-proxy">My metadata are stored in a database-like framework. Implementing every GeoAPI interfaces for them is impractical.</a></li>
+            <li><a href="#metadata-unknownClass">I cannot marshall my custom implementation.</a></li>
           </ul>
         </li>
       </ul>
     </li>
   </ul>
 </nav>
-<h1 id="referencing">Referencing   </h1>
-<h2 id="referencing-intro">Getting started   </h2>
-<h3 id="getCRS">How do I get a Coordinate Reference System?   </h3>
+<h1 id="referencing">Referencing</h1>
+<h2 id="referencing-intro">Getting started</h2>
+<h3 id="getCRS">How do I get a Coordinate Reference System?</h3>
 <p>The <code>CRS</code> class in the <code>org.apache.sis.referencing.crs</code> package provides static convenience methods.
 The most notable methods are:</p>
 <ul>
@@ -94,11 +94,11 @@ Some supported authorities are <a href="./epsg.html">EPSG</a>, AUTO, AUTO2 and C
 <li><code>CRS.fromWKT(String)</code> for parsing a <abbr title="Coordinate Reference System">CRS</abbr> definition from a character string in Well-Known Text (WKT) format.</li>
 <li><code>CRS.fromXML(String)</code> for parsing a <abbr title="Coordinate Reference System">CRS</abbr> definition from a character string in Geographic Markup Language (GML) format.</li>
 </ul>
-<h3 id="transform-point">How do I transform a coordinate?   </h3>
+<h3 id="transform-point">How do I transform a coordinate?</h3>
 <p>See the <a href="./howto/index.html#referencing">&ldquo;How to…&rdquo;</a> page for Java code examples.
 Those examples get Coordinate Reference Systems (CRS) instances in various ways
 and apply coordinate operations between two reference systems.</p>
-<h3 id="operation-methods">Which map projections are supported?   </h3>
+<h3 id="operation-methods">Which map projections are supported?</h3>
 <p>The operation <em>methods</em> (including, but not limited to, map projections) supported by
 Apache <abbr title="Spatial Information System">SIS</abbr> are listed in the <a href="tables/CoordinateOperationMethods.html">Coordinate Operation Methods</a> page.
 The amount of map projection methods is relatively small,
@@ -110,8 +110,8 @@ For convenience, thousands of projected <abbr title="Coordinate Reference System
 A well-known source of such definitions is the EPSG geodetic dataset, but other authorities also exist.
 The predefined <abbr title="Coordinate Reference System">CRS</abbr> known to Apache <abbr title="Spatial Information System">SIS</abbr> are listed in the
 <a href="tables/CoordinateReferenceSystems.html">Coordinate Reference Systems</a> page.</p>
-<h2 id="crs">Coordinate Reference Systems   </h2>
-<h3 id="google">What is the Google projection?   </h3>
+<h2 id="crs">Coordinate Reference Systems</h2>
+<h3 id="google">What is the Google projection?</h3>
 <p>The Google projection is a Mercator projection that pretends to be defined on the WGS84 datum,
 but actually ignores the ellipsoidal nature of that datum and uses the simpler spherical formulas instead.
 Since version 6.15 of EPSG geodetic dataset, the preferred way to get that projection is to invoke <code>CRS.forCode(&quot;EPSG:3857&quot;)</code>.
@@ -126,7 +126,7 @@ this can be done with explicit declarations of <code>&quot;semi_major&quot;</cod
 Those parameter values are usually inferred from the datum, but Apache <abbr title="Spatial Information System">SIS</abbr> allows explicit declarations to override the inferred values.
 This hack is provided for making possible to use data that ignore the ellipsoid flattening factor
 (which are unfortunately not uncommon), but it should be used in last resort only.</p>
-<h3 id="axisOrder">What is the axis order issue and how is it addressed?   </h3>
+<h3 id="axisOrder">What is the axis order issue and how is it addressed?</h3>
 <p>The axis order is specified by the authority (typically a national agency) defining the Coordinate Reference System (CRS).
 The order depends on the <abbr title="Coordinate Reference System">CRS</abbr> type and the country defining the <abbr title="Coordinate Reference System">CRS</abbr>.
 In the case of geographic <abbr title="Coordinate Reference System">CRS</abbr>, the (<em>latitude</em>, <em>longitude</em>) axis order is widely used by geographers and pilots for centuries.
@@ -153,8 +153,8 @@ But Apache <abbr title="Spatial Information System">SIS</abbr> rather defaults t
 but allows changing axis order to the (<em>x</em>, <em>y</em>) order after <abbr title="Coordinate Reference System">CRS</abbr> creation.
 This change can be done with the following code:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">CoordinateReferenceSystem</span><span class="w"> </span><span class="n">crs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...;</span><span class="w"> </span><span class="c1">// CRS obtained by any means.</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">crs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AbstractCRS</span><span class="p">.</span><span class="na">castOrCopy</span><span class="p">(</span><span class="n">crs</span><span class="p">).</span><span class="na">forConvention</span><span class="p">(</span><span class="n">AxesConvention</span><span class="p">.</span><span class="na">RIGHT_HANDED</span><span class="p">)</span><span class="w">
-</span></span></span></code></pre></div><h3 id="lookupReliability">Is IdentifiedObjects.lookupEPSG(…) a reliable inverse of CRS.forCode(…)?  </h3>
+</span></span></span><span class="line"><span class="cl"><span class="n">crs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AbstractCRS</span><span class="p">.</span><span class="na">castOrCopy</span><span class="p">(</span><span class="n">crs</span><span class="p">).</span><span class="na">forConvention</span><span class="p">(</span><span class="n">AxesConvention</span><span class="p">.</span><span class="na">RIGHT_HANDED</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></div><h3 id="lookupReliability">Is IdentifiedObjects.lookupEPSG(…) a reliable inverse of CRS.forCode(…)?</h3>
 <p>For <abbr title="Coordinate Reference System">CRS</abbr> created from the EPSG geodetic dataset, usually yes.
 Note however that <code>IdentifiedObjects.getIdentifier(…)</code> is cheaper and insensitive to the details of <abbr title="Coordinate Reference System">CRS</abbr> definition,
 since it never query the database. But it works only if the <abbr title="Coordinate Reference System">CRS</abbr> declares explicitly its code,
@@ -163,12 +163,12 @@ The <code>lookupEPSG(…)</code> method on the other hand is robust to erroneous
 since it always compares the <abbr title="Coordinate Reference System">CRS</abbr> with the database content.
 But it may fail if there is slight mismatch (for example rounding errors in projection parameters)
 between the supplied <abbr title="Coordinate Reference System">CRS</abbr> and the <abbr title="Coordinate Reference System">CRS</abbr> found in the database.</p>
-<h3 id="crsHashCode">Are CRS objects safe for use as keys in HashMap?   </h3>
+<h3 id="crsHashCode">Are CRS objects safe for use as keys in HashMap?</h3>
 <p>Yes, every classes defined in the <code>org.apache.sis.referencing.crs</code>, <code>cs</code> and <code>datum</code> packages
 define properly their <code>equals(Object)</code> and <code>hashCode()</code> methods.
 The Apache <abbr title="Spatial Information System">SIS</abbr> library itself uses <abbr title="Coordinate Reference System">CRS</abbr> objects in <code>HashMap</code>-like containers for caching purpose.</p>
-<h2 id="transforms">Coordinate transformations   </h2>
-<h3 id="axisOrderInTransforms">My transformed coordinates are totally wrong!   </h3>
+<h2 id="transforms">Coordinate transformations</h2>
+<h3 id="axisOrderInTransforms">My transformed coordinates are totally wrong!</h3>
 <p>This is most frequently caused by coordinate values given in the wrong order.
 Developers tend to assume a (<em>x</em>, <em>y</em>) or (<em>longitude</em>, <em>latitude</em>) axis order.
 But geographers and pilots are using (<em>latitude</em>, <em>longitude</em>) axis order for centuries,
@@ -176,7 +176,7 @@ and the EPSG geodetic dataset defines geographic Coordinate Reference Systems th
 If a coordinate transformation seems to produce totally wrong values,
 the first thing to do should be to print the source and target Coordinate Reference Systems:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">sourceCRS</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">targetCRS</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">targetCRS</span><span class="p">);</span><span class="w">
 </span></span></span></code></pre></div><p>Attention should be paid to the order of <code>AXIS</code> elements.
 In the example below, the Coordinate Reference System clearly uses (<em>latitude</em>, <em>longitude</em>) axis order:</p>
 <pre tabindex="0"><code>GeodeticCRS[&#34;WGS 84&#34;,
@@ -187,14 +187,14 @@ In the example below, the Coordinate Reference System clearly uses (<em>latitude
     Axis[&#34;Geodetic longitude (Lon)&#34;, east],
     Unit[&#34;degree&#34;, 0.017453292519943295]]
 </code></pre><p>If (<em>longitude</em>, <em>latitude</em>) axis order is really wanted, Apache <abbr title="Spatial Information System">SIS</abbr> can be forced to that order <a href="./faq.html#axisOrder">as described above</a>.</p>
-<h3 id="projectionName">I have correct axis order but my transformed coordinates are still wrong.  </h3>
+<h3 id="projectionName">I have correct axis order but my transformed coordinates are still wrong.</h3>
 <p>Make sure that the right projection is used. Some projection names are confusing.
 For example <em>&ldquo;Oblique Mercator&rdquo;</em> and <em>&ldquo;Hotine Oblique Mercator&rdquo;</em> (in EPSG naming) are two different projections.
 But <em>&ldquo;Oblique Mercator&rdquo;</em> (not Hotine) in EPSG naming is also called <em>&ldquo;Hotine Oblique Mercator Azimuth Center&rdquo;</em> by ESRI,
 while <em>&ldquo;Hotine Oblique Mercator&rdquo;</em> (EPSG naming) is called <em>&ldquo;Hotine Oblique Mercator Azimuth Natural Origin&rdquo;</em> by ESRI.</p>
 <p>The <em>&ldquo;Oblique Stereographic&rdquo;</em> projection (EPSG name) is called <em>&ldquo;Double Stereographic&rdquo;</em> by ESRI.
 ESRI also defines a <em>&ldquo;Stereographic&rdquo;</em> projection, which is actually an oblique projection like the former but using different formulas.</p>
-<h3 id="parameterUnits">I just used the WKT of a well-known authority and my transformed coordinates are still wrong!   </h3>
+<h3 id="parameterUnits">I just used the WKT of a well-known authority and my transformed coordinates are still wrong!</h3>
 <p>The version 1 of Well Known Text (WKT) specification has been interpreted in different ways by different implementors.
 One subtle issue is the angular units of prime meridian and projection parameter values.
 The <abbr title="Well Known Text">WKT</abbr> 1 specification clary states: <em>&ldquo;If the <code>PRIMEM</code> clause occurs inside a <code>GEOGCS</code>,
@@ -226,7 +226,7 @@ which ensure that Apache <abbr title="Spatial Information System">SIS</abbr>, GD
 <p>Note that the GeoPackage standard explicitly requires <abbr title="Open Geospatial Consortium">OGC</abbr> 01-009 compliant <abbr title="Well Known Text">WKT</abbr>
 and the new <abbr title="Well Known Text">WKT</abbr> 2 standard also follows the <abbr title="Open Geospatial Consortium">OGC</abbr> 01-009 interpretation.
 The default Apache <abbr title="Spatial Information System">SIS</abbr> behavior is consistent with those two standards.</p>
-<h3 id="BursaWolf">I verified all the above and still have an error of about one kilometer.   </h3>
+<h3 id="BursaWolf">I verified all the above and still have an error of about one kilometer.</h3>
 <p>Coordinate Reference Systems (CRS) approximate the Earth’s shape by an ellipsoid.
 Different ellipsoids (actually different <em>datum</em>) are used in different countries of the world and at different time in history.
 When transforming coordinates between two <abbr title="Coordinate Reference System">CRS</abbr> using the same datum, no Bursa-Wolf parameters are needed.
@@ -236,7 +236,7 @@ The Bursa-Wolf method is one of them, not the only one. However it is one of the
 The Bursa-Wolf parameters can be specified inside a <code>TOWGS84</code> element with version 1 of Well Known Text (WKT) format,
 or in a <code>BOUNDCRS</code> element with version 2 of <abbr title="Well Known Text">WKT</abbr> format.
 If the CRS are parsed from a <abbr title="Well Known Text">WKT</abbr> string, make sure that the string contains the appropriate element.</p>
-<h3 id="slightDifferences">I get slightly different results depending on the environment I’m running in.   </h3>
+<h3 id="slightDifferences">I get slightly different results depending on the environment I’m running in.</h3>
 <p>The results of coordinate transformations when running in a web application container (JBoss, <em>etc.</em>)
 may be a few meters off compared to coordinates transformations in an IDE (NetBeans, Eclipse, <em>etc.</em>).
 The results depend on whether an EPSG factory is available on the classpath, <strong>regardless how the <abbr title="Coordinate Reference System">CRS</abbr> were created</strong>,
@@ -249,14 +249,14 @@ The recommended way to uniformize the results is to add in the second environmen
 the same <abbr title="Java DataBase Connectivity">JDBC</abbr> driver than the one available in the first environment (JEE).
 It should be one of the following: JavaDB (a.k.a. Derby), HSQL or PostgreSQL.
 Make sure that the <a href="./epsg.html">connection parameters to the EPSG database</a> are also the same.</p>
-<h3 id="toWGS84">Can I always expect a transform from an arbitrary CRS to WGS84 to succeed?   </h3>
+<h3 id="toWGS84">Can I always expect a transform from an arbitrary CRS to WGS84 to succeed?</h3>
 <p>For 2D horizontal <abbr title="Coordinate Reference System">CRS</abbr> created from the EPSG database, calls to <code>CRS.findOperation(…)</code> should generally succeed.
 For 3D <abbr title="Coordinate Reference System">CRS</abbr> having any kind of height different than ellipsoidal height, or for a 2D <abbr title="Coordinate Reference System">CRS</abbr> of type <code>EngineeringCRS</code>, it may fail.
 Note however that even if the call to <code>CRS.findOperation(…)</code> succeed, the call to <code>MathTransform.transform(…)</code> may fail
 or produce <code>NaN</code> or infinity values if the coordinate to transform is far from the domain of validity.</p>
-<h1 id="metadata">Metadata   </h1>
-<h2 id="metadata-implementation">Custom implementations   </h2>
-<h3 id="metadata-proxy">My metadata are stored in a database-like framework. Implementing every GeoAPI interfaces for them is impractical.   </h3>
+<h1 id="metadata">Metadata</h1>
+<h2 id="metadata-implementation">Custom implementations</h2>
+<h3 id="metadata-proxy">My metadata are stored in a database-like framework. Implementing every GeoAPI interfaces for them is impractical.</h3>
 <p>Developers do not need to implement directly the metadata interfaces.
 If the underlying storage framework can access metadata from their class and attribute names (either Java names
 or <abbr title="International Organization for Standardization">ISO</abbr>/<abbr title="Open Geospatial Consortium">OGC</abbr> names), then it is possible to implement a single engine accessing any kind of metadata and let the
@@ -264,13 +264,13 @@ Java Virtual Machine implements the GeoAPI interfaces on-the-fly, using the <cod
 See the <code>Proxy</code> Javadoc for details, keeping in mind that the <abbr title="International Organization for Standardization">ISO</abbr>/<abbr title="Open Geospatial Consortium">OGC</abbr> name of a <code>java.lang.Class</code> or
 <code>java.lang.reflect.Method</code> object can be obtained as below:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">UML</span><span class="w"> </span><span class="n">uml</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">method</span><span class="p">.</span><span class="na">getAnnotation</span><span class="p">(</span><span class="n">UML</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uml</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uml</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uml</span><span class="p">.</span><span class="na">identifier</span><span class="p">();</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// Fetch the metadata here.</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div><p>This is indeed the approach taken by the <code>org.apache.sis.metadata.sql</code> package for providing an implementation
 of all GeoAPI metadata interfaces reading their values directly from a SQL database.</p>
-<h3 id="metadata-unknownClass">I cannot marshall my custom implementation.   </h3>
+<h3 id="metadata-unknownClass">I cannot marshall my custom implementation.</h3>
 <p>The classes given to the JAXB marshaller shall contain JAXB annotations,
 otherwise the following exception is thrown:</p>
 <pre tabindex="0"><code>javax.xml.bind.JAXBException: class MyCustomClass nor any of its super class is known to this context.
@@ -287,7 +287,17 @@ The attribute values will be wrapped automatically as needed by JAXB adapters.</
           <div class="container">
             <p>Copyright &copy; 2013-2026 The Apache Software Foundation, Licensed under the
             <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
-            Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+            Apache <abbr title="Spatial Information System">SIS</abbr>,
+            Apache, the Apache logo are trademarks of The Apache Software Foundation.</p>
+            <p>
+              <a href="https://www.apache.org/">Foundation</a> |
+              <a href="https://www.apache.org/events/current-event.html">Events</a> |
+              <a href="https://www.apache.org/licenses/">License</a> |
+              <a href="https://www.apache.org/security/">Security</a> |
+              <a href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a> |
+              <a href="https://www.apache.org/foundation/thanks.html">Thanks</a> |
+              <a href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy</a>
+            </p>
           </div>
         </footer>
       </div>

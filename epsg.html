@@ -10,7 +10,7 @@
   </head>
   <body>
     <div class="topbar">
-      <a class="topbar-brand" href="./index.html">Apache SIS™</a>
+      <a class="topbar-brand" href="./index.html">Apache <abbr title="Spatial Information System">SIS</abbr>™</a>
       <ul class="topbar-items">
         <li>
           <a href="https://www.apache.org/events/current-event.html">
@@ -64,28 +64,28 @@ of the information provided that numeric equivalence is achieved.</li>
 <p>In order to use the EPSG geodetic dataset with Apache <abbr title="Spatial Information System">SIS</abbr>, apply <em>one</em> of the following choices:</p>
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#command-line">Install a local copy with command-line tool   </a>
+    <li><a href="#command-line">Install a local copy with command-line tool</a>
       <ul>
-        <li><a href="#use-local">How to use the local copy in other applications   </a></li>
+        <li><a href="#use-local">How to use the local copy in other applications</a></li>
       </ul>
     </li>
-    <li><a href="#maven">Add a Maven dependency   </a>
+    <li><a href="#maven">Add a Maven dependency</a>
       <ul>
-        <li><a href="#maven-embedded">As embedded database    </a></li>
-        <li><a href="#maven-epsg">As database installer    </a></li>
+        <li><a href="#maven-embedded">As embedded database</a></li>
+        <li><a href="#maven-epsg">As database installer</a></li>
       </ul>
     </li>
-    <li><a href="#ask-user">Ask user&rsquo;s permission then download   </a></li>
-    <li><a href="#existing">Use an existing EPSG database   </a>
+    <li><a href="#ask-user">Ask user&rsquo;s permission then download</a></li>
+    <li><a href="#existing">Use an existing EPSG database</a>
       <ul>
-        <li><a href="#setup">Registration by Java code   </a></li>
-        <li><a href="#jndi">Registration by Java Naming and Directory Interface   </a></li>
-        <li><a href="#jndi-webapp">Registration in web application containers   </a></li>
+        <li><a href="#setup">Registration by Java code</a></li>
+        <li><a href="#jndi">Registration by Java Naming and Directory Interface</a></li>
+        <li><a href="#jndi-webapp">Registration in web application containers</a></li>
       </ul>
     </li>
   </ul>
 </nav>
-<h1 id="command-line">Install a local copy with command-line tool   </h1>
+<h1 id="command-line">Install a local copy with command-line tool</h1>
 <p>The installation process described in this section makes clear that EPSG dataset
 is distributed under a different license and asks users for their agreement.
 This process can be used with the <a href="./downloads.html#bundles">Apache SIS 1.6 binary bundle</a>.
@@ -98,7 +98,7 @@ In both cases, the first time that the command-line tool or JavaFX application n
 it will prompt the user for authorization to download the EPSG geodetic dataset from Maven Central.
 If the user accepts EPSG terms of use, then a local copy of the EPSG geodetic dataset will be created
 and stored in the <code>apache-sis-1.6/data</code> sub-directory.</p>
-<h2 id="use-local">How to use the local copy in other applications   </h2>
+<h2 id="use-local">How to use the local copy in other applications</h2>
 <p>The EPSG dataset installed by the command-line tools or the JavaFX application can also be used with other applications.
 For using the installed EPSG geodetic dataset in your own application, apply <em>one</em> of the following choices:</p>
 <ul>
@@ -111,17 +111,17 @@ has been unzipped (replace <code>myApp</code> and <code>MyMainClass</code> by th
 </span></span><span class="line"><span class="cl">java --class-path apache-sis-1.6/lib/sis-referencing.jar:myApp.jar MyMainClass
 </span></span></code></pre></div><p>If the <code>SIS_DATA</code> environment variable cannot be set, Java property can be used as a fallback:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">java -Dderby.system.home<span class="o">=</span>apache-sis-1.6/data/Databases <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>     --class-path apache-sis-1.6/lib/sis-referencing.jar:myApp.jar <span class="se">\
-</span></span></span><span class="line"><span class="cl"><span class="se"></span>     MyMainClass
+</span></span></span><span class="line"><span class="cl">     --class-path apache-sis-1.6/lib/sis-referencing.jar:myApp.jar <span class="se">\
+</span></span></span><span class="line"><span class="cl">     MyMainClass
 </span></span></code></pre></div><p>The <code>SIS_DATA</code> environment variable or <code>derby.system.home</code> Java property
 can be set to the path of any other directory which contain the same files.</p>
-<h1 id="maven">Add a Maven dependency   </h1>
+<h1 id="maven">Add a Maven dependency</h1>
 <p>Maven projects can get the EPSG geodetic dataset automatically, <em>without any prompt for EPSG Terms of Use agreement</em>,
 if the users add a <code>sis-embedded-data</code> or <code>sis-epsg</code> dependency (from <code>org.apache.sis.non-free</code> group) in their project.
 Those two approaches have advantages and inconvenient described in following sub-sections.
 In both cases, we assume that the developers who add those dependencies explicitly in their project
 have agreed with the <a href="https://epsg.org/terms-of-use.html">EPSG Terms of Use</a>.</p>
-<h2 id="maven-embedded">As embedded database    </h2>
+<h2 id="maven-embedded">As embedded database</h2>
 <p>With <code>sis-embedded-data</code> artifact on the classpath, there is no need to setup environment variable, Java property or JNDI.
 However, this simplicity come at the cost of a larger download with no possibility to choose the database engine
 (i.e. the database software is fixed to Derby), and no possibility to add&rsquo;s user data (i.e. the database is read-only).
@@ -135,7 +135,7 @@ This embedded data dependency can be declared as below
 </span></span><span class="line"><span class="cl">    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
 </span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
 </span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependencies&gt;</span>
-</span></span></code></pre></div><h2 id="maven-epsg">As database installer    </h2>
+</span></span></code></pre></div><h2 id="maven-epsg">As database installer</h2>
 <p>For applications which already have a database engine, or which use a different version of the Derby database,
 it may be desirable to install the EPSG geodetic dataset in their existing database rather than having two databases in parallel.
 With <code>sis-epsg</code> artifact on the classpath, Apache <abbr title="Spatial Information System">SIS</abbr> will create a local copy of EPSG database when first needed.
@@ -167,14 +167,14 @@ with the Derby dependency replaced by another database driver if desired:</p>
 </span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
 </span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependencies&gt;</span>
 </span></span></code></pre></div><p>Note that <code>sis-epsg</code> and <code>sis-embedded-data</code> artifacts should not be specified in the same project. Only one is needed.</p>
-<h1 id="ask-user">Ask user&rsquo;s permission then download   </h1>
+<h1 id="ask-user">Ask user&rsquo;s permission then download</h1>
 <p>If an application does not want to bundle EPSG data by default,
 either for licensing reasons or for saving space, the application can ask user&rsquo;s permission the first time
 that EPSG data are needed, then (if agreed) download and install the data automatically.
 It can be done with a Java code similar to the following:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.setup.OptionalInstallations</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">OptionalInstallDialog</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">OptionalInstallations</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">OptionalInstallDialog</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">OptionalInstallations</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">OptionalInstallDialog</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">super</span><span class="p">(</span><span class="s">&#34;text/plain&#34;</span><span class="p">);</span><span class="w">     </span><span class="c1">// Desired format for the `license` argument below.</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
@@ -189,13 +189,13 @@ It can be done with a Java code similar to the following:</p>
 </span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// Ask here to user if she accepts the EPSG terms of use.</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
 </span></span></span></code></pre></div><p>The above class needs to be declared as an implementation of the <code>InstallationResources</code> service in <code>module-info.java</code>
 or, if the application does not use Java modules, in the <code>META-INF/services/org.apache.sis.setup.InstallationResources</code> file.
 In addition, the <code>SIS_DATA</code> environment variable needs to be set to the destination directory where to write data on the user&rsquo;s machine.
 With this configuration, Apache SIS will automatically asks for user agreement and, if agreed, download EPSG data when first needed.
 This approach can be combined with the next section for writing the EPSG data in a custom database.</p>
-<h1 id="existing">Use an existing EPSG database   </h1>
+<h1 id="existing">Use an existing EPSG database</h1>
 <p>Applications can use their own EPSG database.
 In addition of Derby, Apache <abbr title="Spatial Information System">SIS</abbr> is also tested on HSQL and PostgreSQL.
 For using an arbitrary database, register a <code>javax.sql.DataSource</code> instance through one of the methods described below.
@@ -203,13 +203,13 @@ The database must exist but can be empty, in which case it will be populated wit
 if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​1.6</code> dependency is on the classpath
 (see <a href="./epsg.html#maven-epsg">above section</a>).
 If non-empty, the database should contain the tables created by SQL scripts downloaded from <a href="https://epsg.org/">EPSG</a>.</p>
-<h2 id="setup">Registration by Java code   </h2>
+<h2 id="setup">Registration by Java code</h2>
 <p>The data source can be specified by Java code as below
 (replace the <code>main</code> method by any method where initialization occurs):</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">javax.sql.DataSource</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.setup.Configuration</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.apache.sis.setup.Configuration</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">MyApp</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">MyApp</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Configuration</span><span class="p">.</span><span class="na">current</span><span class="p">().</span><span class="na">setDatabase</span><span class="p">(</span><span class="n">MyApp</span><span class="p">::</span><span class="n">createDataSource</span><span class="p">);</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
@@ -218,22 +218,22 @@ If non-empty, the database should contain the tables created by SQL scripts down
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">DataSource</span><span class="w"> </span><span class="n">ds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...;</span><span class="w">        </span><span class="c1">// Initialize the data source here.</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ds</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
-</span></span></span></code></pre></div><h2 id="jndi">Registration by Java Naming and Directory Interface   </h2>
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h2 id="jndi">Registration by Java Naming and Directory Interface</h2>
 <p>Registration in JNDI can be done programmatically (by Java code) or by configuring XML files in some environments.
 Registration can be done by the following Java code, provided that a JNDI implementation is available on the classpath:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// Example using PostgreSQL data source (org.postgresql.ds.PGSimpleDataSource)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">PGSimpleDataSource</span><span class="w"> </span><span class="n">ds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PGSimpleDataSource</span><span class="p">();</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ds</span><span class="p">.</span><span class="na">setDatabaseName</span><span class="p">(</span><span class="s">&#34;SpatialMetadata&#34;</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// Server default to &#34;localhost&#34;.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="n">PGSimpleDataSource</span><span class="w"> </span><span class="n">ds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PGSimpleDataSource</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="n">ds</span><span class="p">.</span><span class="na">setDatabaseName</span><span class="p">(</span><span class="s">&#34;SpatialMetadata&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Server default to &#34;localhost&#34;.</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// Registration assuming that a JNDI implementation is available</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Context</span><span class="w"> </span><span class="n">env</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Context</span><span class="p">)</span><span class="w"> </span><span class="n">InitialContext</span><span class="p">.</span><span class="na">doLookup</span><span class="p">(</span><span class="s">&#34;java:comp/env&#34;</span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">env</span><span class="p">.</span><span class="na">bind</span><span class="p">(</span><span class="s">&#34;jdbc/SpatialMetadata&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">ds</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Registration assuming that a JNDI implementation is available</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="n">Context</span><span class="w"> </span><span class="n">env</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Context</span><span class="p">)</span><span class="w"> </span><span class="n">InitialContext</span><span class="p">.</span><span class="na">doLookup</span><span class="p">(</span><span class="s">&#34;java:comp/env&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="n">env</span><span class="p">.</span><span class="na">bind</span><span class="p">(</span><span class="s">&#34;jdbc/SpatialMetadata&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">ds</span><span class="p">);</span><span class="w">
 </span></span></span></code></pre></div><p>If there is no JNDI environment, the <code>org.apache.sis.setup.Configuration</code> class can be used as a fallback:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">// Fallback <span class="k">if</span> no JNDI environment is available.
 </span></span><span class="line"><span class="cl">Configuration.current<span class="o">()</span>.setDatabase<span class="o">(()</span> -&gt; ds<span class="o">)</span><span class="p">;</span>
-</span></span></code></pre></div><h2 id="jndi-webapp">Registration in web application containers   </h2>
+</span></span></code></pre></div><h2 id="jndi-webapp">Registration in web application containers</h2>
 <p>JNDI implementations are provided by web application containers like Apache Tomcat.
 When Apache <abbr title="Spatial Information System">SIS</abbr> is used in a JavaEE container, the data source can be configured as below:</p>
 <ol>
@@ -283,7 +283,17 @@ fetching the data source from the <code>context.xml</code> file.</p>
           <div class="container">
             <p>Copyright &copy; 2013-2026 The Apache Software Foundation, Licensed under the
             <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
-            Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+            Apache <abbr title="Spatial Information System">SIS</abbr>,
+            Apache, the Apache logo are trademarks of The Apache Software Foundation.</p>
+            <p>
+              <a href="https://www.apache.org/">Foundation</a> |
+              <a href="https://www.apache.org/events/current-event.html">Events</a> |
+              <a href="https://www.apache.org/licenses/">License</a> |
+              <a href="https://www.apache.org/security/">Security</a> |
+              <a href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a> |
+              <a href="https://www.apache.org/foundation/thanks.html">Thanks</a> |
+              <a href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy</a>
+            </p>
           </div>
         </footer>
       </div>
