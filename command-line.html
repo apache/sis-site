@@ -10,7 +10,7 @@
   </head>
   <body>
     <div class="topbar">
-      <a class="topbar-brand" href="./index.html">Apache SIS™</a>
+      <a class="topbar-brand" href="./index.html">Apache <abbr title="Spatial Information System">SIS</abbr>™</a>
       <ul class="topbar-items">
         <li>
           <a href="https://www.apache.org/events/current-event.html">
@@ -47,28 +47,28 @@ For each example, key Java APIs are listed for allowing users to reproduce the f
 in their own application.</p>
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#install">Installation   </a>
+    <li><a href="#install">Installation</a>
       <ul>
-        <li><a href="#dependencies">Optional dependencies   </a></li>
+        <li><a href="#dependencies">Optional dependencies</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage   </a></li>
-    <li><a href="#examples">Examples   </a>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#examples">Examples</a>
       <ul>
-        <li><a href="#crs">Print Coordinate Reference Systems (CRS) definition   </a></li>
-        <li><a href="#identifier">Getting a verified EPSG identifier from a Coordinate Reference System   </a></li>
-        <li><a href="#coordinateOperation">Performing coordinate conversions or transformations   </a>
+        <li><a href="#crs">Print Coordinate Reference Systems (CRS) definition</a></li>
+        <li><a href="#identifier">Getting a verified EPSG identifier from a Coordinate Reference System</a></li>
+        <li><a href="#coordinateOperation">Performing coordinate conversions or transformations</a>
           <ul>
             <li><a href="#using-a-specific-coordinate-operation">Using a specific coordinate operation</a></li>
           </ul>
         </li>
-        <li><a href="#metadata">Extracting ISO 19115 Metadata   </a></li>
+        <li><a href="#metadata">Extracting ISO 19115 Metadata</a></li>
       </ul>
     </li>
-    <li><a href="#performance">Performance consideration   </a></li>
+    <li><a href="#performance">Performance consideration</a></li>
   </ul>
 </nav>
-<h1 id="install">Installation   </h1>
+<h1 id="install">Installation</h1>
 <p>Select &ldquo;Apache <abbr title="Spatial Information System">SIS</abbr> 1.6 binary&rdquo; from the <a href="./downloads.html">downloads page</a> an unzip in any directory.
 The directory structure will be as below:</p>
 <pre tabindex="0"><code>apache-sis-1.6
@@ -83,7 +83,7 @@ Example:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PWD</span>/apache-sis-1.6/bin:<span class="nv">$PATH</span>
 </span></span></code></pre></div><p>The remaining of this page assumes that the <code>bin</code> directory is on the search path.
 If not, the same examples can still be executed by replacing the <code>sis</code> command by <code>./apache-sis-1.6/bin/sis</code>.</p>
-<h2 id="dependencies">Optional dependencies   </h2>
+<h2 id="dependencies">Optional dependencies</h2>
 <p>Every JAR files present in the <code>lib</code> sub-directory will be included on the classpath during <code>sis</code> command execution.
 By default, the <code>lib</code> directory contains the <code>sis-*.jar</code> files together with GeoAPI, JAXB and Apache Derby dependencies.
 However users can add other JAR files in that directory for the following optional dependencies:</p>
@@ -96,7 +96,7 @@ If there is a need to read files encoded in GRID or HDF formats, then copy the U
 If presents, the UCAR library should be detected and used automatically when SIS cannot read a netCDF file by itself.</li>
 </ul>
 <p>See <a href="https://issues.apache.org/jira/browse/SIS-545">issue SIS-545</a> for instructions on downloading optional dependencies.</p>
-<h1 id="usage">Usage   </h1>
+<h1 id="usage">Usage</h1>
 <p>Invoking <code>sis</code> without argument shows a summary of available commands and all options.
 For executing a command, the syntax is:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis &lt;command&gt; <span class="o">[</span>options<span class="o">]</span> <span class="o">[</span>files<span class="o">]</span>
@@ -131,7 +131,7 @@ Available options will be from the following list:</p>
 <p>The <code>--locale</code>, <code>--timezone</code> and <code>--encoding</code> options apply to the command output sent to the standard output stream,
 but usually do not apply to the error messages sent to the standard error stream.
 The reason is that command output may be targeted to a client, while the error messages are usually for the operator.</p>
-<h1 id="examples">Examples   </h1>
+<h1 id="examples">Examples</h1>
 <p>The following examples first show how to get a Coordinate Reference System (CRS) from different kinds of definitions.
 <abbr title="Coordinate Reference System">CRS</abbr> contain necessary information for locating points on Earth.
 Those information include the geodetic reference frame, the map projection (if any), the axes and their units of measurement.
@@ -139,7 +139,7 @@ When two such <abbr title="Coordinate Reference System">CRS</abbr> are known (th
 However the coordinate operation depends not only on the source and target <abbr title="Coordinate Reference System">CRS</abbr>, but also on the <em>area of interest</em> as shown
 by the example transforming city coordinates in USA and in Canada.
 Then another example show how to get a wider set of metadata, with the <abbr title="Coordinate Reference System">CRS</abbr> as only one specific element of those metadata.</p>
-<h2 id="crs">Print Coordinate Reference Systems (CRS) definition   </h2>
+<h2 id="crs">Print Coordinate Reference Systems (CRS) definition</h2>
 <p>Apache <abbr title="Spatial Information System">SIS</abbr> can read Coordinate Reference System (CRS) definitions from various sources:</p>
 <ul>
 <li>Codes from the EPSG geodetic dataset</li>
@@ -216,7 +216,7 @@ The result will be much more verbose than <abbr title="Well Known Text">WKT</abb
 </ul>
 </li>
 </ul>
-<h2 id="identifier">Getting a verified EPSG identifier from a Coordinate Reference System   </h2>
+<h2 id="identifier">Getting a verified EPSG identifier from a Coordinate Reference System</h2>
 <p>Because the EPSG geodetic dataset is so commonly used,
 a very common practice is to specify a <abbr title="Coordinate Reference System">CRS</abbr> using only its EPSG code instead of its full definition.
 Such codes can be written in different ways. For example all the following strings are for the same code:</p>
@@ -286,7 +286,7 @@ even if it stands for a <abbr title="Coordinate Reference System">CRS</abbr> def
 </ul>
 </li>
 </ul>
-<h2 id="coordinateOperation">Performing coordinate conversions or transformations   </h2>
+<h2 id="coordinateOperation">Performing coordinate conversions or transformations</h2>
 <p>Coordinates represented in a given <abbr title="Coordinate Reference System">CRS</abbr> can be transformed into coordinates represented in another <abbr title="Coordinate Reference System">CRS</abbr>.
 The coordinate transformations depend mostly on the <em>source</em> and <em>target</em> <abbr title="Coordinate Reference System">CRS</abbr>, but the <em>area of interest</em>
 can also have an influence; while optional, that area should be specified when it is known.</p>
@@ -352,7 +352,7 @@ in which case they do not need to exist in the EPSG database.</p>
 But if the source and/or target <abbr title="Coordinate Reference System">CRS</abbr> are nevertheless specified together with the operation,
 then the operation is used in the middle of a chain of operations,
 and conversions from/to the specified <abbr title="Coordinate Reference System">CRS</abbr> are concatenated before/after the specified operation.</p>
-<h2 id="metadata">Extracting ISO 19115 Metadata   </h2>
+<h2 id="metadata">Extracting ISO 19115 Metadata</h2>
 <p>Apache <abbr title="Spatial Information System">SIS</abbr> can read the header of a data file and print the metadata in an <abbr title="International Organization for Standardization">ISO</abbr> 19115 structure.
 The data file given in argument can be a local file or a URL.
 By default, the metadata are shown in a relatively compact tree-table format.
@@ -410,7 +410,7 @@ See <a href="https://issues.apache.org/jira/browse/SIS-545">issue SIS-545</a> fo
 </ul>
 </li>
 </ul>
-<h1 id="performance">Performance consideration   </h1>
+<h1 id="performance">Performance consideration</h1>
 <p>If there is a large amount of files to process, invoking the above command many time may be inefficient
 because it would restart a new JVM on every invocation.
 If the operation requires the EPSG dataset, booting the Derby database also has a significant cost.
@@ -423,7 +423,17 @@ For such cases, it is more efficient to loop inside a small Java program using t
           <div class="container">
             <p>Copyright &copy; 2013-2026 The Apache Software Foundation, Licensed under the
             <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
-            Apache SIS, Apache, the Apache feather logo are trademarks of The Apache Software Foundation.</p>
+            Apache <abbr title="Spatial Information System">SIS</abbr>,
+            Apache, the Apache logo are trademarks of The Apache Software Foundation.</p>
+            <p>
+              <a href="https://www.apache.org/">Foundation</a> |
+              <a href="https://www.apache.org/events/current-event.html">Events</a> |
+              <a href="https://www.apache.org/licenses/">License</a> |
+              <a href="https://www.apache.org/security/">Security</a> |
+              <a href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a> |
+              <a href="https://www.apache.org/foundation/thanks.html">Thanks</a> |
+              <a href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy</a>
+            </p>
           </div>
         </footer>
       </div>
