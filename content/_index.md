@@ -82,11 +82,18 @@ are also provided for allowing users to experiment some SIS functionalities befo
 
 ## Backward compatibility policy    {#compatibility}
 
-Most of SIS public API is stable.
+Most of {{% SIS %}} public {{% API %}} is stable.
 If an API needs to be changed, the old API is annotated as deprecated and a Javadoc comment explains the replacement.
-If the API is deprecated for removal, it is usually kept for only one release and effectively removed in the next one.
-Therefore, if an API seems to have disappeared after an Apache SIS upgrade, the migration path can be identified by
-incrementing the version one-by-one. The `@version` tag gives the last version when a class got a significant change.
+If the API is deprecated for removal, it is usually kept for one SIS release and effectively removed in the next one.
+Therefore, if an API seems to have disappeared between two versions of Apache SIS,
+the replacement can be found by incrementing the SIS version one-by-one and looking at the compiler warnings.
+The versions to test can be bounded by looking at the `@version` tag in the [Javadoc](apidocs/index.html),
+which gives the last version when a class, package or module got a significant change.
+
+In some rare occasions, an incompatible API change may be applied without deprecation cycle.
+It may happen when it is difficult to have the old and new API coexisting.
+Such cases are documented in an "Incompatible changes" section of the [release notes](release-notes/index.html)
+and should not impact the most commonly used APIs.
 
 
 [geoapi]:    https://www.geoapi.org/
