@@ -54,10 +54,8 @@ and stored in the `apache-sis-{{% version %}}/data` sub-directory.
 ## How to use the local copy in other applications    {#use-local}
 
 The EPSG dataset installed by the command-line tools or the JavaFX application can also be used with other applications.
-For using the installed EPSG geodetic dataset in your own application, apply *one* of the following choices:
-
-* Set the `SIS_DATA` environment variable to the path of `apache-sis-{{% version %}}/data` directory _(recommended)_.
-* Set the `derby.system.home` Java property to the path of `apache-sis-{{% version %}}/data/Databases` directory.
+For using the installed EPSG geodetic dataset in your own application,
+set the `SIS_DATA` environment variable to the path of `apache-sis-{{% version %}}/data` directory.
 
 Examples are shown below for Unix systems, assuming that the current directory is the directory where `apache-sis-{{% version %}}-bin.zip`
 has been unzipped (replace `myApp` and `MyMainClass` by the application to launch):
@@ -70,12 +68,11 @@ java --class-path apache-sis-{{% version %}}/lib/sis-referencing.jar:myApp.jar M
 If the `SIS_DATA` environment variable cannot be set, Java property can be used as a fallback:
 
 ```bash
-java -Dderby.system.home=apache-sis-{{% version %}}/data/Databases \
-     --class-path apache-sis-{{% version %}}/lib/sis-referencing.jar:myApp.jar \
+java --class-path apache-sis-{{% version %}}/lib/sis-referencing.jar:myApp.jar \
      MyMainClass
 ```
 
-The `SIS_DATA` environment variable or `derby.system.home` Java property
+The `SIS_DATA` environment variable
 can be set to the path of any other directory which contain the same files.
 
 
@@ -93,7 +90,7 @@ have agreed with the [EPSG Terms of Use][EPSG-ToU].
 
 With `sis-embedded-data` artifact on the classpath, there is no need to setup environment variable, Java property or JNDI.
 However, this simplicity come at the cost of a larger download with no possibility to choose the database engine
-(i.e. the database software is fixed to Derby), and no possibility to add's user data (i.e. the database is read-only).
+(i.e. the database software is fixed to HSQLDB), and no possibility to add's user data (i.e. the database is read-only).
 This embedded data dependency can be declared as below
 (see the [download](downloads.html#epsg) page for more information about Maven dependency declaration).
 
@@ -110,14 +107,12 @@ This embedded data dependency can be declared as below
 
 ## As database installer     {#maven-epsg}
 
-For applications which already have a database engine, or which use a different version of the Derby database,
+For applications which already have a database engine,
 it may be desirable to install the EPSG geodetic dataset in their existing database rather than having two databases in parallel.
 With `sis-epsg` artifact on the classpath, Apache {{% SIS %}} will create a local copy of EPSG database when first needed.
 The target database must be specified by users with *one* of the following choices:
 
-* set the `SIS_DATA` environment variable to the path of an initially empty directory _(recommended for Derby users)_,
-* or set the `derby.system.home` Java property to the path of an initially empty directory
-  or a directory that contain other Derby databases,
+* set the `SIS_DATA` environment variable to the path of an initially empty directory _(recommended for HSQLDB users)_,
 * or register a `DataSource` under the `java:comp/env/jdbc/SpatialMetadata` name in a JNDI directory
   (see [next section](#jndi)),
 * or set a `DataSource` [from Java code](./apidocs/org.apache.sis.util/org/apache/sis/setup/Configuration.html).
@@ -125,7 +120,7 @@ The target database must be specified by users with *one* of the following choic
 In all cases, the specified directory or database must exist but may be empty.
 Sub-directories or database schema will be created as needed.
 Then, the Maven dependency can be declared in a project as below,
-with the Derby dependency replaced by another database driver if desired:
+with the HSQLDB dependency replaced by another database driver if desired:
 
 ```xml
 <dependencies>
@@ -136,9 +131,9 @@ with the Derby dependency replaced by another database driver if desired:
     <scope>runtime</scope>
   </dependency>
   <dependency>
-    <groupId>org.apache.derby</groupId>
-    <artifactId>derby</artifactId>
-    <version>10.14.2.0</version>
+    <groupId>org.hsqldb</groupId>
+    <artifactId>hsqldb</artifactId>
+    <version>2.7.4</version>
     <scope>runtime</scope>
   </dependency>
 </dependencies>
@@ -189,7 +184,7 @@ This approach can be combined with the next section for writing the EPSG data in
 # Use an existing EPSG database    {#existing}
 
 Applications can use their own EPSG database.
-In addition of Derby, Apache {{% SIS %}} is also tested on HSQL and PostgreSQL.
+In addition of HSQLDB, Apache {{% SIS %}} is also tested on Derby and PostgreSQL.
 For using an arbitrary database, register a `javax.sql.DataSource` instance through one of the methods described below.
 The database must exist but can be empty, in which case it will be populated with an EPSG schema when first needed
 if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​{{% version %}}</code> dependency is on the classpath

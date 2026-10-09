@@ -25,7 +25,8 @@ The API and the data encodings follow [international standards](standards.html) 
 
 * Raster formats:
   * Read [NetCDF-3 Classic and 64-bit Offset Format][netCDF].
-  * Read [GeoTIFF][geoTIFF] or Cloud Optimized GeoTIFF (COG), including BigTIFF extension.
+  * Read GeoHEIF files (experimental).
+  * Read/write [GeoTIFF][geoTIFF] or Cloud Optimized GeoTIFF (COG), including BigTIFF extension.
   * Read Landsat (groups of GeoTIFF files).
   * Read ESRI BIL/BIP/BSQ and read/write ERSI ASCII Grid.
   * Read/write World Files with any image format supported by Image I/O.
@@ -63,11 +64,11 @@ The API and the data encodings follow [international standards](standards.html) 
 
 # Using Apache SIS    {#using}
 
-The latest SIS release is {{% version %}}, released in January 2026,
+The latest SIS release is {{% version %}}, released in October 2026,
 and can be [downloaded](downloads.html) as a `zip` files or as Maven dependencies.
 The EPSG geodetic dataset is optional for licensing reasons, but recommended.
 EPSG database installation is [described in a separated page](epsg.html).
-This Apache SIS version requires Java 11 or later and uses the Java Platform Module System (JPMS).
+This Apache SIS version requires Java 11 or later and uses the Java Module System.
 Applications should declare SIS JAR files on their module-path rather than their class-path,
 but a compatibility mechanism makes possible to nevertheless use SIS on the class-path.
 Note that this class-path compatibility may be removed in future versions.

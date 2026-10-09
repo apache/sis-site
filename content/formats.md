@@ -41,6 +41,11 @@ in which case the root resource will be `Aggregate`.
     <td><code>org.apache.sis.storage.gdal</code></td>
     <td><code>Aggregate</code></td>
   </tr><tr>
+    <td>GeoHEIF</td>
+    <td>Read</td>
+    <td><code>org.apache.sis.storage.geoheif</code></td>
+    <td><code>Aggregate</code>, <code>GridCoverageResource</code></td>
+  </tr><tr>
     <td>GeoTIFF⁽²⁾</td>
     <td>Read/Write</td>
     <td><code>org.apache.sis.storage.geotiff</code></td>

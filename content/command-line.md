@@ -39,7 +39,7 @@ If not, the same examples can still be executed by replacing the `sis` command b
 ## Optional dependencies    {#dependencies}
 
 Every JAR files present in the `lib` sub-directory will be included on the classpath during `sis` command execution.
-By default, the `lib` directory contains the `sis-*.jar` files together with GeoAPI, JAXB and Apache Derby dependencies.
+By default, the `lib` directory contains the `sis-*.jar` files together with GeoAPI, JAXB and HSQLDB dependencies.
 However users can add other JAR files in that directory for the following optional dependencies:
 
 * **JAXB implementation —**
@@ -430,5 +430,5 @@ Java API for accessing functionalities shown in above examples are:
 
 If there is a large amount of files to process, invoking the above command many time may be inefficient
 because it would restart a new JVM on every invocation.
-If the operation requires the EPSG dataset, booting the Derby database also has a significant cost.
+If the operation requires the EPSG dataset, booting the HSQLDB database also has a significant cost.
 For such cases, it is more efficient to loop inside a small Java program using the [SIS API](apidocs/index.html).

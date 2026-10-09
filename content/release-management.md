@@ -195,13 +195,17 @@ Note that the [password can be encrypted](https://maven.apache.org/guides/mini/g
 
 # Specific release configuration    {#release-config}
 
+Before to start, verify that the latest
+[Continuous Integration (CI) build](https://ci-builds.apache.org/job/SIS/job/main/) is green.
+It may require to launch a new build.
+
 For all instructions in this page, `$OLD_VERSION` and `$NEW_VERSION` stand for the version
 number of the previous and the new release respectively, and `$RELEASE_CANDIDATE` stands for
 the current release attempt. Those versions shall be set on the command line like below (Unix):
 
 ```bash
 gpg --list-keys                     # For getting the value to put in <your key ID>
-export OLD_VERSION=1.4
+export OLD_VERSION=1.6
 export NEW_VERSION={{% version %}}
 export RELEASE_CANDIDATE=1
 export SIGNING_KEY=<your key ID>    # hexadecimal number with 8 or 40 digits.
@@ -238,11 +242,11 @@ svn copy https://dist.apache.org/repos/dist/release/sis/$OLD_VERSION/HEADER.html
 Replace the `$OLD_VERSION` number by `$NEW_VERSION` in the following files on the development branch
 (currently the `geoapi-4.0` branch). Check also if the content of those files needs update.
 
-* `NOTICE`
+* `NOTICE` (update also the copyright year)
 * `README.md`
-* `optional/src/org.apache.sis.gui/bundle/README`
+* `optional/src/org.apache.sis.gui/bundle/README` (update also the copyright year)
 * `endorsed/src/org.apache.sis.util/main/org/apache/sis/setup/OptionalInstallations.java`
-  * Appears in the `DOWNLOAD_URL` constant, in its Javadoc and in class `@since` Javadoc tag.
+  * Appears in the `DOWNLOAD_URL` constant and in class `@since` Javadoc tag.
 
 Commit and merge with other branches up to main branch.
 
@@ -328,7 +332,7 @@ Then, execute the following commands and fix as much warnings as practical:
 ```bash
 systemctl start postgresql.service        # Optional — exact command depends on Linux distribution.
 export SIS_TEST_OPTIONS=epsg,extensive,postgresql
-gradle test
+gradle test --rerun
 ```
 
 If the `SIS_DATA` environment variable was set during above build, unset it and try again.
@@ -340,7 +344,7 @@ the variable value in the shell performing the release.
 echo $SIS_DATA
 unset SIS_DATA
 unset SIS_TEST_OPTIONS
-gradle cleanTest test
+gradle test --rerun
 ```
 
 
@@ -362,8 +366,7 @@ Those steps are also useful as additional tests, since failure to generate those
        --module org.apache.sis.referencing/org.apache.sis.referencing.report.CoordinateOperationMethods
 
   java --module-path endorsed/build/libs \
-       --add-modules   org.apache.derby.tools,org.apache.derby.engine \
-       --limit-modules org.apache.derby.tools,org.apache.derby.engine,org.apache.sis.referencing \
+       --limit-modules org.hsqldb,org.apache.sis.referencing \
        --patch-module  org.apache.sis.referencing=endorsed/build/classes/java/test/org.apache.sis.referencing \
        --module org.apache.sis.referencing/org.apache.sis.referencing.report.CoordinateReferenceSystems
   ```
@@ -371,11 +374,14 @@ Those steps are also useful as additional tests, since failure to generate those
 * If successful, HTML files will be generated in the current directory.
   Open those files in a web browser and verify that information are okay,
   in particular the SIS and EPSG version numbers in the first paragraph.
-* If okay, move those two HTML files to the `../site/main/static/tables/` directory, overwriting previous files.
-  Revert the hack in `AuthorityCodes` class, then commit:
+* If okay, move those two HTML files to the web site directory, overwriting previous files.
+  Then commit:
 
   ```bash
+  mv CoordinateOperationMethods.html CoordinateReferenceSystems.html ../../site/main/static/tables/
+  cd ../../site/main
   git commit --message="Update the list CRS and operation methods supported by Apache SIS $NEW_VERSION."
+  cd -
   ```
 
 
@@ -542,7 +548,7 @@ Apply the following changes:
 * Move all `-classpath` content to `--module-path`.
 * Add the value of `$PATH_TO_FX` environment variable to the module-path.
 * Remove the `--no-fonts` option.
-* Add the `-use` and `--since 1.1,1.2,1.3,1.4,1.5,1.6` options (edit the list of releases).
+* Add the `-use` and `--since 1.1,1.2,1.3,1.4,1.5,1.6,1.7` options (edit the list of releases).
 * Delete all Java source files listed after the options, everything until the end of file.
 * Add the following line in-place of deleted lines (omit the `org.opengis.geoapi` module if not desired):
 
@@ -560,6 +566,7 @@ org.apache.sis.storage,\
 org.apache.sis.storage.sql,\
 org.apache.sis.storage.xml,\
 org.apache.sis.storage.netcdf,\
+org.apache.sis.storage.geoheif,\
 org.apache.sis.storage.geotiff,\
 org.apache.sis.storage.earthobservation,\
 org.apache.sis.storage.gdal,\
@@ -582,11 +589,10 @@ ln -s ../../optional/src/org.apache.sis.* .
 rm -r org.apache.sis.test.*
 cd -
 
-# Replace "../../GeoAPI/3.0.2" by the path to a GeoAPI 3.0.2 checkout, or omit those lines.
+# Replace "../../../GeoAPI/3.0.x" by the path to a GeoAPI 3.0.2 checkout, or omit those lines.
 mkdir endorsed/src/org.opengis.geoapi
-cp -r ../../GeoAPI/3.0.2/geoapi/src/main/java                    endorsed/src/org.opengis.geoapi/main
-cp -r ../../GeoAPI/3.0.2/geoapi/src/pending/java/org             endorsed/src/org.opengis.geoapi/main/
-cp    ../../GeoAPI/3.0.2/geoapi/src/main/java9/module-info.java  endorsed/src/org.opengis.geoapi/main/
+cp -r ../../../GeoAPI/3.0.x/geoapi/src/main/java        endorsed/src/org.opengis.geoapi/main
+cp -r ../../../GeoAPI/3.0.x/geoapi/src/pending/java/org endorsed/src/org.opengis.geoapi/main/
 
 javadoc @endorsed/build/tmp/javadoc/javadoc.options
 firefox endorsed/build/docs/javadoc/index.html                      # For verifying the result.
@@ -602,7 +608,7 @@ cd endorsed/build/docs/
 mv javadoc apidocs
 zip -9 -r $DIST_DIR/apache-sis-$NEW_VERSION-doc.zip apidocs
 cd -
-cd ../site/javadoc/
+cd ../../site/javadoc/
 rm -r *
 mv $SIS_RC_DIR/endorsed/build/docs/apidocs/* .
 git checkout -- README.md
@@ -678,8 +684,9 @@ wget https://sis.staged.apache.org/examples/coordinates/CanadianCities.csv
 ./bin/sis identifier https://sis.staged.apache.org/examples/crs/EquivalentDefinition.wkt
 ./bin/sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 AmericanCities.csv
 ./bin/sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 CanadianCities.csv
-rm --recursive data/Databases/SpatialMetadata  # For testing EPSG download from GUI.
+rm --recursive data/Databases/*  # For testing EPSG download from GUI.
 ./bin/sisfx
+ll data/Databases/
 ```
 
 
@@ -732,7 +739,7 @@ Update the following files (e.g. the release date in `index.md`):
 * `content/_index.md`
 * `content/command-line.md`
 * `content/epsg.md` for EPSG dataset version
-* `content/download.md` for SIS version and JAXB dependency
+* `content/downloads.md` for SIS version and JAXB dependency
 * `content/developer-guide/introduction/Installation.html`
 
 Execute `hugo` and browse the documentation in the `public` repository.
