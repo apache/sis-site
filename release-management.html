@@ -224,12 +224,15 @@ Note that the <a href="https://maven.apache.org/guides/mini/guide-encryption.htm
 </span></span><span class="line"><span class="cl">  <span class="nt">&lt;/servers&gt;</span>
 </span></span><span class="line"><span class="cl"><span class="nt">&lt;/settings&gt;</span>
 </span></span></code></pre></div><h1 id="release-config">Specific release configuration</h1>
+<p>Before to start, verify that the latest
+<a href="https://ci-builds.apache.org/job/SIS/job/main/">Continuous Integration (CI) build</a> is green.
+It may require to launch a new build.</p>
 <p>For all instructions in this page, <code>$OLD_VERSION</code> and <code>$NEW_VERSION</code> stand for the version
 number of the previous and the new release respectively, and <code>$RELEASE_CANDIDATE</code> stands for
 the current release attempt. Those versions shall be set on the command line like below (Unix):</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gpg --list-keys                     <span class="c1"># For getting the value to put in &lt;your key ID&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">OLD_VERSION</span><span class="o">=</span>1.4
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">NEW_VERSION</span><span class="o">=</span>1.6
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">OLD_VERSION</span><span class="o">=</span>1.6
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">NEW_VERSION</span><span class="o">=</span>1.7
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">RELEASE_CANDIDATE</span><span class="o">=</span><span class="m">1</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SIGNING_KEY</span><span class="o">=</span>&lt;your key ID&gt;    <span class="c1"># hexadecimal number with 8 or 40 digits.</span>
 </span></span></code></pre></div><p>Make sure that the code signing key is the default key declared in <code>~/.gnupg/gpg.conf</code>
@@ -250,12 +253,12 @@ Update the file content if necessary.</p>
 <p>Replace the <code>$OLD_VERSION</code> number by <code>$NEW_VERSION</code> in the following files on the development branch
 (currently the <code>geoapi-4.0</code> branch). Check also if the content of those files needs update.</p>
 <ul>
-<li><code>NOTICE</code></li>
+<li><code>NOTICE</code> (update also the copyright year)</li>
 <li><code>README.md</code></li>
-<li><code>optional/src/org.apache.sis.gui/bundle/README</code></li>
+<li><code>optional/src/org.apache.sis.gui/bundle/README</code> (update also the copyright year)</li>
 <li><code>endorsed/src/org.apache.sis.util/main/org/apache/sis/setup/OptionalInstallations.java</code>
 <ul>
-<li>Appears in the <code>DOWNLOAD_URL</code> constant, in its Javadoc and in class <code>@since</code> Javadoc tag.</li>
+<li>Appears in the <code>DOWNLOAD_URL</code> constant and in class <code>@since</code> Javadoc tag.</li>
 </ul>
 </li>
 </ul>
@@ -318,7 +321,7 @@ see <a href="./source.html#postgres">PostgreSQL testing configuration</a> for mo
 Then, execute the following commands and fix as much warnings as practical:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">systemctl start postgresql.service        <span class="c1"># Optional — exact command depends on Linux distribution.</span>
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SIS_TEST_OPTIONS</span><span class="o">=</span>epsg,extensive,postgresql
-</span></span><span class="line"><span class="cl">gradle <span class="nb">test</span>
+</span></span><span class="line"><span class="cl">gradle <span class="nb">test</span> --rerun
 </span></span></code></pre></div><p>If the <code>SIS_DATA</code> environment variable was set during above build, unset it and try again.
 Ideally the build should be tested in both conditions (<code>SIS_DATA</code> set and unset).
 That test may be done in a separated shell (console window) in order to preserve
@@ -326,7 +329,7 @@ the variable value in the shell performing the release.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="nv">$SIS_DATA</span>
 </span></span><span class="line"><span class="cl"><span class="nb">unset</span> SIS_DATA
 </span></span><span class="line"><span class="cl"><span class="nb">unset</span> SIS_TEST_OPTIONS
-</span></span><span class="line"><span class="cl">gradle cleanTest <span class="nb">test</span>
+</span></span><span class="line"><span class="cl">gradle <span class="nb">test</span> --rerun
 </span></span></code></pre></div><h2 id="update-crs-list">Update the list of supported CRS</h2>
 <p>The following steps regenerate
 the <a href="./tables/CoordinateOperationMethods.html">CoordinateOperationMethods</a>
@@ -343,8 +346,7 @@ Those steps are also useful as additional tests, since failure to generate those
 </span></span></span><span class="line"><span class="cl">     --module org.apache.sis.referencing/org.apache.sis.referencing.report.CoordinateOperationMethods
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">java --module-path endorsed/build/libs <span class="se">\
-</span></span></span><span class="line"><span class="cl">     --add-modules   org.apache.derby.tools,org.apache.derby.engine <span class="se">\
-</span></span></span><span class="line"><span class="cl">     --limit-modules org.apache.derby.tools,org.apache.derby.engine,org.apache.sis.referencing <span class="se">\
+</span></span></span><span class="line"><span class="cl">     --limit-modules org.hsqldb,org.apache.sis.referencing <span class="se">\
 </span></span></span><span class="line"><span class="cl">     --patch-module  org.apache.sis.referencing<span class="o">=</span>endorsed/build/classes/java/test/org.apache.sis.referencing <span class="se">\
 </span></span></span><span class="line"><span class="cl">     --module org.apache.sis.referencing/org.apache.sis.referencing.report.CoordinateReferenceSystems
 </span></span></code></pre></div></li>
@@ -354,9 +356,12 @@ Open those files in a web browser and verify that information are okay,
 in particular the SIS and EPSG version numbers in the first paragraph.</p>
 </li>
 <li>
-<p>If okay, move those two HTML files to the <code>../site/main/static/tables/</code> directory, overwriting previous files.
-Revert the hack in <code>AuthorityCodes</code> class, then commit:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git commit --message<span class="o">=</span><span class="s2">&#34;Update the list CRS and operation methods supported by Apache SIS </span><span class="nv">$NEW_VERSION</span><span class="s2">.&#34;</span>
+<p>If okay, move those two HTML files to the web site directory, overwriting previous files.
+Then commit:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mv CoordinateOperationMethods.html CoordinateReferenceSystems.html ../../site/main/static/tables/
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> ../../site/main
+</span></span><span class="line"><span class="cl">git commit --message<span class="o">=</span><span class="s2">&#34;Update the list CRS and operation methods supported by Apache SIS </span><span class="nv">$NEW_VERSION</span><span class="s2">.&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> -
 </span></span></code></pre></div></li>
 </ul>
 <h2 id="release-notes">Prepare release notes</h2>
@@ -476,7 +481,7 @@ But it should have created a <code>javadoc.options</code> file that we will patc
 <li>Move all <code>-classpath</code> content to <code>--module-path</code>.</li>
 <li>Add the value of <code>$PATH_TO_FX</code> environment variable to the module-path.</li>
 <li>Remove the <code>--no-fonts</code> option.</li>
-<li>Add the <code>-use</code> and <code>--since 1.1,1.2,1.3,1.4,1.5,1.6</code> options (edit the list of releases).</li>
+<li>Add the <code>-use</code> and <code>--since 1.1,1.2,1.3,1.4,1.5,1.6,1.7</code> options (edit the list of releases).</li>
 <li>Delete all Java source files listed after the options, everything until the end of file.</li>
 <li>Add the following line in-place of deleted lines (omit the <code>org.opengis.geoapi</code> module if not desired):</li>
 </ul>
@@ -493,6 +498,7 @@ org.apache.sis.storage,\
 org.apache.sis.storage.sql,\
 org.apache.sis.storage.xml,\
 org.apache.sis.storage.netcdf,\
+org.apache.sis.storage.geoheif,\
 org.apache.sis.storage.geotiff,\
 org.apache.sis.storage.earthobservation,\
 org.apache.sis.storage.gdal,\
@@ -511,11 +517,10 @@ Then the Javadoc command is launched manually.</p>
 </span></span><span class="line"><span class="cl">rm -r org.apache.sis.test.*
 </span></span><span class="line"><span class="cl"><span class="nb">cd</span> -
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># Replace &#34;../../GeoAPI/3.0.2&#34; by the path to a GeoAPI 3.0.2 checkout, or omit those lines.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Replace &#34;../../../GeoAPI/3.0.x&#34; by the path to a GeoAPI 3.0.2 checkout, or omit those lines.</span>
 </span></span><span class="line"><span class="cl">mkdir endorsed/src/org.opengis.geoapi
-</span></span><span class="line"><span class="cl">cp -r ../../GeoAPI/3.0.2/geoapi/src/main/java                    endorsed/src/org.opengis.geoapi/main
-</span></span><span class="line"><span class="cl">cp -r ../../GeoAPI/3.0.2/geoapi/src/pending/java/org             endorsed/src/org.opengis.geoapi/main/
-</span></span><span class="line"><span class="cl">cp    ../../GeoAPI/3.0.2/geoapi/src/main/java9/module-info.java  endorsed/src/org.opengis.geoapi/main/
+</span></span><span class="line"><span class="cl">cp -r ../../../GeoAPI/3.0.x/geoapi/src/main/java        endorsed/src/org.opengis.geoapi/main
+</span></span><span class="line"><span class="cl">cp -r ../../../GeoAPI/3.0.x/geoapi/src/pending/java/org endorsed/src/org.opengis.geoapi/main/
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">javadoc @endorsed/build/tmp/javadoc/javadoc.options
 </span></span><span class="line"><span class="cl">firefox endorsed/build/docs/javadoc/index.html                      <span class="c1"># For verifying the result.</span>
@@ -527,7 +532,7 @@ Then update the online Javadoc:</p>
 </span></span><span class="line"><span class="cl">mv javadoc apidocs
 </span></span><span class="line"><span class="cl">zip -9 -r <span class="nv">$DIST_DIR</span>/apache-sis-<span class="nv">$NEW_VERSION</span>-doc.zip apidocs
 </span></span><span class="line"><span class="cl"><span class="nb">cd</span> -
-</span></span><span class="line"><span class="cl"><span class="nb">cd</span> ../site/javadoc/
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> ../../site/javadoc/
 </span></span><span class="line"><span class="cl">rm -r *
 </span></span><span class="line"><span class="cl">mv <span class="nv">$SIS_RC_DIR</span>/endorsed/build/docs/apidocs/* .
 </span></span><span class="line"><span class="cl">git checkout -- README.md
@@ -579,8 +584,9 @@ Specify the URL to the nexus repository, where <code>####</code> is the identifi
 </span></span><span class="line"><span class="cl">./bin/sis identifier https://sis.staged.apache.org/examples/crs/EquivalentDefinition.wkt
 </span></span><span class="line"><span class="cl">./bin/sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 AmericanCities.csv
 </span></span><span class="line"><span class="cl">./bin/sis transform --sourceCRS EPSG:4267 --targetCRS EPSG:4326 CanadianCities.csv
-</span></span><span class="line"><span class="cl">rm --recursive data/Databases/SpatialMetadata  <span class="c1"># For testing EPSG download from GUI.</span>
+</span></span><span class="line"><span class="cl">rm --recursive data/Databases/*  <span class="c1"># For testing EPSG download from GUI.</span>
 </span></span><span class="line"><span class="cl">./bin/sisfx
+</span></span><span class="line"><span class="cl">ll data/Databases/
 </span></span></code></pre></div><h2 id="test-downloads">Test the downloads</h2>
 <p>Stage the release candidate:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> <span class="nv">$DIST_DIR</span>
@@ -614,7 +620,7 @@ Add a new <code>&lt;release&gt;</code> block for the new release with the estima
 <li><code>content/_index.md</code></li>
 <li><code>content/command-line.md</code></li>
 <li><code>content/epsg.md</code> for EPSG dataset version</li>
-<li><code>content/download.md</code> for SIS version and JAXB dependency</li>
+<li><code>content/downloads.md</code> for SIS version and JAXB dependency</li>
 <li><code>content/developer-guide/introduction/Installation.html</code></li>
 </ul>
 <p>Execute <code>hugo</code> and browse the documentation in the <code>public</code> repository.
