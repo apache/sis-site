@@ -50,8 +50,21 @@
 </ul>
 <p>Following the <a href="https://db.apache.org/derby/#Derby&#43;Retired">retirement of Apache Derby</a>,
 this release migrated the <code>org.apache.sis.referencing.database</code> module (Maven artifact: <code>sis-embedded-data</code>) to HSQLDB.
-Reminder: applications connected to their own database should instead use the <code>org.apache.sis.referencing.epsg</code> module
-(Maven artifact: <code>sis-epsg</code>) in order to leverage their existing database engine (e.g. PostgreSQL) instead of adding HSQLDB.</p>
+This change brings the following known issues (links to issues tracker are given):</p>
+<ul>
+<li><code>sis-embedded-data</code> does not work if HSQLDB is on the module-path
+(<a href="https://sourceforge.net/p/hsqldb/bugs/1761/">HSQLDB-1761</a>).</li>
+<li><code>sis-embedded-data</code> causes <em>&ldquo;A terminally deprecated method in sun.misc.Unsafe has been called&rdquo;</em> warning
+(<a href="https://sourceforge.net/p/hsqldb/bugs/1752/">HSQLDB-1752</a>).</li>
+<li><code>sis-embedded-data</code> may be very slow
+(<a href="https://sourceforge.net/p/hsqldb/bugs/1758/">HSQLDB-1758</a>).
+As a workaround, <code>sis-embedded-data</code> unzips the database in a temporary directory,
+but this workaround may not be applicable in all environments.</li>
+<li>Some <a href="../command-line.html#identifier">command-line examples</a> are temporarily broken because of collation issue.</li>
+</ul>
+<p>Applications connected to their own database should instead use the <code>org.apache.sis.referencing.epsg</code> module
+(Maven artifact: <code>sis-epsg</code>) in order to leverage their existing database engine and avoid above issues.
+For example, Apache SIS works well on PostgreSQL.</p>
 <h1 id="security">Security</h1>
 <p>This release fixes the following vulnerabilities.
 Before the fixes, parsing a small crafted file could cause an <code>OutOfMemoryError</code>,
