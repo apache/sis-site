@@ -88,7 +88,7 @@ of the information provided that numeric equivalence is achieved.</li>
 <h1 id="command-line">Install a local copy with command-line tool</h1>
 <p>The installation process described in this section makes clear that EPSG dataset
 is distributed under a different license and asks users for their agreement.
-This process can be used with the <a href="./downloads.html#bundles">Apache SIS 1.6 binary bundle</a>.
+This process can be used with the <a href="./downloads.html#bundles">Apache SIS 1.7 binary bundle</a>.
 If the <a href="./command-line.html">command-line tool</a> has been downloaded and installed, just query any CRS.
 For example:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sis crs EPSG:6676
@@ -97,23 +97,19 @@ It may be necessary to open a random data file for triggering the EPSG dataset i
 In both cases, the first time that the command-line tool or JavaFX application needs to query EPSG,
 it will prompt the user for authorization to download the EPSG geodetic dataset from Maven Central.
 If the user accepts EPSG terms of use, then a local copy of the EPSG geodetic dataset will be created
-and stored in the <code>apache-sis-1.6/data</code> sub-directory.</p>
+and stored in the <code>apache-sis-1.7/data</code> sub-directory.</p>
 <h2 id="use-local">How to use the local copy in other applications</h2>
 <p>The EPSG dataset installed by the command-line tools or the JavaFX application can also be used with other applications.
-For using the installed EPSG geodetic dataset in your own application, apply <em>one</em> of the following choices:</p>
-<ul>
-<li>Set the <code>SIS_DATA</code> environment variable to the path of <code>apache-sis-1.6/data</code> directory <em>(recommended)</em>.</li>
-<li>Set the <code>derby.system.home</code> Java property to the path of <code>apache-sis-1.6/data/Databases</code> directory.</li>
-</ul>
-<p>Examples are shown below for Unix systems, assuming that the current directory is the directory where <code>apache-sis-1.6-bin.zip</code>
+For using the installed EPSG geodetic dataset in your own application,
+set the <code>SIS_DATA</code> environment variable to the path of <code>apache-sis-1.7/data</code> directory.</p>
+<p>Examples are shown below for Unix systems, assuming that the current directory is the directory where <code>apache-sis-1.7-bin.zip</code>
 has been unzipped (replace <code>myApp</code> and <code>MyMainClass</code> by the application to launch):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SIS_DATA</span><span class="o">=</span>apache-sis-1.6/data
-</span></span><span class="line"><span class="cl">java --class-path apache-sis-1.6/lib/sis-referencing.jar:myApp.jar MyMainClass
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SIS_DATA</span><span class="o">=</span>apache-sis-1.7/data
+</span></span><span class="line"><span class="cl">java --class-path apache-sis-1.7/lib/sis-referencing.jar:myApp.jar MyMainClass
 </span></span></code></pre></div><p>If the <code>SIS_DATA</code> environment variable cannot be set, Java property can be used as a fallback:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">java -Dderby.system.home<span class="o">=</span>apache-sis-1.6/data/Databases <span class="se">\
-</span></span></span><span class="line"><span class="cl">     --class-path apache-sis-1.6/lib/sis-referencing.jar:myApp.jar <span class="se">\
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">java --class-path apache-sis-1.7/lib/sis-referencing.jar:myApp.jar <span class="se">\
 </span></span></span><span class="line"><span class="cl">     MyMainClass
-</span></span></code></pre></div><p>The <code>SIS_DATA</code> environment variable or <code>derby.system.home</code> Java property
+</span></span></code></pre></div><p>The <code>SIS_DATA</code> environment variable
 can be set to the path of any other directory which contain the same files.</p>
 <h1 id="maven">Add a Maven dependency</h1>
 <p>Maven projects can get the EPSG geodetic dataset automatically, <em>without any prompt for EPSG Terms of Use agreement</em>,
@@ -124,26 +120,24 @@ have agreed with the <a href="https://epsg.org/terms-of-use.html">EPSG Terms of 
 <h2 id="maven-embedded">As embedded database</h2>
 <p>With <code>sis-embedded-data</code> artifact on the classpath, there is no need to setup environment variable, Java property or JNDI.
 However, this simplicity come at the cost of a larger download with no possibility to choose the database engine
-(i.e. the database software is fixed to Derby), and no possibility to add&rsquo;s user data (i.e. the database is read-only).
+(i.e. the database software is fixed to HSQLDB), and no possibility to add&rsquo;s user data (i.e. the database is read-only).
 This embedded data dependency can be declared as below
 (see the <a href="./downloads.html#epsg">download</a> page for more information about Maven dependency declaration).</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependencies&gt;</span>
 </span></span><span class="line"><span class="cl">  <span class="nt">&lt;dependency&gt;</span>
 </span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.apache.sis.non-free<span class="nt">&lt;/groupId&gt;</span>
 </span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>sis-embedded-data<span class="nt">&lt;/artifactId&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>1.6<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>1.7<span class="nt">&lt;/version&gt;</span>
 </span></span><span class="line"><span class="cl">    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
 </span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
 </span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependencies&gt;</span>
 </span></span></code></pre></div><h2 id="maven-epsg">As database installer</h2>
-<p>For applications which already have a database engine, or which use a different version of the Derby database,
+<p>For applications which already have a database engine,
 it may be desirable to install the EPSG geodetic dataset in their existing database rather than having two databases in parallel.
 With <code>sis-epsg</code> artifact on the classpath, Apache <abbr title="Spatial Information System">SIS</abbr> will create a local copy of EPSG database when first needed.
 The target database must be specified by users with <em>one</em> of the following choices:</p>
 <ul>
-<li>set the <code>SIS_DATA</code> environment variable to the path of an initially empty directory <em>(recommended for Derby users)</em>,</li>
-<li>or set the <code>derby.system.home</code> Java property to the path of an initially empty directory
-or a directory that contain other Derby databases,</li>
+<li>set the <code>SIS_DATA</code> environment variable to the path of an initially empty directory <em>(recommended for HSQLDB users)</em>,</li>
 <li>or register a <code>DataSource</code> under the <code>java:comp/env/jdbc/SpatialMetadata</code> name in a JNDI directory
 (see <a href="./epsg.html#jndi">next section</a>),</li>
 <li>or set a <code>DataSource</code> <a href="./apidocs/org.apache.sis.util/org/apache/sis/setup/Configuration.html">from Java code</a>.</li>
@@ -151,18 +145,18 @@ or a directory that contain other Derby databases,</li>
 <p>In all cases, the specified directory or database must exist but may be empty.
 Sub-directories or database schema will be created as needed.
 Then, the Maven dependency can be declared in a project as below,
-with the Derby dependency replaced by another database driver if desired:</p>
+with the HSQLDB dependency replaced by another database driver if desired:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependencies&gt;</span>
 </span></span><span class="line"><span class="cl">  <span class="nt">&lt;dependency&gt;</span>
 </span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.apache.sis.non-free<span class="nt">&lt;/groupId&gt;</span>
 </span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>sis-epsg<span class="nt">&lt;/artifactId&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>1.6<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>1.7<span class="nt">&lt;/version&gt;</span>
 </span></span><span class="line"><span class="cl">    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
 </span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
 </span></span><span class="line"><span class="cl">  <span class="nt">&lt;dependency&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.apache.derby<span class="nt">&lt;/groupId&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>derby<span class="nt">&lt;/artifactId&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>10.14.2.0<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.hsqldb<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>hsqldb<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>2.7.4<span class="nt">&lt;/version&gt;</span>
 </span></span><span class="line"><span class="cl">    <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
 </span></span><span class="line"><span class="cl">  <span class="nt">&lt;/dependency&gt;</span>
 </span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependencies&gt;</span>
@@ -197,10 +191,10 @@ With this configuration, Apache SIS will automatically asks for user agreement a
 This approach can be combined with the next section for writing the EPSG data in a custom database.</p>
 <h1 id="existing">Use an existing EPSG database</h1>
 <p>Applications can use their own EPSG database.
-In addition of Derby, Apache <abbr title="Spatial Information System">SIS</abbr> is also tested on HSQL and PostgreSQL.
+In addition of HSQLDB, Apache <abbr title="Spatial Information System">SIS</abbr> is also tested on Derby and PostgreSQL.
 For using an arbitrary database, register a <code>javax.sql.DataSource</code> instance through one of the methods described below.
 The database must exist but can be empty, in which case it will be populated with an EPSG schema when first needed
-if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​1.6</code> dependency is on the classpath
+if the <code style="white-space:normal">org.apache.sis.non-free:​sis-epsg:​1.7</code> dependency is on the classpath
 (see <a href="./epsg.html#maven-epsg">above section</a>).
 If non-empty, the database should contain the tables created by SQL scripts downloaded from <a href="https://epsg.org/">EPSG</a>.</p>
 <h2 id="setup">Registration by Java code</h2>

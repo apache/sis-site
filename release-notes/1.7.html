@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <title>Apache SIS - SIS 1.7 Release notes</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="../sis.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../syntax.css">
+  </head>
+  <body>
+    <div class="topbar">
+      <a class="topbar-brand" href="../index.html">Apache <abbr title="Spatial Information System">SIS</abbr>™</a>
+      <ul class="topbar-items">
+        <li>
+          <a href="https://www.apache.org/events/current-event.html">
+             <img class="apache-con" src="https://www.apache.org/events/current-event-234x60.png" alt="ApacheCon"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="main-section">
+      <nav class="left-bar">
+        <ul class="nav-pills">
+          <li><a class="nav-link  inactive " href="../index.html">Home</a></li>
+          <li><a class="nav-link  inactive " href="../about.html">About</a></li>
+          <li><a class="nav-link  inactive " href="../downloads.html">Downloads</a></li>
+          <li><a class="nav-link  inactive " href="../howto/index.html">How to…</a></li>
+          <li><a class="nav-link  inactive " href="../standards.html">Standards</a></li>
+          <li><a class="nav-link  inactive " href="../formats.html">Data formats</a></li>
+          <li><a class="nav-link  inactive " href="../epsg.html">EPSG Database</a></li>
+          <li><a class="nav-link  inactive " href="../javafx.html">Application (demo)</a></li>
+          <li><a class="nav-link  inactive " href="../documentation.html">Documentation</a></li>
+        </ul>
+      </nav>
+      <div class="main-content">
+        <main class="container">
+          <article>
+            <img src="../images/logo.png" class="sis-logo" align="left"/>
+            <p class="page-title">SIS 1.7 Release notes</p>
+
+  <ul>
+<li>Release date: <strong>2026-10-13</strong></li>
+<li>Next release</li>
+<li><a href="../release-notes/1.6.html">Previous release</a></li>
+<li><a href="../release-notes/1.7.html#compatibility">Incompatible changes</a></li>
+<li><a href="../release-notes/1.7.html#issues">Noticeable changes</a></li>
+<li>Requirement: Java 11</li>
+<li>EPSG version: 13.101</li>
+</ul>
+<p>Following the <a href="https://db.apache.org/derby/#Derby&#43;Retired">retirement of Apache Derby</a>,
+this release migrated the <code>org.apache.sis.referencing.database</code> module (Maven artifact: <code>sis-embedded-data</code>) to HSQLDB.
+This change brings the following known issues (links to issues tracker are given):</p>
+<ul>
+<li><code>sis-embedded-data</code> does not work if HSQLDB is on the module-path
+(<a href="https://sourceforge.net/p/hsqldb/bugs/1761/">HSQLDB-1761</a>).</li>
+<li><code>sis-embedded-data</code> causes <em>&ldquo;A terminally deprecated method in sun.misc.Unsafe has been called&rdquo;</em> warning
+(<a href="https://sourceforge.net/p/hsqldb/bugs/1752/">HSQLDB-1752</a>).</li>
+<li><code>sis-embedded-data</code> may be very slow
+(<a href="https://sourceforge.net/p/hsqldb/bugs/1758/">HSQLDB-1758</a>).
+As a workaround, <code>sis-embedded-data</code> unzips the database in a temporary directory,
+but this workaround may not be applicable in all environments.</li>
+<li>Some <a href="../command-line.html#identifier">command-line examples</a> are temporarily broken because of collation issue.</li>
+</ul>
+<p>Applications connected to their own database should instead use the <code>org.apache.sis.referencing.epsg</code> module
+(Maven artifact: <code>sis-epsg</code>) in order to leverage their existing database engine and avoid above issues.
+For example, Apache SIS works well on PostgreSQL.</p>
+<h1 id="security">Security</h1>
+<p>This release fixes the following vulnerabilities.
+Before the fixes, parsing a small crafted file could cause an <code>OutOfMemoryError</code>,
+or cause the parsing of other files at arbitrary URLs (local or distant), or allow SQL injection
+(<code>org.apache.sis.storage.sql</code> module only; the metadata and referencing modules are not impacted).
+Note that when Apache SIS opens another file, it tries to parse it as GML, GeoTIFF, NADCON or NTv2
+format and fails at the first error. Therefore, these vulnerabilities are unlikely to leak sensitive
+information (unless passwords are saved as TIFF images…).</p>
+<ul>
+<li>CWE-918 SSRF and local-file disclosure via <code>xlink:href</code> resolution during XML unmarshalling (reporters: n0mi1k, Ho1aAs).</li>
+<li>CWE-918 SSRF via datum-shift grid-file references such as URI parameter in WKT (reporters: n0mi1k, Ho1aAs).</li>
+<li>CWE-22 path traversal / arbitrary file read via Landsat metadata band filenames (reporters: n0mi1k, Ho1aAs).</li>
+<li>CWE-770 unbounded memory allocation in the binary file parsers (netCDF + GeoTIFF) leading to DoS (reporter: n0mi1k).</li>
+<li>SQL injection via unvalidated <code>ORDER BY</code> sort expression in the SQL feature store (reporter: Ho1aAs).</li>
+</ul>
+<p>The following vulnerability has not been fixed by code.
+Instead, it is addressed by documenting recommendations:</p>
+<ul>
+<li>SQL injection on MySQL/MariaDB via missing backslash escaping (reporter: Ho1aAs).</li>
+</ul>
+<p>See the <a href="https://github.com/apache/sis/blob/main/SECURITY.md">Security Policy</a>
+for recommendations about how to use Apache SIS in a security-sensitive context.
+Thanks to &ldquo;n0mi1k Security&rdquo; and to Ho1aAs (GitHub: @HolaAsuka) for these reports.</p>
+<h1 id="compatibility">Incompatible changes</h1>
+<p>The following changes in Apache SIS 1.7 are incompatibles with the previous release (SIS 1.6):</p>
+<ul>
+<li><code>JoinFeatureSet.condition</code> field has been made private because it was exposing a non-public type.</li>
+<li><code>StoreListener.eventOccured(…)</code> method has been renamed <code>eventOccurred(…)</code> (fixed a typo in method name).</li>
+<li><code>RecentReferenceSystems.setGridReferencing(…)</code> argument changed: <code>Map</code> keys changed from <code>String</code> to <code>Identifier</code>.</li>
+<li><code>xlink:href</code> attributes in XML files are no longer followed by default if the referenced file is not in the same
+directory, or in a sub-directory, of the document containing the reference (see above security section).
+For following all URLs as before, set the <code>XML.RESOLVER</code> property to <code>ReferenceResolver.FOLLOW_EXTERNAL_XLINK</code>.</li>
+</ul>
+<h1 id="issues">Noticeable changes</h1>
+<p>Non-exhaustive list:</p>
+<h2 id="features">New Features</h2>
+<ul>
+<li><a href="https://issues.apache.org/jira/browse/SIS-636">SIS-636</a> — Provide a HEIF data store</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-635">SIS-635</a> — Write quasi-COG (Cloud Optimized GeoTIFF)</li>
+</ul>
+<h2 id="improvements">Improvements</h2>
+<ul>
+<li><a href="https://issues.apache.org/jira/browse/SIS-626">SIS-626</a> — GeoTIFF reader should implement TiledGridResource interface</li>
+</ul>
+<h2 id="bugs">Bug fixes</h2>
+<ul>
+<li><a href="https://issues.apache.org/jira/browse/SIS-637">SIS-637</a> — EPSGFactory triggers full GCs</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-630">SIS-630</a> — NoClassDefFoundError: org/apache/derby/iapi/jdbc/EmbeddedDataSourceInterface when using sis-embedded-data</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-629">SIS-629</a> — DateTimeParseException in EPSGDataAccess.getOptionalTemporal when iterating EPSG GeographicCRS codes</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-628">SIS-628</a> — Pyramid level order should be from coarsest to finest resolution</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-627">SIS-627</a> — JVM crash if two or more <code>GDALStoreProvider</code> are created with explicit path to GDAL native library</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-632">SIS-632</a> — NotSerializableException during CRS serialization</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-625">SIS-625</a> — GDAL library not loaded on MacOS</li>
+<li><a href="https://github.com/apache/sis/pull/48">#48</a> — Fix GeoTIFF localization grid when tie points are rectilinear but unevenly spaced</li>
+<li><a href="https://github.com/apache/sis/pull/43">#43</a> — Fix getting tiles from a 3D tiled grid coverage using <code>ImageTileMatrix</code> class</li>
+<li><a href="https://github.com/apache/sis/pull/45">#45</a> — Incorrect column type for timestamp with timezone in PostgreSQL</li>
+</ul>
+<h2 id="tasks">Tasks</h2>
+<ul>
+<li><a href="https://issues.apache.org/jira/browse/SIS-633">SIS-633</a> — Move OptionKey to the storage module</li>
+<li><a href="https://issues.apache.org/jira/browse/SIS-631">SIS-631</a> — Migrate EPSG dataset from Derby to another database</li>
+<li><a href="https://github.com/apache/sis/pull/44">#44</a> — Fix an instability in GeoTIFF unit test</li>
+</ul>
+
+
+          </article>
+        </main>
+        <footer>
+          <div class="container">
+            <p>Copyright &copy; 2013-2026 The Apache Software Foundation, Licensed under the
+            <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.<br/>
+            Apache <abbr title="Spatial Information System">SIS</abbr>,
+            Apache, the Apache logo are trademarks of The Apache Software Foundation.</p>
+            <p>
+              <a href="https://www.apache.org/">Foundation</a> |
+              <a href="https://www.apache.org/events/current-event.html">Events</a> |
+              <a href="https://www.apache.org/licenses/">License</a> |
+              <a href="https://www.apache.org/security/">Security</a> |
+              <a href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a> |
+              <a href="https://www.apache.org/foundation/thanks.html">Thanks</a> |
+              <a href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy</a>
+            </p>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>

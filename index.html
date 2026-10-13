@@ -2,7 +2,7 @@
 <html lang="en">
 
   <head>
-	<meta name="generator" content="Hugo 0.159.0">
+	<meta name="generator" content="Hugo 0.162.1">
     <title>Apache SIS - The Apache SIS™ library</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -62,7 +62,8 @@ The API and the data encodings follow <a href="./standards.html">international s
 <li>Raster formats:
 <ul>
 <li>Read <a href="https://www.ogc.org/standards/netcdf">NetCDF-3 Classic and 64-bit Offset Format</a>.</li>
-<li>Read <a href="https://www.ogc.org/standards/geotiff">GeoTIFF</a> or Cloud Optimized GeoTIFF (COG), including BigTIFF extension.</li>
+<li>Read GeoHEIF files (experimental).</li>
+<li>Read/write <a href="https://www.ogc.org/standards/geotiff">GeoTIFF</a> or Cloud Optimized GeoTIFF (COG), including BigTIFF extension.</li>
 <li>Read Landsat (groups of GeoTIFF files).</li>
 <li>Read ESRI BIL/BIP/BSQ and read/write ERSI ASCII Grid.</li>
 <li>Read/write World Files with any image format supported by Image I/O.</li>
@@ -120,11 +121,11 @@ and more <a href="tables/CoordinateOperationMethods.html">supported operation me
 </ul>
 </details>
 <h1 id="using">Using Apache SIS</h1>
-<p>The latest SIS release is 1.6, released in January 2026,
+<p>The latest SIS release is 1.7, released in October 2026,
 and can be <a href="./downloads.html">downloaded</a> as a <code>zip</code> files or as Maven dependencies.
 The EPSG geodetic dataset is optional for licensing reasons, but recommended.
 EPSG database installation is <a href="./epsg.html">described in a separated page</a>.
-This Apache SIS version requires Java 11 or later and uses the Java Platform Module System (JPMS).
+This Apache SIS version requires Java 11 or later and uses the Java Module System.
 Applications should declare SIS JAR files on their module-path rather than their class-path,
 but a compatibility mechanism makes possible to nevertheless use SIS on the class-path.
 Note that this class-path compatibility may be removed in future versions.</p>
@@ -135,11 +136,17 @@ provide instructions about developing with SIS.
 A <a href="./command-line.html">command-line tool</a> and a <a href="./javafx.html">JavaFX application</a>
 are also provided for allowing users to experiment some SIS functionalities before writing code.</p>
 <h2 id="compatibility">Backward compatibility policy</h2>
-<p>Most of SIS public API is stable.
+<p>Most of <abbr title="Spatial Information System">SIS</abbr> public <abbr title="Application Programming Interface">API</abbr> is stable.
 If an API needs to be changed, the old API is annotated as deprecated and a Javadoc comment explains the replacement.
-If the API is deprecated for removal, it is usually kept for only one release and effectively removed in the next one.
-Therefore, if an API seems to have disappeared after an Apache SIS upgrade, the migration path can be identified by
-incrementing the version one-by-one. The <code>@version</code> tag gives the last version when a class got a significant change.</p>
+If the API is deprecated for removal, it is usually kept for one SIS release and effectively removed in the next one.
+Therefore, if an API seems to have disappeared between two versions of Apache SIS,
+the replacement can be found by incrementing the SIS version one-by-one and looking at the compiler warnings.
+The versions to test can be bounded by looking at the <code>@version</code> tag in the <a href="apidocs/index.html">Javadoc</a>,
+which gives the last version when a class, package or module got a significant change.</p>
+<p>In some rare occasions, an incompatible API change may be applied without deprecation cycle.
+It may happen when it is difficult to have the old and new API coexisting.
+Such cases are documented in an &ldquo;Incompatible changes&rdquo; section of the <a href="./release-notes/index.html">release notes</a>
+and should not impact the most commonly used APIs.</p>
 
 
           </article>
