@@ -74,11 +74,17 @@ Note that when Apache SIS opens another file, it tries to parse it as GML, GeoTI
 format and fails at the first error. Therefore, these vulnerabilities are unlikely to leak sensitive
 information (unless passwords are saved as TIFF images…).</p>
 <ul>
+<li><a href="https://www.cve.org/CVERecord?id=CVE-2026-110748">CVE-2026-110748</a> —
+Improper limitation of paths to GML, GeoTIFF, NADCON or NTv2 files
+<ul>
 <li>CWE-918 SSRF and local-file disclosure via <code>xlink:href</code> resolution during XML unmarshalling (reporters: n0mi1k, Ho1aAs).</li>
 <li>CWE-918 SSRF via datum-shift grid-file references such as URI parameter in WKT (reporters: n0mi1k, Ho1aAs).</li>
 <li>CWE-22 path traversal / arbitrary file read via Landsat metadata band filenames (reporters: n0mi1k, Ho1aAs).</li>
+</ul>
+</li>
+<li><a href="https://www.cve.org/CVERecord?id=CVE-2026-110733">CVE-2026-110733</a> —
+SQL injection via unvalidated <code>ORDER BY</code> sort expression in the SQL feature store (reporter: Ho1aAs).</li>
 <li>CWE-770 unbounded memory allocation in the binary file parsers (netCDF + GeoTIFF) leading to DoS (reporter: n0mi1k).</li>
-<li>SQL injection via unvalidated <code>ORDER BY</code> sort expression in the SQL feature store (reporter: Ho1aAs).</li>
 </ul>
 <p>The following vulnerability has not been fixed by code.
 Instead, it is addressed by documenting recommendations:</p>
@@ -87,7 +93,7 @@ Instead, it is addressed by documenting recommendations:</p>
 </ul>
 <p>See the <a href="https://github.com/apache/sis/blob/main/SECURITY.md">Security Policy</a>
 for recommendations about how to use Apache SIS in a security-sensitive context.
-Thanks to &ldquo;n0mi1k Security&rdquo; and to Ho1aAs (GitHub: @HolaAsuka) for these reports.</p>
+Thanks to <code>n0mi1k</code> and to <code>Ho1aAs</code> (GitHub: <code>@HolaAsuka</code>) for these reports.</p>
 <h1 id="compatibility">Incompatible changes</h1>
 <p>The following changes in Apache SIS 1.7 are incompatibles with the previous release (SIS 1.6):</p>
 <ul>
