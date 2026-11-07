@@ -2,6 +2,24 @@
 title: The Apache SIS™ library
 ---
 
+<div class="hero">
+  <img class="hero-globe" src="/images/sis-hero.svg" alt="Globe with a discrete global grid, satellites in orbit and a flight from Paris to New York"/>
+  <div class="hero-text">
+    <p class="hero-tagline">Space <span>and</span> time, in Java.</p>
+    <ul>
+      <li>Coordinate reference systems and operations, backed by the <abbr>EPSG</abbr> geodetic dataset.</li>
+      <li>Multi-dimensional data: time axes, 4D+ envelopes, moving features.</li>
+      <li>Rasters and features from GeoTIFF, netCDF, {{% GPX %}}, {{% SQL %}} databases and more.</li>
+      <li>Discrete global grid systems, 2D and 3D geometries <em>(incubator)</em>.</li>
+      <li>Metadata and services following {{% OGC %}} and {{% ISO %}} standards.</li>
+    </ul>
+    <p class="hero-buttons">
+      <a class="button" href="/downloads.html">Download</a>
+      <a class="button secondary" href="/howto/index.html">How to…</a>
+    </p>
+  </div>
+</div>
+
 Apache Spatial Information System (SIS) is a free software, Java language library for developing geospatial applications.
 SIS provides data structures for geographic features and associated metadata along with methods to manipulate those data structures.
 The library is an implementation of [GeoAPI 3.0.2][geoapi] interfaces and can be used for desktop or server applications.
