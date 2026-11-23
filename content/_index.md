@@ -10,7 +10,6 @@ title: The Apache SIS™ library
       <li>Coordinate reference systems and operations, backed by the <abbr>EPSG</abbr> geodetic dataset.</li>
       <li>Multi-dimensional data: time axes, 4D+ envelopes, moving features.</li>
       <li>Rasters and features from GeoTIFF, netCDF, {{% GPX %}}, {{% SQL %}} databases and more.</li>
-      <li>Discrete global grid systems, 2D and 3D geometries <em>(incubator)</em>.</li>
       <li>Metadata and services following {{% OGC %}} and {{% ISO %}} standards.</li>
     </ul>
     <p class="hero-buttons">
