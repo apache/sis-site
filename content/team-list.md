@@ -44,6 +44,9 @@ or other means.
 * Minh Chinh Vu
 * Thi Phuong Hao Nguyen
 * Touraïvane
+* Dr Franz-Benjamin Mocnik 
+<a href="https://www.plus.ac.at"><img src="https://www.plus.ac.at/wp-content/uploads/2026/09/UNI_SBG_WBM_linksb_WEISS_RZ-scaled.png" alt="Faculty of Digital and Analytical Sciences
+Paris Lodron University of Salzburg, Austria" height="50" style="filter: invert(100%);"></a>
 
 ## Emeritus members    {#emeritus}
 
